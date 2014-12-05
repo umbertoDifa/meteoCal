@@ -5,7 +5,7 @@ package bakingBeans;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import EJB.LoginManager;
+import EJB.interfaces.LoginManager;
 import model.User;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;

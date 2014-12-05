@@ -5,6 +5,7 @@
  */
 package EJB;
 
+import EJB.interfaces.SignUpManager;
 import bakingBeans.Credentials;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,14 +27,11 @@ public class SignUpManagerImpl implements SignUpManager {
     Logger logger;
 
     @Override
-    public boolean addUser(Credentials credential) {
-        User newUser = new User();
-        newUser.setUsername(credential.getUsername());
-        newUser.setPassword(credential.getPassword());
+    public boolean addUser(User newUser) {     
         
         try {
             database.persist(newUser);
-            logger.log(Level.INFO, "User +{0} created", newUser.getUsername());
+            logger.log(Level.INFO, "User +{0} created", newUser.getName());
         } catch (EntityExistsException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
             return false;

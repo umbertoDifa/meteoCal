@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package EJB;
+package EJB.interfaces;
 
 import java.util.Calendar;
 import java.util.List;
+import model.Event;
 import model.User;
 
 /**
@@ -27,4 +28,15 @@ public interface CalendarManager {
      * @return a free Calendar day if one is found, null if not
      */
     public Calendar findFreeDay(Calendar fromBusyDay,int weeksAhead);
+    /**
+     * Dato un evento ed un calendario, inserisce l'evento nel calendario
+     * @param event Evento da inserire
+     * @param calendar Calendario dell'utente in cui inserirlo
+     * @return true se inserito,false se non
+     */
+    public boolean addToCalendar(Event event, model.Calendar calendar);
+    
+    public void exportCalendar(model.Calendar calendar);
+    
+    public void importCalendar(model.Calendar calendar);
 }

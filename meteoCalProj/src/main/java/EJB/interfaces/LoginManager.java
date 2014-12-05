@@ -1,4 +1,4 @@
-package EJB;
+package EJB.interfaces;
 
 import model.User;
 
