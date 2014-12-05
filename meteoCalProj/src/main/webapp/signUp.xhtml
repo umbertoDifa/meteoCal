@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:composition template="template.xhtml">
+
+        <ui:define name="content">
+
+            <h:messages />
+
+            <h1>Sign Up</h1>
+
+            <h:form id="signUpForm" rendered="#{!login.loggedIn}"> 
+
+                <h:panelGrid columns="2" 
+
+                             rendered="#{!login.loggedIn}"> 
+
+                    <h:outputLabel for="email">Email*:</h:outputLabel> 
+
+                    <h:inputText id="email" value="#{user.email}" p:required="">
+                        <f:passThroughAttribute name="type" value="email" />
+                    </h:inputText>
+
+
+                    <h:outputLabel for="email">Name*:</h:outputLabel> 
+
+                    <h:inputText id="name" value="#{tempUser.name}" p:required="" />
+
+
+                    <h:outputLabel for="email">Surname*:</h:outputLabel> 
+
+                    <h:inputText id="surname" value="#{tempUser.surname}" p:required=""/>
+
+                    <h:outputLabel for="password">Password*:</h:outputLabel> 
+
+                    <h:inputSecret id="password" value="#{tempUser.password}" p:required="" />
+
+                </h:panelGrid> 
+
+                <!--if the user is not logged in show button to submit credentials-->
+                <h:commandButton id="login" 
+
+                                 value="Login" 
+
+                                 action="#{signUp.sign}" 
+
+                                 rendered="#{!login.loggedIn}"/>
+
+                <h:message for="username" style="color:red" />
+                <h:message for="password" style="color:red" />
+            </h:form> 
+
+        </ui:define>
+
+    </ui:composition>
+</html>

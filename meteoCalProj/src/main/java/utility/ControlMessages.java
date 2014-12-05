@@ -11,8 +11,8 @@ package utility;
  */
 public enum ControlMessages {
 
-    USER_NOT_FOUND(0,"Username non corretto"),
-    WRONG_PASSWORD(1,"Password non corretta");
+    USER_NOT_FOUND(0,"Incorrect Username"),
+    WRONG_PASSWORD(1,"Incorrect Password");
     
     //static?
     private final int index;

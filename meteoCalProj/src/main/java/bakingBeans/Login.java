@@ -10,7 +10,6 @@ import model.User;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import javax.ejb.EJB;
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -42,7 +41,7 @@ public class Login implements Serializable {
 
     public void login() throws Exception {
 
-        User user = userManager.findUser(credentials.getUsername(), credentials.getPassword());
+        User user = userManager.findUser(credentials.getEmail(), credentials.getPassword());
 
         if (user != null) {
 

@@ -1,7 +1,5 @@
 package bakingBeans;
 
-
-
 import java.io.Serializable;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
@@ -15,20 +13,16 @@ import javax.inject.Named;
 @Named
 public class Credentials {
 
-    private String username;
+    private String email;
 
     private String password;
 
-    public String getUsername() {
-
-        return username;
-
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void setUsername(String username) {
-
-        this.username = username;
-
+    public String getEmail() {
+        return email;
     }
 
     public String getPassword() {
