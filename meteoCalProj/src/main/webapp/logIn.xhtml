@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:composition template="template.xhtml">
+
+        <ui:define name="logIn">
+
+        <h:form id="loginForm"> 
+            <!--if the user is not logged in show outputLabel "non loggato"-->
+            <h:outputLabel for="username" rendered="#{!login.loggedIn}">
+                "non loggato"</h:outputLabel>
+            <!--if the user is logged in show outputLabel "loggato"-->
+            <h:outputLabel for="username" rendered="#{login.loggedIn}">
+                Ciao #{login.currentUser.name}</h:outputLabel>
+
+            <!--if the user is not logged show login panel-->
+            <h:panelGrid columns="2" 
+
+                         rendered="#{!login.loggedIn}"> 
+                <h:outputLabel for="username">Username:</h:outputLabel> 
+
+                <h:inputText id="username" value="#{credentials.username}"/> 
+
+                <h:outputLabel for="password">Password:</h:outputLabel> 
+
+                <h:inputSecret id="password" value="#{credentials.password}"/> 
+
+            </h:panelGrid> 
+
+            <!--if the user is not logged in show button to submit credentials-->
+            <h:commandButton id="login" 
+
+                             value="Login" 
+
+                             action="#{login.login}" 
+
+                             rendered="#{!login.loggedIn}"/>
+
+            <!--if the user is not logged in show button to log out-->
+            <h:commandButton id="logout" 
+
+                             value="Logout" 
+
+                             action="#{login.logout}" 
+
+                             rendered="#{login.loggedIn}"/> 
+
+        </h:form> 
+
+        <h:link outcome="/users.xhtml">View users</h:link>
+
+        </ui:define>
+
+    </ui:composition>
+</html>

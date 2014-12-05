@@ -5,8 +5,6 @@ package bakingBeans;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import EJB.UserManager;
 import model.User;
 import javax.inject.Named;
@@ -48,13 +46,14 @@ public class Login implements Serializable {
         if (user != null) {
 
             this.currentUser = user;
-
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage("Welcome, " + currentUser.getName()));
-
+//          FacesContext.getCurrentInstance().addMessage(null,
+//                  new FacesMessage("Welcome, " + currentUser.getName()));
+        }else {
+//            FacesContext.getCurrentInstance().addMessage(new FacesMessage(userManager.getLastError().getMessage()));
+            
         }
 
-    }        
+    }
 
     public void logout() {
 
@@ -65,12 +64,13 @@ public class Login implements Serializable {
 
     }
 
-    public boolean isLoggedIn() {         
+    public boolean isLoggedIn() {
         return currentUser != null;
 
     }
 
-    @Produces //@LoggedIn
+    @Produces
+//    @LoggedIn
     public User getCurrentUser() {
 
         return currentUser;
@@ -78,4 +78,3 @@ public class Login implements Serializable {
     }
 
 }
-
