@@ -5,44 +5,39 @@
  */
 package EJB;
 
-import java.util.List;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Named;
+import bakingBeans.Credentials;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.Stateless;
+import javax.enterprise.inject.Default;
+import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import model.User;
 
+@Stateless
 public class SignUpManagerImpl implements SignUpManager {
 
     @PersistenceContext(unitName = "meteoCalDB")
     EntityManager database;
-    
-    private User newUser = new User();
 
-    @Produces
-    @Named(value ="users")
-    @RequestScoped
-    @Override
-    public List<User> getUsers() {
-        return database.createQuery("select u from User u").getResultList();
-
-    }
+    @Inject @Default
+    Logger logger;
 
     @Override
-    public boolean addUser() {
-        database.persist(newUser);
+    public boolean addUser(Credentials credential) {
+        User newUser = new User();
+        newUser.setUsername(credential.getUsername());
+        newUser.setPassword(credential.getPassword());
         
-        //TODO: fix this
+        try {
+            database.persist(newUser);
+            logger.log(Level.INFO, "User +{0} created", newUser.getUsername());
+        } catch (EntityExistsException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            return false;
+        }
         return true;
     }
-    
-    @Produces
-    @RequestScoped
-    @Named
-    @Override
-    public User getNewUser() {
-        return newUser;
-    }
-
 }
