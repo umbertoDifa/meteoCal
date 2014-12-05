@@ -4,7 +4,7 @@ package utility;
  *
  * @author umboDifa
  */
-public enum TypeOfNotification {
+public enum NotificationType {
 
     NEW_EVENT,
     WEATHER_CHANGE;

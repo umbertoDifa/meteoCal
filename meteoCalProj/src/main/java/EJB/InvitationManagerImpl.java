@@ -2,9 +2,11 @@ package EJB;
 
 import EJB.interfaces.InvitationManager;
 import java.util.List;
+import javax.ejb.Stateless;
 import model.Event;
 import model.User;
 
+@Stateless
 public class InvitationManagerImpl implements InvitationManager {
 
     @Override

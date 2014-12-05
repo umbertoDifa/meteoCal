@@ -2,11 +2,12 @@ package EJB;
 
 import EJB.interfaces.EventManager;
 import java.util.List;
+import javax.ejb.Stateless;
 import model.Calendar;
 import model.Event;
 import model.User;
 
-
+@Stateless
 public class EventManagerImpl implements EventManager {
 
     @Override

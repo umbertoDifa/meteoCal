@@ -7,7 +7,7 @@ package EJB.interfaces;
 
 import java.util.List;
 import model.User;
-import utility.TypeOfNotification;
+import utility.NotificationType;
 
 /**
  *
@@ -20,5 +20,5 @@ public interface NotificationManager {
      * @param type type of notification
      * @return true if success
      */
-    public boolean createNotifications(List<User> users, TypeOfNotification type);
+    public boolean createNotifications(List<User> users, NotificationType type);
 }
