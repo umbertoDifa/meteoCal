@@ -6,10 +6,12 @@
 package EJB;
 
 import java.util.List;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import model.User;
 
+@Stateless
 public class LoginManagerImpl implements LoginManager {
 
     @PersistenceContext(unitName = "meteoCalDB")

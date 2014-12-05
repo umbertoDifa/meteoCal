@@ -5,11 +5,12 @@ package bakingBeans;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import EJB.UserManager;
+import EJB.LoginManager;
 import model.User;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import javax.ejb.EJB;
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -35,7 +36,7 @@ public class Login implements Serializable {
     private Credentials credentials;
 
     @Inject
-    private UserManager userManager;
+    private LoginManager userManager;
 
     private User currentUser;
 
