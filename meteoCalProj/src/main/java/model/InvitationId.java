@@ -12,24 +12,26 @@ import java.util.Objects;
  * @author Luckyna
  */
 public class InvitationId {
-    private User invitee;
-    private Event event;
+    private Long invitee;
+    private Long event;
 
-    public User getInvitee() {
+    public Long getInvitee() {
         return invitee;
     }
 
-    public void setInvitee(User invitee) {
+    public void setInvitee(Long invitee) {
         this.invitee = invitee;
     }
 
-    public Event getEvent() {
+    public Long getEvent() {
         return event;
     }
 
-    public void setEvent(Event event) {
+    public void setEvent(Long event) {
         this.event = event;
     }
+
+
 
     @Override
     public int hashCode() {

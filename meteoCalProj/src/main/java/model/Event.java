@@ -13,6 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -23,6 +25,7 @@ import javax.persistence.Temporal;
  * @author Luckyna
  */
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Event implements Serializable {
     
     private static final long serialVersionUID = 1L;
@@ -54,7 +57,7 @@ public abstract class Event implements Serializable {
     private List<Invitation> invitations;
     
     @ManyToMany(mappedBy = "eventsInCalendar")
-    private List<Calendar> inCalendars;
+    private List<model.Calendar> inCalendars;
     
     
     //METHODS

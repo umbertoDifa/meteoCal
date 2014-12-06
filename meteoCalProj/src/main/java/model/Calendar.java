@@ -29,7 +29,6 @@ public class Calendar implements Serializable {
     @Id
     private String title;
     @Id
-
     @ManyToOne
     private User owner;
     

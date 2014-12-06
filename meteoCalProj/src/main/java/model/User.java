@@ -46,7 +46,7 @@ public class User implements Serializable {
     private char gender;
 
     @ManyToMany(mappedBy = "guests")
-    private List<Event> publicJoins;
+    private List<PublicEvent> publicJoins;
 
     @OneToMany(mappedBy = "invitee")
     private List<Invitation> invitations;
