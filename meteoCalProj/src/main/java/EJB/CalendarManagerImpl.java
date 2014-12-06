@@ -53,10 +53,8 @@ public class CalendarManagerImpl implements CalendarManager {
 
     @Override
     public model.Calendar setToDefault(model.Calendar calendar, User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        //TODO quando dai il titolo check che non abbia già un caldendario
-        //con "Default Titolo", nel caso fallo diventare "Default titolo 2"
-        
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates
+        //TODO quado crei un default calendar attenzione a non dargli un nome già esistente
     }
     
 }

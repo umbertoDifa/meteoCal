@@ -25,7 +25,7 @@ public class SignUpManagerImpl implements SignUpManager {
     EntityManager database;
 
     @Inject @Default
-    Logger logger;
+    Logger logger;    
     
     @Inject
     CalendarManager calManager;
@@ -47,5 +47,9 @@ public class SignUpManagerImpl implements SignUpManager {
             return false;
         }
         return true;
-    }          
+    }         
+    
+    
+    
+    
 }

@@ -39,12 +39,6 @@ public interface CalendarManager {
     public void exportCalendar(model.Calendar calendar);
     
     public void importCalendar(model.Calendar calendar);
-    
-    /**
-     * Takes a calendar and sets its attributes to the default ones
-     * @param calendar calendar to set to default
-     * @param user owner of the calendar
-     * @return the default calendar for that user
-     */
+ 
     public model.Calendar setToDefault(model.Calendar calendar, User user);
 }

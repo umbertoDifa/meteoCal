@@ -9,6 +9,7 @@ import EJB.interfaces.LoginManager;
 import bakingBeans.Credentials;
 import java.util.LinkedList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,7 +21,12 @@ public class LoginManagerImpl implements LoginManager {
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
-    private LinkedList<ControlMessages> errorMessageQueue = new LinkedList<>();
+    private LinkedList<ControlMessages> errorMessageQueue;
+
+    @PostConstruct
+    private void init() {
+        errorMessageQueue = new LinkedList<>();
+    }
 
     @Override
     public User findUser(Credentials credentials) {
@@ -32,7 +38,6 @@ public class LoginManagerImpl implements LoginManager {
                 .setParameter("password", credentials.getPassword()).getResultList();
 
         //query per cercare un utente preciso
-        
         if (results.isEmpty()) {
             errorMessageQueue.add(ControlMessages.USER_NOT_FOUND);
             return null;
@@ -42,15 +47,15 @@ public class LoginManagerImpl implements LoginManager {
                     //TODO, questa??
                     "Cannot have more than one user with the same username!");
         }
-        
+
         //verifico la password
         if (results.get(0).getPassword().equals(credentials.getPassword())) {
             return results.get(0);
         }
-        
+
         //se password sbagliata, scrivo l'errore e ritorno null
         errorMessageQueue.add(ControlMessages.WRONG_PASSWORD);
-        
+
         return null;
     }
 
@@ -58,7 +63,5 @@ public class LoginManagerImpl implements LoginManager {
     public ControlMessages getLastError() {
         return errorMessageQueue.pollFirst();
     }
-    
-    
 
 }
