@@ -10,7 +10,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import model.User;
+import model.UserModel;
 
 /**
  *
@@ -23,7 +23,7 @@ public class SignUpBacking {
     @Inject
     private TempUserBacking tempUser;
 
-    private User user;
+    private UserModel user;
 
     @Inject
     private SignUpManager signUpManager;
@@ -35,7 +35,7 @@ public class SignUpBacking {
     }
 
     public String SignUp() {
-        user = new User();
+        user = new UserModel();
         //setto user coi parametri di tempUser, MANCANO SETTER IN USER
         if (signUpManager.addUser(user)) {
             return "success";

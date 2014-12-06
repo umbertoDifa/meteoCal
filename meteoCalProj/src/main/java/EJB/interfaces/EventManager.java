@@ -7,7 +7,7 @@ package EJB.interfaces;
 
 import java.util.List;
 import model.Event;
-import model.User;
+import model.UserModel;
 
 /**
  *
@@ -15,7 +15,7 @@ import model.User;
  */
 public interface EventManager {
 
-    public List<model.Calendar> loadCalendars(User user);
+    public List<model.CalendarModel> loadCalendars(UserModel user);
 
     //TODO forse inutile perchè non fa che chiamare la stessa nel searchManager
     public List<Object> search(Object thingToSearch);
@@ -26,7 +26,7 @@ public interface EventManager {
      * @param invitee users to invite
      * @return true if stored
      */
-    public boolean saveInvites(List<User> invitee);
+    public boolean saveInvites(List<UserModel> invitee);
 
     public boolean checkData(//TODO: come nel calendar manager, forse inutile
             );
@@ -39,5 +39,5 @@ public interface EventManager {
      * @param invitees invitati all'evento
      * @return true if created with success, false if not
      */
-    public boolean scheduleNewEvent(User user, Event event, model.Calendar insertInCalendar,List<User> invitees);
+    public boolean scheduleNewEvent(UserModel user, Event event, model.CalendarModel insertInCalendar,List<UserModel> invitees);
 }

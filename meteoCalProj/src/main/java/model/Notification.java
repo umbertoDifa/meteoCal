@@ -26,7 +26,7 @@ public class Notification implements Serializable {
     private Long id;
     
     @ManyToOne
-    private User recipient;
+    private UserModel recipient;
     
     @ManyToOne
     private Event relatedEvent;
@@ -43,6 +43,30 @@ public class Notification implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public UserModel getRecipient() {
+        return recipient;
+    }
+
+    public void setRecipient(UserModel recipient) {
+        this.recipient = recipient;
+    }
+
+    public Event getRelatedEvent() {
+        return relatedEvent;
+    }
+
+    public void setRelatedEvent(Event relatedEvent) {
+        this.relatedEvent = relatedEvent;
+    }
+
+    public NotificationType getType() {
+        return type;
+    }
+
+    public void setType(NotificationType type) {
+        this.type = type;
     }
 
     @Override

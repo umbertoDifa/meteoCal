@@ -7,15 +7,16 @@ package EJB.interfaces;
 
 import java.util.Calendar;
 import java.util.List;
+import model.CalendarModel;
 import model.Event;
-import model.User;
+import model.UserModel;
 
 /**
  *
  * @author Umberto
  */
 public interface CalendarManager {
-    public List<String> getCalendarsName(User user);
+    public List<CalendarModel> getCalendars(UserModel user);
     
     public boolean checkData(//TODO: classe backing con tutti i dati da checkare
     );
@@ -34,11 +35,11 @@ public interface CalendarManager {
      * @param calendar Calendario dell'utente in cui inserirlo
      * @return true se inserito,false se non
      */
-    public boolean addToCalendar(Event event, model.Calendar calendar);
+    public boolean addToCalendar(Event event, model.CalendarModel calendar);
     
-    public void exportCalendar(model.Calendar calendar);
+    public void exportCalendar(model.CalendarModel calendar);
     
-    public void importCalendar(model.Calendar calendar);
+    public void importCalendar(model.CalendarModel calendar);
  
-    public model.Calendar setToDefault(model.Calendar calendar, User user);
+    public model.CalendarModel setToDefault(model.CalendarModel calendar, UserModel user);
 }

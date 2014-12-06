@@ -7,9 +7,9 @@ package model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +21,7 @@ import javax.persistence.OneToMany;
  * @author Luckyna
  */
 @Entity
-public class User implements Serializable {
+public class UserModel implements Serializable {
     //ATTRIBUTES
 
     @Id
@@ -56,9 +56,9 @@ public class User implements Serializable {
 
     @OneToMany(mappedBy = "owner")
     private List<Event> ownedEvents;
-    
+
     @OneToMany(mappedBy = "owner")
-    private List<Calendar> ownedCalendars;
+    private List<CalendarModel> ownedCalendars;
 
     //METHODS
     public String getSurname() {
@@ -81,7 +81,7 @@ public class User implements Serializable {
         return gender;
     }
 
-    public List<Calendar> getOwnedCalendars() {
+    public List<CalendarModel> getOwnedCalendars() {
         return ownedCalendars;
     }
 
@@ -101,15 +101,44 @@ public class User implements Serializable {
         this.id = id;
     }
 
+    public List<PublicEvent> getPublicJoins() {
+        return publicJoins;
+    }
+
+    public void setPublicJoins(List<PublicEvent> publicJoins) {
+        this.publicJoins = publicJoins;
+    }
+
+    public List<Invitation> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(List<Invitation> invitations) {
+        this.invitations = invitations;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
     public boolean equals(Object object) {
-        if (!(object instanceof User)) {
+        if (!(object instanceof UserModel)) {
             return false;
         }
-        User other = (User) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        UserModel other = (UserModel) object;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
 }

@@ -51,13 +51,13 @@ public abstract class Event implements Serializable {
     private boolean isOutdoor;
     
     @ManyToOne
-    private User owner;
+    private UserModel owner;
     
     @OneToMany(mappedBy = "event")
     private List<Invitation> invitations;
     
     @ManyToMany(mappedBy = "eventsInCalendar")
-    private List<model.Calendar> inCalendars;
+    private List<model.CalendarModel> inCalendars;
     
     
     //METHODS
@@ -90,8 +90,24 @@ public abstract class Event implements Serializable {
         return isOutdoor;
     }
 
-    public User getOwner() {
+    public UserModel getOwner() {
         return owner;
+    }
+
+    public List<Invitation> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(List<Invitation> invitations) {
+        this.invitations = invitations;
+    }
+
+    public List<CalendarModel> getInCalendars() {
+        return inCalendars;
+    }
+
+    public void setInCalendars(List<CalendarModel> inCalendars) {
+        this.inCalendars = inCalendars;
     }
 
 

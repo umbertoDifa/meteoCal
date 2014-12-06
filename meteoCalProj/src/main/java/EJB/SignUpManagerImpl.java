@@ -15,8 +15,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import model.Calendar;
-import model.User;
+import model.CalendarModel;
+import model.UserModel;
 
 @Stateless
 public class SignUpManagerImpl implements SignUpManager {
@@ -30,10 +30,10 @@ public class SignUpManagerImpl implements SignUpManager {
     @Inject
     CalendarManager calManager;
     
-    Calendar defaultCalendar;
+    CalendarModel defaultCalendar;
 
     @Override
-    public boolean addUser(User newUser) { 
+    public boolean addUser(UserModel newUser) { 
             
         defaultCalendar = calManager.setToDefault(defaultCalendar, newUser);
         

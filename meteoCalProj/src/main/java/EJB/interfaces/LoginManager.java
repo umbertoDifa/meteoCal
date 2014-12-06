@@ -1,7 +1,7 @@
 package EJB.interfaces;
 
 import bakingBeans.CredentialsBacking;
-import model.User;
+import model.UserModel;
 import utility.ControlMessages;
 
 /**
@@ -15,7 +15,7 @@ public interface LoginManager {
      * @param credentials user credentials
      * @return an User if found, null if not
      */
-    public User findUser(CredentialsBacking credentials);
+    public UserModel findUser(CredentialsBacking credentials);
     
     /**
      * Retrives last error in the loginManager

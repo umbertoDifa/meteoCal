@@ -4,8 +4,9 @@ import EJB.interfaces.CalendarManager;
 import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Stateless;
+import model.CalendarModel;
 import model.Event;
-import model.User;
+import model.UserModel;
 
 @Stateless
 public class CalendarManagerImpl implements CalendarManager {
@@ -22,7 +23,7 @@ public class CalendarManagerImpl implements CalendarManager {
         //TODO do
     }
     @Override
-    public List<String> getCalendarsName(User user) {
+    public List<CalendarModel> getCalendars(UserModel user) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -37,22 +38,22 @@ public class CalendarManagerImpl implements CalendarManager {
     }
 
     @Override
-    public boolean addToCalendar(Event event, model.Calendar calendar) {
+    public boolean addToCalendar(Event event, model.CalendarModel calendar) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void exportCalendar(model.Calendar calendar) {
+    public void exportCalendar(model.CalendarModel calendar) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void importCalendar(model.Calendar calendar) {
+    public void importCalendar(model.CalendarModel calendar) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public model.Calendar setToDefault(model.Calendar calendar, User user) {
+    public model.CalendarModel setToDefault(model.CalendarModel calendar, UserModel user) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates
         //TODO quado crei un default calendar attenzione a non dargli un nome già esistente
     }

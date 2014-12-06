@@ -6,7 +6,7 @@ package bakingBeans;
  * and open the template in the editor.
  */
 import EJB.interfaces.LoginManager;
-import model.User;
+import model.UserModel;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -37,11 +37,11 @@ public class LoginBacking implements Serializable {
     @Inject
     private LoginManager userManager;
 
-    private User currentUser;
+    private UserModel currentUser;
 
     public void login() throws Exception {
 
-        User user = userManager.findUser(credentials);
+        UserModel user = userManager.findUser(credentials);
 
         if (user != null) {
 
@@ -65,7 +65,7 @@ public class LoginBacking implements Serializable {
 
     @Produces
 //    @LoggedIn
-    public User getCurrentUser() {
+    public UserModel getCurrentUser() {
 
         return currentUser;
 

@@ -20,7 +20,7 @@ import javax.persistence.ManyToOne;
 public class Invitation implements Serializable {
     @Id
     @ManyToOne
-    private User invitee;
+    private UserModel invitee;
     
     @Id
     @ManyToOne
@@ -30,11 +30,11 @@ public class Invitation implements Serializable {
     
     //METHODS
 
-    public User getInvitee() {
+    public UserModel getInvitee() {
         return invitee;
     }
 
-    public void setInvitee(User invitee) {
+    public void setInvitee(UserModel invitee) {
         this.invitee = invitee;
     }
 

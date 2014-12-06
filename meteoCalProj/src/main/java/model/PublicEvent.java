@@ -19,7 +19,15 @@ public class PublicEvent extends Event {
     
     @ManyToMany
     @JoinTable(name = "PublicJoin")
-    private List<User> guests;
+    private List<UserModel> guests;
+
+    public List<UserModel> getGuests() {
+        return guests;
+    }
+
+    public void setGuests(List<UserModel> guests) {
+        this.guests = guests;
+    }
    
     
 }

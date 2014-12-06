@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import model.User;
+import model.UserModel;
 import utility.ControlMessages;
 
 @Stateless
@@ -29,9 +29,9 @@ public class LoginManagerImpl implements LoginManager {
     }
 
     @Override
-    public User findUser(CredentialsBacking credentials) {
+    public UserModel findUser(CredentialsBacking credentials) {
 
-        List<User> results = database
+        List<UserModel> results = database
                 .createQuery(
                         "select u from User u where u.username=:username and u.password=:password")
                 .setParameter("username", credentials.getEmail())

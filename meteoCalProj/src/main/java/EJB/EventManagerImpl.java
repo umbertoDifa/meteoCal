@@ -12,9 +12,9 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import model.Calendar;
+import model.CalendarModel;
 import model.Event;
-import model.User;
+import model.UserModel;
 
 @Stateless
 public class EventManagerImpl implements EventManager {
@@ -36,7 +36,7 @@ public class EventManagerImpl implements EventManager {
     Logger logger;
 
     @Override
-    public List<Calendar> loadCalendars(User user) {
+    public List<CalendarModel> loadCalendars(UserModel user) {
         return user.getOwnedCalendars();
     }
 
@@ -46,7 +46,7 @@ public class EventManagerImpl implements EventManager {
     }
 
     @Override
-    public boolean saveInvites(List<User> invitee) {
+    public boolean saveInvites(List<UserModel> invitee) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         //TODO secondo me questa deve stare nel backing
     }
@@ -57,7 +57,7 @@ public class EventManagerImpl implements EventManager {
     }
 
     @Override
-    public boolean scheduleNewEvent(User user, Event event, model.Calendar insertInCalendar,List<User> invitees) {
+    public boolean scheduleNewEvent(UserModel user, Event event, model.CalendarModel insertInCalendar,List<UserModel> invitees) {
         database.persist(event);
         logger.log(Level.INFO, "Event +{0} created", event.getTitle());
        

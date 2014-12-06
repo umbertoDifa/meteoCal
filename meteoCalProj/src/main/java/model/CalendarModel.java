@@ -24,13 +24,13 @@ import javax.persistence.ManyToOne;
 
 @Entity
 @IdClass (CalendarId.class)
-public class Calendar implements Serializable {
+public class CalendarModel implements Serializable {
     
     @Id
     private String title;
     @Id
     @ManyToOne
-    private User owner;
+    private UserModel owner;
     
     private boolean isPublic;
 
@@ -38,7 +38,7 @@ public class Calendar implements Serializable {
     
     @ManyToMany
     @JoinTable(name = "EventInCalendar")
-    private List<User> eventsInCalendar;
+    private List<UserModel> eventsInCalendar;
 
  
 
@@ -50,5 +50,38 @@ public class Calendar implements Serializable {
     public void setTitle(String calendar_title) {
         this.title = calendar_title;
     }
+
+    public UserModel getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UserModel owner) {
+        this.owner = owner;
+    }
+
+    public boolean isIsPublic() {
+        return isPublic;
+    }
+
+    public void setIsPublic(boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+
+    public boolean isIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+
+    public List<UserModel> getEventsInCalendar() {
+        return eventsInCalendar;
+    }
+
+    public void setEventsInCalendar(List<UserModel> eventsInCalendar) {
+        this.eventsInCalendar = eventsInCalendar;
+    }
+    
     
 }

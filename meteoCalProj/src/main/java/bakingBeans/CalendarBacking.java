@@ -11,7 +11,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import model.User;
+import model.UserModel;
 import utility.ViewModality;
 
 /**
@@ -26,7 +26,7 @@ public class CalendarBacking implements Serializable {
     @Inject
     EventManager eventManager;
 
-    private List<model.Calendar> calendars;
+    private List<model.CalendarModel> calendars;
     private int indexCurrentCalendar;
     private ViewModality viewModality;
     /**
@@ -35,7 +35,7 @@ public class CalendarBacking implements Serializable {
     public CalendarBacking() {
     }
 
-    public void load(User user) {
+    public void load(UserModel user) {
         calendars = eventManager.loadCalendars(user);
         //chiedere quale è di deafult
 

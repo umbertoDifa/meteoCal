@@ -7,7 +7,7 @@ package EJB.interfaces;
 
 import java.util.List;
 import model.Event;
-import model.User;
+import model.UserModel;
 
 /**
  *
@@ -20,5 +20,5 @@ public interface InvitationManager {
      * @param event event for which the invitation is created
      * @return true if success
      */
-    public boolean createInvitations(List<User> userToInvite, Event event);
+    public boolean createInvitations(List<UserModel> userToInvite, Event event);
 }
