@@ -51,13 +51,14 @@ public class LoginManagerImpl implements LoginManager {
             //verifico la password
             if (results.get(0).getPassword().equals(credentials.getPassword())) {
                 userAndMessage.setUser(results.get(0));
+                userAndMessage.setMessage(ControlMessages.LOGIN_SUCCESSFUL);
             } else {
                 //se password sbagliata, scrivo l'errore e ritorno null
                 userAndMessage.setUser(null);
                 userAndMessage.setMessage(ControlMessages.WRONG_PASSWORD);
             }
         }
-        
+
         return userAndMessage;
     }
 }

@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import model.CalendarModel;
 import model.Event;
 import model.UserModel;
+import utility.ControlMessages;
 
 @Stateless
 public class CalendarManagerImpl implements CalendarManager {
@@ -33,12 +34,14 @@ public class CalendarManagerImpl implements CalendarManager {
 
     @Override
     public List<CalendarModel> getCalendars(UserModel user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return user.getOwnedCalendars();
     }
 
     @Override
     public boolean checkData() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.checkWeather();
+        this.checkConflicts();
+        return true;
     }
 
     @Override
@@ -47,15 +50,19 @@ public class CalendarManagerImpl implements CalendarManager {
     }
 
     @Override
-    public boolean addToCalendar(Event event, CalendarModel calendar, UserModel user) {
+    public ControlMessages addToCalendar(Event event, CalendarModel calendar, UserModel user) {
         //se l'evento non è in nessun calendario dell'utente
-        for (CalendarModel cal :user.getOwnedCalendars()){
-            for(Event e : cal.getEventsInCalendar()){
-                if(e.equals(event)){}
+        for (CalendarModel cal : user.getOwnedCalendars()) {
+            for (Event e : cal.getEventsInCalendar()) {
+                if (e.equals(event)) {
+                    return ControlMessages.EVENT_ALREADY_IN_CALENDARS;
+                }
             }
         }
         //allora lo aggiungo
-        return true;
+        //TODO basta aggiungere a questa lista?
+        //calendar.setEventsInCalendar();
+        return ControlMessages.EVENT_ADDED;
     }
 
     @Override
