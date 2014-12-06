@@ -11,40 +11,44 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-
-
 
 /**
  *
  * @author Luckyna
  */
-
 @Entity
-@IdClass (CalendarId.class)
+@IdClass(CalendarId.class)
 public class CalendarModel implements Serializable {
-    
+
     @Id
     private String title;
     @Id
     @ManyToOne
     private UserModel owner;
-    
+
     private boolean isPublic;
 
     private boolean isDefault;
-    
+
     @ManyToMany
     @JoinTable(name = "EventInCalendar")
-    private List<UserModel> eventsInCalendar;
-
- 
+    private List<Event> eventsInCalendar;//FIXED
 
     public String getTitle() {
         return title;
 
+    }
+
+    public List<Event> getEventsInCalendar() {
+        return eventsInCalendar;
+    }
+
+    public void setEventsInCalendar(List<Event> eventsInCalendar) {
+        this.eventsInCalendar = eventsInCalendar;
     }
 
     public void setTitle(String calendar_title) {
@@ -75,13 +79,4 @@ public class CalendarModel implements Serializable {
         this.isDefault = isDefault;
     }
 
-    public List<UserModel> getEventsInCalendar() {
-        return eventsInCalendar;
-    }
-
-    public void setEventsInCalendar(List<UserModel> eventsInCalendar) {
-        this.eventsInCalendar = eventsInCalendar;
-    }
-    
-    
 }

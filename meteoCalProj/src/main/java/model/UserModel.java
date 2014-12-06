@@ -47,21 +47,21 @@ public class UserModel implements Serializable {
     //non so se definire sopra una mini-enum per questo campo
     private char gender;
 
-//    @ManyToMany(mappedBy = "guests")
-//    private List<PublicEvent> publicJoins;
-//
-//    @OneToMany(mappedBy = "invitee")
-//    private List<Invitation> invitations;
-//
-//    @OneToMany(mappedBy = "recipient")
-//    private List<Notification> notifications;
-//
+    @ManyToMany(mappedBy = "guests")
+    private List<PublicEvent> publicJoins;
+
+    @OneToMany(mappedBy = "invitee")
+    private List<Invitation> invitations;
+
+    @OneToMany(mappedBy = "recipient")
+    private List<Notification> notifications;
+
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_fk")
     private List<Event> ownedEvents;
-//
-//    @OneToMany(mappedBy = "owner")
-//    private List<CalendarModel> ownedCalendars;
+
+    @OneToMany(mappedBy = "owner")
+    private List<CalendarModel> ownedCalendars;
 
     //METHODS
     public String getSurname() {
@@ -84,13 +84,14 @@ public class UserModel implements Serializable {
         return gender;
     }
 
-//    public List<CalendarModel> getOwnedCalendars() {
-//        return ownedCalendars;
-//    }
-//
-//    public List<Event> getOwnedEvents() {
-//        return ownedEvents;
-//    }
+    public List<CalendarModel> getOwnedCalendars() {
+        return ownedCalendars;
+    }
+
+    public List<Event> getOwnedEvents() {
+        return ownedEvents;
+    }
+
     public String getName() {
         return name;
     }
@@ -103,28 +104,30 @@ public class UserModel implements Serializable {
         this.id = id;
     }
 
-//    public List<PublicEvent> getPublicJoins() {
-//        return publicJoins;
-//    }
-//    public void setPublicJoins(List<PublicEvent> publicJoins) {
-//        this.publicJoins = publicJoins;
-//    }
-//
-//    public List<Invitation> getInvitations() {
-//        return invitations;
-//    }
-//
-//    public void setInvitations(List<Invitation> invitations) {
-//        this.invitations = invitations;
-//    }
-//
-//    public List<Notification> getNotifications() {
-//        return notifications;
-//    }
-//
-//    public void setNotifications(List<Notification> notifications) {
-//        this.notifications = notifications;
-//    }
+    public List<PublicEvent> getPublicJoins() {
+        return publicJoins;
+    }
+
+    public void setPublicJoins(List<PublicEvent> publicJoins) {
+        this.publicJoins = publicJoins;
+    }
+
+    public List<Invitation> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(List<Invitation> invitations) {
+        this.invitations = invitations;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
