@@ -33,8 +33,8 @@ public class LoginManagerImpl implements LoginManager {
 
         List<UserModel> results = database
                 .createQuery(
-                        "select u from User u where u.username=:username and u.password=:password")
-                .setParameter("username", credentials.getEmail())
+                        "select u from UserModel u where u.email=:email and u.password=:password")
+                .setParameter("email", credentials.getEmail())
                 .setParameter("password", credentials.getPassword()).getResultList();
 
         //query per cercare un utente preciso

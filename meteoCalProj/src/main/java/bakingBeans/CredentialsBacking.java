@@ -1,8 +1,6 @@
 package bakingBeans;
 
-import java.io.Serializable;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 /**
@@ -10,7 +8,7 @@ import javax.inject.Named;
  * @author Umberto
  */
 @RequestScoped
-@Named
+@Named(value = "credentials")
 public class CredentialsBacking {
 
     private String email;
