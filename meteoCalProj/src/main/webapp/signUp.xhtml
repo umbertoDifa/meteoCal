@@ -12,6 +12,7 @@ and open the template in the editor.
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
 
     <ui:composition template="template.xhtml">
+        <ui:define name="title">Sign Up</ui:define>
 
         <ui:define name="content">
 
@@ -21,9 +22,7 @@ and open the template in the editor.
 
             <h:form id="signUpForm" rendered="#{!login.loggedIn}"> 
 
-                <h:panelGrid columns="2" 
-
-                             rendered="#{!login.loggedIn}"> 
+                <h:panelGrid columns="2"> 
 
                     <h:outputLabel for="email">Email*:</h:outputLabel> 
 
@@ -48,17 +47,18 @@ and open the template in the editor.
                 </h:panelGrid> 
 
                 <!--if the user is not logged in show button to submit credentials-->
-                <h:commandButton id="login" 
+                <h:commandButton id="signUp" 
 
-                                 value="Login" 
+                                 value="SignUp" 
 
-                                 action="#{signUp.sign}" 
+                                 action="#{signUp.signUp}" 
 
                                  rendered="#{!login.loggedIn}"/>
 
                 <h:message for="username" style="color:red" />
                 <h:message for="password" style="color:red" />
             </h:form> 
+            <h:outputText rendered="#{login.loggedIn}">You are registrated!</h:outputText>
 
         </ui:define>
 
