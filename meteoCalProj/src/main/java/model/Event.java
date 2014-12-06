@@ -12,9 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 
 /**
@@ -23,25 +22,33 @@ import javax.persistence.Temporal;
  */
 @Entity
 public abstract class Event implements Serializable {
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
     private String title;
+    
     @Temporal(javax.persistence.TemporalType.DATE)
     private java.util.Calendar startDateTime ;
+    
     @Temporal(javax.persistence.TemporalType.DATE)
+    
     private java.util.Calendar endDateTime;
+    
     private String location;
+    
     private String description;
+    
     private boolean isOutdoor;
+    
     private Long owner;
     
-    @ManyToMany
-    @JoinTable(name = "Invitation", joinColumns = @JoinColumn(name = "event"), inverseJoinColumns = @JoinColumn(name = "user"))
-    private List<User> invitee;
+    @OneToMany(mappedBy = "event")
+    private List<Invitation> invitations;
     
-    @ManyToMany(mappedBy = "events")
+    @ManyToMany(mappedBy = "eventsInCalendar")
     private List<Calendar> inCalendars;
     
     
@@ -77,10 +84,6 @@ public abstract class Event implements Serializable {
 
     public Long getOwner() {
         return owner;
-    }
-
-    public List<User> getInvitee() {
-        return invitee;
     }
 
 

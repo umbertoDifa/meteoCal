@@ -13,19 +13,17 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
+
 
 /**
  *
  * @author Luckyna
  */
 @Entity
-
 public class User implements Serializable {
+    
 
     //ATTRIBUTES
     @Id
@@ -48,16 +46,21 @@ public class User implements Serializable {
 
     private char gender;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "owner")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="owner")
     private List<Calendar> ownedCalendars;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner")
+    @OneToMany( mappedBy="owner")
     private List<Event> ownedEvents;
     
-    @ManyToMany(mappedBy ="invitee")
-    private List<Event> invitations;
+    @ManyToMany(mappedBy ="guests")
+    private List<Event> publicJoins;
+    
+    @OneToMany(mappedBy= "invitee")
+    private List<Invitation> invitations;
+    
+    @OneToMany(mappedBy = "recipient")
+    private List<Notification> notifications;
+    
     
     
     
@@ -91,9 +94,6 @@ public class User implements Serializable {
         return ownedEvents;
     }
 
-    public List<Event> getInvitations() {    
-        return invitations;
-    }
 
     public String getName() {
         return name;

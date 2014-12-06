@@ -5,21 +5,13 @@
  */
 package model;
 
-import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 
 /**
  *
  * @author Luckyna
  */
 @Entity
-public class PublicEvent extends Event {
-    
-    @ManyToMany
-    @JoinTable(name = "PublicJoin")
-    private List<User> guests;
-   
+public class PrivateEvent extends Event{
     
 }

@@ -5,16 +5,15 @@
  */
 package model;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+
 
 
 /**
@@ -24,27 +23,28 @@ import javax.persistence.OneToMany;
 
 @Entity
 @IdClass (CalendarId.class)
-public class Calendar {
+public class Calendar implements Serializable {
     
     @Id
     private String title;
     @Id
-    private Long owner;
+    @ManyToOne
+    private User owner;
     private boolean isPublic;
     private boolean isDefault;
     
     @ManyToMany
-    @JoinTable(name = "EventInCalendar", joinColumns = @JoinColumn(name = "calendar"), inverseJoinColumns = @JoinColumn(name = "event"))
-    private List<User> events;
+    @JoinTable(name = "EventInCalendar")
+    private List<User> eventsInCalendar;
 
  
 
-    public String getCalendar_title() {
+    public String getTitle() {
         return title;
 
     }
 
-    public void setCalendar_title(String calendar_title) {
+    public void setTitle(String calendar_title) {
         this.title = calendar_title;
     }
     
