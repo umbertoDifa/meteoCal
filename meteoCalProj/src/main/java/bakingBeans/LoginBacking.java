@@ -46,13 +46,7 @@ public class LoginBacking implements Serializable {
         if (user != null) {
 
             this.currentUser = user;
-//          FacesContext.getCurrentInstance().addMessage(null,
-//                  new FacesMessage("Welcome, " + currentUser.getName()));
-        }else {
-//            FacesContext.getCurrentInstance().addMessage(new FacesMessage(userManager.getLastError().getMessage()));
-            
         }
-
     }
 
     public void logout() {

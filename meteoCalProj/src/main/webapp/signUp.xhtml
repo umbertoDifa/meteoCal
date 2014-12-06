@@ -46,19 +46,26 @@ and open the template in the editor.
 
                 </h:panelGrid> 
 
-                <!--if the user is not logged in show button to submit credentials-->
                 <h:commandButton id="signUp" 
 
                                  value="SignUp" 
 
-                                 action="#{signUp.signUp}" 
-
-                                 rendered="#{!login.loggedIn}"/>
+                                 action="#{signUp.signUp}" />
 
                 <h:message for="username" style="color:red" />
                 <h:message for="password" style="color:red" />
             </h:form> 
+            
             <h:outputText rendered="#{login.loggedIn}">You are registrated!</h:outputText>
+
+            <!--if the user is not logged in show button to log out-->
+            <h:commandButton id="logout" 
+
+                             value="Logout" 
+
+                             action="#{login.logout}" 
+
+                             rendered="#{login.loggedIn}"/> 
 
         </ui:define>
 

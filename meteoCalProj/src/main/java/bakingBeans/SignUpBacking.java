@@ -5,9 +5,9 @@
  */
 package bakingBeans;
 
-import EJB.interfaces.LoginManager;
 import EJB.interfaces.SignUpManager;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import model.User;
@@ -19,25 +19,28 @@ import model.User;
 @Named(value = "singUp")
 @RequestScoped
 public class SignUpBacking {
-    
+
     @Inject
     private TempUserBacking tempUser;
-    
+
     private User user;
-    
+
     @Inject
     private SignUpManager signUpManager;
-    
+
     /**
      * Creates a new instance of SingUp
      */
     public SignUpBacking() {
     }
-    
-    public void SignUp() {
+
+    public String SignUp() {
         user = new User();
         //setto user coi parametri di tempUser, MANCANO SETTER IN USER
-        signUpManager.addUser(user);
+        if (signUpManager.addUser(user)) {
+            return "success";
+        }
+        return "";
     }
-    
+
 }
