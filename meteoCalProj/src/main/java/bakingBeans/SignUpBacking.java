@@ -15,14 +15,14 @@ import model.User;
  */
 @Named(value = "singUp")
 @RequestScoped
-public class SignUp {
+public class SignUpBacking {
 
     private User tempUser;
     
     /**
      * Creates a new instance of SingUp
      */
-    public SignUp() {
+    public SignUpBacking() {
     }
     
 }

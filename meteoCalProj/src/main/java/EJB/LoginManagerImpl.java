@@ -6,7 +6,7 @@
 package EJB;
 
 import EJB.interfaces.LoginManager;
-import bakingBeans.Credentials;
+import bakingBeans.CredentialsBacking;
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -29,7 +29,7 @@ public class LoginManagerImpl implements LoginManager {
     }
 
     @Override
-    public User findUser(Credentials credentials) {
+    public User findUser(CredentialsBacking credentials) {
 
         List<User> results = database
                 .createQuery(

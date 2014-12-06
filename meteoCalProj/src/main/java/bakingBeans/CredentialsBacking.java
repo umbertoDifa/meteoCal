@@ -11,7 +11,7 @@ import javax.inject.Named;
  */
 @RequestScoped
 @Named
-public class Credentials {
+public class CredentialsBacking {
 
     private String email;
 

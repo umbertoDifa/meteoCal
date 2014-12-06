@@ -21,18 +21,18 @@ import javax.inject.Inject;
  */
 @Named(value = "login")
 @SessionScoped
-public class Login implements Serializable {
+public class LoginBacking implements Serializable {
 
     /**
      * Creates a new instance of Login
      */
-    public Login() {
+    public LoginBacking() {
     }
 
     private static final long serialVersionUID = 7965455427888195913L;
 
     @Inject
-    private Credentials credentials;
+    private CredentialsBacking credentials;
 
     @Inject
     private LoginManager userManager;
@@ -41,7 +41,7 @@ public class Login implements Serializable {
 
     public void login() throws Exception {
 
-        User user = userManager.findUser(credentials.getEmail(), credentials.getPassword());
+        User user = userManager.findUser(credentials);
 
         if (user != null) {
 

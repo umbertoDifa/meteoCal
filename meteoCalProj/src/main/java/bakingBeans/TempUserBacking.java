@@ -14,7 +14,7 @@ import javax.enterprise.context.RequestScoped;
  */
 @RequestScoped
 @Named
-public class TempUser {
+public class TempUserBacking {
 
     private String email;
     private String name;
@@ -66,7 +66,7 @@ public class TempUser {
     /**
      * Creates a new instance of User
      */
-    public TempUser() {
+    public TempUserBacking() {
     }
     
 }
