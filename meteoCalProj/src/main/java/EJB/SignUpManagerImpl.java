@@ -35,7 +35,7 @@ public class SignUpManagerImpl implements SignUpManager {
     @Override
     public boolean addUser(UserModel newUser) { 
             
-        defaultCalendar = calManager.setToDefault(defaultCalendar, newUser);
+        defaultCalendar = calManager.createDefaultCalendar(newUser);
         
         try {
             //cerco di persistere calendario e utente

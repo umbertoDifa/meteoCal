@@ -33,16 +33,16 @@ and open the template in the editor.
 
                     <h:outputLabel for="email">Name*:</h:outputLabel> 
 
-                    <h:inputText id="name" value="#{tempUser.name}" p:required="" />
+                    <h:inputText id="name" value="#{user.name}" p:required="" />
 
 
                     <h:outputLabel for="email">Surname*:</h:outputLabel> 
 
-                    <h:inputText id="surname" value="#{tempUser.surname}" p:required=""/>
+                    <h:inputText id="surname" value="#{user.surname}" p:required=""/>
 
                     <h:outputLabel for="password">Password*:</h:outputLabel> 
 
-                    <h:inputSecret id="password" value="#{tempUser.password}" p:required="" />
+                    <h:inputSecret id="password" value="#{user.password}" p:required="" />
 
                 </h:panelGrid> 
 
@@ -55,7 +55,7 @@ and open the template in the editor.
                 <h:message for="username" style="color:red" />
                 <h:message for="password" style="color:red" />
             </h:form> 
-            
+
             <h:outputText rendered="#{login.loggedIn}">You are registrated!</h:outputText>
 
             <!--if the user is not logged in show button to log out-->
@@ -67,6 +67,7 @@ and open the template in the editor.
 
                              rendered="#{login.loggedIn}"/> 
 
+            <h:link outcome="/logIn.xhtml"> LogIn</h:link>
         </ui:define>
 
     </ui:composition>

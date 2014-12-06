@@ -7,7 +7,6 @@ package bakingBeans;
 
 import EJB.interfaces.SignUpManager;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import model.UserModel;
@@ -16,7 +15,7 @@ import model.UserModel;
  *
  * @author Francesco
  */
-@Named(value = "singUp")
+@Named(value = "signUp")
 @RequestScoped
 public class SignUpBacking {
 
@@ -34,13 +33,21 @@ public class SignUpBacking {
     public SignUpBacking() {
     }
 
-    public String SignUp() {
-        user = new UserModel();
-        //setto user coi parametri di tempUser, MANCANO SETTER IN USER
+    public String signUp() {        
+        //creo un user e setto user coi parametri di tempUser
+        buildUser();
         if (signUpManager.addUser(user)) {
             return "success";
         }
         return "";
+    }
+    
+    private void buildUser(){
+        user = new UserModel();
+        user.setEmail(tempUser.getEmail());
+        user.setName(tempUser.getName());
+        user.setSurname(tempUser.getSurname());
+        user.setPassword(tempUser.getPassword());
     }
 
 }

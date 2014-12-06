@@ -13,7 +13,7 @@ import javax.enterprise.context.RequestScoped;
  * @author Francesco
  */
 @RequestScoped
-@Named
+@Named(value = "user")
 public class TempUserBacking {
 
     private String email;

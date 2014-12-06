@@ -41,5 +41,5 @@ public interface CalendarManager {
     
     public void importCalendar(model.CalendarModel calendar);
  
-    public model.CalendarModel setToDefault(model.CalendarModel calendar, UserModel user);
+    public CalendarModel createDefaultCalendar( UserModel user);
 }
