@@ -16,16 +16,14 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-
 /**
  *
  * @author Luckyna
  */
 @Entity
 public class User implements Serializable {
-    
-
     //ATTRIBUTES
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -44,28 +42,25 @@ public class User implements Serializable {
 
     private String avatarPath;
 
+    //non so se definire sopra una mini-enum per questo campo
     private char gender;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="owner")
-    private List<Calendar> ownedCalendars;
-
-    @OneToMany( mappedBy="owner")
-    private List<Event> ownedEvents;
-    
-    @ManyToMany(mappedBy ="guests")
+    @ManyToMany(mappedBy = "guests")
     private List<Event> publicJoins;
-    
-    @OneToMany(mappedBy= "invitee")
+
+    @OneToMany(mappedBy = "invitee")
     private List<Invitation> invitations;
-    
+
     @OneToMany(mappedBy = "recipient")
     private List<Notification> notifications;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Event> ownedEvents;
     
-    
-    
-    
+    @OneToMany(mappedBy = "owner")
+    private List<Calendar> ownedCalendars;
+
     //METHODS
-    
     public String getSurname() {
         return surname;
     }
@@ -93,7 +88,6 @@ public class User implements Serializable {
     public List<Event> getOwnedEvents() {
         return ownedEvents;
     }
-
 
     public String getName() {
         return name;

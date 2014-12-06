@@ -26,7 +26,6 @@ public class Invitation implements Serializable {
     @ManyToOne
     private Event event;
     
-    
     private char answer;
     
     //METHODS

@@ -8,11 +8,13 @@ package model;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 
@@ -28,13 +30,15 @@ public abstract class Event implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
+    @Column(nullable = false)
     private String title;
     
     @Temporal(javax.persistence.TemporalType.DATE)
+    @Column(nullable = false)
     private java.util.Calendar startDateTime ;
     
     @Temporal(javax.persistence.TemporalType.DATE)
-    
+    @Column(nullable = false)
     private java.util.Calendar endDateTime;
     
     private String location;
@@ -43,7 +47,8 @@ public abstract class Event implements Serializable {
     
     private boolean isOutdoor;
     
-    private Long owner;
+    @ManyToOne
+    private User owner;
     
     @OneToMany(mappedBy = "event")
     private List<Invitation> invitations;
@@ -82,7 +87,7 @@ public abstract class Event implements Serializable {
         return isOutdoor;
     }
 
-    public Long getOwner() {
+    public User getOwner() {
         return owner;
     }
 
