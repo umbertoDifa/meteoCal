@@ -5,6 +5,8 @@
  */
 package EJB.interfaces;
 
+import java.util.List;
+
 /**
  *
  * @author Umberto
@@ -16,6 +18,6 @@ public interface SearchManager {
      * @param thingToSearch user or event
      * @return  the list of object found in the database from the search
      */
-    public <List>Object search(Object thingToSearch);
+    public List<Object> search(Object thingToSearch);
     
 }
