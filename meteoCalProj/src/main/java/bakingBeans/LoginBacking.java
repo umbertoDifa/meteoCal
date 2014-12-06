@@ -14,6 +14,7 @@ import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import objectAndString.UserAndMessage;
 
 /**
  *
@@ -39,13 +40,15 @@ public class LoginBacking implements Serializable {
 
     private UserModel currentUser;
 
-    public void login() throws Exception {
+    public void login() {
 
-        UserModel user = userManager.findUser(credentials);
+        UserAndMessage userAndMessage = userManager.findUser(credentials);
 
-        if (user != null) {
-
-            this.currentUser = user;
+        if (userAndMessage.getUser() != null) {
+            this.currentUser = userAndMessage.getUser();
+        } else {
+            //mostro il messaggio di errore che posso trovare in
+            //userAndMessage.getMessage();
         }
     }
 

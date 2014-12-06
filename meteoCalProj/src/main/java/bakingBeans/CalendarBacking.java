@@ -29,6 +29,7 @@ public class CalendarBacking implements Serializable {
     private List<model.CalendarModel> calendars;
     private int indexCurrentCalendar;
     private ViewModality viewModality;
+
     /**
      * Creates a new instance of CalendarBacking
      */
@@ -36,13 +37,12 @@ public class CalendarBacking implements Serializable {
     }
 
     public void load(UserModel user) {
-        calendars = eventManager.loadCalendars(user);
-        //chiedere quale è di deafult
 
+        //chiedere quale è di deafult
     }
-    
-    public void getCurrent(){
-        
+
+    public void getCurrent() {
+
     }
 
 }

@@ -35,11 +35,11 @@ public interface CalendarManager {
      * @param calendar Calendario dell'utente in cui inserirlo
      * @return true se inserito,false se non
      */
-    public boolean addToCalendar(Event event, model.CalendarModel calendar);
+    public boolean addToCalendar(Event event,CalendarModel calendar,UserModel user);
     
-    public void exportCalendar(model.CalendarModel calendar);
+    public void exportCalendar(CalendarModel calendar);
     
-    public void importCalendar(model.CalendarModel calendar);
+    public void importCalendar(CalendarModel calendar);
  
     public CalendarModel createDefaultCalendar( UserModel user);
 }

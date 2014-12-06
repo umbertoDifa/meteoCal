@@ -34,7 +34,8 @@ public class SignUpManagerImpl implements SignUpManager {
 
     @Override
     public boolean addUser(UserModel newUser) { 
-            
+        
+        //creo un calendario default
         defaultCalendar = calManager.createDefaultCalendar(newUser);
         
         try {

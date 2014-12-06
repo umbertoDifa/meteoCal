@@ -33,13 +33,7 @@ public class EventManagerImpl implements EventManager {
 
     @Inject
     @Default
-    Logger logger;
-
-    @Override
-    public List<CalendarModel> loadCalendars(UserModel user) {
-               throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
- //return user.getOwnedCalendars();
-    }
+    Logger logger;   
 
     @Override
     public List<Object> search(Object thingToSearch) {
@@ -63,7 +57,7 @@ public class EventManagerImpl implements EventManager {
         logger.log(Level.INFO, "Event +{0} created", event.getTitle());
        
         if(insertInCalendar != null){
-            calManager.addToCalendar(event, insertInCalendar);
+            calManager.addToCalendar(event, insertInCalendar, user);
         }
         
         return invitationManager.createInvitations(invitees, event);

@@ -15,9 +15,6 @@ import model.UserModel;
  */
 public interface EventManager {
 
-    public List<model.CalendarModel> loadCalendars(UserModel user);
-
-    //TODO forse inutile perchè non fa che chiamare la stessa nel searchManager
     public List<Object> search(Object thingToSearch);
 
     /**
@@ -28,16 +25,17 @@ public interface EventManager {
      */
     public boolean saveInvites(List<UserModel> invitee);
 
-    public boolean checkData(//TODO: come nel calendar manager, forse inutile
-            );
-    
+    public boolean checkData();
+
     /**
-     * Create the new event, persist it, call create invitation del calendar manager
+     * Create the new event, persist it, call create invitation del calendar
+     * manager
+     *
      * @param user owner of the event
      * @param event Event to create
      * @param insertInCalendar calendar in which the event is inserted
      * @param invitees invitati all'evento
      * @return true if created with success, false if not
      */
-    public boolean scheduleNewEvent(UserModel user, Event event, model.CalendarModel insertInCalendar,List<UserModel> invitees);
+    public boolean scheduleNewEvent(UserModel user, Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees);
 }

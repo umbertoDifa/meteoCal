@@ -14,6 +14,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import model.UserModel;
+import objectAndString.UserAndMessage;
 import utility.ControlMessages;
 
 @Stateless
@@ -21,15 +22,16 @@ public class LoginManagerImpl implements LoginManager {
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
-    private LinkedList<ControlMessages> errorMessageQueue;
+
+    private UserAndMessage userAndMessage;
 
     @PostConstruct
     private void init() {
-        errorMessageQueue = new LinkedList<>();
+        userAndMessage = new UserAndMessage();
     }
 
     @Override
-    public UserModel findUser(CredentialsBacking credentials) {
+    public UserAndMessage findUser(CredentialsBacking credentials) {
 
         List<UserModel> results = database
                 .createQuery(
@@ -39,29 +41,23 @@ public class LoginManagerImpl implements LoginManager {
 
         //query per cercare un utente preciso
         if (results.isEmpty()) {
-            errorMessageQueue.add(ControlMessages.USER_NOT_FOUND);
-            return null;
-
+            userAndMessage.setUser(null);
+            userAndMessage.setMessage(ControlMessages.USER_NOT_FOUND);
         } else if (results.size() > 1) {
             throw new IllegalStateException(
                     //TODO, questa??
                     "Cannot have more than one user with the same username!");
+        } else {
+            //verifico la password
+            if (results.get(0).getPassword().equals(credentials.getPassword())) {
+                userAndMessage.setUser(results.get(0));
+            } else {
+                //se password sbagliata, scrivo l'errore e ritorno null
+                userAndMessage.setUser(null);
+                userAndMessage.setMessage(ControlMessages.WRONG_PASSWORD);
+            }
         }
-
-        //verifico la password
-        if (results.get(0).getPassword().equals(credentials.getPassword())) {
-            return results.get(0);
-        }
-
-        //se password sbagliata, scrivo l'errore e ritorno null
-        errorMessageQueue.add(ControlMessages.WRONG_PASSWORD);
-
-        return null;
+        
+        return userAndMessage;
     }
-
-    @Override
-    public ControlMessages getLastError() {
-        return errorMessageQueue.pollFirst();
-    }
-
 }

@@ -47,8 +47,15 @@ public class CalendarManagerImpl implements CalendarManager {
     }
 
     @Override
-    public boolean addToCalendar(Event event, CalendarModel calendar) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean addToCalendar(Event event, CalendarModel calendar, UserModel user) {
+        //se l'evento non è in nessun calendario dell'utente
+        for (CalendarModel cal :user.getOwnedCalendars()){
+            for(Event e : cal.getEventsInCalendar()){
+                if(e.equals(event)){}
+            }
+        }
+        //allora lo aggiungo
+        return true;
     }
 
     @Override
