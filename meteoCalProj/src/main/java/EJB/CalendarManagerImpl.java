@@ -1,6 +1,7 @@
 package EJB;
 
 import EJB.interfaces.CalendarManager;
+import EJB.interfaces.WeatherManager;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
@@ -19,6 +20,9 @@ public class CalendarManagerImpl implements CalendarManager {
     @Inject
     @Default
     Logger logger;
+    
+    @Inject
+    WeatherManager weatherManager;
 
     private void checkWeather() {
         //TODO do       
