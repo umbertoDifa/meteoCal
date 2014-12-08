@@ -12,20 +12,14 @@ and open the template in the editor.
       xmlns:p="http://java.sun.com/jsf/passthrough"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-    <ui:composition template="template.xhtml">
+    <ui:composition template="/template.xhtml">
 
         <ui:define name="content">
             <h1>New Event</h1>
             <h:form>
 
                 <h:inputText value="Title"/><br/>
-                
-                <h:selectOneMenu>
-                    <c:forEach items="#{calendar.calendarNames}" var="cal">
-                        <f:selectItem itemLabel="#{cal}" />
-                    </c:forEach>
-                </h:selectOneMenu><br/>
-                
+             
                 
                 <h:outputLabel value="Starting date:" />
                 <h:inputText value="gg/mm/aaaa">

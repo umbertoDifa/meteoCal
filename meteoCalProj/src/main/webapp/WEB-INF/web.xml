@@ -17,4 +17,13 @@
     <welcome-file-list>
         <welcome-file>logIn.xhtml</welcome-file>
     </welcome-file-list>
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>utility.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/s/*</url-pattern>
+    </filter-mapping>
+
 </web-app>
