@@ -10,6 +10,7 @@ import EJB.interfaces.CalendarManager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import model.UserModel;
@@ -57,35 +58,27 @@ public class CalendarBacking implements Serializable {
     }
 
     public List<String> getCalendarNames() {
+        if (calendars != null) {
+            List<String> r = new ArrayList<>();
+            return titlesCalendar(this.calendars, r);
+        }
+        return null;
+    }
+
+    @PostConstruct
+    private void init() {
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
         login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(facesContext, "#{login}", LoginBacking.class);
         UserModel u = login.getCurrentUser();
-        
-        if (calendarManager == null) {
-            System.out.println("cal mng è null");
-        } else {
-            System.out.println("cal mng non è null");
+        if (u != null) {
+            calendars = calendarManager.getCalendars(u);
         }
-        calendars = calendarManager.getCalendars(u);
-        if (calendars == null) {
-            System.out.println("cal  è null");
-        } else {
-            System.out.println("cal  non è null");
-        }
-        System.out.println(calendars.size());
-        
-        List<String> r = new ArrayList<>();
-        if (calendars.isEmpty()) {
-            r.add("vuota");
-            return r;
-        }
-        return titlesCalendar(this.calendars, r);
     }
 
     private List<String> titlesCalendar(List<model.CalendarModel> c, List<String> r) {
         if (c.size() == 1) {
-            r.add("," + c.get(0).getTitle());
+            r.add(c.get(0).getTitle());
         } else {
             r.add(c.get(0).getTitle() + ",");
             r.addAll(titlesCalendar(c.subList(1, c.size()), r));

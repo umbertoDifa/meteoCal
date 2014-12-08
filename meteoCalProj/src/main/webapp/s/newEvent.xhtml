@@ -19,10 +19,15 @@ and open the template in the editor.
             <h:form>
 
                 <h:inputText value="Title"/><br/>
-             
                 
+                <h:selectOneMenu>
+                    <c:forEach items="#{calendar.calendarNames}" var="cal">
+                        <f:selectItem itemLabel="#{cal}" />
+                    </c:forEach>
+                </h:selectOneMenu><br/>
+
                 <h:outputLabel value="Starting date:" />
-                <h:inputText value="gg/mm/aaaa">
+                <h:inputText value="#{currentDate}">
                     <f:passThroughAttribute name="type" value="date" />
                 </h:inputText><br/>
 
