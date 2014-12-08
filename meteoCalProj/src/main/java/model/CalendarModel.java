@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -29,7 +30,7 @@ public class CalendarModel implements Serializable {
     @Id
     private String title;
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private UserModel owner;
 
     private boolean isPublic;
