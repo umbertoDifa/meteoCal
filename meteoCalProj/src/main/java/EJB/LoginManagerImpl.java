@@ -49,7 +49,7 @@ public class LoginManagerImpl implements LoginManager {
         } else {
             //verifico la password
             if (results.get(0).getPassword().equals(credentials.getPassword())) {                
-                userAndMessage.setUser(results.get(0));
+                userAndMessage.setUser(results.get(0));                
                 database.refresh(results.get(0));
                 userAndMessage.setMessage(ControlMessages.LOGIN_SUCCESSFUL);
             } else {

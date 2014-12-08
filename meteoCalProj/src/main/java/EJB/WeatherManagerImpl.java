@@ -5,7 +5,6 @@ import Exceptions.ForecastDayNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -50,11 +49,11 @@ public class WeatherManagerImpl implements WeatherManager {
     private WeatherForecast weatherForecast;
 
     //city to get forecast for
-    private String city;    
+    private String city;
 
     @Inject
     @Default
-    Logger logger;        
+    Logger logger;
 
     @PostConstruct
     private void init() {
@@ -63,7 +62,7 @@ public class WeatherManagerImpl implements WeatherManager {
 
     @Override
     public WeatherForecast getWeather(Calendar day, String city) {
-        this.city = city;        
+        this.city = city;
         //in base a che giorno è oggi e a quando è schedulato l'evento uso
         //un tipo diverso di previsioni
         this.forecastType = inferForecastType(day);
@@ -74,9 +73,14 @@ public class WeatherManagerImpl implements WeatherManager {
         return weatherForecast;
     }
 
-    protected ForecastType inferForecastType(Calendar dayToCheck) {
+    private ForecastType inferForecastType(Calendar dayToCheck) {
         //creo un oggetto calendario con il giorno di oggi
         Calendar today = Calendar.getInstance();
+        Calendar in5Days = Calendar.getInstance();
+        Calendar in16Days = Calendar.getInstance();
+
+        in5Days.add(Calendar.DATE, 5);
+        in16Days.add(Calendar.DATE, 16);
 
         int diff = dayToCheck.compareTo(today);
 
@@ -85,25 +89,25 @@ public class WeatherManagerImpl implements WeatherManager {
         //TODO vedi se riesci a fare qualcosa con la history
         if (diff < 0) {
             return ForecastType.UNPREDICTABLE;
-            
+
         }
 
         //se chiede il tempo per oggi stesso
         if (diff == 0) {
             return ForecastType.CURRENT_WEATHER;
-            
+
         }
 
         //se chiede il tempo entro i prossimi 5 giorni
-        if (diff < TimeUnit.SECONDS.toMillis(5)) {
+        if (dayToCheck.before(in5Days)) {
             return ForecastType.FORECAST_5_3HOURS;
-            
+
         }
 
         //se chiede il tempo entro i prox 16 giorni
-        if (diff < TimeUnit.SECONDS.toMillis(16)) {
+        if (dayToCheck.before(in16Days)) {
             return ForecastType.FORECAST_16_DAILY;
-            
+
         }
 
         //altrimenti
@@ -111,7 +115,7 @@ public class WeatherManagerImpl implements WeatherManager {
 
     }
 
-    protected void createWeatherForecast() {
+    private void createWeatherForecast() {
         //se non ho superato i tentativi massimi e i dati sono accessibili
         if (downloadWeather(forecastType) <= MAX_TRIES && infoIsAvailable()) {
             //imposta i dati
@@ -121,7 +125,7 @@ public class WeatherManagerImpl implements WeatherManager {
         }
     }
 
-    protected int downloadWeather(ForecastType forecastType) {
+    private int downloadWeather(ForecastType forecastType) {
         int i = 0;
 
         //finchè non ottengo una risposta ma riprova a contattare
@@ -139,7 +143,9 @@ public class WeatherManagerImpl implements WeatherManager {
                         dailyForecast = openWeatherMap.dailyForecastByCityName(city, (byte) 16);
                         break;
 
+                    //just a bigger number than MAX_TRIES
                     default:
+                        i = MAX_TRIES * 2;
                         break;
                 }
 
@@ -153,7 +159,7 @@ public class WeatherManagerImpl implements WeatherManager {
         return i;
     }
 
-    protected boolean hasWeatherList() {
+    private boolean hasWeatherList() {
         switch (forecastType) {
             case FORECAST_5_3HOURS:
                 return forecastFiveDays.hasForecast_List();
@@ -168,7 +174,7 @@ public class WeatherManagerImpl implements WeatherManager {
         return false;
     }
 
-    protected boolean infoIsAvailable() {
+    private boolean infoIsAvailable() {
         switch (forecastType) {
             case FORECAST_5_3HOURS:
                 return infoIsAvailable5Days();
@@ -181,7 +187,7 @@ public class WeatherManagerImpl implements WeatherManager {
         return false;
     }
 
-    protected boolean infoIsAvailableCurrent() {
+    private boolean infoIsAvailableCurrent() {
         if (currentWeather.hasWeather_List()
                 && currentWeather.getWeather_List().get(0) != null
                 && currentWeather.getWeather_List().get(0).hasWeatherCode()
@@ -199,7 +205,7 @@ public class WeatherManagerImpl implements WeatherManager {
         return false;
     }
 
-    protected boolean infoIsAvailable5Days() {
+    private boolean infoIsAvailable5Days() {
 
         try {
             position = this.findDayPositionInForecastList(forecastFiveDays, null);
@@ -224,7 +230,7 @@ public class WeatherManagerImpl implements WeatherManager {
         }
     }
 
-    protected void setWeatherObj() {
+    private void setWeatherObj() {
         switch (forecastType) {
             case FORECAST_5_3HOURS:
                 this.setWeatherObjFromForecast5();
@@ -238,7 +244,7 @@ public class WeatherManagerImpl implements WeatherManager {
         }
     }
 
-    protected void setWeatherObjFromForecast5() {
+    private void setWeatherObjFromForecast5() {
         weatherForecast.setDescription(forecastFiveDays.getForecast_List().get(position).getWeather_List().get(0).getWeatherDescription());
         weatherForecast.setHumidity(forecastFiveDays.getForecast_List().get(position).getMainData_Object().getHumidity());
         weatherForecast.setIcon(forecastFiveDays.getForecast_List().get(position).getWeather_List().get(0).getWeatherIconName());
@@ -251,7 +257,7 @@ public class WeatherManagerImpl implements WeatherManager {
         setGoodOrBadWeather();
     }
 
-    protected void setWeatherObjFromCurrent() {
+    private void setWeatherObjFromCurrent() {
         weatherForecast.setDescription(currentWeather.getWeather_List().get(0).getWeatherDescription());
         weatherForecast.setHumidity(currentWeather.getMainData_Object().getHumidity());
         weatherForecast.setIcon(currentWeather.getWeather_List().get(0).getWeatherIconName());
@@ -264,7 +270,7 @@ public class WeatherManagerImpl implements WeatherManager {
         setGoodOrBadWeather();
     }
 
-    protected int findDayPositionInForecastList(ForecastWeatherData forecast, Calendar day) throws ForecastDayNotFoundException {
+    private int findDayPositionInForecastList(ForecastWeatherData forecast, Calendar day) throws ForecastDayNotFoundException {
         if (forecast.hasForecast_List()) {
             for (int i = 0; i < forecast.getForecast_List_Count(); i++) {
                 if (forecast.getForecast_List().get(i) != null
@@ -278,14 +284,14 @@ public class WeatherManagerImpl implements WeatherManager {
 
     }
 
-    protected String dayToText(Calendar day) {
+    private String dayToText(Calendar day) {
         SimpleDateFormat df = new SimpleDateFormat();
         //df.applyPattern("yyyy-MM-dd hh:mm:ss");
         df.applyPattern("yyyy-MM-dd");
         return df.format(day.getTime());
     }
 
-    protected void setGoodOrBadWeather() {
+    private void setGoodOrBadWeather() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

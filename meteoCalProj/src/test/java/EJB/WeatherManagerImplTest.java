@@ -1,8 +1,8 @@
 package EJB;
 
 import java.util.Calendar;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.embeddable.EJBContainer;
 import objectAndString.WeatherForecast;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -10,8 +10,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
-import utility.ForecastType;
 import utility.LoggerProducer;
 
 /**
@@ -20,7 +18,6 @@ import utility.LoggerProducer;
  */
 public class WeatherManagerImplTest {
 
-    WeatherManagerImpl weatherManagerImpl;
     static final Logger logger = LoggerProducer.debugLogger(WeatherManagerImplTest.class);
 
     public WeatherManagerImplTest() {
@@ -37,7 +34,6 @@ public class WeatherManagerImplTest {
 
     @Before
     public void setUp() {
-        weatherManagerImpl = new WeatherManagerImpl();
     }
 
     @After
@@ -48,52 +44,21 @@ public class WeatherManagerImplTest {
      * Test of getWeather method, of class WeatherManagerImpl.
      */
     @Test
-    @Ignore
+
     public void testGetWeather() throws Exception {
         System.out.println("getWeather");
-        Calendar day = null;
-        String city = "";
-        WeatherManagerImpl instance = new WeatherManagerImpl();
-        WeatherForecast expResult = null;
-        WeatherForecast result = instance.getWeather(day, city);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    @Test
-    @Ignore
-    public void prova() {
-        Calendar dayToCheck = Calendar.getInstance();
-        ForecastType type = weatherManagerImpl.inferForecastType(dayToCheck);
-
-        logger.log(Level.INFO, "INFO:type : {0}", type);
-        assertTrue(type == ForecastType.CURRENT_WEATHER);
-
-        //aggiungo un giorno
-        dayToCheck.add(Calendar.DATE, 1);
-        type = weatherManagerImpl.inferForecastType(dayToCheck);
-        logger.log(Level.INFO, "type : {0}", type);
-        assertTrue(type == ForecastType.FORECAST_5_3HOURS);
-
-        //aggiungo 4 giorni
-        dayToCheck.add(Calendar.DATE, 4);
-        type = weatherManagerImpl.inferForecastType(dayToCheck);
-        logger.log(Level.INFO, "type : {0}", type);
-        assertTrue(type == ForecastType.FORECAST_5_3HOURS);
-
-        //aggiungo 3 giorni
-        dayToCheck.add(Calendar.DATE, 3);
-        type = weatherManagerImpl.inferForecastType(dayToCheck);
-        logger.log(Level.INFO, "type : {0}", type);
-        assertTrue(type == ForecastType.FORECAST_16_DAILY);
-
-        //aggiungo 15 giorni
-        dayToCheck.add(Calendar.DATE, 15);
-        type = weatherManagerImpl.inferForecastType(dayToCheck);
-        logger.log(Level.INFO, "type : {0}", type);
-        assertTrue(type == ForecastType.UNPREDICTABLE);
-
+        EJBContainer container = javax.ejb.embeddable.EJBContainer.createEJBContainer();
+        WeatherManagerImpl instance = (WeatherManagerImpl) container.getContext().lookup("java:global/com.fravaleumbo_meteoCalProj_war_1.0-SNAPSHOT/WeatherManagerImpl!EJB.WeatherManagerImpl");
+        
+//        Calendar day = null;
+//        String city = "";
+//        WeatherForecast expResult = null;
+//        WeatherForecast result = weatherManagerImpl.getWeather(day, city);
+//        assertEquals(expResult, result);
+//        // TODO review the generated test code and remove the default call to fail.
+//        fail("The test case is a prototype.");
+        instance.getWeather(null, null);
+        container.close();
     }
 
 }
