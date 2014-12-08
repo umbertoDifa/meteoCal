@@ -1,12 +1,8 @@
 package EJB;
 
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.logging.Filter;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import javax.inject.Inject;
 import objectAndString.WeatherForecast;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -16,7 +12,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import utility.ForecastType;
-import utility.LoggerLevel;
 import utility.LoggerProducer;
 
 /**
@@ -67,6 +62,7 @@ public class WeatherManagerImplTest {
     }
 
     @Test
+    @Ignore
     public void prova() {
         Calendar dayToCheck = Calendar.getInstance();
         ForecastType type = weatherManagerImpl.inferForecastType(dayToCheck);

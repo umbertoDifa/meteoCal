@@ -7,7 +7,6 @@ package EJB;
 
 import EJB.interfaces.LoginManager;
 import bakingBeans.CredentialsBacking;
-import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -38,7 +37,7 @@ public class LoginManagerImpl implements LoginManager {
                         "select u from UserModel u where u.email=:email and u.password=:password")
                 .setParameter("email", credentials.getEmail())
                 .setParameter("password", credentials.getPassword()).getResultList();
-
+        
         //query per cercare un utente preciso
         if (results.isEmpty()) {
             userAndMessage.setUser(null);
@@ -49,8 +48,9 @@ public class LoginManagerImpl implements LoginManager {
                     "Cannot have more than one user with the same username!");
         } else {
             //verifico la password
-            if (results.get(0).getPassword().equals(credentials.getPassword())) {
+            if (results.get(0).getPassword().equals(credentials.getPassword())) {                
                 userAndMessage.setUser(results.get(0));
+                database.refresh(results.get(0));
                 userAndMessage.setMessage(ControlMessages.LOGIN_SUCCESSFUL);
             } else {
                 //se password sbagliata, scrivo l'errore e ritorno null
