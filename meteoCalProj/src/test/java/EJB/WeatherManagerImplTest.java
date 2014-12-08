@@ -61,6 +61,7 @@ public class WeatherManagerImplTest {
     }
     
     @Test
+    @Ignore
     public void prova(){        
         WeatherManagerImpl wm = lookupWeatherManagerImplBean();
         Calendar dayToCheck = Calendar.getInstance();
