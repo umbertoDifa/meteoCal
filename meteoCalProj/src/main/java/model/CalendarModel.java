@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  *
@@ -22,6 +23,7 @@ import javax.persistence.ManyToOne;
  */
 @Entity
 @IdClass(CalendarId.class)
+@Table(name="CALENDAR")
 public class CalendarModel implements Serializable {
 
     @Id
@@ -35,7 +37,7 @@ public class CalendarModel implements Serializable {
     private boolean isDefault;
 
     @ManyToMany
-    @JoinTable(name = "EventInCalendar")
+    @JoinTable(name = "EVENT_IN_CALENDAR")
     private List<Event> eventsInCalendar;//FIXED
 
     public String getTitle() {

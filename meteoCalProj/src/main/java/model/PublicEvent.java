@@ -9,16 +9,18 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 /**
  *
  * @author Luckyna
  */
 @Entity
+@Table(name = "PUBLIC_EVENT")
 public class PublicEvent extends Event {
     
     @ManyToMany
-    @JoinTable(name = "PublicJoin")
+    @JoinTable(name = "PUBLIC_JOIN")
     private List<UserModel> guests;
 
     public List<UserModel> getGuests() {

@@ -17,12 +17,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  *
  * @author Luckyna
  */
 @Entity
+@Table(name="USER")
 public class UserModel implements Serializable {
     //ATTRIBUTES
 
@@ -60,7 +62,7 @@ public class UserModel implements Serializable {
     @JoinColumn(name = "owner_fk")
     private List<Event> ownedEvents;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
     private List<CalendarModel> ownedCalendars;
 
     //METHODS
@@ -174,6 +176,10 @@ public class UserModel implements Serializable {
         }
         UserModel other = (UserModel) object;
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
+    }
+
+    void setpwds(String pswd) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

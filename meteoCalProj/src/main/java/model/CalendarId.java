@@ -5,13 +5,14 @@
  */
 package model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  *
  * @author Luckyna
  */
-public class CalendarId {
+public class CalendarId implements Serializable {
     private String title;
     private Long owner;
 

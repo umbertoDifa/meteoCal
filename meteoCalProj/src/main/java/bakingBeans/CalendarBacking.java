@@ -14,10 +14,8 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import model.UserModel;
 import utility.ViewModality;
-import javax.faces.bean.ManagedProperty;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
-
-
 
 /**
  *
@@ -34,7 +32,6 @@ public class CalendarBacking implements Serializable {
     @Inject
     CalendarManager calendarManager;
 
-    @ManagedProperty(value="#{login}")
     private LoginBacking login;
 
     private List<model.CalendarModel> calendars;
@@ -45,8 +42,6 @@ public class CalendarBacking implements Serializable {
      * Creates a new instance of CalendarBacking
      */
     public CalendarBacking() {
-        UserModel u = login.getCurrentUser();
-        calendars = calendarManager.getCalendars(u);
     }
 
     public void load(UserModel user) {
@@ -63,8 +58,25 @@ public class CalendarBacking implements Serializable {
 
     public List<String> getCalendarNames() {
 
-        List<String> r = new ArrayList<String>();
-        if(calendars.isEmpty()){
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(facesContext, "#{login}", LoginBacking.class);
+        UserModel u = login.getCurrentUser();
+        
+        if (calendarManager == null) {
+            System.out.println("cal mng è null");
+        } else {
+            System.out.println("cal mng non è null");
+        }
+        calendars = calendarManager.getCalendars(u);
+        if (calendars == null) {
+            System.out.println("cal  è null");
+        } else {
+            System.out.println("cal  non è null");
+        }
+        System.out.println(calendars.size());
+        
+        List<String> r = new ArrayList<>();
+        if (calendars.isEmpty()) {
             r.add("vuota");
             return r;
         }
