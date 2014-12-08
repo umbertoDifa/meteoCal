@@ -52,12 +52,13 @@
                                  action="#{login.logout}" 
 
                                  rendered="#{login.loggedIn}"/> 
+
                 <h:message for="username" style="color:red" />
                 <h:message for="password" style="color:red" />
             </h:form> 
-
-            <h:link outcome="/users.xhtml">View users</h:link>
-            <h:link outcome="/signUp.xhtml">SignUp</h:link>
+            <h:link outcome="/s/newEvent.xhtml">New Event</h:link><br/>
+            <h:link outcome="/users.xhtml">View users</h:link><br/>
+            <h:link outcome="/signUp.xhtml">SignUp</h:link><br/>
 
             <h:outputLabel rendered="#{login.loggedIn}">
                 calendari: #{login.currentUser.ownedCalendars.size()}</h:outputLabel>

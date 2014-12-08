@@ -12,7 +12,7 @@ and open the template in the editor.
       xmlns:p="http://java.sun.com/jsf/passthrough"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-    <ui:composition template="template.xhtml">
+    <ui:composition template="/template.xhtml">
 
         <ui:define name="content">
             <h1>New Event</h1>
@@ -25,10 +25,9 @@ and open the template in the editor.
                         <f:selectItem itemLabel="#{cal}" />
                     </c:forEach>
                 </h:selectOneMenu><br/>
-                
-                
+
                 <h:outputLabel value="Starting date:" />
-                <h:inputText value="gg/mm/aaaa">
+                <h:inputText value="#{currentDate}">
                     <f:passThroughAttribute name="type" value="date" />
                 </h:inputText><br/>
 
