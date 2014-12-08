@@ -94,6 +94,30 @@ public abstract class Event implements Serializable {
         this.inCalendars = inCalendars;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setStartDateTime(Calendar startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public void setEndDateTime(Calendar endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setIsOutdoor(boolean isOutdoor) {
+        this.isOutdoor = isOutdoor;
+    }
+
     public Calendar getStartDateTime() {
         return startDateTime;
     }
