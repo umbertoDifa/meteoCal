@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://java.sun.com/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:composition template="template.xhtml">
+
+        <ui:define name="content">
+            <h1>New Event</h1>
+            <h:form>
+
+                <h:inputText value="Title"/><br/>
+
+                <h:outputLabel value="#{calendar.viewModailty}"/><br/>
+                
+                
+                <h:selectOneMenu>
+                    <c:forEach items="#{calendar.calendarNames}" var="cal">
+                        <f:selectItem itemLabel="#{cal}" />
+                    </c:forEach>
+                </h:selectOneMenu><br/>
+                
+                
+                <h:outputLabel value="Starting date:" />
+                <h:inputText value="gg/mm/aaaa">
+                    <f:passThroughAttribute name="type" value="date" />
+                </h:inputText><br/>
+
+                <h:outputLabel value="Until:" />
+                <h:inputText value="gg/mm/aaaa">
+                    <f:passThroughAttribute name="type" value="date" />
+                </h:inputText><br/>
+
+                <h:outputLabel value="From:" />
+                <h:inputText value="--:--">
+                    <f:passThroughAttribute name="type" value="time" />
+                </h:inputText><br/>
+
+                <h:outputLabel value="To:" />
+                <h:inputText value="--:--">
+                    <f:passThroughAttribute name="type" value="time" />
+                </h:inputText><br/>
+
+                <h:outputLabel value="Public:" /><h:selectBooleanCheckbox /><br/>
+
+                <h:inputText value="Address"/><br/>
+
+                <h:outputLabel value="Outdoor:" /><h:selectBooleanCheckbox /><br/>
+
+                <h:inputTextarea value="Description" style="resize: none" /><br/>
+
+                <h:commandButton value="Save"></h:commandButton>
+                <h:commandButton value="Cancel"></h:commandButton>
+                <h:commandButton value="Delete"></h:commandButton>
+                <!--invite someone-->
+            </h:form>
+
+        </ui:define>
+
+    </ui:composition>
+</html>
