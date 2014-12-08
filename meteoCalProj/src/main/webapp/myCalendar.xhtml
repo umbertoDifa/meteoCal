@@ -16,7 +16,10 @@ and open the template in the editor.
         <ui:define name="content">
 
             <h1>Calendar</h1>
-
+            <h:commandButton>Day</h:commandButton>
+            <h:commandButton>Week</h:commandButton>
+            <h:commandButton>Month</h:commandButton>
+            <ui:insert name=#{calendar.viewModailty} />
         </ui:define>
 
     </ui:composition>

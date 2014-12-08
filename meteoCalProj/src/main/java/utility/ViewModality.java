@@ -10,5 +10,7 @@ package utility;
  * @author Francesco
  */
 public enum ViewModality {
-    
+    DAY(),
+    WEEK(),
+    MONTH();
 }

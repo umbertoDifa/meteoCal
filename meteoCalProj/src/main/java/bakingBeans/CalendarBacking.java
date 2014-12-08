@@ -6,13 +6,18 @@
 package bakingBeans;
 
 import EJB.interfaces.EventManager;
+import EJB.interfaces.CalendarManager;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import model.UserModel;
 import utility.ViewModality;
+import javax.faces.bean.ManagedProperty;
+import javax.inject.Named;
+
+
 
 /**
  *
@@ -26,14 +31,22 @@ public class CalendarBacking implements Serializable {
     @Inject
     EventManager eventManager;
 
+    @Inject
+    CalendarManager calendarManager;
+
+    @ManagedProperty(value="#{login}")
+    private LoginBacking login;
+
     private List<model.CalendarModel> calendars;
     private int indexCurrentCalendar;
-    private ViewModality viewModality;
+    private ViewModality viewModality = ViewModality.DAY;
 
     /**
      * Creates a new instance of CalendarBacking
      */
     public CalendarBacking() {
+        UserModel u = login.getCurrentUser();
+        calendars = calendarManager.getCalendars(u);
     }
 
     public void load(UserModel user) {
@@ -42,7 +55,29 @@ public class CalendarBacking implements Serializable {
     }
 
     public void getCurrent() {
-
     }
 
+    public String getViewModailty() {
+        return viewModality.toString();
+    }
+
+    public List<String> getCalendarNames() {
+
+        List<String> r = new ArrayList<String>();
+        if(calendars.isEmpty()){
+            r.add("vuota");
+            return r;
+        }
+        return titlesCalendar(this.calendars, r);
+    }
+
+    private List<String> titlesCalendar(List<model.CalendarModel> c, List<String> r) {
+        if (c.size() == 1) {
+            r.add("," + c.get(0).getTitle());
+        } else {
+            r.add(c.get(0).getTitle() + ",");
+            r.addAll(titlesCalendar(c.subList(1, c.size()), r));
+        }
+        return r;
+    }
 }
