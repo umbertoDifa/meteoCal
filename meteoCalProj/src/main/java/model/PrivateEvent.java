@@ -6,12 +6,14 @@
 package model;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  *
  * @author Luckyna
  */
 @Entity
+@Table(name = "PRIVATE_EVENT")
 public class PrivateEvent extends Event{
     
 }

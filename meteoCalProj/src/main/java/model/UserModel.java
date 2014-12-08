@@ -17,12 +17,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  *
  * @author Luckyna
  */
 @Entity
+@Table(name="USER")
 public class UserModel implements Serializable {
     //ATTRIBUTES
 
@@ -60,7 +62,7 @@ public class UserModel implements Serializable {
     @JoinColumn(name = "owner_fk")
     private List<Event> ownedEvents;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
     private List<CalendarModel> ownedCalendars;
 
     //METHODS
