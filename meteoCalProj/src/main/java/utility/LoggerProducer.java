@@ -13,9 +13,22 @@ import javax.enterprise.inject.spi.InjectionPoint;
 @Dependent
 public class LoggerProducer {
 
-    @Produces @Default
+    @Produces
+    @Default
     private Logger createLogger(InjectionPoint injectionPoint) {
-        return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
+        Logger logger = Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
+
+        logger.getParent().setLevel(LoggerLevel.DEBUG);
+        logger.getParent().getHandlers()[0].setLevel(LoggerLevel.DEBUG);
+
+        return logger;
+    }
+
+    public static Logger debugLogger(Class myClass) {
+        Logger logger = Logger.getLogger(myClass.getName());
+        logger.getParent().setLevel(LoggerLevel.DEBUG);
+        logger.getParent().getHandlers()[0].setLevel(LoggerLevel.DEBUG);
+        return logger;
     }
 
 }

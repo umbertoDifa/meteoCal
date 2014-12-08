@@ -54,7 +54,7 @@ public class WeatherManagerImpl implements WeatherManager {
 
     @Inject
     @Default
-    Logger logger;
+    Logger logger;        
 
     @PostConstruct
     private void init() {

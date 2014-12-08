@@ -7,7 +7,7 @@ package EJB.interfaces;
 
 import java.util.List;
 import model.UserModel;
-import utility.NotificationType;
+import model.NotificationType;
 
 /**
  *

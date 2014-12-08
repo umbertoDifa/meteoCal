@@ -2,14 +2,12 @@ package EJB;
 
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.NotificationManager;
-import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import model.Event;
 import model.UserModel;
-import utility.NotificationType;
+import model.NotificationType;
 
 @Stateless
 public class InvitationManagerImpl implements InvitationManager {

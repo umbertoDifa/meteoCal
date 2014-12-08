@@ -12,5 +12,7 @@ package model;
 public enum NotificationType {
     INVITATION,
     WEATHER_CHANGED,
-    EVENT_CHANGED
+    EVENT_CHANGED,
+    NEW_EVENT,
+    EVENT_CANCELLED;
 }
