@@ -8,6 +8,7 @@ package model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -25,6 +27,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="USER")
+
+@NamedQuery(name = "findOwnedCalendar",query = "SELECT c FROM CalendarModel c WHERE c.owner =:id")
+
 public class UserModel implements Serializable {
     //ATTRIBUTES
 
@@ -87,6 +92,7 @@ public class UserModel implements Serializable {
     }
 
     public List<CalendarModel> getOwnedCalendars() {
+        
         return ownedCalendars;
     }
 
