@@ -16,14 +16,9 @@
     
     <dependencies>
         <dependency>
-            <groupId>teamWeather</groupId>
-            <artifactId>weatherLib</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>teamJson</groupId>
+            <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>1.0</version>
+            <version>20141113</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

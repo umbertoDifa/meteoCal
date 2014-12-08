@@ -12,14 +12,14 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
-import net.aksingh.java.api.owm.CurrentWeatherData;
-import net.aksingh.java.api.owm.DailyForecastData;
-import net.aksingh.java.api.owm.ForecastWeatherData;
-import net.aksingh.java.api.owm.OpenWeatherMap;
 import objectAndString.WeatherForecast;
 import org.json.JSONException;
 import utility.ForecastType;
 import utility.WeatherMessages;
+import weatherLib.CurrentWeatherData;
+import weatherLib.DailyForecastData;
+import weatherLib.ForecastWeatherData;
+import weatherLib.OpenWeatherMap;
 
 @Stateless
 public class WeatherManagerImpl implements WeatherManager {
