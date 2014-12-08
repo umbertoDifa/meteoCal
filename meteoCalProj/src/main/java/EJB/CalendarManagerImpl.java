@@ -25,7 +25,7 @@ public class CalendarManagerImpl implements CalendarManager {
     WeatherManager weatherManager;
 
     private void checkWeather() {
-        //TODO do       
+        //TODO do             
     }
 
     private void checkConflicts() {
