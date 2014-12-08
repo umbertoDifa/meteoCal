@@ -4,7 +4,7 @@ import EJB.interfaces.NotificationManager;
 import java.util.List;
 import javax.ejb.Stateless;
 import model.UserModel;
-import utility.NotificationType;
+import model.NotificationType;
 
 @Stateless
 public class NotificationManagerImpl implements NotificationManager {

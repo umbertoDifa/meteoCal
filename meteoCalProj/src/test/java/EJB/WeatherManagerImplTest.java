@@ -1,12 +1,12 @@
 package EJB;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.logging.Filter;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.inject.Inject;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import objectAndString.WeatherForecast;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -16,29 +16,35 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import utility.ForecastType;
+import utility.LoggerLevel;
+import utility.LoggerProducer;
 
 /**
  *
  * @author umboDifa
  */
 public class WeatherManagerImplTest {
-    WeatherManagerImpl weatherManagerImpl = lookupWeatherManagerImplBean();
-    
+
+    WeatherManagerImpl weatherManagerImpl;
+    static final Logger logger = LoggerProducer.debugLogger(WeatherManagerImplTest.class);
+
     public WeatherManagerImplTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
+
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
+        weatherManagerImpl = new WeatherManagerImpl();
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -59,24 +65,39 @@ public class WeatherManagerImplTest {
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
-    
+
     @Test
-    @Ignore
-    public void prova(){        
-        WeatherManagerImpl wm = lookupWeatherManagerImplBean();
+    public void prova() {
         Calendar dayToCheck = Calendar.getInstance();
-        ForecastType type = wm.inferForecastType(dayToCheck);
+        ForecastType type = weatherManagerImpl.inferForecastType(dayToCheck);
+
+        logger.log(Level.INFO, "INFO:type : {0}", type);
         assertTrue(type == ForecastType.CURRENT_WEATHER);
+
+        //aggiungo un giorno
+        dayToCheck.add(Calendar.DATE, 1);
+        type = weatherManagerImpl.inferForecastType(dayToCheck);
+        logger.log(Level.INFO, "type : {0}", type);
+        assertTrue(type == ForecastType.FORECAST_5_3HOURS);
+
+        //aggiungo 4 giorni
+        dayToCheck.add(Calendar.DATE, 4);
+        type = weatherManagerImpl.inferForecastType(dayToCheck);
+        logger.log(Level.INFO, "type : {0}", type);
+        assertTrue(type == ForecastType.FORECAST_5_3HOURS);
+
+        //aggiungo 3 giorni
+        dayToCheck.add(Calendar.DATE, 3);
+        type = weatherManagerImpl.inferForecastType(dayToCheck);
+        logger.log(Level.INFO, "type : {0}", type);
+        assertTrue(type == ForecastType.FORECAST_16_DAILY);
+
+        //aggiungo 15 giorni
+        dayToCheck.add(Calendar.DATE, 15);
+        type = weatherManagerImpl.inferForecastType(dayToCheck);
+        logger.log(Level.INFO, "type : {0}", type);
+        assertTrue(type == ForecastType.UNPREDICTABLE);
+
     }
 
-    private WeatherManagerImpl lookupWeatherManagerImplBean() {
-        try {
-            Context c = new InitialContext();
-            return (WeatherManagerImpl) c.lookup("java:global/com.fravaleumbo_meteoCalProj_war_1.0-SNAPSHOT/WeatherManagerImpl!EJB.WeatherManagerImpl");
-        } catch (NamingException ne) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
-            throw new RuntimeException(ne);
-        }
-    }
-    
 }
