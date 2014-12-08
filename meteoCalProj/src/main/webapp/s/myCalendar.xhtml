@@ -10,7 +10,7 @@ and open the template in the editor.
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core">
     
-    <ui:composition template="template.xhtml">
+    <ui:composition template="/template.xhtml">
         <ui:define name="title">Calendar</ui:define>
 
         <ui:define name="content">
@@ -19,7 +19,7 @@ and open the template in the editor.
             <h:commandButton>Day</h:commandButton>
             <h:commandButton>Week</h:commandButton>
             <h:commandButton>Month</h:commandButton>
-            <ui:insert name=#{calendar.viewModailty} />
+            <ui:insert name="#{calendar.viewModailty}" />
         </ui:define>
 
     </ui:composition>

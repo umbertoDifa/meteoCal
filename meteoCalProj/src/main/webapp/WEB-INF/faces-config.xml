@@ -11,5 +11,4 @@
             <to-view-id>logIn.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
-    <!-- da tutte le pagine tranne che da signUp e logIn vado in logIn se non loggato? -->
 </faces-config>
