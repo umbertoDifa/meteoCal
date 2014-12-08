@@ -50,7 +50,7 @@ public class CalendarManagerImpl implements CalendarManager {
     }
 
     @Override
-    public boolean addCalendarToUser(UserModel user, Calendar cal) {
+    public boolean addCalendarToUser(UserModel user, CalendarModel cal) {
         user = database.find(UserModel.class, user.getId());
         cal.setOwner(user);
         cal.setTitle("Pubblic_Cal");

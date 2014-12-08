@@ -23,7 +23,7 @@ public interface CalendarManager {
     public boolean checkData(//TODO: classe backing con tutti i dati da checkare
             );
 
-    public boolean addCalendarToUser(UserModel user, Calendar cal);
+    public boolean addCalendarToUser(UserModel user, CalendarModel cal);
 
     /**
      * Returns the first available free day within the next weeksAhead
