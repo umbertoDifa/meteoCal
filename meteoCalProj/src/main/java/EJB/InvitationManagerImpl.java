@@ -17,10 +17,10 @@ public class InvitationManagerImpl implements InvitationManager {
 
     @Override
     public boolean createInvitations(List<UserModel> usersToInvite, Event event) {
-        for (UserModel user : usersToInvite) {
-            this.createInvitation(user, event);
-        }
-        notificationManager.createNotifications(usersToInvite, NotificationType.NEW_EVENT);
+            for (UserModel user : usersToInvite) {
+                this.createInvitation(user, event);
+            }
+            notificationManager.createNotifications(usersToInvite, NotificationType.NEW_EVENT);
         
         return true;
     }
