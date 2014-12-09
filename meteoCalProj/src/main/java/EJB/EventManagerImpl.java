@@ -23,7 +23,7 @@ public class EventManagerImpl implements EventManager {
 
     @Inject
     CalendarManager calManager;
-    
+
     @Inject
     InvitationManager invitationManager;
 
@@ -32,7 +32,7 @@ public class EventManagerImpl implements EventManager {
 
     @Inject
     @Default
-    Logger logger;   
+    Logger logger;
 
     @Override
     public List<Object> search(Object thingToSearch) {
@@ -45,16 +45,19 @@ public class EventManagerImpl implements EventManager {
     }
 
     @Override
-    public boolean scheduleNewEvent(UserModel user, Event event, model.CalendarModel insertInCalendar,List<UserModel> invitees) {
+    public boolean scheduleNewEvent(UserModel user, Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees) {
         database.persist(event);
         logger.log(Level.INFO, "Event +{0} created", event.getTitle());
-       
-        if(insertInCalendar != null){
+
+        if (insertInCalendar != null) {
             calManager.addToCalendar(event, insertInCalendar, user);
         }
-        
-        return invitationManager.createInvitations(invitees, event);
-        
+
+        if (invitees != null && invitees.size() > 0) {
+            return invitationManager.createInvitations(invitees, event);
+        } else {
+            return true;
+        }
     }
 
 }
