@@ -24,7 +24,7 @@ import weatherLib.OpenWeatherMap;
 public class WeatherManagerImpl implements WeatherManager {
 
     //tentativi di ottenere le previsioni prima di ritornare unavailable
-    private final int MAX_TRIES = 4;
+    private final int MAX_TRIES = 10;
 
     //creo oggetto openWeatherMap per fare le richieste con la mia API key
     private OpenWeatherMap openWeatherMap;
@@ -60,15 +60,24 @@ public class WeatherManagerImpl implements WeatherManager {
         openWeatherMap = new OpenWeatherMap("6f165fcce7eddd2405ef5c0596000ff7");
     }
 
+    //Just for testing!
+    protected void initOpenWeatherMap() {
+        openWeatherMap = new OpenWeatherMap("6f165fcce7eddd2405ef5c0596000ff7");
+    }
+
     @Override
     public WeatherForecast getWeather(Calendar day, String city) {
         this.city = city;
         //in base a che giorno è oggi e a quando è schedulato l'evento uso
         //un tipo diverso di previsioni
         this.forecastType = inferForecastType(day);
+        weatherForecast = new WeatherForecast();
 
-        //TODO adattare questa struttura a forecast 16 e quano è unpredictable
-        createWeatherForecast();
+        if (forecastType != ForecastType.UNPREDICTABLE) {
+            createWeatherForecast(day);
+        } else {
+            weatherForecast.setMessage(WeatherMessages.NOT_AVAILABLE);
+        }
 
         return weatherForecast;
     }
@@ -115,69 +124,44 @@ public class WeatherManagerImpl implements WeatherManager {
 
     }
 
-    private void createWeatherForecast() {
-        //se non ho superato i tentativi massimi e i dati sono accessibili
-        if (downloadWeather(forecastType) <= MAX_TRIES && infoIsAvailable()) {
-            //imposta i dati
-            this.setWeatherObj();
-        } else {
-            weatherForecast.setMessage(WeatherMessages.NOT_AVAILABLE);
-        }
-    }
-
-    private int downloadWeather(ForecastType forecastType) {
+    private void createWeatherForecast(Calendar day) {
         int i = 0;
-
-        //finchè non ottengo una risposta ma riprova a contattare
-        //il servizio per un massimo di MAX_TRIES tentativi
         do {
-            try {
-                switch (forecastType) {
-                    case FORECAST_5_3HOURS:
-                        forecastFiveDays = openWeatherMap.forecastWeatherByCityName(city);
-                        break;
-                    case CURRENT_WEATHER:
-                        currentWeather = openWeatherMap.currentWeatherByCityName(city);
-                        break;
-                    case FORECAST_16_DAILY:
-                        dailyForecast = openWeatherMap.dailyForecastByCityName(city, (byte) 16);
-                        break;
-
-                    //just a bigger number than MAX_TRIES
-                    default:
-                        i = MAX_TRIES * 2;
-                        break;
-                }
-
-            } catch (IOException | JSONException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
-                return MAX_TRIES * 2;//just a bigger number than MAX_TRIES
+            //tento di trovare le previsioni
+            if (downloadWeather(forecastType) && infoIsAvailable(day)) {
+                //imposta i dati
+                this.setWeatherObj();
+            } else {
+                i++;
+                weatherForecast.setMessage(WeatherMessages.NOT_AVAILABLE);
             }
-            i++;
-        } while (!hasWeatherList() && i <= MAX_TRIES);
-
-        return i;
+        } while (i < MAX_TRIES); //fino ad un massimo di tentativi
     }
 
-    private boolean hasWeatherList() {
-        switch (forecastType) {
-            case FORECAST_5_3HOURS:
-                return forecastFiveDays.hasForecast_List();
+    private boolean downloadWeather(ForecastType forecastType) {
 
-            case CURRENT_WEATHER:
-                return currentWeather.hasWeather_List();
+        try {
 
-            case FORECAST_16_DAILY:
-                return dailyForecast.hasForecast_List();
+            switch (forecastType) {
+                case FORECAST_5_3HOURS:
+                    forecastFiveDays = openWeatherMap.forecastWeatherByCityName(city);
+                case CURRENT_WEATHER:
+                    currentWeather = openWeatherMap.currentWeatherByCityName(city);
+                case FORECAST_16_DAILY:
+                    dailyForecast = openWeatherMap.dailyForecastByCityName(city, (byte) 16);
+            }
+            return true;
 
+        } catch (IOException | JSONException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            return false;
         }
-        return false;
     }
 
-    private boolean infoIsAvailable() {
+    private boolean infoIsAvailable(Calendar day) {
         switch (forecastType) {
             case FORECAST_5_3HOURS:
-                return infoIsAvailable5Days();
+                return infoIsAvailable5Days(day);
             case CURRENT_WEATHER:
                 return infoIsAvailableCurrent();
             case FORECAST_16_DAILY:
@@ -204,11 +188,10 @@ public class WeatherManagerImpl implements WeatherManager {
         }
         return false;
     }
-
-    private boolean infoIsAvailable5Days() {
-
+   
+    private boolean infoIsAvailable5Days(Calendar day) {       
         try {
-            position = this.findDayPositionInForecastList(forecastFiveDays, null);
+            position = this.findDayPositionInForecastList(forecastFiveDays, day);
             //check all has
             if (forecastFiveDays.getForecast_List().get(position).hasWeather_List()
                     && forecastFiveDays.getForecast_List().get(position).getWeather_List().get(0).hasWeatherCode()
@@ -231,6 +214,7 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private void setWeatherObj() {
+
         switch (forecastType) {
             case FORECAST_5_3HOURS:
                 this.setWeatherObjFromForecast5();
@@ -267,10 +251,16 @@ public class WeatherManagerImpl implements WeatherManager {
         weatherForecast.setPressure(currentWeather.getMainData_Object().getPressure());
         weatherForecast.setTemp(currentWeather.getMainData_Object().getTemperature());
         weatherForecast.setWeatherId(currentWeather.getWeather_List().get(0).getWeatherCode());
+
         setGoodOrBadWeather();
+
     }
 
     private int findDayPositionInForecastList(ForecastWeatherData forecast, Calendar day) throws ForecastDayNotFoundException {
+        //TODO il numero esatto di elementi dovrebbe essere 41, se è minore
+        //o se cmq non si trova l'info, bisogna ripetere la richiesta
+        //prima di lanciare l'exception
+        //in questo caso l'ultima spieggia è cercare il forecast16
         if (forecast.hasForecast_List()) {
             for (int i = 0; i < forecast.getForecast_List_Count(); i++) {
                 if (forecast.getForecast_List().get(i) != null
@@ -292,7 +282,7 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private void setGoodOrBadWeather() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        weatherForecast.setMessage(WeatherMessages.BAD_WEATHER);
     }
 
 }
