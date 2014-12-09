@@ -29,15 +29,15 @@ public class StartupBean {
 
     @Inject
     private SignUpManager signupManager;
-    @Inject
-    private EntityManager database;
+   // @Inject
+   // private EntityManager database;
     @Inject
     private Logger logger;
 
     @PostConstruct
     public void init() {
         insertUsers();
-        insertOptCalendar();
+        //insertOptCalendar();
 
     }
 
@@ -60,7 +60,7 @@ public class StartupBean {
             signupManager.addUser(newUser);
         }
     }
-
+/*
     private void insertOptCalendar() {
         CalendarModel calendar = new CalendarModel();
         calendar.setIsDefault(false);
@@ -72,6 +72,6 @@ public class StartupBean {
         logger.log(Level.INFO, "Pulic_Cal created for user:", user1.getEmail());
         database.persist(calendar);
         logger.log(Level.INFO, "User +{0} created", user1.getName());
-    }
+    }*/
 
 }

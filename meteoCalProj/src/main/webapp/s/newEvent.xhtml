@@ -27,7 +27,7 @@ and open the template in the editor.
                 </h:selectOneMenu><br/>
 
                 <h:outputLabel value="Starting date:" />
-                <h:inputText value="#{currentDate}">
+                <h:inputText value="#{newEvent.startingDate}">
                     <f:passThroughAttribute name="type" value="date" />
                 </h:inputText><br/>
 
@@ -54,10 +54,14 @@ and open the template in the editor.
 
                 <h:inputTextarea value="Description" style="resize: none" /><br/>
 
-                <h:commandButton value="Save"></h:commandButton>
+                <h:commandButton value="Save" action="#{newEvent.save}"></h:commandButton>
                 <h:commandButton value="Cancel"></h:commandButton>
                 <h:commandButton value="Delete"></h:commandButton>
                 <!--invite someone-->
+                
+                <div id="inviteDiv">
+                    <h2>Guests:</h2>
+                </div>
             </h:form>
 
         </ui:define>
