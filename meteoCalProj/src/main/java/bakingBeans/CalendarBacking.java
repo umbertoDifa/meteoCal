@@ -10,6 +10,7 @@ import EJB.interfaces.CalendarManager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -17,6 +18,8 @@ import model.UserModel;
 import utility.ViewModality;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import utility.LoggerLevel;
+import utility.LoggerProducer;
 
 /**
  *
@@ -26,12 +29,13 @@ import javax.inject.Named;
 @SessionScoped
 public class CalendarBacking implements Serializable {
 
-    //serialVersionUID?
     @Inject
     EventManager eventManager;
 
     @Inject
     CalendarManager calendarManager;
+
+    Logger logger = LoggerProducer.debugLogger(CalendarBacking.class);
 
     private LoginBacking login;
 
@@ -59,8 +63,9 @@ public class CalendarBacking implements Serializable {
 
     public List<String> getCalendarNames() {
         if (calendars != null) {
-            List<String> r = new ArrayList<>();
-            return titlesCalendar(this.calendars, r);
+            List<String> r = titlesCalendar(this.calendars);
+            logger.log(LoggerLevel.DEBUG, r.toString());
+            return r;
         }
         return null;
     }
@@ -76,13 +81,15 @@ public class CalendarBacking implements Serializable {
         }
     }
 
-    private List<String> titlesCalendar(List<model.CalendarModel> c, List<String> r) {
-        if (c.size() == 1) {
-            r.add(c.get(0).getTitle());
+    private List<String> titlesCalendar(List<model.CalendarModel> c) {
+        List<String> result = new ArrayList<>();
+        if (c != null) {
+            for (model.CalendarModel b : c) {
+                result.add(b.getTitle());
+            }
         } else {
-            r.add(c.get(0).getTitle() + ",");
-            r.addAll(titlesCalendar(c.subList(1, c.size()), r));
+            System.out.println("Lista calendari null");
         }
-        return r;
+        return result;
     }
 }

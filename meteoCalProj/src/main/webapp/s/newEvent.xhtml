@@ -20,6 +20,12 @@ and open the template in the editor.
 
                 <h:inputText value="#{newEvent.title}" /><br/>
 
+                <h:selectOneMenu value="#{newEvent.calendarName}">
+                    <c:forEach items="#{calendar.calendarNames}" var="cal">
+                        <f:selectItem itemLabel="#{cal}" />
+                    </c:forEach>
+                </h:selectOneMenu><br/>
+
                 <h:outputLabel value="Starting date:" />
                 <h:inputText id="startingDate" value="#{newEvent.startDate}">
                     <f:passThroughAttribute name="type" value="date" />
