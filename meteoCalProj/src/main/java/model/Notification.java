@@ -33,10 +33,27 @@ public class Notification implements Serializable {
     
     @Column(nullable = false)
     private NotificationType type;
-    
-    //METHODS
-    
 
+
+    
+ /**
+ *
+ *   CONSTRUCTORS
+ */
+
+
+    public Notification(UserModel recipient, Event relatedEvent, NotificationType type) {
+        this.recipient = recipient;
+        this.relatedEvent = relatedEvent;
+        this.type = type;
+    }
+    
+/**
+ *
+ *   SETTERS & GETTERS
+ */
+
+    
     public Long getId() {
         return id;
     }

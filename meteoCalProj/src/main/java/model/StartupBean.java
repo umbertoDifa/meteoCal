@@ -12,18 +12,12 @@ package model;
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.SignUpManager;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Startup;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+
 
 @Singleton
 @Startup
@@ -34,7 +28,7 @@ public class StartupBean {
     @Inject
     private CalendarManager calendarManager;
     
-    private ArrayList<UserModel> users = new ArrayList<UserModel>();
+    private ArrayList<UserModel> users = new ArrayList<>();
     
 
     //METHODS
@@ -77,6 +71,10 @@ public class StartupBean {
         calendarManager.addCalendarToUser(user, calendar);
         }
 
+    }
+    
+    private void insertEvents() {
+        
     }
 
 }

@@ -40,7 +40,26 @@ public class CalendarModel implements Serializable {
     @ManyToMany
     @JoinTable(name = "EVENT_IN_CALENDAR")
     private List<Event> eventsInCalendar;//FIXED
+    
+    
+    /**
+    *
+    *   CONSTRUCTURS
+    */
+    public CalendarModel() {
+    }
 
+    public CalendarModel(String title, UserModel owner, boolean isPublic, boolean isDefault) {
+        this.title = title;
+        this.owner = owner;
+        this.isPublic = isPublic;
+        this.isDefault = isDefault;
+    }
+
+    /**
+    *
+    *  SETTERS & GETTERS 
+    */
     public String getTitle() {
         return title;
 

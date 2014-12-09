@@ -5,6 +5,8 @@
  */
 package model;
 
+import java.util.Calendar;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -15,5 +17,15 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "PRIVATE_EVENT")
 public class PrivateEvent extends Event{
+
+    public PrivateEvent() {
+    }
+
+    
     
 }
+
+
+    
+
+

@@ -17,7 +17,10 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Temporal;
 
 /**
@@ -25,46 +28,56 @@ import javax.persistence.Temporal;
  * @author Luckyna
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Event implements Serializable {
+@NamedQueries({
+    //COME IMPOSTARE IL PARAMETRO: namedQuery.setParameter("search", "%" + value + "%");
+    @NamedQuery(name = "findEventbyString", query = "SELECT e FROM Event e WHERE e.title LIKE :search"),
+
+    @NamedQuery(name = "findEventbyTitle", query = "SELECT e FROM Event e WHERE e.title=:title"),
     
+    @NamedQuery(name= "findNextEvents,", query= "SELECT e FROM Event e WHERE e.startDateTime>= CURRENT_TIMESTAMP ")
+
+})
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Event implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     @Column(nullable = false)
     private String title;
-    
+
     @Temporal(javax.persistence.TemporalType.DATE)
+    @OrderColumn
     @Column(nullable = false)
-    private java.util.Calendar startDateTime ;
-    
+    private java.util.Calendar startDateTime;
+
     @Temporal(javax.persistence.TemporalType.DATE)
     @Column(nullable = false)
     private java.util.Calendar endDateTime;
-    
+
     private String location;
-    
+
     private String description;
-    
+
     private boolean isOutdoor;
-    
+
     @ManyToOne
     private UserModel owner;
-    
+
     @OneToMany(mappedBy = "event")
     private List<Invitation> invitations;
-   
+
     @ManyToMany(mappedBy = "eventsInCalendar")
     private List<model.CalendarModel> inCalendars;
 //   EX ERROR!!
-    
-    //METHODS
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
+    
+    /**
+    *
+    *   SETTERS & GETTERS
+    */
 
     public String getTitle() {
         return title;
@@ -134,7 +147,6 @@ public abstract class Event implements Serializable {
         return isOutdoor;
     }
 
-
     public Long getId() {
         return id;
     }
@@ -167,5 +179,5 @@ public abstract class Event implements Serializable {
     public String toString() {
         return "model.Event[ id=" + id + " ]";
     }
-    
+
 }
