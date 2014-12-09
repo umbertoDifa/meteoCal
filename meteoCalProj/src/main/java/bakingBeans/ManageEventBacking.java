@@ -206,7 +206,7 @@ public class ManageEventBacking implements Serializable {
         eventToCreate.setOwner(login.getCurrentUser());
         //passo all eventManager l'ownerId, l'evento riempito, il calendario
         //dove metterlo e la lista degli invitati
-        eventManager.scheduleNewEvent(login.getCurrentUser(), eventToCreate, calendar, null);
+        eventManager.scheduleNewEvent(eventToCreate, calendar, null);
     }
 
 }
