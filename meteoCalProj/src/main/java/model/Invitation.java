@@ -26,7 +26,7 @@ public class Invitation implements Serializable {
     @ManyToOne
     private Event event;
     
-    private char answer;
+    private InvitationAnswer answer;
     
     //METHODS
 
@@ -46,12 +46,13 @@ public class Invitation implements Serializable {
         this.event = event;
     }
 
-    public char getAnswer() {
+    public InvitationAnswer getAnswer() {
         return answer;
     }
 
-    public void setAnswer(char answer) {
+    public void setAnswer(InvitationAnswer answer) {
         this.answer = answer;
     }
+
     
 }
