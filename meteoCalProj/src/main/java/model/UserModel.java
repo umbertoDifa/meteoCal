@@ -70,8 +70,7 @@ public class UserModel implements Serializable {
     @OneToMany(mappedBy = "recipient")
     private List<Notification> notifications;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "owner_fk")
+    @OneToMany(mappedBy = "owner")
     private List<Event> ownedEvents;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
