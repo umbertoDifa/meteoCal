@@ -9,6 +9,7 @@ package model;
  *
  * @author Luckyna
  */
+import EJB.interfaces.CalendarManager;
 import EJB.interfaces.SignUpManager;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Singleton
 @Startup
@@ -29,15 +31,19 @@ public class StartupBean {
 
     @Inject
     private SignUpManager signupManager;
-   // @Inject
-   // private EntityManager database;
     @Inject
-    private Logger logger;
+    private CalendarManager calendarManager;
+    
+    private ArrayList<UserModel> users = new ArrayList<UserModel>();
+    
 
+    //METHODS
+    
     @PostConstruct
     public void init() {
+        
         insertUsers();
-        //insertOptCalendar();
+        insertPublicCalendar();
 
     }
 
@@ -58,20 +64,19 @@ public class StartupBean {
             newUser.setEmail(emails[i]);
             newUser.setPassword(pswds[i]);
             signupManager.addUser(newUser);
+            users.add(newUser);
         }
     }
-/*
-    private void insertOptCalendar() {
+
+    private void insertPublicCalendar() {
+        for (UserModel user: users) {
         CalendarModel calendar = new CalendarModel();
         calendar.setIsDefault(false);
         calendar.setIsPublic(true);
-        UserModel user1 = database.find(UserModel.class, 1);
-        calendar.setOwner(user1);
         calendar.setTitle("Pubblic_Cal");
+        calendarManager.addCalendarToUser(user, calendar);
+        }
 
-        logger.log(Level.INFO, "Pulic_Cal created for user:", user1.getEmail());
-        database.persist(calendar);
-        logger.log(Level.INFO, "User +{0} created", user1.getName());
-    }*/
+    }
 
 }

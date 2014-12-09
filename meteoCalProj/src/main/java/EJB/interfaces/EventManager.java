@@ -15,15 +15,7 @@ import model.UserModel;
  */
 public interface EventManager {
 
-    public List<Object> search(Object thingToSearch);
-
-    /**
-     * Store the users to invite
-     *
-     * @param invitee users to invite
-     * @return true if stored
-     */
-    public boolean saveInvites(List<UserModel> invitee);
+    public List<Object> search(Object thingToSearch);   
 
     public boolean checkData();
 
