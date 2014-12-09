@@ -54,7 +54,7 @@ import org.json.JSONObject;
  * @version 2013/08/07
  * @since 2.5.0.1
  */
-public class DailyForecastData {
+public class DailyForecastData{
 
     /**
      * Key for JSON object - City

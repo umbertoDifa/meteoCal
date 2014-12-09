@@ -20,8 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
-*/
-
+ */
 package weatherLib;
 
 import java.io.IOException;
@@ -87,7 +86,7 @@ public class OpenWeatherMap {
         private final String OWM_APPID_VALUE;
 
         public OWM_Response(String apiKey) {
-            this(OWM_URL.PARAMETER_UNITS_VALUE_IMPERIAL, apiKey);
+            this(OWM_URL.PARAMETER_UNITS_VALUE_METRIC, apiKey);
         }
 
         public OWM_Response(OWM_URL unit, String apiKey) {
@@ -101,15 +100,15 @@ public class OpenWeatherMap {
             String response;
 
             String address = OWM_URL.BASE_URL.getParameter()
-                             + OWM_URL.PARAMETER_CURRENT_WEATHER.getParameter()
-                             + OWM_URL.PARAMETER_CITY_NAME.getParameter()
-                             + URLEncoder.encode(cityName, "US-ASCII") + "&"
-                             + OWM_URL.PARAMETER_MODE.getParameter()
-                             + this.OWM_MODE_VALUE + "&"
-                             + OWM_URL.PARAMETER_UNITS.getParameter()
-                             + this.OWM_UNITS_VALUE + "&"
-                             + OWM_URL.PARAMETER_APPID.getParameter()
-                             + this.OWM_APPID_VALUE;
+                    + OWM_URL.PARAMETER_CURRENT_WEATHER.getParameter()
+                    + OWM_URL.PARAMETER_CITY_NAME.getParameter()
+                    + URLEncoder.encode(cityName, "US-ASCII") + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
 
             response = Tools.Downloader.downloadPage(address);
 
@@ -122,16 +121,16 @@ public class OpenWeatherMap {
             String response;
 
             address = OWM_URL.BASE_URL.getParameter()
-                      + OWM_URL.PARAMETER_CURRENT_WEATHER.getParameter()
-                      + OWM_URL.PARAMETER_CITY_NAME.getParameter()
-                      + URLEncoder.encode(cityName, "US-ASCII")
-                      + "," + countryCode + "&"
-                      + OWM_URL.PARAMETER_MODE.getParameter()
-                      + this.OWM_MODE_VALUE + "&"
-                      + OWM_URL.PARAMETER_UNITS.getParameter()
-                      + this.OWM_UNITS_VALUE + "&"
-                      + OWM_URL.PARAMETER_APPID.getParameter()
-                      + this.OWM_APPID_VALUE;
+                    + OWM_URL.PARAMETER_CURRENT_WEATHER.getParameter()
+                    + OWM_URL.PARAMETER_CITY_NAME.getParameter()
+                    + URLEncoder.encode(cityName, "US-ASCII")
+                    + "," + countryCode + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
 
             response = Tools.Downloader.downloadPage(address);
 
@@ -144,15 +143,15 @@ public class OpenWeatherMap {
             String response;
 
             address = OWM_URL.BASE_URL.getParameter()
-                      + OWM_URL.PARAMETER_CURRENT_WEATHER.getParameter()
-                      + OWM_URL.PARAMETER_CITY_ID.getParameter()
-                      + Long.toString(cityCode) + "&"
-                      + OWM_URL.PARAMETER_MODE.getParameter()
-                      + this.OWM_MODE_VALUE + "&"
-                      + OWM_URL.PARAMETER_UNITS.getParameter()
-                      + this.OWM_UNITS_VALUE + "&"
-                      + OWM_URL.PARAMETER_APPID.getParameter()
-                      + this.OWM_APPID_VALUE;
+                    + OWM_URL.PARAMETER_CURRENT_WEATHER.getParameter()
+                    + OWM_URL.PARAMETER_CITY_ID.getParameter()
+                    + Long.toString(cityCode) + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
 
             response = Tools.Downloader.downloadPage(address);
 
@@ -165,17 +164,17 @@ public class OpenWeatherMap {
             String response;
 
             address = OWM_URL.BASE_URL.getParameter()
-                      + OWM_URL.PARAMETER_CURRENT_WEATHER.getParameter()
-                      + OWM_URL.PARAMETER_LATITUDE.getParameter()
-                      + Float.toString(latitude) + "&"
-                      + OWM_URL.PARAMETER_LONGITUDE.getParameter()
-                      + Float.toString(longitude) + "&"
-                      + OWM_URL.PARAMETER_MODE.getParameter()
-                      + this.OWM_MODE_VALUE + "&"
-                      + OWM_URL.PARAMETER_UNITS.getParameter()
-                      + this.OWM_UNITS_VALUE + "&"
-                      + OWM_URL.PARAMETER_APPID.getParameter()
-                      + this.OWM_APPID_VALUE;
+                    + OWM_URL.PARAMETER_CURRENT_WEATHER.getParameter()
+                    + OWM_URL.PARAMETER_LATITUDE.getParameter()
+                    + Float.toString(latitude) + "&"
+                    + OWM_URL.PARAMETER_LONGITUDE.getParameter()
+                    + Float.toString(longitude) + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
 
             response = Tools.Downloader.downloadPage(address);
 
@@ -188,16 +187,16 @@ public class OpenWeatherMap {
             String response;
 
             address = OWM_URL.BASE_URL.getParameter()
-                      + OWM_URL.PARAMETER_FORECAST_WEATHER.getParameter()
-                      + OWM_URL.PARAMETER_CITY_NAME.getParameter()
-                      + URLEncoder.encode(cityName, "US-ASCII") + "&"
-                      + OWM_URL.PARAMETER_MODE.getParameter()
-                      + this.OWM_MODE_VALUE + "&"
-                      + OWM_URL.PARAMETER_UNITS.getParameter()
-                      + this.OWM_UNITS_VALUE + "&"
-                      + OWM_URL.PARAMETER_APPID.getParameter()
-                      + this.OWM_APPID_VALUE;
-
+                    + OWM_URL.PARAMETER_FORECAST_WEATHER.getParameter()
+                    + OWM_URL.PARAMETER_CITY_NAME.getParameter()
+                    + URLEncoder.encode(cityName, "US-ASCII") + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
+            //System.out.println("indirizzo: " + address);
             response = Tools.Downloader.downloadPage(address);
 
             return response;
@@ -209,16 +208,16 @@ public class OpenWeatherMap {
             String response;
 
             address = OWM_URL.BASE_URL.getParameter()
-                      + OWM_URL.PARAMETER_FORECAST_WEATHER.getParameter()
-                      + OWM_URL.PARAMETER_CITY_NAME.getParameter()
-                      + URLEncoder.encode(cityName, "US-ASCII")
-                      + "," + countryCode + "&"
-                      + OWM_URL.PARAMETER_MODE.getParameter()
-                      + this.OWM_MODE_VALUE + "&"
-                      + OWM_URL.PARAMETER_UNITS.getParameter()
-                      + this.OWM_UNITS_VALUE + "&"
-                      + OWM_URL.PARAMETER_APPID.getParameter()
-                      + this.OWM_APPID_VALUE;
+                    + OWM_URL.PARAMETER_FORECAST_WEATHER.getParameter()
+                    + OWM_URL.PARAMETER_CITY_NAME.getParameter()
+                    + URLEncoder.encode(cityName, "US-ASCII")
+                    + "," + countryCode + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
 
             response = Tools.Downloader.downloadPage(address);
 
@@ -231,15 +230,15 @@ public class OpenWeatherMap {
             String response;
 
             address = OWM_URL.BASE_URL.getParameter()
-                      + OWM_URL.PARAMETER_FORECAST_WEATHER.getParameter()
-                      + OWM_URL.PARAMETER_CITY_ID.getParameter()
-                      + Long.toString(cityCode) + "&"
-                      + OWM_URL.PARAMETER_MODE.getParameter()
-                      + this.OWM_MODE_VALUE + "&"
-                      + OWM_URL.PARAMETER_UNITS.getParameter()
-                      + this.OWM_UNITS_VALUE + "&"
-                      + OWM_URL.PARAMETER_APPID.getParameter()
-                      + this.OWM_APPID_VALUE;
+                    + OWM_URL.PARAMETER_FORECAST_WEATHER.getParameter()
+                    + OWM_URL.PARAMETER_CITY_ID.getParameter()
+                    + Long.toString(cityCode) + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
 
             response = Tools.Downloader.downloadPage(address);
 
@@ -252,17 +251,17 @@ public class OpenWeatherMap {
             String response;
 
             address = OWM_URL.BASE_URL.getParameter()
-                      + OWM_URL.PARAMETER_FORECAST_WEATHER.getParameter()
-                      + OWM_URL.PARAMETER_LATITUDE.getParameter()
-                      + Float.toString(latitude) + "&"
-                      + OWM_URL.PARAMETER_LONGITUDE.getParameter()
-                      + Float.toString(longitude) + "&"
-                      + OWM_URL.PARAMETER_MODE.getParameter()
-                      + this.OWM_MODE_VALUE + "&"
-                      + OWM_URL.PARAMETER_UNITS.getParameter()
-                      + this.OWM_UNITS_VALUE + "&"
-                      + OWM_URL.PARAMETER_APPID.getParameter()
-                      + this.OWM_APPID_VALUE;
+                    + OWM_URL.PARAMETER_FORECAST_WEATHER.getParameter()
+                    + OWM_URL.PARAMETER_LATITUDE.getParameter()
+                    + Float.toString(latitude) + "&"
+                    + OWM_URL.PARAMETER_LONGITUDE.getParameter()
+                    + Float.toString(longitude) + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
 
             response = Tools.Downloader.downloadPage(address);
 
@@ -275,17 +274,17 @@ public class OpenWeatherMap {
             String response;
 
             address = OWM_URL.BASE_URL.getParameter()
-                      + OWM_URL.PARAMETER_DAILY_FORECAST.getParameter()
-                      + OWM_URL.PARAMETER_CITY_NAME.getParameter()
-                      + URLEncoder.encode(cityName, "US-ASCII") + "&"
-                      + OWM_URL.PARAMETER_COUNT.getParameter()
-                      + Byte.toString(count) + "&"
-                      + OWM_URL.PARAMETER_MODE.getParameter()
-                      + this.OWM_MODE_VALUE + "&"
-                      + OWM_URL.PARAMETER_UNITS.getParameter()
-                      + this.OWM_UNITS_VALUE + "&"
-                      + OWM_URL.PARAMETER_APPID.getParameter()
-                      + this.OWM_APPID_VALUE;
+                    + OWM_URL.PARAMETER_DAILY_FORECAST.getParameter()
+                    + OWM_URL.PARAMETER_CITY_NAME.getParameter()
+                    + URLEncoder.encode(cityName, "US-ASCII") + "&"
+                    + OWM_URL.PARAMETER_COUNT.getParameter()
+                    + Byte.toString(count) + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
 
             response = Tools.Downloader.downloadPage(address);
 
@@ -298,18 +297,18 @@ public class OpenWeatherMap {
             String response;
 
             address = OWM_URL.BASE_URL.getParameter()
-                      + OWM_URL.PARAMETER_DAILY_FORECAST.getParameter()
-                      + OWM_URL.PARAMETER_CITY_NAME.getParameter()
-                      + URLEncoder.encode(cityName, "US-ASCII")
-                      + "," + countryCode + "&"
-                      + OWM_URL.PARAMETER_COUNT.getParameter()
-                      + Byte.toString(count) + "&"
-                      + OWM_URL.PARAMETER_MODE.getParameter()
-                      + this.OWM_MODE_VALUE + "&"
-                      + OWM_URL.PARAMETER_UNITS.getParameter()
-                      + this.OWM_UNITS_VALUE + "&"
-                      + OWM_URL.PARAMETER_APPID.getParameter()
-                      + this.OWM_APPID_VALUE;
+                    + OWM_URL.PARAMETER_DAILY_FORECAST.getParameter()
+                    + OWM_URL.PARAMETER_CITY_NAME.getParameter()
+                    + URLEncoder.encode(cityName, "US-ASCII")
+                    + "," + countryCode + "&"
+                    + OWM_URL.PARAMETER_COUNT.getParameter()
+                    + Byte.toString(count) + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
 
             response = Tools.Downloader.downloadPage(address);
 
@@ -322,17 +321,17 @@ public class OpenWeatherMap {
             String response;
 
             address = OWM_URL.BASE_URL.getParameter()
-                      + OWM_URL.PARAMETER_DAILY_FORECAST.getParameter()
-                      + OWM_URL.PARAMETER_CITY_ID.getParameter()
-                      + Long.toString(cityCode) + "&"
-                      + OWM_URL.PARAMETER_COUNT.getParameter()
-                      + Byte.toString(count) + "&"
-                      + OWM_URL.PARAMETER_MODE.getParameter()
-                      + this.OWM_MODE_VALUE + "&"
-                      + OWM_URL.PARAMETER_UNITS.getParameter()
-                      + this.OWM_UNITS_VALUE + "&"
-                      + OWM_URL.PARAMETER_APPID.getParameter()
-                      + this.OWM_APPID_VALUE;
+                    + OWM_URL.PARAMETER_DAILY_FORECAST.getParameter()
+                    + OWM_URL.PARAMETER_CITY_ID.getParameter()
+                    + Long.toString(cityCode) + "&"
+                    + OWM_URL.PARAMETER_COUNT.getParameter()
+                    + Byte.toString(count) + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
 
             response = Tools.Downloader.downloadPage(address);
 
@@ -345,19 +344,19 @@ public class OpenWeatherMap {
             String response;
 
             address = OWM_URL.BASE_URL.getParameter()
-                      + OWM_URL.PARAMETER_DAILY_FORECAST.getParameter()
-                      + OWM_URL.PARAMETER_LATITUDE.getParameter()
-                      + Float.toString(latitude) + "&"
-                      + OWM_URL.PARAMETER_COUNT.getParameter()
-                      + Byte.toString(count) + "&"
-                      + OWM_URL.PARAMETER_LONGITUDE.getParameter()
-                      + Float.toString(longitude) + "&"
-                      + OWM_URL.PARAMETER_MODE.getParameter()
-                      + this.OWM_MODE_VALUE + "&"
-                      + OWM_URL.PARAMETER_UNITS.getParameter()
-                      + this.OWM_UNITS_VALUE + "&"
-                      + OWM_URL.PARAMETER_APPID.getParameter()
-                      + this.OWM_APPID_VALUE;
+                    + OWM_URL.PARAMETER_DAILY_FORECAST.getParameter()
+                    + OWM_URL.PARAMETER_LATITUDE.getParameter()
+                    + Float.toString(latitude) + "&"
+                    + OWM_URL.PARAMETER_COUNT.getParameter()
+                    + Byte.toString(count) + "&"
+                    + OWM_URL.PARAMETER_LONGITUDE.getParameter()
+                    + Float.toString(longitude) + "&"
+                    + OWM_URL.PARAMETER_MODE.getParameter()
+                    + this.OWM_MODE_VALUE + "&"
+                    + OWM_URL.PARAMETER_UNITS.getParameter()
+                    + this.OWM_UNITS_VALUE + "&"
+                    + OWM_URL.PARAMETER_APPID.getParameter()
+                    + this.OWM_APPID_VALUE;
 
             response = Tools.Downloader.downloadPage(address);
 
@@ -372,7 +371,7 @@ public class OpenWeatherMap {
     private final OWM_Response owmResponse;
 
     public OpenWeatherMap(String apiKey) {
-        this(OWM_URL.PARAMETER_UNITS_VALUE_IMPERIAL, apiKey);
+        this(OWM_URL.PARAMETER_UNITS_VALUE_METRIC, apiKey);
     }
 
     public OpenWeatherMap(OWM_URL unit, String apiKey) {
