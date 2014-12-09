@@ -90,10 +90,6 @@ public abstract class Event implements Serializable {
         return inCalendars;
     }
 
-    public void setInCalendars(List<CalendarModel> inCalendars) {
-        this.inCalendars = inCalendars;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -137,11 +133,6 @@ public abstract class Event implements Serializable {
     public boolean isIsOutdoor() {
         return isOutdoor;
     }
-
-//    public UserModel getOwner() {
-//        return owner;
-//    }
-
 
 
     public Long getId() {
