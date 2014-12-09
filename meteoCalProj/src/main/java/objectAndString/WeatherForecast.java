@@ -25,6 +25,18 @@ public class WeatherForecast {
 
     String icon;
 
+    @Override
+    public String toString() {
+        if (message == null || message == WeatherMessages.NOT_AVAILABLE) {
+            return "Weather forecast not available.";
+        }
+        return "WeatherForecast: temp=" + temp + ", maxTemp=" + maxTemp
+                + ", minTemp=" + minTemp + ", pressure=" + pressure
+                + ", humidity=" + humidity + ", weatherId=" + weatherId
+                + ", main=" + main + ", description=" + description + ", icon="
+                + icon + '.';
+    }
+
     public WeatherMessages getMessage() {
         return message;
     }

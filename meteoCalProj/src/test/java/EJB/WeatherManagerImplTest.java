@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import utility.LoggerLevel;
 import utility.LoggerProducer;
 import utility.WeatherMessages;
 
@@ -20,7 +21,8 @@ import utility.WeatherMessages;
  */
 public class WeatherManagerImplTest {
 
-    static final Logger logger = LoggerProducer.debugLogger(WeatherManagerImplTest.class);
+    static final Logger logger = LoggerProducer.debugLogger(
+            WeatherManagerImplTest.class);
 
     public WeatherManagerImplTest() {
     }
@@ -48,7 +50,6 @@ public class WeatherManagerImplTest {
      * @throws java.lang.Exception
      */
     @Test
-
     public void testGetWeather() throws Exception {
         System.out.println("getWeather");
 //        WeatherManagerImpl wm = new WeatherManagerImpl();
@@ -63,5 +64,73 @@ public class WeatherManagerImplTest {
 //        assertTrue((float)990.73 == forecast.getPressure());
 //        assertTrue((float)0.55 == forecast.getTemp());
         //USATO PER FARE TESTING, I VALORI VANNO CODATI AL MOMENTO
+    }
+
+    @Test
+    public void testManual() {
+        Logger logger = LoggerProducer.debugLogger(WeatherManagerImplTest.class);
+        WeatherManagerImpl wm = new WeatherManagerImpl();
+        wm.initOpenWeatherMap();
+
+        //prova con oggi        
+        Calendar cal = Calendar.getInstance();
+        logger.log(LoggerLevel.DEBUG, "Tempo del: {0}", cal.getTime().
+                toString());
+        WeatherForecast forecast = wm.getWeather(cal, "Rome");
+        logger.log(LoggerLevel.DEBUG, forecast.toString());
+
+        wm = new WeatherManagerImpl();
+        wm.initOpenWeatherMap();
+        //prova con domani
+        cal.add(Calendar.DATE, 1);
+        logger.log(LoggerLevel.DEBUG, "Tempo del: {0}", cal.getTime().
+                toString());
+        forecast = wm.getWeather(cal, "Rome");
+        logger.log(LoggerLevel.DEBUG, forecast.toString());
+
+        wm = new WeatherManagerImpl();
+        wm.initOpenWeatherMap();
+        //prova fra 2 giorni
+        cal.add(Calendar.DATE, 1);
+        logger.log(LoggerLevel.DEBUG, "Tempo del: {0}", cal.getTime().
+                toString());
+        forecast = wm.getWeather(cal, "Rome");
+        logger.log(LoggerLevel.DEBUG, forecast.toString());
+
+        wm = new WeatherManagerImpl();
+        wm.initOpenWeatherMap();
+        //prova fra 4 giorni
+        cal.add(Calendar.DATE, 2);
+        logger.log(LoggerLevel.DEBUG, "Tempo del: {0}", cal.getTime().
+                toString());
+        forecast = wm.getWeather(cal, "Rome");
+        logger.log(LoggerLevel.DEBUG, forecast.toString());
+
+        wm = new WeatherManagerImpl();
+        wm.initOpenWeatherMap();
+        //prova fra 5 giorni
+        cal.add(Calendar.DATE, 1);
+        logger.log(LoggerLevel.DEBUG, "Tempo del: {0}", cal.getTime().
+                toString());
+        forecast = wm.getWeather(cal, "Rome");
+        logger.log(LoggerLevel.DEBUG, forecast.toString());
+
+        wm = new WeatherManagerImpl();
+        wm.initOpenWeatherMap();
+        //prova fra 6 giorni
+        cal.add(Calendar.DATE, 1);
+        logger.log(LoggerLevel.DEBUG, "Tempo del: {0}", cal.getTime().
+                toString());
+        forecast = wm.getWeather(cal, "Rome");
+        logger.log(LoggerLevel.DEBUG, forecast.toString());
+
+        wm = new WeatherManagerImpl();
+        wm.initOpenWeatherMap();
+        //prova fra 10 giorni
+        cal.add(Calendar.DATE, 4);
+        logger.log(LoggerLevel.DEBUG, "Tempo del: {0}", cal.getTime().
+                toString());
+        forecast = wm.getWeather(cal, "Rome");
+        logger.log(LoggerLevel.DEBUG, forecast.toString());
     }
 }
