@@ -16,48 +16,46 @@ and open the template in the editor.
 
         <ui:define name="content">
             <h1>New Event</h1>
-            <h:form>
+            <h:form id="newEventForm">
 
-                <h:inputText value="Title"/><br/>
-                
-                <h:selectOneMenu>
-                    <c:forEach items="#{calendar.calendarNames}" var="cal">
-                        <f:selectItem itemLabel="#{cal}" />
-                    </c:forEach>
-                </h:selectOneMenu><br/>
+                <h:inputText value="#{newEvent.title}" /><br/>
 
                 <h:outputLabel value="Starting date:" />
-                <h:inputText value="#{currentDate}">
+                <h:inputText id="startingDate" value="#{newEvent.startDate}">
                     <f:passThroughAttribute name="type" value="date" />
                 </h:inputText><br/>
 
                 <h:outputLabel value="Until:" />
-                <h:inputText value="gg/mm/aaaa">
+                <h:inputText value="#{newEvent.endDate}">
                     <f:passThroughAttribute name="type" value="date" />
                 </h:inputText><br/>
 
                 <h:outputLabel value="From:" />
-                <h:inputText value="--:--">
+                <h:inputText value="#{newEvent.startTime}">
                     <f:passThroughAttribute name="type" value="time" />
                 </h:inputText><br/>
 
                 <h:outputLabel value="To:" />
-                <h:inputText value="--:--">
+                <h:inputText value="#{newEvent.endTime}">
                     <f:passThroughAttribute name="type" value="time" />
                 </h:inputText><br/>
 
-                <h:outputLabel value="Public:" /><h:selectBooleanCheckbox /><br/>
+                <h:outputLabel value="Public:" /><h:selectBooleanCheckbox value="#{newEvent.publicAccess}" /><br/>
 
-                <h:inputText value="Address"/><br/>
+                <h:inputText value="#{newEvent.location}"/><br/>
 
-                <h:outputLabel value="Outdoor:" /><h:selectBooleanCheckbox /><br/>
+                <h:outputLabel value="Outdoor:" /><h:selectBooleanCheckbox value="#{newEvent.outdoor}"/><br/>
 
-                <h:inputTextarea value="Description" style="resize: none" /><br/>
+                <h:inputTextarea value="#{newEvent.description}" style="resize: none" /><br/>
 
-                <h:commandButton value="Save"></h:commandButton>
+                <h:commandButton id="save" value="Save" action="#{newEvent.save}"></h:commandButton>
                 <h:commandButton value="Cancel"></h:commandButton>
                 <h:commandButton value="Delete"></h:commandButton>
                 <!--invite someone-->
+
+                <div id="inviteDiv">
+                    <h2>Guests:</h2>
+                </div>
             </h:form>
 
         </ui:define>

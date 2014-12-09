@@ -33,8 +33,8 @@ public interface EventManager {
      *
      * @param user owner of the event
      * @param event Event to create
-     * @param insertInCalendar calendar in which the event is inserted
-     * @param invitees invitati all'evento
+     * @param insertInCalendar calendar in which the event has to be inserted, null if none
+     * @param invitees invitati all'evento, null if none
      * @return true if created with success, false if not
      */
     public boolean scheduleNewEvent(UserModel user, Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees);
