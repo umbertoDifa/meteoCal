@@ -77,7 +77,30 @@ public class UserModel implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
     private List<CalendarModel> ownedCalendars;
 
-    //METHODS
+    
+
+ /**
+ *
+ *   CONSTRUCTORS
+ */
+    public UserModel() {
+    }
+
+    public UserModel(String name, String surname, String email, String password) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.password = password;
+    }
+    
+    
+    
+
+
+/**
+ *
+ *   SETTERS & GETTERS
+ */
     public String getSurname() {
         return surname;
     }

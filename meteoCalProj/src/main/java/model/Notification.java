@@ -47,6 +47,10 @@ public class Notification implements Serializable {
         this.relatedEvent = relatedEvent;
         this.type = type;
     }
+
+    public Notification() {
+    }
+    
     
 /**
  *
