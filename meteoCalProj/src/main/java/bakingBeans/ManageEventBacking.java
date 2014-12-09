@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package bakingBeans;
 
 import EJB.interfaces.CalendarManager;
@@ -11,6 +6,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import javax.faces.bean.ManagedProperty;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -30,6 +26,10 @@ public class ManageEventBacking implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ManagedProperty("#{newEvent.idEvent}")
+    String idEvent;
+
+    
     Event eventToCreate;
 
     String description;
@@ -66,6 +66,12 @@ public class ManageEventBacking implements Serializable {
         login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(facesContext, "#{login}", LoginBacking.class);
     }
 
+    public void setEditModality(){
+        //riempire campi title,location etc con
+        //quelli dell evento con id specificato
+        //nel param
+    }
+    
     public void setTitle(String title) {
         this.title = title;
     }
@@ -104,6 +110,10 @@ public class ManageEventBacking implements Serializable {
 
     public String getCalendarName() {
         return calendarName;
+    }
+    
+    public String getIdEvent() {
+        return idEvent;
     }
 
     public void setCalendarName(String calendarName) {
