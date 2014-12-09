@@ -12,7 +12,8 @@ import javax.enterprise.inject.spi.InjectionPoint;
  */
 @Dependent
 public class LoggerProducer {
-
+    
+    //NB. per spegnere il debug cambiare tutti i DEBUG in INFO
     @Produces
     @Default
     private Logger createLogger(InjectionPoint injectionPoint) {

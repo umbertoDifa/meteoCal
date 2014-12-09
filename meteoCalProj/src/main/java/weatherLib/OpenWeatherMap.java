@@ -26,8 +26,11 @@ package weatherLib;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
+import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import utility.LoggerLevel;
+import utility.LoggerProducer;
 
 /**
  * Provides methods to get weather, forecast, and other data from
@@ -84,13 +87,15 @@ public class OpenWeatherMap {
         private final String OWM_MODE_VALUE;
         private final String OWM_UNITS_VALUE;
         private final String OWM_APPID_VALUE;
+        Logger logger = LoggerProducer.debugLogger(OpenWeatherMap.class);
 
         public OWM_Response(String apiKey) {
             this(OWM_URL.PARAMETER_UNITS_VALUE_METRIC, apiKey);
         }
 
         public OWM_Response(OWM_URL unit, String apiKey) {
-            this.OWM_MODE_VALUE = OWM_URL.PARAMETER_MODE_VALUE_JSON.getParameter();
+            this.OWM_MODE_VALUE = OWM_URL.PARAMETER_MODE_VALUE_JSON.
+                    getParameter();
             this.OWM_UNITS_VALUE = unit.getParameter();
             this.OWM_APPID_VALUE = apiKey;
         }
@@ -109,13 +114,16 @@ public class OpenWeatherMap {
                     + this.OWM_UNITS_VALUE + "&"
                     + OWM_URL.PARAMETER_APPID.getParameter()
                     + this.OWM_APPID_VALUE;
+            logger.log(LoggerLevel.DEBUG, "Indirizzo download data: {0}",
+                    address);
 
             response = Tools.Downloader.downloadPage(address);
 
             return response;
         }
 
-        public String currentWeatherByCityName(String cityName, String countryCode)
+        public String currentWeatherByCityName(String cityName,
+                                               String countryCode)
                 throws MalformedURLException, IOException {
             String address;
             String response;
@@ -158,7 +166,8 @@ public class OpenWeatherMap {
             return response;
         }
 
-        public String currentWeatherByCoordinates(float latitude, float longitude)
+        public String currentWeatherByCoordinates(float latitude,
+                                                  float longitude)
                 throws MalformedURLException, IOException {
             String address;
             String response;
@@ -196,13 +205,17 @@ public class OpenWeatherMap {
                     + this.OWM_UNITS_VALUE + "&"
                     + OWM_URL.PARAMETER_APPID.getParameter()
                     + this.OWM_APPID_VALUE;
-            //System.out.println("indirizzo: " + address);
+
+            logger.log(LoggerLevel.DEBUG, "Indirizzo download data: {0}",
+                    address);
+
             response = Tools.Downloader.downloadPage(address);
 
             return response;
         }
 
-        public String forecastWeatherByCityName(String cityName, String countryCode)
+        public String forecastWeatherByCityName(String cityName,
+                                                String countryCode)
                 throws MalformedURLException, IOException {
             String address;
             String response;
@@ -245,7 +258,8 @@ public class OpenWeatherMap {
             return response;
         }
 
-        public String forecastWeatherByCoordinates(float latitude, float longitude)
+        public String forecastWeatherByCoordinates(float latitude,
+                                                   float longitude)
                 throws MalformedURLException, IOException {
             String address;
             String response;
@@ -285,13 +299,16 @@ public class OpenWeatherMap {
                     + this.OWM_UNITS_VALUE + "&"
                     + OWM_URL.PARAMETER_APPID.getParameter()
                     + this.OWM_APPID_VALUE;
+            logger.log(LoggerLevel.DEBUG, "Indirizzo download data: {0}",
+                    address);
 
             response = Tools.Downloader.downloadPage(address);
 
             return response;
         }
 
-        public String dailyForecastByCityName(String cityName, String countryCode, byte count)
+        public String dailyForecastByCityName(String cityName,
+                                              String countryCode, byte count)
                 throws MalformedURLException, IOException {
             String address;
             String response;
@@ -338,7 +355,8 @@ public class OpenWeatherMap {
             return response;
         }
 
-        public String dailyForecastByCoordinates(float latitude, float longitude, byte count)
+        public String dailyForecastByCoordinates(float latitude, float longitude,
+                                                 byte count)
                 throws MalformedURLException, IOException {
             String address;
             String response;
@@ -389,12 +407,14 @@ public class OpenWeatherMap {
         return cwd;
     }
 
-    public CurrentWeatherData currentWeatherByCityName(String cityName, String countryCode)
+    public CurrentWeatherData currentWeatherByCityName(String cityName,
+                                                       String countryCode)
             throws MalformedURLException, IOException, JSONException {
         String jsonResponse;
         CurrentWeatherData cwd;
 
-        jsonResponse = owmResponse.currentWeatherByCityName(cityName, countryCode);
+        jsonResponse = owmResponse.currentWeatherByCityName(cityName,
+                countryCode);
         cwd = this.currentWeatherFromResponse(jsonResponse);
 
         return cwd;
@@ -411,12 +431,14 @@ public class OpenWeatherMap {
         return cwd;
     }
 
-    public CurrentWeatherData currentWeatherByCoordinates(float latitude, float longitude)
+    public CurrentWeatherData currentWeatherByCoordinates(float latitude,
+                                                          float longitude)
             throws MalformedURLException, IOException, JSONException {
         String jsonResponse;
         CurrentWeatherData cwd;
 
-        jsonResponse = owmResponse.currentWeatherByCoordinates(latitude, longitude);
+        jsonResponse = owmResponse.currentWeatherByCoordinates(latitude,
+                longitude);
         cwd = this.currentWeatherFromResponse(jsonResponse);
 
         return cwd;
@@ -444,12 +466,14 @@ public class OpenWeatherMap {
         return fwd;
     }
 
-    public ForecastWeatherData forecastWeatherByCityName(String cityName, String countryCode)
+    public ForecastWeatherData forecastWeatherByCityName(String cityName,
+                                                         String countryCode)
             throws MalformedURLException, IOException, JSONException {
         String jsonResponse;
         ForecastWeatherData fwd;
 
-        jsonResponse = owmResponse.forecastWeatherByCityName(cityName, countryCode);
+        jsonResponse = owmResponse.forecastWeatherByCityName(cityName,
+                countryCode);
         fwd = this.forecastWeatherFromResponse(jsonResponse);
 
         return fwd;
@@ -466,12 +490,14 @@ public class OpenWeatherMap {
         return fwd;
     }
 
-    public ForecastWeatherData forecastWeatherByCoordinates(float latitude, float longitude)
+    public ForecastWeatherData forecastWeatherByCoordinates(float latitude,
+                                                            float longitude)
             throws MalformedURLException, IOException, JSONException {
         String jsonResponse;
         ForecastWeatherData fwd;
 
-        jsonResponse = owmResponse.forecastWeatherByCoordinates(latitude, longitude);
+        jsonResponse = owmResponse.forecastWeatherByCoordinates(latitude,
+                longitude);
         fwd = this.forecastWeatherFromResponse(jsonResponse);
 
         return fwd;
@@ -499,12 +525,15 @@ public class OpenWeatherMap {
         return dfd;
     }
 
-    public DailyForecastData dailyForecastByCityName(String cityName, String countryCode, byte count)
+    public DailyForecastData dailyForecastByCityName(String cityName,
+                                                     String countryCode,
+                                                     byte count)
             throws MalformedURLException, IOException, JSONException {
         String jsonResponse;
         DailyForecastData dfd;
 
-        jsonResponse = owmResponse.dailyForecastByCityName(cityName, countryCode, count);
+        jsonResponse = owmResponse.
+                dailyForecastByCityName(cityName, countryCode, count);
         dfd = this.dailyForecastFromResponse(jsonResponse);
 
         return dfd;
@@ -521,12 +550,15 @@ public class OpenWeatherMap {
         return dfd;
     }
 
-    public DailyForecastData dailyForecastByCoordinates(float latitude, float longitude, byte count)
+    public DailyForecastData dailyForecastByCoordinates(float latitude,
+                                                        float longitude,
+                                                        byte count)
             throws MalformedURLException, IOException, JSONException {
         String jsonResponse;
         DailyForecastData dfd;
 
-        jsonResponse = owmResponse.dailyForecastByCoordinates(latitude, longitude, count);
+        jsonResponse = owmResponse.dailyForecastByCoordinates(latitude,
+                longitude, count);
         dfd = this.dailyForecastFromResponse(jsonResponse);
 
         return dfd;
