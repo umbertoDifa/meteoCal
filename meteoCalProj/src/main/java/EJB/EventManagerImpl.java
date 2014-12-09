@@ -37,13 +37,7 @@ public class EventManagerImpl implements EventManager {
     @Override
     public List<Object> search(Object thingToSearch) {
         return searchManager.search(thingToSearch);
-    }
-
-    @Override
-    public boolean saveInvites(List<UserModel> invitee) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        //TODO secondo me questa deve stare nel backing
-    }
+    }  
 
     @Override
     public boolean checkData() {
