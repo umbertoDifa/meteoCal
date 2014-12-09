@@ -9,6 +9,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -17,6 +18,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "PUBLIC_EVENT")
+
+@NamedQuery(name= "findNextPublicEvents", query= "SELECT e FROM PublicEvent e WHERE e.startDateTime>= CURRENT_TIMESTAMP AND e.owner <> :user")
+
 public class PublicEvent extends Event {
     
     @ManyToMany

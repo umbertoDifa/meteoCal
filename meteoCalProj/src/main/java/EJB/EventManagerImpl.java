@@ -4,6 +4,7 @@ import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.SearchManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,6 +14,9 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import model.Event;
+import model.Invitation;
+import model.InvitationAnswer;
+import model.PublicEvent;
 import model.UserModel;
 
 @Stateless
@@ -37,7 +41,7 @@ public class EventManagerImpl implements EventManager {
     @Override
     public List<Object> search(Object thingToSearch) {
         return searchManager.search(thingToSearch);
-    }  
+    }
 
     @Override
     public boolean checkData() {
@@ -60,4 +64,37 @@ public class EventManagerImpl implements EventManager {
         }
     }
 
+    public List<PublicEvent> eventOnWall(UserModel user) {
+        return database.createNamedQuery("findNextPublicEvents").setParameter("user", user.getId()).setMaxResults(10).getResultList();
+
+    }
+
+    public List<Event> ownedEventonWall(UserModel user) {
+        return user.getOwnedEvents().subList(0, 9);
+    }
+
+    public List<Event> acceptedEventsOnWall(UserModel user) {
+        List<Event> events = new ArrayList<>();
+        List<Invitation> invitations = user.getInvitations();
+        for (int i = 0; i < 10 || i < invitations.size(); i++) {
+            if (invitations.get(i).getAnswer().equals(InvitationAnswer.YES)) {
+                events.add(invitations.get(i).getEvent());
+            }
+
+        }
+        return events;
+    }
+
+    public List<Event> invitedEventsOnWall(UserModel user) {
+        List<Event> events = new ArrayList<>();
+        List<Invitation> invitations = user.getInvitations();
+        for (int i = 0; i < 10 || i < invitations.size(); i++) {
+            events.add(invitations.get(i).getEvent());
+        }
+        return events;
+    }
+
+    public List<PublicEvent> joinedEventsOnWall(UserModel user) {
+        return user.getPublicJoins().subList(0, 9);
+    }
 }

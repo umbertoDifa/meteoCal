@@ -32,9 +32,7 @@ import javax.persistence.Temporal;
     //COME IMPOSTARE IL PARAMETRO: namedQuery.setParameter("search", "%" + value + "%");
     @NamedQuery(name = "findEventbyString", query = "SELECT e FROM Event e WHERE e.title LIKE :search"),
 
-    @NamedQuery(name = "findEventbyTitle", query = "SELECT e FROM Event e WHERE e.title=:title"),
-    
-    @NamedQuery(name= "findNextEvents,", query= "SELECT e FROM Event e WHERE e.startDateTime>= CURRENT_TIMESTAMP ")
+    @NamedQuery(name = "findEventbyTitle", query = "SELECT e FROM Event e WHERE e.title=:title")
 
 })
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
