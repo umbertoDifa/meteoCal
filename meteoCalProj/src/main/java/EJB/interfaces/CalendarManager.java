@@ -43,7 +43,7 @@ public interface CalendarManager {
      * @param calendar Calendario dell'utente in cui inserirlo
      * @return true se inserito,false se non
      */
-    public ControlMessages addToCalendar(Event event, CalendarModel calendar, UserModel user);
+    public ControlMessages addToCalendar(Event event, CalendarModel calendar);
 
     public void exportCalendar(CalendarModel calendar);
 

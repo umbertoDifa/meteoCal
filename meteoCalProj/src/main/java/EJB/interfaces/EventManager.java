@@ -29,5 +29,5 @@ public interface EventManager {
      * @param invitees invitati all'evento, null if none
      * @return true if created with success, false if not
      */
-    public boolean scheduleNewEvent(UserModel user, Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees);
+    public boolean scheduleNewEvent( Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees);
 }

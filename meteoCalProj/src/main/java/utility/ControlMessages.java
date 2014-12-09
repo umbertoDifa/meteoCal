@@ -15,7 +15,8 @@ public enum ControlMessages {
     WRONG_PASSWORD(1, "Incorrect Password"),
     EVENT_ALREADY_IN_CALENDARS(2, "The event is already in a user calendar"),
     EVENT_ADDED(3, "The event has been added to the user calendar"),
-    LOGIN_SUCCESSFUL(4, "The user has been logged in"),;
+    LOGIN_SUCCESSFUL(4, "The user has been logged in"),
+    ERROR_IN_ADDING_EVENT_TO_CAL(5, "The event cannot be added to the calendar");
 
     //static?
     private final int index;

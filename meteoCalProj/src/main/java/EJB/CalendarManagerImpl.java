@@ -26,6 +26,7 @@ public class CalendarManagerImpl implements CalendarManager {
 
     @Inject
     WeatherManager weatherManager;
+   
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
@@ -78,20 +79,23 @@ public class CalendarManagerImpl implements CalendarManager {
     }
 
     @Override
-    public ControlMessages addToCalendar(Event event, CalendarModel calendar, UserModel user
-    ) {
+    public ControlMessages addToCalendar(Event event, CalendarModel calendar) {
         //se l'evento non è in nessun calendario dell'utente
-        for (CalendarModel cal : user.getOwnedCalendars()) {
+        database.getTransaction().begin();
+        for (CalendarModel cal : event.getOwner().getOwnedCalendars()) {
             for (Event e : cal.getEventsInCalendar()) {
                 if (e.equals(event)) {
-                    return ControlMessages.EVENT_ALREADY_IN_CALENDARS;
+                    calendar.getEventsInCalendar().remove(e);
                 }
             }
         }
-        //allora lo aggiungo
-        //TODO basta aggiungere a questa lista?
-        //calendar.setEventsInCalendar();
-        return ControlMessages.EVENT_ADDED;
+        if (calendar.addEventInCalendar(event)) {
+            database.getTransaction().commit();
+            return ControlMessages.EVENT_ADDED;
+        } else {
+            database.getTransaction().rollback();
+        }
+        return ControlMessages.ERROR_IN_ADDING_EVENT_TO_CAL;
     }
 
     @Override

@@ -60,6 +60,7 @@ public class CalendarModel implements Serializable {
     *
     *  SETTERS & GETTERS 
     */
+    
     public String getTitle() {
         return title;
 
@@ -69,9 +70,6 @@ public class CalendarModel implements Serializable {
         return eventsInCalendar;
     }
 
-    public void setEventsInCalendar(List<Event> eventsInCalendar) {
-        this.eventsInCalendar = eventsInCalendar;
-    }
 
     public void setTitle(String calendar_title) {
         this.title = calendar_title;
@@ -101,4 +99,13 @@ public class CalendarModel implements Serializable {
         this.isDefault = isDefault;
     }
 
+    
+    /**
+    *
+    *  METHODS
+    */
+    
+    public boolean addEventInCalendar(Event event) {
+        return this.eventsInCalendar.add(event);
+    }
 }

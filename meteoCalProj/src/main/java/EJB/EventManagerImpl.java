@@ -45,12 +45,12 @@ public class EventManagerImpl implements EventManager {
     }
 
     @Override
-    public boolean scheduleNewEvent(UserModel user, Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees) {
+    public boolean scheduleNewEvent(Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees) {
         database.persist(event);
         logger.log(Level.INFO, "Event +{0} created", event.getTitle());
 
         if (insertInCalendar != null) {
-            calManager.addToCalendar(event, insertInCalendar, user);
+            calManager.addToCalendar(event, insertInCalendar);
         }
 
         if (invitees != null && invitees.size() > 0) {
