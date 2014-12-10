@@ -6,6 +6,8 @@
 package EJB.interfaces;
 
 import java.util.List;
+import model.Event;
+import model.UserModel;
 
 /**
  *
@@ -15,9 +17,10 @@ public interface SearchManager {
     
     /**
      * Searches the kind of object passed     
-     * @param thingToSearch user or event
      * @return  the list of object found in the database from the search
      */
-    public List<Object> search(Object thingToSearch);
+    public List<UserModel> searchUsers(String stringToSearch);
+    
+    public List<Event> searchEvents(String stringToSearch);
     
 }

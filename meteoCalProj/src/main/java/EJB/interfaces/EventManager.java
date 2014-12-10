@@ -16,8 +16,6 @@ import model.UserModel;
  */
 public interface EventManager {
 
-    public List<Object> search(Object thingToSearch);   
-
     public boolean checkData();
 
     /**
