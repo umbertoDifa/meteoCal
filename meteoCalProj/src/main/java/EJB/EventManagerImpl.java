@@ -52,13 +52,14 @@ public class EventManagerImpl implements EventManager {
     public boolean scheduleNewEvent(Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees) {
         database.persist(event);
         logger.log(Level.INFO, "Event +{0} created", event.getTitle());
-
+        
         if (insertInCalendar != null) {
             calManager.addToCalendar(event, insertInCalendar);
         }
 
         if (invitees != null && invitees.size() > 0) {
-            return invitationManager.createInvitations(invitees, event);
+            invitationManager.createInvitations(invitees, event);
+            return true;//TODO
         } else {
             return true;
         }

@@ -16,7 +16,8 @@ public enum ControlMessages {
     EVENT_ALREADY_IN_CALENDARS(2, "The event is already in a user calendar"),
     EVENT_ADDED(3, "The event has been added to the user calendar"),
     LOGIN_SUCCESSFUL(4, "The user has been logged in"),
-    ERROR_IN_ADDING_EVENT_TO_CAL(5, "The event cannot be added to the calendar");
+    ERROR_ADDING_EVENT_TO_CAL(5, "The event cannot be added to the calendar"),
+    NO_USER_WITH_CALENDAR(6,"The user doesn't have an calendar with the requested name");
 
     //static?
     private final int index;

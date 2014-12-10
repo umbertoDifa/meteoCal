@@ -11,11 +11,15 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import model.CalendarId;
 import model.CalendarModel;
 import model.Event;
 import model.UserModel;
 import utility.ControlMessages;
+import utility.LoggerLevel;
 
 @Stateless
 public class CalendarManagerImpl implements CalendarManager {
@@ -78,26 +82,48 @@ public class CalendarManagerImpl implements CalendarManager {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * aggiunge un evento al calendario, cancellandolo se è presente in altri
+     * calendari dello stesso utente
+     *
+     * @param event Evento da aggiungere
+     * @param calendar Calendario in cui aggiungere l'evento
+     * @return
+     */
     @Override
     public ControlMessages addToCalendar(Event event, CalendarModel calendar) {
-        //se l'evento non è in nessun calendario dell'utente
-        //TODO: perchè getTransaction?
-        //bisogna refreshare i dati prima di fare le cose
-        database.getTransaction().begin();
+
+        calendar = (CalendarModel) database.createNamedQuery(
+                "findCalbyUserAndTitle").setParameter("id",
+                        calendar.getOwner()).setParameter(
+                        "title", calendar.getTitle()).getSingleResult();
+
+        event = database.find(Event.class, event.getId());
+
+        //database.refresh(calendar);
+        //database.refresh(event);
         for (CalendarModel cal : event.getOwner().getOwnedCalendars()) {
             for (Event e : cal.getEventsInCalendar()) {
                 if (e.equals(event)) {
                     calendar.getEventsInCalendar().remove(e);
+                    //TODO: check this remove
                 }
             }
         }
         if (calendar.addEventInCalendar(event)) {
-            database.getTransaction().commit();
+            //calendar.getEventsInCalendar().add(event);
+            logger.log(Level.INFO, "Evento " + event.getTitle()
+                    + " aggiunto al calendario " + calendar.getTitle() + " di "
+                    + calendar.getOwner().getEmail());
+
+            logger.log(LoggerLevel.DEBUG, "Events in calendar now: {0}",
+                    calendar.getEventsInCalendar());
+
             return ControlMessages.EVENT_ADDED;
-        } else {
-            database.getTransaction().rollback();
         }
-        return ControlMessages.ERROR_IN_ADDING_EVENT_TO_CAL;
+
+        logger.log(Level.WARNING, "Evento non aggiunto al calendario");
+        return ControlMessages.ERROR_ADDING_EVENT_TO_CAL;
 
     }
 

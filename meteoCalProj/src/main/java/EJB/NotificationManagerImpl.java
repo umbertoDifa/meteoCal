@@ -4,7 +4,10 @@ import EJB.interfaces.NotificationManager;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import model.Event;
+import model.Notification;
 import model.UserModel;
 import model.NotificationType;
 import utility.EmailSender;
@@ -15,37 +18,40 @@ import utility.LoggerProducer;
 public class NotificationManagerImpl implements NotificationManager {
 
     Logger logger = LoggerProducer.debugLogger(NotificationManagerImpl.class);
+    @PersistenceContext(unitName = "meteoCalDB")
+    private EntityManager database;
 
     @Override
-    public boolean createNotifications(List<UserModel> users, Event event, NotificationType type) {
+    public void createNotifications(List<UserModel> users, Event event, NotificationType type) {
         logger.log(LoggerLevel.DEBUG, "Setting up the notification...");
-        
+
         type.setEventName(event.getTitle()).setEventOwner(
                 event.getOwner().getEmail());
 
         for (UserModel user : users) {
-            createNotification(user, type);
+            createNotification(user, event, type);
         }
         for (UserModel user : users) {
             type.setInviteeName(user.getName()).buildEmail();
             sendEmail(user, type);
         }
 
-        return true;
     }
 
     private void sendEmail(UserModel user, NotificationType type) {
-        logger.log(LoggerLevel.DEBUG, "Mando email");
         String subject = type.getSubject();
         String body = type.getBodyMessage();
-        EmailSender.sendEmail(user.getEmail(), subject, body);
+        //TODO decommenta per mandare email
+        //EmailSender.sendEmail(user.getEmail(), subject, body);
     }
 
-    private boolean createNotification(UserModel user, NotificationType type) {
+    private void createNotification(UserModel user, Event event, NotificationType type) {
         //creo la notifica
+        Notification notification = new Notification(user, event, type);
+
         //la persisto
-        //TODO
-        return true;
+        database.persist(notification);
+
     }
 
 }

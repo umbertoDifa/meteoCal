@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
 import utility.WeatherMessages;
@@ -49,6 +50,7 @@ public class WeatherManagerImplTest {
      *
      * @throws java.lang.Exception
      */
+    @Ignore
     @Test
     public void testGetWeather() throws Exception {
         System.out.println("getWeather");
@@ -65,7 +67,7 @@ public class WeatherManagerImplTest {
 //        assertTrue((float)0.55 == forecast.getTemp());
         //USATO PER FARE TESTING, I VALORI VANNO CODATI AL MOMENTO
     }
-
+    @Ignore
     @Test
     public void testManual() {
         Logger logger = LoggerProducer.debugLogger(WeatherManagerImplTest.class);

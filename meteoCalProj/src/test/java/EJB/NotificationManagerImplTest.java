@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -41,12 +42,13 @@ public class NotificationManagerImplTest {
     /**
      * Test of createNotifications method, of class NotificationManagerImpl.
      */
+    @Ignore
     @Test
     public void testCreateNotifications() throws Exception {
         System.out.println("createNotifications");
         List<UserModel> users = new ArrayList<>();
         UserModel invitee = new UserModel("Umberto", "Di Fabrizio",
-                "umberto.di.fabrizio@gmail.com", "123");
+                "angelo.francesco.mobile@gmail.com", "123");
         UserModel owner = new UserModel("Fra", "Angelo",
                 "fra.angelo@gmail.com", "123");
 
@@ -60,7 +62,13 @@ public class NotificationManagerImplTest {
 
         NotificationManagerImpl instance = new NotificationManagerImpl();
 
-        boolean result = instance.createNotifications(users, event, type);
+        instance.createNotifications(users, event, type);
+        
+        type = NotificationType.EVENT_CHANGED;
+        instance.createNotifications(users, event, type);
+        
+        type = NotificationType.EVENT_CANCELLED;
+        instance.createNotifications(users, event, type);
 
     }
 

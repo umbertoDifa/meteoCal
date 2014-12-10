@@ -30,7 +30,7 @@ import javax.persistence.Table;
 
 @NamedQueries({
     @NamedQuery(name="findOwnedCalendar",query= "SELECT c FROM CalendarModel c WHERE c.owner =:id"),
-    
+   
     //COME IMPOSTARE IL PARAMETRO: namedQuery.setParameter("search", "%" + value + "%");
     @NamedQuery(name="findUserbyString",query= "SELECT u FROM UserModel u WHERE u.name LIKE :search OR u.surname LIKE :search OR u.email LIKE :search")
 
