@@ -18,6 +18,7 @@ import model.Invitation;
 import model.InvitationAnswer;
 import model.PublicEvent;
 import model.UserModel;
+import utility.EventType;
 
 @Stateless
 public class EventManagerImpl implements EventManager {
@@ -64,23 +65,56 @@ public class EventManagerImpl implements EventManager {
             return true;
         }
     }
-
+    
+    
     @Override
-    public List<PublicEvent> eventOnWall(UserModel user) {
-        return database.createNamedQuery("findNextPublicEvents").setParameter("user", user.getId()).setMaxResults(10).getResultList();
+    public List<Event> eventOnWall (utility.EventType type, int n, UserModel owner) {
+        switch (type) {
+            case INVITED: {
+                return invitedEventsOnWall(owner,n);
+            }
+            case PARTECIPATING: {
+                return acceptedEventsOnWall(owner, n);
+            }
+            
+            case JOINED: {
+                List<Event> joinedEvents = new ArrayList<>();
+                joinedEvents.addAll(joinedEventsOnWall(owner, n));
+                return joinedEvents;
+             
+            }
+            
+            case OWNED: {
+                return ownedEventonWall(owner, n);
+            }
+            
+            case PUBLIC: {
+                List<Event> publicEvents = new ArrayList<>();
+                publicEvents.addAll(eventsOnWall(owner, n));
+                return publicEvents;
+            }
+            
+        }
+        return null;
+    }
+
+
+
+    private List<PublicEvent> eventsOnWall(UserModel user, int n) {
+        return database.createNamedQuery("findNextPublicEvents").setParameter("user", user.getId()).setMaxResults(n).getResultList();
 
     }
 
-    @Override
-    public List<Event> ownedEventonWall(UserModel user) {
-        return user.getOwnedEvents().subList(0, 9); //TODO magic number?
+
+    private List<Event> ownedEventonWall(UserModel user, int n) {
+        return user.getOwnedEvents().subList(0, n-1);
     }
 
-    @Override
-    public List<Event> acceptedEventsOnWall(UserModel user) {
+
+    private List<Event> acceptedEventsOnWall(UserModel user, int n) {
         List<Event> events = new ArrayList<>();
         List<Invitation> invitations = user.getInvitations();
-        for (int i = 0; i < 10 || i < invitations.size(); i++) {//TODO: magic number
+        for (int i = 0; i < n || i < invitations.size(); i++) {
             if (invitations.get(i).getAnswer().equals(InvitationAnswer.YES)) {
                 events.add(invitations.get(i).getEvent());
             }
@@ -89,18 +123,18 @@ public class EventManagerImpl implements EventManager {
         return events;
     }
 
-    @Override
-    public List<Event> invitedEventsOnWall(UserModel user) {
+
+    private List<Event> invitedEventsOnWall(UserModel user, int n) {
         List<Event> events = new ArrayList<>();
         List<Invitation> invitations = user.getInvitations();
-        for (int i = 0; i < 10 || i < invitations.size(); i++) {//TODO magic number?
+        for (int i = 0; i < n || i < invitations.size(); i++) {
             events.add(invitations.get(i).getEvent());
         }
         return events;
     }
 
-    @Override
-    public List<PublicEvent> joinedEventsOnWall(UserModel user) {
-        return user.getPublicJoins().subList(0, 9);//TODO magic numbers?
+
+    private List<PublicEvent> joinedEventsOnWall(UserModel user, int n) {
+        return user.getPublicJoins().subList(0, n-1);
     }
 }

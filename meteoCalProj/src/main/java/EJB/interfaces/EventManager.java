@@ -32,13 +32,5 @@ public interface EventManager {
      */
     public boolean scheduleNewEvent( Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees);
     
-    public List<PublicEvent> eventOnWall(UserModel user);
-    
-    public List<Event> ownedEventonWall(UserModel user);
-    
-    public List<Event> acceptedEventsOnWall(UserModel user);
-    
-    public List<Event> invitedEventsOnWall(UserModel user);
-    
-    public List<PublicEvent> joinedEventsOnWall(UserModel user);
+    public List<Event> eventOnWall (utility.EventType type, int n, UserModel owner);
 }

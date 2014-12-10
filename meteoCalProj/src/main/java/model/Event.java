@@ -71,6 +71,26 @@ public abstract class Event implements Serializable {
     private List<model.CalendarModel> inCalendars;
 //   EX ERROR!!
 
+    /**
+    *
+    *   CONSTRUCTORS
+    */
+    
+    //costruiscono una anonymus subclass, non bisogna MAI persisterli prima di aver creato la entity giusta!
+    public Event(String title, Calendar startDateTime, Calendar endDateTime, String location, String description, boolean isOutdoor, UserModel owner) {
+        this.title = title;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.location = location;
+        this.description = description;
+        this.isOutdoor = isOutdoor;
+        this.owner = owner;
+    }
+
+    //costruiscono una anonymus subclass, non bisogna MAI persisterli prima di aver creato la entity giusta!
+    public Event() {
+    }
+
     
     /**
     *

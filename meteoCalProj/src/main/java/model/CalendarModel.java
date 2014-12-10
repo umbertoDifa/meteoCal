@@ -58,6 +58,11 @@ public class CalendarModel implements Serializable {
         this.isDefault = isDefault;
     }
 
+        public CalendarModel(String title, boolean isPublic, boolean isDefault) {
+        this.title = title;
+        this.isPublic = isPublic;
+        this.isDefault = isDefault;
+    }
     /**
     *
     *  SETTERS & GETTERS 

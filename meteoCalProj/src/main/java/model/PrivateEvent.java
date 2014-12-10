@@ -17,9 +17,20 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "PRIVATE_EVENT")
 public class PrivateEvent extends Event{
+    
+
+    /**
+    *
+    *   CONSTRUCTORS
+    */
+
+    public PrivateEvent(String title, Calendar startDateTime, Calendar endDateTime, String location, String description, boolean isOutdoor, UserModel owner) {
+        super(title, startDateTime, endDateTime, location, description, isOutdoor, owner);
+    }
 
     public PrivateEvent() {
     }
+
 
     
     
