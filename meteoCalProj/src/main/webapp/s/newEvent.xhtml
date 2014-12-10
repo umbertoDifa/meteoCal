@@ -9,7 +9,7 @@
 
     <f:metadata>
         <f:viewParam name="ev" value="#{newEvent.idEvent}"/>
-        <f:event type="preRenderView" listener="#{newEvent.setEditModality}"
+        <f:event type="preRenderView" listener="#{newEvent.setEditModality}"/>
     </f:metadata>
     
     <ui:composition template="/template.xhtml">
@@ -22,8 +22,9 @@
 
                 <h:selectOneMenu value="#{newEvent.calendarName}">
                     <c:forEach items="#{calendar.calendarNames}" var="cal">
-                        <f:selectItem itemLabel="#{cal}" />
+                        <f:selectItem itemValue="#{cal}" itemLabel="#{cal}" />
                     </c:forEach>
+                    <f:selectItem value="#{null}" itemLabel="Nessun Calendario" />
                 </h:selectOneMenu><br/>
 
                 <h:outputLabel value="Starting date:" />

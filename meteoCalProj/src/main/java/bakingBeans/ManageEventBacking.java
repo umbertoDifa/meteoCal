@@ -28,7 +28,6 @@ public class ManageEventBacking implements Serializable {
     @ManagedProperty("#{newEvent.idEvent}")
     String idEvent;
 
-    
     Event eventToCreate;
 
     String description;
@@ -65,12 +64,12 @@ public class ManageEventBacking implements Serializable {
         login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(facesContext, "#{login}", LoginBacking.class);
     }
 
-    public void setEditModality(){
+    public void setEditModality() {
         //riempire campi title,location etc con
         //quelli dell evento con id specificato
         //nel param
     }
-    
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -110,13 +109,13 @@ public class ManageEventBacking implements Serializable {
     public String getCalendarName() {
         return calendarName;
     }
-    
+
     public String getIdEvent() {
         return idEvent;
     }
 
-    public void setCalendarName(String calendarName) {
-        this.calendarName = calendarName;
+    public void setCalendarName(String nameCal) {
+        this.calendarName = nameCal;
     }
 
     public void setInCalendar(String calendarName) {
@@ -213,6 +212,10 @@ public class ManageEventBacking implements Serializable {
         eventToCreate.setStartDateTime(startDateTime);
         eventToCreate.setEndDateTime(endDateTime);
         eventToCreate.setOwner(login.getCurrentUser());
+
+        //setto calendar all'entità corrispondente al calendarName
+        setInCalendar(calendarName);
+
         //passo all eventManager l'ownerId, l'evento riempito, il calendario
         //dove metterlo e la lista degli invitati
         eventManager.scheduleNewEvent(eventToCreate, calendar, null);
