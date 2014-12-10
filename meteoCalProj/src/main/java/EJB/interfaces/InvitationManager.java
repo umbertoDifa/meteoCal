@@ -20,5 +20,5 @@ public interface InvitationManager {
      * @param event event for which the invitation is created
      * @return true if success
      */
-    public boolean createInvitations(List<UserModel> userToInvite, Event event);
+    public void createInvitations(List<UserModel> userToInvite, Event event);
 }

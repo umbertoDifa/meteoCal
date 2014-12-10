@@ -15,12 +15,14 @@ import model.UserModel;
  * @author Umberto
  */
 public interface NotificationManager {
+
     /**
      * Creates a notfication of the specified type for the users in the list
+     *
      * @param users list of users ot notify
      * @param event
      * @param type
      * @return true if success
      */
-    public boolean createNotifications(List<UserModel> users, Event event, NotificationType type);
+    public void createNotifications(List<UserModel> users, Event event, NotificationType type);
 }

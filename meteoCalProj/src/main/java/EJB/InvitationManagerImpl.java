@@ -16,20 +16,19 @@ public class InvitationManagerImpl implements InvitationManager {
     NotificationManager notificationManager;
 
     @Override
-    public boolean createInvitations(List<UserModel> usersToInvite, Event event) {
+    public void createInvitations(List<UserModel> usersToInvite, Event event) {
         for (UserModel user : usersToInvite) {
             this.createInvitation(user, event);
         }
         notificationManager.createNotifications(usersToInvite, event,
                 NotificationType.INVITATION);
-
-        return true;
     }
 
     private void createInvitation(UserModel user, Event event) {
         //verifico se esiste già un invito per quell'utente a quell'evento        
         //creo invito
         //lo persisto
+        //TODO do
     }
 
 }

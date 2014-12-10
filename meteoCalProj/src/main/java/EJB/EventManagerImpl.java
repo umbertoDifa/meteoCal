@@ -58,7 +58,8 @@ public class EventManagerImpl implements EventManager {
         }
 
         if (invitees != null && invitees.size() > 0) {
-            return invitationManager.createInvitations(invitees, event);
+            invitationManager.createInvitations(invitees, event);
+            return true;//TODO
         } else {
             return true;
         }
