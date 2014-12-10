@@ -172,6 +172,11 @@ public abstract class Event implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+    
+    /**
+    *
+    *   METHODS
+    */
 
     @Override
     public int hashCode() {
@@ -197,5 +202,12 @@ public abstract class Event implements Serializable {
     public String toString() {
         return "model.Event[ id=" + id + " ]";
     }
-
+    
+    public String getDateStart() {
+        return this.startDateTime.getTime().toString();
+    }
+    
+    public void setDateStart() {
+    }
+           
 }

@@ -63,6 +63,8 @@ public class EventManagerImpl implements EventManager {
 
     @Override
     public List<Event> eventOnWall(utility.EventType type, int n, UserModel owner) {
+        owner = database.find(UserModel.class, owner.getId());
+        database.refresh(owner);
         switch (type) {
             case INVITED: {
                 return invitedEventsOnWall(owner, n);
@@ -98,8 +100,6 @@ public class EventManagerImpl implements EventManager {
     }
 
     private List<Event> ownedEventonWall(UserModel user, int n) {
-        user = database.find(UserModel.class, user.getId());
-        database.refresh(user);
         List<Event> r = user.getOwnedEvents();
         if (n > r.size()) {
             return r;
