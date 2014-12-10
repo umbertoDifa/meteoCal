@@ -6,8 +6,9 @@
 package EJB.interfaces;
 
 import java.util.List;
-import model.UserModel;
+import model.Event;
 import model.NotificationType;
+import model.UserModel;
 
 /**
  *
@@ -16,9 +17,10 @@ import model.NotificationType;
 public interface NotificationManager {
     /**
      * Creates a notfication of the specified type for the users in the list
-     * @param users list of users ot notify 
-     * @param type type of notification
+     * @param users list of users ot notify
+     * @param event
+     * @param type
      * @return true if success
      */
-    public boolean createNotifications(List<UserModel> users, NotificationType type);
+    public boolean createNotifications(List<UserModel> users, Event event, NotificationType type);
 }

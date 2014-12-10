@@ -10,13 +10,13 @@ import javax.mail.internet.*;
  * @author umboDifa
  */
 public class EmailSender {
-
+    
     private static String USER_NAME = "meteoCalendar.notification";  // GMail user name (just the part before "@gmail.com")
     private static String PASSWORD = "fravaleumbo"; // GMail password
     private static String RECIPIENT_DEFAULT = "umberto.difabrizio@gmail.com";
     private static Logger logger = LoggerProducer.debugLogger(EmailSender.class);
-
-    public static void sendEmail(String recipient) {
+    
+    public static void sendEmail(String recipient, String subject, String body) {
         String from = USER_NAME;
         String pass = PASSWORD;
         String[] to;
@@ -25,13 +25,11 @@ public class EmailSender {
         } else {
             to = new String[]{recipient};
         }
-
-        String subject = "Meteo Calendar Notification";
-        String body = "DEscrizione della notifica";
-
+        
         sendFromGMail(from, pass, to, subject, body);
+        logger.log(LoggerLevel.DEBUG, "Email successfully sent to {0}", to);
     }
-
+    
     private static void sendFromGMail(String from, String pass, String[] to,
                                       String subject, String body) {
         Properties props = System.getProperties();
@@ -42,10 +40,10 @@ public class EmailSender {
         props.put("mail.smtp.password", pass);
         props.put("mail.smtp.port", "587");
         props.put("mail.smtp.auth", "true");
-
+        
         Session session = Session.getDefaultInstance(props);
         MimeMessage message = new MimeMessage(session);
-
+        
         try {
             message.setFrom(new InternetAddress(from));
             InternetAddress[] toAddress = new InternetAddress[to.length];
@@ -54,11 +52,11 @@ public class EmailSender {
             for (int i = 0; i < to.length; i++) {
                 toAddress[i] = new InternetAddress(to[i]);
             }
-
+            
             for (int i = 0; i < toAddress.length; i++) {
                 message.addRecipient(Message.RecipientType.TO, toAddress[i]);
             }
-
+            
             message.setSubject(subject);
             message.setText(body);
             Transport transport = session.getTransport("smtp");
@@ -69,7 +67,7 @@ public class EmailSender {
             logger.log(LoggerLevel.SEVERE, ae.getMessage(), ae);
         } catch (MessagingException me) {
             logger.log(LoggerLevel.SEVERE, me.getMessage(), me);
-
+            
         }
     }
 }
