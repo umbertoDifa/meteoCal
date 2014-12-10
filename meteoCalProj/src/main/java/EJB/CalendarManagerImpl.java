@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import model.CalendarId;
 import model.CalendarModel;
 import model.Event;
 import model.UserModel;
@@ -83,7 +84,10 @@ public class CalendarManagerImpl implements CalendarManager {
         //se l'evento non è in nessun calendario dell'utente
         //TODO: perchè getTransaction?
         //bisogna refreshare i dati prima di fare le cose
-        database.getTransaction().begin();
+        calendar = (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id", calendar.getOwner()).setParameter("title", calendar.getTitle()).getSingleResult();
+        event = database.find(Event.class, event.getId());
+        database.refresh(calendar);
+        database.refresh(event);
         for (CalendarModel cal : event.getOwner().getOwnedCalendars()) {
             for (Event e : cal.getEventsInCalendar()) {
                 if (e.equals(event)) {
@@ -92,10 +96,12 @@ public class CalendarManagerImpl implements CalendarManager {
             }
         }
         if (calendar.addEventInCalendar(event)) {
-            database.getTransaction().commit();
+            logger.log(Level.INFO, "AGGIUNTO AL CALENDARIO ");
+            database.refresh(calendar);
+            database.refresh(event);
             return ControlMessages.EVENT_ADDED;
         } else {
-            database.getTransaction().rollback();
+            logger.log(Level.INFO, "NON AGGIUNTO AL CALENDARIO ");
         }
         return ControlMessages.ERROR_IN_ADDING_EVENT_TO_CAL;
 

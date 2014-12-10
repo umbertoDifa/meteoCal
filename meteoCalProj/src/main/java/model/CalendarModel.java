@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -25,6 +26,7 @@ import javax.persistence.Table;
 @Entity
 @IdClass(CalendarId.class)
 @Table(name="CALENDAR")
+ @NamedQuery(name= "findCalbyUserAndTitle", query= "SELECT c FROM CalendarModel c WHERE c.owner =:id AND c.title=:title")
 public class CalendarModel implements Serializable {
 
     @Id
