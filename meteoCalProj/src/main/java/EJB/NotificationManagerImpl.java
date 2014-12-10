@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import model.UserModel;
 import model.NotificationType;
+import utility.EmailSender;
 
 @Stateless
 public class NotificationManagerImpl implements NotificationManager {
@@ -22,7 +23,8 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private void sendEmail(UserModel user, NotificationType type) {
-        //TODO è possibile generare un email sender con la insert code!
+        //TODO questo è già fatto devo solo copiare codice
+        //EmailSender.sendEmail(user.getEmail());
     }
 
     private boolean createNotification(UserModel user, NotificationType type) {

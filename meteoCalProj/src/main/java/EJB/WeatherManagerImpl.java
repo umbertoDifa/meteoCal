@@ -15,11 +15,13 @@ import utility.LoggerLevel;
 import utility.LoggerProducer;
 import utility.TimeTool;
 import utility.WeatherMessages;
+import utility.WeatherType;
 import weatherLib.CurrentWeatherData;
 import weatherLib.DailyForecastData;
 import weatherLib.ForecastWeatherData;
 import weatherLib.OpenWeatherMap;
 
+//TODO se c'è tempo, si potrebbe dirgli di usare 5 se current non c'è e usare 16 se 5 non c'è
 @Stateless
 public class WeatherManagerImpl implements WeatherManager {
 
@@ -94,30 +96,31 @@ public class WeatherManagerImpl implements WeatherManager {
 
         tomorrow.add(Calendar.DATE, 1);
         yesterday.add(Calendar.DATE, -1);
-        in5Days.add(Calendar.DATE, 5);//TODO magic number
-        in16Days.add(Calendar.DATE, 15);
+        in5Days.add(Calendar.DATE, 5);
+        in16Days.add(Calendar.DATE, 16);
 
         //se chiede il forecast di un giorno passato per ora il risultato 
         //è unpredictable
         //TODO vedi se riesci a fare qualcosa con la history
         //se per un giorno passato allora unpredictable
-        if (isBefore(dayToCheck, today)) {
+        if (TimeTool.isBefore(dayToCheck, today)) {
             return ForecastType.UNPREDICTABLE;
         }
 
         //se per oggi allora current weather        
-        if (isBefore(dayToCheck, tomorrow) && isAfter(dayToCheck, yesterday)) {
+        if (TimeTool.isBefore(dayToCheck, tomorrow) && TimeTool.isAfter(
+                dayToCheck, yesterday)) {
             return ForecastType.CURRENT_WEATHER;
         }
 
         //se chiede il tempo entro i prossimi 5 giorni
-        if (isBefore(dayToCheck, in5Days)) {
+        if (TimeTool.isBefore(dayToCheck, in5Days)) {
             return ForecastType.FORECAST_5_3HOURS;
 
         }
 
         //se chiede il tempo entro i prox 16 giorni
-        if (isBefore(dayToCheck, in16Days)) {
+        if (TimeTool.isBefore(dayToCheck, in16Days)) {
             return ForecastType.FORECAST_16_DAILY;
 
         }
@@ -126,55 +129,6 @@ public class WeatherManagerImpl implements WeatherManager {
         logger.log(LoggerLevel.DEBUG, "Giorno troppo lontano");
         return ForecastType.UNPREDICTABLE;
 
-    }
-
-    /**
-     * if day1 is before day2
-     *
-     * @param day1
-     * @param day2
-     * @return
-     */
-    private boolean isBefore(Calendar day1, Calendar day2) {
-        Calendar day1Normalized;
-        Calendar day2Normalized;
-
-        //normalizzo i giorni settando le ore a zero 
-        day1Normalized = normalize(day1);
-        day2Normalized = normalize(day2);
-
-        //uso la compare di libreria
-        return day1Normalized.before(day2Normalized);
-    }
-
-    /**
-     * returns the day with 0 hours 0 min and 0 secs
-     *
-     * @param day day to normalize
-     * @return
-     */
-    private Calendar normalize(Calendar day) {
-        Calendar dayNormalized = (Calendar) day.clone();
-
-        dayNormalized.set(day.get(Calendar.YEAR), day.get(Calendar.MONTH),
-                day.get(Calendar.DATE));
-        dayNormalized.set(Calendar.HOUR_OF_DAY, 0);
-        dayNormalized.set(Calendar.MINUTE, 0);
-        dayNormalized.set(Calendar.SECOND, 0);
-        dayNormalized.set(Calendar.MILLISECOND, 0);
-
-        return dayNormalized;
-    }
-
-    /**
-     * if day1 is after day2
-     *
-     * @param day1
-     * @param day2
-     * @return
-     */
-    private boolean isAfter(Calendar day1, Calendar day2) {
-        return !isBefore(day1, day2);
     }
 
     private void createWeatherForecast(Calendar day) {
@@ -261,7 +215,6 @@ public class WeatherManagerImpl implements WeatherManager {
         return false;
     }
 
-    //TODO usase 5 se current non funziona e 16  se 5 non funziona
     private boolean infoIsAvailable16Days(Calendar day) {
         try {
             position = this.findDayPositionInForecastList(dailyForecast, day);
@@ -290,8 +243,6 @@ public class WeatherManagerImpl implements WeatherManager {
             logger.log(Level.WARNING, ex.getMessage(), ex);
             return false;
         }
-        //TODO, in realtà a me non interassano tutti i campi, ma prinicpalemnte temperatura e main
-        //è inutile far fallire solo perchè manca la pressione ad esempio
     }
 
     private boolean infoIsAvailable5Days(Calendar day) {
@@ -414,14 +365,9 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private int findDayPositionInForecastList(ForecastWeatherData forecast,
-                                              Calendar day) throws
-            ForecastDayNotFoundException {
+                                              Calendar day) throws ForecastDayNotFoundException {
         logger.log(LoggerLevel.DEBUG, "Trying to find the forecast position...");
 
-        //TODO il numero esatto di elementi dovrebbe essere 41, se è minore
-        //o se cmq non si trova l'info, bisogna ripetere la richiesta
-        //prima di lanciare l'exception
-        //in questo caso l'ultima spieggia è cercare il forecast16
         if (forecast.hasForecast_List()) {
             for (int i = 0; i < forecast.getForecast_List_Count(); i++) {
                 if (forecast.getForecast_List().get(i) != null
@@ -437,8 +383,7 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private int findDayPositionInForecastList(DailyForecastData dailyForecast,
-                                              Calendar day) throws
-            ForecastDayNotFoundException {
+                                              Calendar day) throws ForecastDayNotFoundException {
         logger.log(LoggerLevel.DEBUG, "Trying to find the forecast position...");
 
         if (dailyForecast.hasForecast_List()) {
@@ -456,7 +401,11 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private void setGoodOrBadWeather() {
-        weatherForecast.setMessage(WeatherMessages.BAD_WEATHER);
+        if (WeatherType.isBadWeather(weatherForecast.getWeatherId())) {
+            weatherForecast.setMessage(WeatherMessages.BAD_WEATHER);
+        } else {
+            weatherForecast.setMessage(WeatherMessages.GOOD_WEATHER);
+        }
     }
 
 }

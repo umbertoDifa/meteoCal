@@ -26,7 +26,6 @@ public class CalendarManagerImpl implements CalendarManager {
 
     @Inject
     WeatherManager weatherManager;
-   
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
@@ -51,13 +50,15 @@ public class CalendarManagerImpl implements CalendarManager {
     }
 
     @Override
+    //TODO qui user non serve perchè deduco l'id dal calendar
     public boolean addCalendarToUser(UserModel user, CalendarModel cal) {
         user = database.find(UserModel.class, user.getId());
         cal.setOwner(user);
         cal.setTitle("Pubblic_Cal");
         try {
             database.persist(cal);
-            logger.log(Level.INFO, "Pulic_Cal created for user:", user.getEmail());
+            logger.log(Level.INFO, "Pulic_Cal created for user: {0}",
+                    user.getEmail());
             return true;
         } catch (EntityExistsException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -69,18 +70,19 @@ public class CalendarManagerImpl implements CalendarManager {
     public boolean checkData() {
         this.checkWeather();
         this.checkConflicts();
-        return true;
+        return true;//TODO do
     }
 
     @Override
-    public Calendar findFreeDay(Calendar fromBusyDay, int weeksAhead
-    ) {
+    public Calendar findFreeDay(Calendar fromBusyDay, int weeksAhead) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public ControlMessages addToCalendar(Event event, CalendarModel calendar) {
         //se l'evento non è in nessun calendario dell'utente
+        //TODO: perchè getTransaction?
+        //bisogna refreshare i dati prima di fare le cose
         database.getTransaction().begin();
         for (CalendarModel cal : event.getOwner().getOwnedCalendars()) {
             for (Event e : cal.getEventsInCalendar()) {
@@ -96,30 +98,29 @@ public class CalendarManagerImpl implements CalendarManager {
             database.getTransaction().rollback();
         }
         return ControlMessages.ERROR_IN_ADDING_EVENT_TO_CAL;
+
     }
 
     @Override
-    public void exportCalendar(CalendarModel calendar
-    ) {
+    public void exportCalendar(CalendarModel calendar) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void importCalendar(CalendarModel calendar
-    ) {
+    public void importCalendar(CalendarModel calendar) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public CalendarModel createDefaultCalendar(UserModel user
-    ) {
+    public CalendarModel createDefaultCalendar(UserModel user) {
         CalendarModel calendar = new CalendarModel();
         calendar.setIsDefault(true);
         calendar.setIsPublic(false);
         calendar.setOwner(user);
         calendar.setTitle("Default");
 
-        logger.log(Level.INFO, "Default calendar for user +{0} created", user.getEmail());
+        logger.log(Level.INFO, "Default calendar for user +{0} created",
+                user.getEmail());
 
         return calendar;
     }
