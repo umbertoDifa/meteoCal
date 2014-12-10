@@ -30,15 +30,15 @@ public class ManageEventBacking implements Serializable {
 
     Event eventToCreate;
 
-    String description;
-    String location;
+    String description = "description";
+    String location = "location";
     boolean outdoor;
     boolean publicAccess;
     String title = "initialTitle";
-    String startDate;
-    String endDate;
-    String startTime;
-    String endTime;
+    String startDate = "10/12/2015";
+    String endDate = "12/12/2015";
+    String startTime = "01:03";
+    String endTime = "05:07";
     String calendarName;
 
     CalendarModel calendar;

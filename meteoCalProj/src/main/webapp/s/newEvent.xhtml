@@ -7,12 +7,15 @@
       xmlns:p="http://java.sun.com/jsf/passthrough"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-    <f:metadata>
-        <f:viewParam name="ev" value="#{newEvent.idEvent}"/>
-        <f:event type="preRenderView" listener="#{newEvent.setEditModality}"/>
-    </f:metadata>
 
     <ui:composition template="/template.xhtml">
+
+        <f:metadata>
+            <f:viewParam name="ev" value="#{newEvent.idEvent}"/>
+            <f:event type="preRenderView" listener="#{newEvent.setEditModality}"/>
+        </f:metadata>
+
+
         <ui:define name="title">new event</ui:define>
         <ui:define name="content">
             <h1>New Event</h1>

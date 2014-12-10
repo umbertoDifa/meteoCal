@@ -30,7 +30,7 @@ public class EventsBacking implements Serializable {
     List<Event> joinedEvents;
     List<Event> wallEvents;
     List<Event> invitations;
-    
+
     final LoginBacking login;
 
     public List<Event> getJoinedEvents() {
@@ -56,7 +56,7 @@ public class EventsBacking implements Serializable {
     public void setInvitations(List<Event> invitations) {
         this.invitations = invitations;
     }
-    
+
     public List<Event> getOwnedEvents() {
         return ownedEvents;
     }
@@ -88,15 +88,20 @@ public class EventsBacking implements Serializable {
         //mi salvo il login per ottenere l'info di chi è loggato
         //e crea o modifica l evento
         login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(facesContext, "#{login}", LoginBacking.class);
-      
+
     }
 
     @PostConstruct
-    public void init(){
-                //riempio le tab
+    public void init() {
+        System.out.println("-dentro la init");
+        //riempio le tab
         ownedEvents = eventManager.eventOnWall(EventType.OWNED, 20, login.getCurrentUser());
         joinedEvents = eventManager.eventOnWall(EventType.JOINED, 20, login.getCurrentUser());
         invitations = eventManager.eventOnWall(EventType.INVITED, 20, login.getCurrentUser());
         wallEvents = eventManager.eventOnWall(EventType.PUBLIC, 20, login.getCurrentUser());
+        System.out.println("--ownedEvents:" +ownedEvents);
+        System.out.println("--joinedEvents:" +joinedEvents);
+        System.out.println("--invitations:" +invitations);
+        System.out.println("--wall:" +wallEvents);
     }
 }

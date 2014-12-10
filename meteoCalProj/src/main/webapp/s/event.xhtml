@@ -13,9 +13,18 @@ and open the template in the editor.
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:composition template="/template.xhtml">
+
+        <f:metadata>
+            <f:viewParam name="id" value="#{viewEvent.eventId}"/>
+            <f:viewAction action="#{viewEvent.findEventById}"/>
+        </f:metadata>
+
         <ui:define name="title">event</ui:define>
 
-        <ui:define name="content"></ui:define>
-        
+        <ui:define name="content">
+
+
+        </ui:define>
+
     </ui:composition>
 </html>
