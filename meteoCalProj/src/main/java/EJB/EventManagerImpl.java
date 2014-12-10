@@ -53,7 +53,6 @@ public class EventManagerImpl implements EventManager {
         database.persist(event);
         logger.log(Level.INFO, "Event +{0} created", event.getTitle());
         
-
         if (insertInCalendar != null) {
             calManager.addToCalendar(event, insertInCalendar);
         }
