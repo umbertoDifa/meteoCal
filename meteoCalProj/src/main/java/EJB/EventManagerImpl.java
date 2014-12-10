@@ -37,12 +37,7 @@ public class EventManagerImpl implements EventManager {
 
     @Inject
     @Default
-    Logger logger;
-
-    @Override
-    public List<Object> search(Object thingToSearch) {
-        return searchManager.search(thingToSearch);
-    }
+    Logger logger;   
 
     @Override
     public boolean checkData() {
