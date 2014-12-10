@@ -35,10 +35,9 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private void sendEmail(UserModel user, NotificationType type) {
-        logger.log(LoggerLevel.DEBUG, "Mando email");
         String subject = type.getSubject();
         String body = type.getBodyMessage();
-        EmailSender.sendEmail(user.getEmail(), subject, body);
+        //EmailSender.sendEmail(user.getEmail(), subject, body);
     }
 
     private boolean createNotification(UserModel user, NotificationType type) {

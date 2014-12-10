@@ -16,11 +16,13 @@ import utility.LoggerProducer;
  */
 public enum NotificationType {
 
-    INVITATION("Invito per il nuovo evento {0}",
-            "Ciao utente {0},\n hai ricevuto un invito per evento {1}.\n Guarda la pagina dellevento al seguente link: {2}. ."), //    WEATHER_CHANGED,
-    //    EVENT_CHANGED,
-    //    EVENT_CANCELLED
-    ;
+    INVITATION("Invito all''evento {0}",
+            "Ciao {0},\n hai ricevuto un invito per l''evento {1} da {2}.\n "
+            + "Guarda la pagina dell''evento al seguente link:\n{3}\nMeteoCalendarTeam"), //    WEATHER_CHANGED,
+    EVENT_CHANGED("L''evento {0} è stato modficato",
+            "Ciao {0},\n ti informiamo che l''evento {1} è stato modificato.\nLink:{3}"),
+    EVENT_CANCELLED("L''evento {0} è stato cancellato",
+            "Ciao {0},\n ti informiamo che l''evento {1} è stato cancellato.\n");
 
     private String subject;
     private String bodyMessage;
@@ -28,6 +30,10 @@ public enum NotificationType {
     private String inviteeName;
     private String eventName;
     private String link;
+
+    Object[] subjParams;
+    Object[] bodyParams;
+
     private Logger logger = LoggerProducer.debugLogger(NotificationType.class);
 
     private NotificationType(String subject, String body) {
@@ -59,10 +65,10 @@ public enum NotificationType {
     }
 
     public NotificationType buildEmail() {
-
         link = "llink temporaneo";
-        Object[] subjParams = new Object[]{eventName};
-        Object[] bodyParams = new Object[]{inviteeName, eventName, link};
+
+        subjParams = new Object[]{eventName};
+        bodyParams = new Object[]{inviteeName, eventName, eventOwner, link};
 
         subject = MessageFormat.format(subject, subjParams);
         bodyMessage = MessageFormat.format(bodyMessage, bodyParams);
