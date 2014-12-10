@@ -3,7 +3,6 @@ package bakingBeans;
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import javax.faces.bean.ManagedProperty;

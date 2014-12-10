@@ -90,9 +90,11 @@ public class CalendarManagerImpl implements CalendarManager {
             }
         }
         if (calendar.addEventInCalendar(event)) {
+            logger.log(Level.INFO, "AGGIUNTO AL CALENDARIO ");
             database.getTransaction().commit();
             return ControlMessages.EVENT_ADDED;
         } else {
+            logger.log(Level.INFO, "NON AGGIUNTO AL CALENDARIO ");
             database.getTransaction().rollback();
         }
         return ControlMessages.ERROR_IN_ADDING_EVENT_TO_CAL;
