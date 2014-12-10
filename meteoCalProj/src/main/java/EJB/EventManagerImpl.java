@@ -84,7 +84,7 @@ public class EventManagerImpl implements EventManager {
 
             case PUBLIC: {
                 List<Event> publicEvents = new ArrayList<>();
-                publicEvents.addAll(eventsOnWall(owner, n));
+                publicEvents.addAll(publicEventsOnWall(owner, n));
                 return publicEvents;
             }
 
@@ -92,12 +92,13 @@ public class EventManagerImpl implements EventManager {
         return null;
     }
 
-    private List<PublicEvent> eventsOnWall(UserModel user, int n) {
-        return database.createNamedQuery("findNextPublicEvents").setParameter("user", user.getId()).setMaxResults(n).getResultList();
+    private List<PublicEvent> publicEventsOnWall(UserModel user, int n) {
+        return database.createNamedQuery("findNextPublicEvents").setParameter("user", user ).setMaxResults(n).getResultList();
 
     }
 
     private List<Event> ownedEventonWall(UserModel user, int n) {
+        database.find(UserModel.class, user.getId());
         List<Event> r = user.getOwnedEvents();
         if (n > r.size()) {
             return r;
