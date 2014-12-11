@@ -10,7 +10,7 @@
     <ui:composition template="/template.xhtml">
 
         <ui:define name="logIn">
-
+            <h:outputScript library="js" name="foo.js" />
             <h:form id="loginForm"> 
                 <!--if the user is not logged in show outputLabel "non loggato"-->
                 <h:outputLabel for="email" rendered="#{!login.loggedIn}">
@@ -26,7 +26,7 @@
                     <h:outputLabel for="email">Email:</h:outputLabel> 
 
                     <h:inputText id="email" value="#{credentials.email}">
-                        <f:passThroughAttribute name="type" value="email" />
+                        <f:passThroughAttribute name="type" value="email"/>
                     </h:inputText>
 
                     <h:outputLabel for="password">Password:</h:outputLabel> 
@@ -56,9 +56,8 @@
                 <h:message for="username" style="color:red" />
                 <h:message for="password" style="color:red" />
             </h:form> 
-            <h:link outcome="/s/newEvent.xhtml">New Event</h:link><br/>
-            <h:link outcome="/users.xhtml">View users</h:link><br/>
-            <h:link outcome="/signUp.xhtml">SignUp</h:link><br/>
+
+            <h:link outcome="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
 
             <h:outputLabel rendered="#{login.loggedIn}">
                 calendari: #{login.currentUser.ownedCalendars.size()}</h:outputLabel>

@@ -2,9 +2,13 @@ package bakingBeans;
 
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
+import EJB.interfaces.InvitationManager;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -14,6 +18,7 @@ import model.CalendarModel;
 import model.Event;
 import model.PrivateEvent;
 import model.PublicEvent;
+import model.UserModel;
 
 /**
  *
@@ -40,8 +45,13 @@ public class ManageEventBacking implements Serializable {
     String startTime = "01:03";
     String endTime = "05:07";
     String calendarName;
+    String newGuestEmail = "invita qualcuno";
+
+    boolean saved;
 
     CalendarModel calendar;
+
+    List<UserModel> guests;
 
     LoginBacking login;
 
@@ -54,9 +64,12 @@ public class ManageEventBacking implements Serializable {
     @Inject
     EventManager eventManager;
 
-    /**
-     * Creates a new instance of newEvent
-     */
+    @Inject
+    InvitationManager invitationManager;
+
+    private UserModel newGuest;
+
+    
     public ManageEventBacking() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         //mi salvo il login per ottenere l'info di chi è loggato
@@ -64,12 +77,11 @@ public class ManageEventBacking implements Serializable {
         login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(facesContext, "#{login}", LoginBacking.class);
     }
 
-    public void setEditModality() {
-        //riempire campi title,location etc con
-        //quelli dell evento con id specificato
-        //nel param
-    }
-
+    /**
+     *
+     * GETTERS & SETTERS
+     *
+     */
     public void setTitle(String title) {
         this.title = title;
     }
@@ -118,22 +130,12 @@ public class ManageEventBacking implements Serializable {
         this.calendarName = nameCal;
     }
 
-    public void setInCalendar(String calendarName) {
-        List<CalendarModel> calendars = calendarManager.getCalendars(login.getCurrentUser());
-        if (calendarName != null) {
-            //salvo in calendar l istanza di Calendar che appartiene all utente
-            //e che ha il title specificato nel form
-            calendar = findCalendarByName(calendars, calendarName);
-        }
+    public boolean isSaved() {
+        return saved;
     }
 
-    private CalendarModel findCalendarByName(List<CalendarModel> calendars, String name) {
-        for (CalendarModel cal : calendars) {
-            if (cal.getTitle().equals(name)) {
-                return cal;
-            }
-        }
-        return null;
+    public void setSaved(boolean saved) {
+        this.saved = saved;
     }
 
     public String getDescription() {
@@ -172,16 +174,99 @@ public class ManageEventBacking implements Serializable {
         return title;
     }
 
-    public void save() {
-        //se l'utente ha impostato a public l evento
-        if (publicAccess) {
-            //istanzio un PublicEvent
-            eventToCreate = new PublicEvent();
-        } else {
-            //PrivateEvent altrimenti
-            eventToCreate = new PrivateEvent();
-        }
+    public String getNewGuestEmail() {
+        return newGuestEmail;
+    }
 
+    public void setNewGuestEmail(String newGuestEmail) {
+        this.newGuestEmail = newGuestEmail;
+    }
+
+    /**
+     *
+     * METHODS
+     *
+     */
+    /**
+     * Creates a new instance of newEvent
+     */
+    @PostConstruct
+    public void setEditModality() {
+        //riempire campi title,location etc con
+        //quelli dell evento con id specificato
+        //nel param
+        //setSaved(true);
+    }
+
+    public void setInCalendar(String calendarName) {
+        List<CalendarModel> calendars = calendarManager.getCalendars(login.getCurrentUser());
+        if (calendarName != null) {
+            //salvo in calendar l istanza di Calendar che appartiene all utente
+            //e che ha il title specificato nel form
+            calendar = findCalendarByName(calendars, calendarName);
+        }
+    }
+
+    private CalendarModel findCalendarByName(List<CalendarModel> calendars, String name) {
+        for (CalendarModel cal : calendars) {
+            if (cal.getTitle().equals(name)) {
+                return cal;
+            }
+        }
+        return null;
+    }
+
+    public void save() {
+
+        createOrLoadInstance();
+        setUpInstance();
+        saveIt();
+
+    }
+
+    public String delete() {
+        //eventManager.delete(idEvent);
+        return "/s/myCalendar.xhtml";
+    }
+
+    public void invite() {
+        if (newGuestEmail != null) {
+            //newGuest = findUserByEmail(newGuestEmail);
+            if (newGuest != null) {
+                guests = new ArrayList<>();
+                guests.add(newGuest);
+            } else {
+                //addFacesMessage("email nn trovata")
+                FacesContext ctx = FacesContext.getCurrentInstance();
+                ctx.addMessage("email", new FacesMessage(FacesMessage.SEVERITY_WARN, "Utente non trovato", "Ricontrolla l'email"));
+            }
+        }
+    }
+
+    /**
+     * se l'evento è già stato creato ne carica l'istanza
+     * altrimenti ne crea uno nuovo, sempre in eventToCreate
+     */
+    private void createOrLoadInstance() {
+        if (isSaved()) {
+            //eventToCreate = eventManager.findEventById(idEvent);
+        } else {
+            //se l'utente ha impostato a public l evento
+            if (publicAccess) {
+                //istanzio un PublicEvent
+                eventToCreate = new PublicEvent();
+            } else {
+                //PrivateEvent altrimenti
+                eventToCreate = new PrivateEvent();
+            }
+        }
+    }
+
+    /**
+     * imposta tutti i parametri di eventToCreate
+     * con i campi del form impostati dall'utente
+     */
+    private void setUpInstance() {
         //creo un Calendar per l'inizio
         startDateTime = Calendar.getInstance();
         String[] startDateToken = startDate.split("-");
@@ -215,10 +300,18 @@ public class ManageEventBacking implements Serializable {
 
         //setto calendar all'entità corrispondente al calendarName
         setInCalendar(calendarName);
+    }
 
+    /**
+     * fa persistere l'evento, aggiungere al calendario
+     * e creare gli inviti all'eventManager
+     */
+    private void saveIt() {
         //passo all eventManager l'ownerId, l'evento riempito, il calendario
         //dove metterlo e la lista degli invitati
-        eventManager.scheduleNewEvent(eventToCreate, calendar, null);
+        if (eventManager.scheduleNewEvent(eventToCreate, calendar, guests)) {
+            setSaved(true);
+        }
     }
 
 }

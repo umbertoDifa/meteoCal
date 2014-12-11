@@ -10,7 +10,7 @@
 
         <title><ui:insert name="title" /></title>
 
-<!--        <link href="/style/main.css" rel="stylesheet" type="text/css"/>-->
+        <!--        <link href="/style/main.css" rel="stylesheet" type="text/css"/>-->
         <h:outputScript name="jsf.js" library="javax.faces"/>
         <ui:insert name="head"/>
 
@@ -18,11 +18,10 @@
     <body>
         <div id="container">
             <div id="header">
+                <ui:insert name="logIn"/>
             </div>
             <div id="sidebar">
-
-                <ui:insert name="logIn"/>
-
+                <ui:include src="/landmarks.xhtml"/>
             </div>
             <div id="content">
 

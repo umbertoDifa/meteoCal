@@ -59,12 +59,18 @@
                 <h:inputTextarea value="#{newEvent.description}" style="resize: none" /><br/>
 
                 <h:commandButton id="save" value="Save" action="#{newEvent.save}"></h:commandButton>
-                <h:commandButton value="Cancel"></h:commandButton>
-                <h:commandButton value="Delete"></h:commandButton>
+                <h:button value="Cancel" rendered="#{!newEvent.saved}" outcome="/s/myCalendar.xhtml"/> 
+                <h:commandButton value="Delete" rendered="#{newEvent.saved}" action="#{newEvent.delete}"/>
+                <h:button value="Show Event" rendered="#{newEvent.saved}" outcome="/event.xhtml?v=#{newEvent.idEvent}"/>
                 <!--invite someone-->
 
                 <div id="inviteDiv">
                     <h2>Guests:</h2>
+                    <h:form id="inviteForm" >
+                        <h:inputText id="email" value="#{newEvent.newGuestEmail}"/>
+                        <h:commandButton value="invite" action="#{newEvent.invite}"/><br/>
+                    </h:form>
+
                 </div>
             </h:form>
 

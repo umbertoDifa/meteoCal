@@ -16,9 +16,9 @@ and open the template in the editor.
         <ui:define name="title">events</ui:define>
 
         <ui:define name="content">
-            
+
             <h1>Events</h1>
-            
+
             <h2>Owned</h2>
             <h:dataTable id="owned" value="#{events.ownedEvents}" var="ev">
                 <h:column>
@@ -31,13 +31,13 @@ and open the template in the editor.
                     <f:facet name="header">
                         <h:outputText value="Data:"/>
                     </f:facet>
-                    <h:outputText value="#{ev.startDateTime}"/>
+                    <h:outputText value="#{ev.dateStart}"/>
                 </h:column>
-                <h:commandButton value="more" action="#{events.loadMore(EventRequestType.OWNED)}">
-                    <f:ajax execute="@none" render=":owned"/>
-                </h:commandButton>
             </h:dataTable>
-            
+            <h:commandButton value="more" action="#{events.loadMore(EventRequestType.OWNED)}">
+                <f:ajax execute="@none" render=":owned"/>
+            </h:commandButton>
+
             <h2>Joined</h2>
             <h:dataTable id="joined" value="#{events.joinedEvents}" var="ev">
                 <h:column>
@@ -50,13 +50,13 @@ and open the template in the editor.
                     <f:facet name="header">
                         <h:outputText value="Data:"/>
                     </f:facet>
-                    <h:outputText value="#{ev.startDateTime}"/>
+                    <h:outputText value="#{ev.dateStart}"/>
                 </h:column>
-                <h:commandButton value="more" action="#{events.loadMore(EventRequestType.JOINED)}">
-                    <f:ajax execute="@none" render="joined"/>
-                </h:commandButton>
             </h:dataTable>
-            
+            <h:commandButton value="more" action="#{events.loadMore(EventRequestType.JOINED)}">
+                <f:ajax execute="@none" render="joined"/>
+            </h:commandButton>
+
             <h2>Wall</h2>
             <h:dataTable id="wall" value="#{events.wallEvents}" var="ev">
                 <h:column>
@@ -69,7 +69,7 @@ and open the template in the editor.
                     <f:facet name="header">
                         <h:outputText value="Data:"/>
                     </f:facet>
-                    <h:outputText value="#{ev.startDateTime}"/>
+                    <h:outputText value="#{ev.dateStart}"/>
                 </h:column>
                 <h:commandButton value="more" action="#{events.loadMore(EventRequestType.WALL)}">
                     <f:ajax execute="@none" render=":wall"/>
@@ -88,7 +88,7 @@ and open the template in the editor.
                     <f:facet name="header">
                         <h:outputText value="Data:"/>
                     </f:facet>
-                    <h:outputText value="#{ev.startDateTime}"/>
+                    <h:outputText value="#{ev.dateStart}"/>
                 </h:column>
                 <h:commandButton value="more" action="#{events.loadMore(EventRequestType.INVITATION)}">
                     <f:ajax execute="@none" render=":invitations"/>

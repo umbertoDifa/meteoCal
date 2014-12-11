@@ -31,8 +31,15 @@ public class EventsBacking implements Serializable {
     List<Event> wallEvents;
     List<Event> invitations;
 
+    private int numClickMoreOwned;
+
     final LoginBacking login;
 
+    /**
+     *
+     * GETTERS & SETTERS
+     *
+     */
     public List<Event> getJoinedEvents() {
         return joinedEvents;
     }
@@ -65,8 +72,14 @@ public class EventsBacking implements Serializable {
         this.ownedEvents = ownedEvents;
     }
 
+    /**
+     *
+     * METHODS
+     *
+     */
     public void loadMore(EventType type) {
-        List<Event> result = eventManager.eventOnWall(type, 20, login.getCurrentUser());
+        List<Event> result = eventManager.eventOnWall(type, numClickMoreOwned + 2, login.getCurrentUser());
+        numClickMoreOwned++;
         switch (type) {
             case OWNED:
                 ownedEvents = result; //oppure ownedEvents.addAll(result);
@@ -99,9 +112,9 @@ public class EventsBacking implements Serializable {
         joinedEvents = eventManager.eventOnWall(EventType.JOINED, 20, login.getCurrentUser());
         invitations = eventManager.eventOnWall(EventType.INVITED, 20, login.getCurrentUser());
         wallEvents = eventManager.eventOnWall(EventType.PUBLIC, 20, login.getCurrentUser());
-        System.out.println("--ownedEvents:" +ownedEvents);
-        System.out.println("--joinedEvents:" +joinedEvents);
-        System.out.println("--invitations:" +invitations);
-        System.out.println("--wall:" +wallEvents);
+        System.out.println("--ownedEvents:" + ownedEvents);
+        System.out.println("--joinedEvents:" + joinedEvents);
+        System.out.println("--invitations:" + invitations);
+        System.out.println("--wall:" + wallEvents);
     }
 }
