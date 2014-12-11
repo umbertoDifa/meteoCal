@@ -142,9 +142,10 @@ public class EventManagerImpl implements EventManager {
     @Override
     public Event findEventbyId(Long id) {
         Event event = database.find(Event.class, id);
-        if (event != null)
+        if (event != null){
+            database.refresh(event);
             return event;
-        else 
+        } else 
             //TODO ERRORE, O LO CONTROLLA FRA?
             return null;
         

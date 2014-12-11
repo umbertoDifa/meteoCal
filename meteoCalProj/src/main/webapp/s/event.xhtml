@@ -22,21 +22,21 @@ and open the template in the editor.
         <ui:define name="title">event</ui:define>
 
         <ui:define name="content">
-            <h:outputLabel value="Title:" /><h:outputText value="#{eventToShow.title}"/><br/>
-            <h:outputLabel value="Starting Date:" /><h:outputText value="#{eventToShow.dateStart}"/><br/>
+            <h:outputLabel value="Title:" /><h:outputText value="#{viewEvent.eventToShow.title}"/><br/>
+            <h:outputLabel value="Starting Date:" /><h:outputText value="#{viewEvent.eventToShow.formattedStartDate}"/><br/>
             <!--        <h:outputText value=""/>  ora inizio 
                         <h:outputText value=""/>  ora fine -->
-            <h:outputLabel value="Ending Date:" /><h:outputText value="#{eventToShow.dateEnd}"/><br/>
-            <h:outputLabel value="Location:" /><h:outputText value="#{eventToShow.location}"/><br/>
-            <h:outputLabel value="Description:" /><h:outputText value="#{eventToShow.description}"/><br/>
-            <h:outputLabel value="isOutdoor:" /><h:outputText value="#{eventToShow.isOutdoor}"/><br/>
-            <h:outputLabel value="Owner:" /><h:outputText value="#{eventToShow.owner.name}"/><br/> <!-- owner -->
+            <h:outputLabel value="Ending Date:" /><h:outputText value="#{viewEvent.eventToShow.formattedEndDate}"/><br/>
+            <h:outputLabel value="Location:" /><h:outputText value="#{viewEvent.eventToShow.location}"/><br/>
+            <h:outputLabel value="Description:" /><h:outputText value="#{viewEvent.eventToShow.description}"/><br/>
+            <h:outputLabel value="isOutdoor:" /><h:outputText value="#{viewEvent.eventToShow.isOutdoor}"/><br/>
+            <h:outputLabel value="Owner:" /><h:outputText value="#{viewEvent.eventToShow.owner.name}"/><br/> <!-- owner -->
             <!--        <h:outputText value=""/>  invitati 
                         <h:outputText value=""/>  è o meno nel tuo calendario 
                         <h:outputText value=""/>  se sei invitato se ci partecipi o no -->
 
-            <h:commandButton value="partecipa" rendered="#{eventToShow.allowedToPartecipate}" action="#{viewEvent.partecipate()}"/><br/>
-            <h:button id="#{eventToShow.id}" value="modifica" rendered="#{eventToShow.allowedToModify}" outcome="/manageEvent.xhtml" /><br/> <!--passare in post id evento -->
+            <h:commandButton value="partecipa" rendered="#{viewEvent.allowedToPartecipate}" action="#{viewEvent.partecipate()}"/><br/>
+            <h:button id="#{eventToShow.id}" value="modifica" rendered="#{viewEvent.allowedToModify}" outcome="/manageEvent.xhtml" /><br/> <!--passare in post id evento -->
         </ui:define>
 
     </ui:composition>

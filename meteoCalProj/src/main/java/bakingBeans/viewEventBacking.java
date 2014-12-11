@@ -7,6 +7,7 @@ package bakingBeans;
 
 import EJB.interfaces.EventManager;
 import java.io.Serializable;
+import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -74,7 +75,16 @@ public class viewEventBacking implements Serializable {
     }
 
     public void findEventById() {
-        //eventToShow = eventManager.findEventById(eventId);
+        
+        //TODO: controllare i permessi
+        
+        System.out.println("-eventId passato con get è:" + eventId);
+        eventToShow = eventManager.findEventbyId(eventId);
+        if (eventToShow != null) {
+            System.out.println("-eventToShow è:" + eventToShow.getTitle());
+        } else {
+            System.out.println("-eventToSHow è null");
+        }
     }
 
     public void partecipate() {

@@ -59,13 +59,6 @@
 
             <h:link outcome="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
 
-            <h:outputLabel rendered="#{login.loggedIn}">
-                calendari: #{login.currentUser.ownedCalendars.size()}</h:outputLabel>
-            <c:forEach var="m" items="#{login.currentUser.ownedCalendars}" >
-                <h:outputLabel value="#{m.title}"/>
-            </c:forEach>
-
-
         </ui:define>
 
     </ui:composition>
