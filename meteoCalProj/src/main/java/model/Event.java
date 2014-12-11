@@ -6,6 +6,7 @@
 package model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import javax.persistence.Column;
@@ -21,6 +22,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 
 /**
@@ -36,22 +38,23 @@ import javax.persistence.Temporal;
 
 })
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@SequenceGenerator (name = "eventSeq", initialValue =  50)
 public abstract class Event implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eventSeq")
     private Long id;
 
     @Column(nullable = false)
     private String title;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @OrderColumn
     @Column(nullable = false)
     private java.util.Calendar startDateTime;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private java.util.Calendar endDateTime;
 
@@ -203,11 +206,14 @@ public abstract class Event implements Serializable {
         return "model.Event[ id=" + id + " ]";
     }
     
-    public String getDateStart() {
-        return this.startDateTime.getTime().toString();
+    public String getFormattedStartDate() {
+        String formattedDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm").format(this.startDateTime.getTime());
+        return formattedDate;
     }
     
-    public void setDateStart() {
+    public String getFormattedEndDate() {
+        String formattedDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm").format(this.endDateTime.getTime());
+        return formattedDate;
     }
            
 }

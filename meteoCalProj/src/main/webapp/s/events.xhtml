@@ -31,7 +31,7 @@ and open the template in the editor.
                     <f:facet name="header">
                         <h:outputText value="Data:"/>
                     </f:facet>
-                    <h:outputText value="#{ev.dateStart}"/>
+                    <h:outputText value="#{ev.formattedStartDate}"/>
                 </h:column>
             </h:dataTable>
             <h:commandButton value="more" action="#{events.loadMore(EventRequestType.OWNED)}">
@@ -50,7 +50,7 @@ and open the template in the editor.
                     <f:facet name="header">
                         <h:outputText value="Data:"/>
                     </f:facet>
-                    <h:outputText value="#{ev.dateStart}"/>
+                    <h:outputText value="#{ev.formattedStartDate}"/>
                 </h:column>
             </h:dataTable>
             <h:commandButton value="more" action="#{events.loadMore(EventRequestType.JOINED)}">
@@ -69,7 +69,7 @@ and open the template in the editor.
                     <f:facet name="header">
                         <h:outputText value="Data:"/>
                     </f:facet>
-                    <h:outputText value="#{ev.dateStart}"/>
+                    <h:outputText value="#{ev.formattedStartDate}"/>
                 </h:column>
                 <h:commandButton value="more" action="#{events.loadMore(EventRequestType.WALL)}">
                     <f:ajax execute="@none" render=":wall"/>
@@ -88,7 +88,7 @@ and open the template in the editor.
                     <f:facet name="header">
                         <h:outputText value="Data:"/>
                     </f:facet>
-                    <h:outputText value="#{ev.dateStart}"/>
+                    <h:outputText value="#{ev.formattedStartDate}"/>
                 </h:column>
                 <h:commandButton value="more" action="#{events.loadMore(EventRequestType.INVITATION)}">
                     <f:ajax execute="@none" render=":invitations"/>

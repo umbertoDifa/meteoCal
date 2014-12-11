@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 /**
  *
@@ -19,10 +20,11 @@ import javax.persistence.ManyToOne;
  */
 
 @Entity
+@SequenceGenerator ( name = "notifSeq", initialValue = 50)
 public class Notification implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notifSeq")
     private Long id;
     
     @ManyToOne

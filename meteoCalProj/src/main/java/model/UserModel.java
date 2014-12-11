@@ -20,6 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -37,11 +38,12 @@ import javax.persistence.Table;
 })
 
 @Table(name="USER")
+@SequenceGenerator ( name = "userSeq", initialValue = 50)
 public class UserModel implements Serializable {
     //ATTRIBUTES
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSeq")
     private Long id;
 
     @Column(nullable = false)
