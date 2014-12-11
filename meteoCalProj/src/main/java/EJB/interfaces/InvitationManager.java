@@ -21,4 +21,5 @@ public interface InvitationManager {
      * @return true if success
      */
     public void createInvitations(List<UserModel> userToInvite, Event event);
+    
 }

@@ -23,4 +23,6 @@ public interface SearchManager {
     
     public List<Event> searchEvents(String stringToSearch);
     
+    public UserModel findUserbyEmail(String email);
+    
 }

@@ -26,4 +26,11 @@ public class SearchManagerImpl implements SearchManager {
                 "search", "%" + stringToSearch + "%").getResultList();
     }
 
+    @Override
+    public UserModel findUserbyEmail(String email) {
+       UserModel user = (UserModel) database.createNamedQuery("findUserbyEmail").setParameter("email", email).getSingleResult();
+       return user;
+    }
+    
+
 }

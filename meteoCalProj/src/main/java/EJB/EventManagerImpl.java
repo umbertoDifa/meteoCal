@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -136,5 +137,31 @@ public class EventManagerImpl implements EventManager {
         } else {
             return r.subList(0, n);
         }
+    }
+
+    @Override
+    public Event findEventbyId(Long id) {
+        Event event = database.find(Event.class, id);
+        if (event != null)
+            return event;
+        else 
+            //TODO ERRORE, O LO CONTROLLA FRA?
+            return null;
+        
+        
+    }
+
+    @Override
+    public boolean DeleteEvent(Event event) {
+        try {
+       database.find(Event.class, event.getId());
+       database.remove(event);
+       database.flush();
+       return true;
+       } catch (IllegalArgumentException e) {
+           return false;
+       }
+       
+ 
     }
 }
