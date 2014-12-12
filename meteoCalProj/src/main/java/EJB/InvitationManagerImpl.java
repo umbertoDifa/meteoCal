@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import model.Event;
 import model.Invitation;
 import model.InvitationAnswer;
@@ -18,8 +19,8 @@ public class InvitationManagerImpl implements InvitationManager {
     @Inject
     NotificationManager notificationManager;
 
-    @Inject
-    EntityManager database;
+    @PersistenceContext(unitName = "meteoCalDB")
+    private EntityManager database;
 
     @Override
     public void createInvitations(List<UserModel> usersToInvite, Event event) {
@@ -31,10 +32,17 @@ public class InvitationManagerImpl implements InvitationManager {
     }
 
     private void createInvitation(UserModel user, Event event) {
-        //verifico se esiste già un invito per quell'utente a quell'evento        
-        //creo invito
-        //lo persisto
-        //TODO do
+        //verifico se esiste già un invito per quell'utente a quell'evento 
+        //lo cerco nello user (più lento probabilmente) perchè non è detto che quell'evento sia già stato persistito!
+        database.find(UserModel.class, user.getId());
+            for (Invitation invitation : user.getInvitations()) {
+                if (invitation.getEvent().equals(event)) {
+                    return;
+                }
+            }
+       Invitation invitation = new Invitation(user,event);
+       database.persist(invitation);
+       return;
     }
 
     @Override

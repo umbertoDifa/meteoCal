@@ -31,8 +31,23 @@ public class Invitation implements Serializable {
     
     private InvitationAnswer answer;
     
-    //METHODS
+    /**
+    *
+    *   CONSTRUCTORS
+    */
 
+    public Invitation(UserModel invitee, Event event) {
+        this.invitee = invitee;
+        this.event = event;
+    }
+
+    public Invitation() {
+    }
+
+    /**
+     *
+     *   CONSTRUCTORS
+     */
     public UserModel getInvitee() {
         return invitee;
     }
