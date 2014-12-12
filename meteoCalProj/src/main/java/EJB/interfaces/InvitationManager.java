@@ -7,6 +7,8 @@ package EJB.interfaces;
 
 import java.util.List;
 import model.Event;
+import model.Invitation;
+import model.InvitationAnswer;
 import model.UserModel;
 
 /**
@@ -22,4 +24,5 @@ public interface InvitationManager {
      */
     public void createInvitations(List<UserModel> userToInvite, Event event);
     
+    boolean setAnswer(Invitation invitation, InvitationAnswer answer);
 }

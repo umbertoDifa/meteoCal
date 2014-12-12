@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 
 /**
  *
@@ -17,6 +18,8 @@ import javax.persistence.ManyToOne;
  */
 @Entity
 @IdClass (InvitationId.class)
+
+@NamedQuery (name= "findInvitation", query="SELECT i FROM Invitation i WHERE i.event=:event AND i.invitee=:user")
 public class Invitation implements Serializable {
     @Id
     @ManyToOne

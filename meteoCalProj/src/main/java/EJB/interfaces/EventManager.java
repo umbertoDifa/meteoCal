@@ -7,6 +7,7 @@ package EJB.interfaces;
 
 import java.util.List;
 import model.Event;
+import model.InvitationAnswer;
 import model.PublicEvent;
 import model.UserModel;
 
@@ -35,4 +36,5 @@ public interface EventManager {
     public Event findEventbyId(Long id);
     
     public boolean DeleteEvent(Event event);
+    
 }
