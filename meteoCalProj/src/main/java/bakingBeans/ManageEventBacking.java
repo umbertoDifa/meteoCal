@@ -3,6 +3,7 @@ package bakingBeans;
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
+import EJB.interfaces.SearchManager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,6 +47,8 @@ public class ManageEventBacking implements Serializable {
     String endTime = "05:07";
     String calendarName;
     String newGuestEmail = "invita qualcuno";
+    List<UserModel> resultUsers;
+    boolean displayResultUsers;
 
     boolean saved;
 
@@ -67,9 +70,11 @@ public class ManageEventBacking implements Serializable {
     @Inject
     InvitationManager invitationManager;
 
+    @Inject
+    SearchManager searchManager;
+
     private UserModel newGuest;
 
-    
     public ManageEventBacking() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         //mi salvo il login per ottenere l'info di chi è loggato
@@ -116,6 +121,22 @@ public class ManageEventBacking implements Serializable {
 
     public void setEndTime(String time) {
         this.endTime = time;
+    }
+
+    public List<UserModel> getResultUsers() {
+        return resultUsers;
+    }
+
+    public void setResultUsers(List<UserModel> resultUsers) {
+        this.resultUsers = resultUsers;
+    }
+
+    public boolean isDisplayResultUsers() {
+        return displayResultUsers;
+    }
+
+    public void setDisplayResultUsers(boolean displayResultUsers) {
+        this.displayResultUsers = displayResultUsers;
     }
 
     public String getCalendarName() {
@@ -229,23 +250,25 @@ public class ManageEventBacking implements Serializable {
         return "/s/myCalendar.xhtml";
     }
 
-    public void invite() {
-        if (newGuestEmail != null) {
-            //newGuest = findUserByEmail(newGuestEmail);
-            if (newGuest != null) {
-                guests = new ArrayList<>();
-                guests.add(newGuest);
-            } else {
-                //addFacesMessage("email nn trovata")
-                FacesContext ctx = FacesContext.getCurrentInstance();
-                ctx.addMessage("email", new FacesMessage(FacesMessage.SEVERITY_WARN, "Utente non trovato", "Ricontrolla l'email"));
-            }
+    public void invite(UserModel user) {
+        if (user != null) {
+            guests.add(user);
+            displayResultUsers = false;
+        }
+    }
+
+    public void showResultUsers() {
+        resultUsers = searchManager.searchUsers(newGuestEmail);
+        if (resultUsers != null && resultUsers.size() > 0) {
+            displayResultUsers = true;
+        } else {
+            //todo msg errore
         }
     }
 
     /**
-     * se l'evento è già stato creato ne carica l'istanza
-     * altrimenti ne crea uno nuovo, sempre in eventToCreate
+     * se l'evento è già stato creato ne carica l'istanza altrimenti ne crea uno
+     * nuovo, sempre in eventToCreate
      */
     private void createOrLoadInstance() {
         if (isSaved()) {
@@ -263,8 +286,8 @@ public class ManageEventBacking implements Serializable {
     }
 
     /**
-     * imposta tutti i parametri di eventToCreate
-     * con i campi del form impostati dall'utente
+     * imposta tutti i parametri di eventToCreate con i campi del form impostati
+     * dall'utente
      */
     private void setUpInstance() {
         //creo un Calendar per l'inizio
@@ -303,8 +326,8 @@ public class ManageEventBacking implements Serializable {
     }
 
     /**
-     * fa persistere l'evento, aggiungere al calendario
-     * e creare gli inviti all'eventManager
+     * fa persistere l'evento, aggiungere al calendario e creare gli inviti
+     * all'eventManager
      */
     private void saveIt() {
         //passo all eventManager l'ownerId, l'evento riempito, il calendario
