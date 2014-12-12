@@ -34,7 +34,7 @@ public class InvitationManagerImpl implements InvitationManager {
     private void createInvitation(UserModel user, Event event) {
         //verifico se esiste già un invito per quell'utente a quell'evento 
         //lo cerco nello user (più lento probabilmente) perchè non è detto che quell'evento sia già stato persistito!
-        database.find(UserModel.class, user.getId());
+        user = database.find(UserModel.class, user.getId());
             for (Invitation invitation : user.getInvitations()) {
                 if (invitation.getEvent().equals(event)) {
                     return;

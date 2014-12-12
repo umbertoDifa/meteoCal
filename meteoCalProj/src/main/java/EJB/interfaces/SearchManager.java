@@ -25,4 +25,6 @@ public interface SearchManager {
     
     public UserModel findUserbyEmail(String email);
     
+    public List<UserModel> searchUserForInvitation (String stringToSearch, Event event);
+    
 }
