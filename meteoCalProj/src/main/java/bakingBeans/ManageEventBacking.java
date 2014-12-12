@@ -257,13 +257,17 @@ public class ManageEventBacking implements Serializable {
         }
     }
 
-    public void showResultUsers() {
+    public String showResultUsers() {
+        System.out.println("-newGuestEmail"+ newGuestEmail);
         resultUsers = searchManager.searchUsers(newGuestEmail);
+        System.out.println("-newGuestEmail"+ newGuestEmail);
+        System.out.println("-resultUsers"+resultUsers);
         if (resultUsers != null && resultUsers.size() > 0) {
             displayResultUsers = true;
         } else {
             //todo msg errore
         }
+        return "";
     }
 
     /**
