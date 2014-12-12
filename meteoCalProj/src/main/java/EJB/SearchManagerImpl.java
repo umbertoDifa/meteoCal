@@ -17,8 +17,8 @@ public class SearchManagerImpl implements SearchManager {
 
     @Override
     public List<UserModel> searchUsers(String stringToSearch) {
-        return database.createNamedQuery("findUserByString").setParameter(
-                "search", "%" + stringToSearch + "%").getResultList();
+        return database.createNamedQuery("findUserbyString").setParameter(
+                "search", "%"+stringToSearch+"%").getResultList();
     }
 
     @Override
@@ -33,14 +33,13 @@ public class SearchManagerImpl implements SearchManager {
        return user;
     }
     
-    public List<UserModel> searchUserForInvitation (String stringToSearch) {
+    @Override
+    public List<UserModel> searchUserForInvitation (String stringToSearch, Event event) {
         List<UserModel> users = searchUsers(stringToSearch);
-        for (UserModel user : users) {
-            for (Invitation invitation : user.getInvitations()) {
-               // TODO: se esiste una invitation per quell'event
-                //ma che succede se l'event non è persistito?
-                //come trovare le invitation dello stesso evento non ancora persistite??
-            }
+        event = database.find(Event.class, event.getId());
+        if (event != null) {
+            for (Invitation invitation : event.getInvitations())
+                    users.remove(invitation.getInvitee());
         }
         return users;
     }
