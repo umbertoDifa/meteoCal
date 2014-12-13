@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
@@ -49,12 +50,15 @@ public class ManageEventBacking implements Serializable {
     String newGuestEmail = "invita qualcuno";
     List<UserModel> resultUsers;
     boolean displayResultUsers;
+//
+//    @ManagedProperty(value="#{param.emailToInvite}")
+//    private String emailToInvite;
 
     boolean saved;
 
     CalendarModel calendar;
 
-    List<UserModel> guests;
+    List<UserModel> guests = new ArrayList<>();
 
     LoginBacking login;
 
@@ -82,7 +86,7 @@ public class ManageEventBacking implements Serializable {
         login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(facesContext, "#{login}", LoginBacking.class);
     }
 
-    /**
+    /*
      *
      * GETTERS & SETTERS
      *
@@ -121,6 +125,14 @@ public class ManageEventBacking implements Serializable {
 
     public void setEndTime(String time) {
         this.endTime = time;
+    }
+
+    public List<UserModel> getGuests() {
+        return guests;
+    }
+
+    public void setGuests(List<UserModel> guests) {
+        this.guests = guests;
     }
 
     public List<UserModel> getResultUsers() {
@@ -203,7 +215,11 @@ public class ManageEventBacking implements Serializable {
         this.newGuestEmail = newGuestEmail;
     }
 
-    /**
+    public void setIdEvent(String idEvent) {
+        this.idEvent = idEvent;
+    }
+
+    /*
      *
      * METHODS
      *
@@ -246,28 +262,42 @@ public class ManageEventBacking implements Serializable {
     }
 
     public String delete() {
-        //eventManager.delete(idEvent);
+        eventManager.DeleteEvent(eventToCreate);
         return "/s/myCalendar.xhtml";
     }
 
-    public void invite(UserModel user) {
-        if (user != null) {
-            guests.add(user);
+    public void invite(String emailToInvite) {
+        if (emailToInvite != null) {
+            UserModel userToInvite = findGuest(resultUsers, emailToInvite);
+            System.out.println("--resultUsers è " + resultUsers);
+            System.out.println("--emailToInvite è " + emailToInvite);
+
+            if (userToInvite != null) {
+                System.out.println("--userToInvite è" + userToInvite);
+                if (!guests.contains(userToInvite)) {
+                    guests.add(userToInvite);
+                } else {
+                    //msg c'è già
+                }
+            } else {
+                System.out.println("-fallita findGuest");
+            }
             displayResultUsers = false;
+        } else {
+            System.out.println("--emailToInvite è null");
         }
     }
 
-    public String showResultUsers() {
-        System.out.println("-newGuestEmail"+ newGuestEmail);
+    public void showResultUsers() {
+        System.out.println("-newGuestEmail" + newGuestEmail);
         resultUsers = searchManager.searchUsers(newGuestEmail);
-        System.out.println("-newGuestEmail"+ newGuestEmail);
-        System.out.println("-resultUsers"+resultUsers);
+        System.out.println("-newGuestEmail" + newGuestEmail);
+        System.out.println("-resultUsers" + resultUsers);
         if (resultUsers != null && resultUsers.size() > 0) {
             displayResultUsers = true;
         } else {
             //todo msg errore
         }
-        return "";
     }
 
     /**
@@ -338,7 +368,19 @@ public class ManageEventBacking implements Serializable {
         //dove metterlo e la lista degli invitati
         if (eventManager.scheduleNewEvent(eventToCreate, calendar, guests)) {
             setSaved(true);
+            idEvent = eventToCreate.getId().toString();
         }
+    }
+
+    private UserModel findGuest(List<UserModel> users, String email) {
+        if (users != null) {
+            for (UserModel u : users) {
+                if (u.getEmail().equals(email)) {
+                    return u;
+                }
+            }
+        }
+        return null;
     }
 
 }

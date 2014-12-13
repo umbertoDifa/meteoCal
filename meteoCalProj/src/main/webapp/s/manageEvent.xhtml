@@ -61,21 +61,29 @@
                 <h:commandButton id="save" value="Save" action="#{newEvent.save}"></h:commandButton>
                 <h:button value="Cancel" rendered="#{!newEvent.saved}" outcome="/s/myCalendar.xhtml"/> 
                 <h:commandButton value="Delete" rendered="#{newEvent.saved}" action="#{newEvent.delete}"/>
-                <h:button value="Show Event" rendered="#{newEvent.saved}" outcome="/event.xhtml?v=#{newEvent.idEvent}"/>
-                <!--invite someone-->
+                <h:button value="Show Event" rendered="#{newEvent.saved}" outcome="/s/event.xhtml?id=#{newEvent.idEvent}"/>
 
                 <div id="inviteDiv">
                     <h2>Guests:</h2>
+
+                    <div>
+                        <h3>To invite:</h3>
+                        <c:forEach items="#{newEvent.guests}" var="g" >
+                            <h:outputText value="#{g.email}"/><br/>
+                        </c:forEach>
+                    </div>
+
+
                     <h:form id="inviteForm" >
                         <h:inputText id="email" value="#{newEvent.newGuestEmail}"/>
-                        <h:commandButton value="invite" action="#{newEvent.showResultUsers}"/><br/>
+                        <h:commandButton value="search" action="#{newEvent.showResultUsers}"/><br/>
                     </h:form>
                     <h:panelGroup layout="block" rendered="#{newEvent.displayResultUsers}" >
-                        <h:form>
-                            <c:forEach items="#{newEvent.resultUsers}" var="u">
-                                <h:commandLink value="#{u.email}" onclick="#{newEvent.invite(u)}" /><br/>
-                            </c:forEach>
-                        </h:form>
+
+                        <ui:repeat value="#{newEvent.resultUsers}" var="u">
+                            <h:commandLink value="#{u.email}" onclick="#{newEvent.invite(u.email)}" /><br/>
+                        </ui:repeat>
+
                     </h:panelGroup>
                 </div>
             </h:form>
