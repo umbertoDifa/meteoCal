@@ -10,11 +10,17 @@
     <ui:composition template="/template.xhtml">
 
         <ui:define name="logIn">
-            <h:outputScript library="js" name="foo.js" />
+            <h:outputScript library="js" name="autofocus.js" />
+
+            <script>
+                autofocus("loginForm:email");
+            </script>
+
             <h:form id="loginForm"> 
                 <!--if the user is not logged in show outputLabel "non loggato"-->
                 <h:outputLabel for="email" rendered="#{!login.loggedIn}">
                     "non loggato"</h:outputLabel>
+
                 <!--if the user is logged in show outputLabel "loggato"-->
                 <h:outputLabel for="email" rendered="#{login.loggedIn}">
                     Ciao #{login.currentUser.name}</h:outputLabel>

@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
-window.onload = function () {
-    document.getElementById('signUpForm:email').focus();
-};
+function autofocus(id) {
+    console.log(id);
+    document.getElementById(id).focus();
+}

@@ -11,19 +11,24 @@
     <ui:composition template="/template.xhtml">
 
         <f:metadata>
-            <f:viewParam name="ev" value="#{newEvent.idEvent}"/>
-            <f:event type="preRenderView" listener="#{newEvent.setEditModality}"/>
+            <f:viewParam name="idEvent" value="#{eventToManage.idEvent}"/>
+            <f:viewAction action="#{eventToManage.setEditModality}"/>
         </f:metadata>
 
 
-        <ui:define name="title">new event</ui:define>
+        <ui:define name="title">
+            manage event
+        </ui:define>
         <ui:define name="content">
-            <h1>New Event</h1>
+            <h1>            
+                <h:outputLabel rendered="#{!eventToManage.saved}" value="new event"/>
+                <h:outputLabel rendered="#{eventToManage.saved}" value="update event"/>
+            </h1>
             <h:form id="newEventForm">
 
-                <h:inputText value="#{newEvent.title}" /><br/>
+                <h:inputText value="#{eventToManage.title}" /><br/>
 
-                <h:selectOneMenu value="#{newEvent.calendarName}">
+                <h:selectOneMenu value="#{eventToManage.calendarName}">
                     <c:forEach items="#{calendar.calendarNames}" var="cal">
                         <f:selectItem itemValue="#{cal}" itemLabel="#{cal}" />
                     </c:forEach>
@@ -31,63 +36,64 @@
                 </h:selectOneMenu><br/>
 
                 <h:outputLabel value="Starting date:" />
-                <h:inputText id="startingDate" value="#{newEvent.startDate}">
+                <h:inputText id="startingDate" value="#{eventToManage.startDate}">
                     <f:passThroughAttribute name="type" value="date" />
                 </h:inputText><br/>
 
                 <h:outputLabel value="Until:" />
-                <h:inputText value="#{newEvent.endDate}">
+                <h:inputText value="#{eventToManage.endDate}">
                     <f:passThroughAttribute name="type" value="date" />
                 </h:inputText><br/>
 
                 <h:outputLabel value="From:" />
-                <h:inputText value="#{newEvent.startTime}">
+                <h:inputText value="#{eventToManage.startTime}">
                     <f:passThroughAttribute name="type" value="time" />
                 </h:inputText><br/>
 
                 <h:outputLabel value="To:" />
-                <h:inputText value="#{newEvent.endTime}">
+                <h:inputText value="#{eventToManage.endTime}">
                     <f:passThroughAttribute name="type" value="time" />
                 </h:inputText><br/>
 
-                <h:outputLabel value="Public:" /><h:selectBooleanCheckbox value="#{newEvent.publicAccess}" /><br/>
+                <h:outputLabel value="Public:" /><h:selectBooleanCheckbox value="#{eventToManage.publicAccess}" /><br/>
 
-                <h:inputText value="#{newEvent.location}"/><br/>
+                <h:inputText value="#{eventToManage.location}"/><br/>
 
-                <h:outputLabel value="Outdoor:" /><h:selectBooleanCheckbox value="#{newEvent.outdoor}"/><br/>
+                <h:outputLabel value="Outdoor:" /><h:selectBooleanCheckbox value="#{eventToManage.outdoor}"/><br/>
 
-                <h:inputTextarea value="#{newEvent.description}" style="resize: none" /><br/>
+                <h:inputTextarea value="#{eventToManage.description}" style="resize: none" /><br/>
 
-                <h:commandButton id="save" value="Save" action="#{newEvent.save}"></h:commandButton>
-                <h:button value="Cancel" rendered="#{!newEvent.saved}" outcome="/s/myCalendar.xhtml"/> 
-                <h:commandButton value="Delete" rendered="#{newEvent.saved}" action="#{newEvent.delete}"/>
-                <h:button value="Show Event" rendered="#{newEvent.saved}" outcome="/s/event.xhtml?id=#{newEvent.idEvent}"/>
+                <h:commandButton id="save" value="Save" action="#{eventToManage.save}"/>
+                <h:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/myCalendar.xhtml"/> 
+                <h:commandButton value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.delete}"/>
+                <h:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/event.xhtml?id=#{eventToManage.idEvent}"/>
 
                 <div id="inviteDiv">
                     <h2>Guests:</h2>
 
                     <div>
                         <h3>To invite:</h3>
-                        <c:forEach items="#{newEvent.guests}" var="g" >
+                        <c:forEach items="#{eventToManage.guests}" var="g" >
                             <h:outputText value="#{g.email}"/><br/>
                         </c:forEach>
                     </div>
 
 
                     <h:form id="inviteForm" >
-                        <h:inputText id="email" value="#{newEvent.newGuestEmail}"/>
-                        <h:commandButton value="search" action="#{newEvent.showResultUsers}"/><br/>
+                        <h:inputText id="email" value="#{eventToManage.newGuestEmail}"/>
+                        <h:commandButton value="search" action="#{eventToManage.showResultUsers}"/><br/>
+                        <h:message for="email" />
                     </h:form>
-                    <h:panelGroup layout="block" rendered="#{newEvent.displayResultUsers}" >
+                    <h:panelGroup layout="block" rendered="#{eventToManage.displayResultUsers}" >
 
-                        <ui:repeat value="#{newEvent.resultUsers}" var="u">
-                            <h:commandLink value="#{u.email}" onclick="#{newEvent.invite(u.email)}" /><br/>
+                        <ui:repeat value="#{eventToManage.resultUsers}" var="u">
+                            <h:commandLink value="#{u.email}" onclick="#{eventToManage.invite(u.email)}" /><br/>
                         </ui:repeat>
 
                     </h:panelGroup>
                 </div>
-            </h:form>
-
+            </h:form><br/>
+            <h:messages />
         </ui:define>
 
     </ui:composition>

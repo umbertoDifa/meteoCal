@@ -71,4 +71,16 @@ public class LoginBacking implements Serializable {
         return currentUser;
     }
 
+    
+    public String getEmail(){
+        return currentUser.getEmail();
+    }
+    
+    public String getName(){
+        return currentUser.getName();
+    }
+    
+    public String getSurname(){
+        return currentUser.getSurname();
+    }
 }

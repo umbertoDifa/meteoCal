@@ -15,7 +15,10 @@ and open the template in the editor.
         <ui:define name="title">sign up</ui:define>
 
         <ui:define name="content">
-
+            <h:outputScript library="js" name="autofocus.js" />
+            <script>
+                autofocus("signForm:email");
+            </script>
             <h:messages />
 
             <h1>Sign Up</h1>
@@ -29,7 +32,7 @@ and open the template in the editor.
                     <h:inputText id="email" value="#{user.email}" p:required="">
                         <f:passThroughAttribute name="type" value="email" />
                     </h:inputText>
-
+                    
 
                     <h:outputLabel for="email">Name*:</h:outputLabel> 
 
