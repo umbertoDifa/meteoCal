@@ -35,7 +35,7 @@ and open the template in the editor.
                         <h:outputText value=""/>  se sei invitato se ci partecipi o no -->
 
             <h:commandButton value="partecipa" rendered="#{viewEvent.allowedToPartecipate}" action="#{viewEvent.partecipate()}"/><br/>
-            <h:button value="modifica" rendered="#{viewEvent.allowedToModify}" outcome="/manageEvent.xhtml" /><br/> <!--passare in post id evento -->
+            <h:button value="modifica" rendered="#{viewEvent.allowedToModify}" outcome="/s/manageEvent.xhtml?idEvent=#{viewEvent.eventId}" /><br/> <!--passare in post id evento -->
         </ui:define>
 
     </ui:composition>
