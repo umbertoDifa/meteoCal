@@ -2,6 +2,7 @@ package EJB;
 
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.WeatherManager;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
@@ -11,10 +12,7 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
-import model.CalendarId;
 import model.CalendarModel;
 import model.Event;
 import model.UserModel;
@@ -42,8 +40,13 @@ public class CalendarManagerImpl implements CalendarManager {
         //TODO do
     }
 
-    private void findFreeSlots() {
+    private void findFreeSlots(UserModel user, Event event) {
+        int searchRange = 15;
         //TODO do
+        for (CalendarModel calendar : user.getOwnedCalendars()) {
+            // cerca un giorno in cui non ci sia un evento programmato per la stessa ora dell'evento schedulato.
+        }
+
     }
 
     @Override
@@ -92,36 +95,28 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public ControlMessages addToCalendar(Event event, CalendarModel calendar) {
-
-        calendar = (CalendarModel) database.createNamedQuery(
-                "findCalbyUserAndTitle").setParameter("id",
-                        calendar.getOwner()).setParameter(
-                        "title", calendar.getTitle()).getSingleResult();
-
         event = database.find(Event.class, event.getId());
-
-        //database.refresh(calendar);
-        //database.refresh(event);
         for (CalendarModel cal : event.getOwner().getOwnedCalendars()) {
-            for (Event e : cal.getEventsInCalendar()) {
-                if (e.equals(event)) {
-                    calendar.getEventsInCalendar().remove(e);
-                    //TODO: check this remove
-                }
+            cal.getEventsInCalendar().remove(event);
+        }
+        if (calendar != null) {
+            calendar = (CalendarModel) database.createNamedQuery(
+                    "findCalbyUserAndTitle").setParameter("id",
+                            calendar.getOwner()).setParameter(
+                            "title", calendar.getTitle()).getSingleResult();
+
+            if (calendar.addEventInCalendar(event)) {
+                //calendar.getEventsInCalendar().add(event);
+                logger.log(Level.INFO, "Evento " + event.getTitle()
+                        + " aggiunto al calendario " + calendar.getTitle() + " di "
+                        + calendar.getOwner().getEmail());
+
+                logger.log(LoggerLevel.DEBUG, "Events in calendar now: {0}",
+                        calendar.getEventsInCalendar());
+
+                return ControlMessages.EVENT_ADDED;
             }
         }
-        if (calendar.addEventInCalendar(event)) {
-            //calendar.getEventsInCalendar().add(event);
-            logger.log(Level.INFO, "Evento " + event.getTitle()
-                    + " aggiunto al calendario " + calendar.getTitle() + " di "
-                    + calendar.getOwner().getEmail());
-
-            logger.log(LoggerLevel.DEBUG, "Events in calendar now: {0}",
-                    calendar.getEventsInCalendar());
-
-            return ControlMessages.EVENT_ADDED;
-        }
-
         logger.log(Level.WARNING, "Evento non aggiunto al calendario");
         return ControlMessages.ERROR_ADDING_EVENT_TO_CAL;
 
@@ -149,6 +144,26 @@ public class CalendarManagerImpl implements CalendarManager {
                 user.getEmail());
 
         return calendar;
+    }
+
+    @Override
+    public CalendarModel findCalendarByName(UserModel user, String name) {
+        for (CalendarModel cal : this.getCalendars(user)) {
+            if (cal.getTitle().equals(name)) {
+                return cal;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<String> getCalendarTitles(UserModel user) {
+        List<String> names = new ArrayList<>();
+        for (CalendarModel cal : this.getCalendars(user)) {
+            names.add(cal.getTitle());
+        }
+        return names;
+
     }
 
 }

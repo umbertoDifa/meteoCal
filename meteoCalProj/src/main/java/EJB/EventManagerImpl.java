@@ -10,16 +10,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
-import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+import model.CalendarModel;
 import model.Event;
 import model.Invitation;
 import model.InvitationAnswer;
 import model.PublicEvent;
 import model.UserModel;
-import utility.EventType;
 
 @Stateless
 public class EventManagerImpl implements EventManager {
@@ -38,7 +38,7 @@ public class EventManagerImpl implements EventManager {
 
     @Inject
     @Default
-    Logger logger;   
+    Logger logger;
 
     @Override
     public boolean checkData() {
@@ -46,7 +46,7 @@ public class EventManagerImpl implements EventManager {
     }
 
     @Override
-    public boolean scheduleNewEvent(Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees) {
+    public boolean scheduleNewEvent(Event event, CalendarModel insertInCalendar, List<UserModel> invitees) {
         database.persist(event);
         logger.log(Level.INFO, "Event +{0} created", event.getTitle());
 
@@ -59,6 +59,20 @@ public class EventManagerImpl implements EventManager {
             return true;//TODO
         } else {
             return true;
+        }
+    }
+
+    @Override
+    public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees) {
+        try {
+            Event oldEvent = database.find(Event.class, event.getId());
+            database.flush();
+            if (invitees != null && invitees.size() > 0) {
+                invitationManager.createInvitations(invitees, event);
+            }
+            return true;
+        } catch (PersistenceException e) {
+            return false;
         }
     }
 
@@ -96,7 +110,7 @@ public class EventManagerImpl implements EventManager {
     }
 
     private List<PublicEvent> publicEventsOnWall(UserModel user, int n) {
-        return database.createNamedQuery("findNextPublicEvents").setParameter("user", user ).setMaxResults(n).getResultList();
+        return database.createNamedQuery("findNextPublicEvents").setParameter("user", user).setMaxResults(n).getResultList();
 
     }
 
@@ -142,27 +156,25 @@ public class EventManagerImpl implements EventManager {
     @Override
     public Event findEventbyId(Long id) {
         Event event = database.find(Event.class, id);
-        if (event != null){
+        if (event != null) {
             database.refresh(event);
             return event;
-        } else 
-            //TODO ERRORE, O LO CONTROLLA FRA?
+        } else //TODO ERRORE, O LO CONTROLLA FRA?
+        {
             return null;
-        
-        
+        }
+
     }
 
     @Override
-    public boolean DeleteEvent(Event event) {
+    public boolean deleteEvent(Event event) {
         try {
-       database.find(Event.class, event.getId());
-       database.remove(event);
-       database.flush();
-       return true;
-       } catch (IllegalArgumentException e) {
-           return false;
-       }
-       
- 
+            database.find(Event.class, event.getId());
+            database.remove(event);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+
     }
 }

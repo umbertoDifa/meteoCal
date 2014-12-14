@@ -24,25 +24,26 @@ public class InvitationManagerImpl implements InvitationManager {
 
     @Override
     public void createInvitations(List<UserModel> usersToInvite, Event event) {
-        for (UserModel user : usersToInvite) {
-            this.createInvitation(user, event);
-        }
+        for (UserModel user : usersToInvite) 
+            if (!this.createInvitation(user, event)) 
+                usersToInvite.remove(user);
+
         notificationManager.createNotifications(usersToInvite, event,
                 NotificationType.INVITATION);
     }
 
-    private void createInvitation(UserModel user, Event event) {
+    private boolean createInvitation(UserModel user, Event event) {
         //verifico se esiste già un invito per quell'utente a quell'evento 
         //lo cerco nello user (più lento probabilmente) perchè non è detto che quell'evento sia già stato persistito!
         user = database.find(UserModel.class, user.getId());
             for (Invitation invitation : user.getInvitations()) {
                 if (invitation.getEvent().equals(event)) {
-                    return;
+                    return false;
                 }
             }
        Invitation invitation = new Invitation(user,event);
        database.persist(invitation);
-       return;
+       return true;
     }
 
     @Override

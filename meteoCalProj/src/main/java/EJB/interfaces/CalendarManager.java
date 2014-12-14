@@ -50,4 +50,8 @@ public interface CalendarManager {
     public void importCalendar(CalendarModel calendar);
 
     public CalendarModel createDefaultCalendar(UserModel user);
+    
+    public CalendarModel findCalendarByName(UserModel user, String name);
+    
+    public List<String> getCalendarTitles(UserModel user);
 }
