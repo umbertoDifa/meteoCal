@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <body>
+        <h:outputScript library="js" name="autofocus.js" />
+
+        <script>
+            autofocus("loginForm:email");
+        </script>
+
+        <h:form id="loginForm"> 
+            <!--if the user is not logged in show outputLabel "non loggato"-->
+            <h:outputLabel for="email" rendered="#{!login.loggedIn}">
+                Non sei loggato</h:outputLabel>
+
+            <!--if the user is logged in show outputLabel "loggato"-->
+            <h:outputLabel for="email" rendered="#{login.loggedIn}">
+                Ciao #{login.currentUser.name}</h:outputLabel>
+
+            <!--if the user is not logged show login panel-->
+            <h:panelGroup  layout="block" rendered="#{!login.loggedIn}"> 
+                <h:outputLabel for="email">Email:</h:outputLabel> 
+
+                <p:inputText id="email" value="#{credentials.email}">
+                    <f:passThroughAttribute name="type" value="email"/>
+                </p:inputText>
+
+                <h:outputLabel for="password">Password:</h:outputLabel> 
+
+                <p:password id="password" value="#{credentials.password}" pt:required="" />
+
+            </h:panelGroup> 
+
+            <!--if the user is not logged in show button to submit credentials-->
+            <p:commandButton id="login" 
+
+                             value="Login" 
+
+                             action="#{login.login}" 
+
+                             rendered="#{!login.loggedIn}"/>
+
+            <!--if the user is not logged in show button to log out-->
+            <p:commandButton id="logout" 
+
+                             value="Logout" 
+
+                             action="#{login.logout}" 
+
+                             rendered="#{login.loggedIn}"/> 
+
+            <p:message for="email" style="color:red" />
+            <p:message for="password" style="color:red" />
+        </h:form> 
+
+        <h:link outcome="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
+
+    </body>
+</html>

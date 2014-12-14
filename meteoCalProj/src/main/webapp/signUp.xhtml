@@ -9,7 +9,7 @@ and open the template in the editor.
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
     <ui:composition template="/template.xhtml">
         <ui:define name="title">sign up</ui:define>
@@ -29,23 +29,23 @@ and open the template in the editor.
 
                     <h:outputLabel for="email">Email*:</h:outputLabel> 
 
-                    <h:inputText id="email" value="#{user.email}" p:required="">
+                    <h:inputText id="email" value="#{user.email}" pt:required="">
                         <f:passThroughAttribute name="type" value="email" />
                     </h:inputText>
                     
 
                     <h:outputLabel for="email">Name*:</h:outputLabel> 
 
-                    <h:inputText id="name" value="#{user.name}" p:required="" />
+                    <h:inputText id="name" value="#{user.name}" pt:required="" />
 
 
                     <h:outputLabel for="email">Surname*:</h:outputLabel> 
 
-                    <h:inputText id="surname" value="#{user.surname}" p:required=""/>
+                    <h:inputText id="surname" value="#{user.surname}" pt:required=""/>
 
                     <h:outputLabel for="password">Password*:</h:outputLabel> 
 
-                    <h:inputSecret id="password" value="#{user.password}" p:required="" />
+                    <h:inputSecret id="password" value="#{user.password}" pt:required="" />
 
                 </h:panelGrid> 
 

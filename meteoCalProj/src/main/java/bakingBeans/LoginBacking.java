@@ -15,6 +15,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import objectAndString.UserAndMessage;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -40,24 +41,29 @@ public class LoginBacking implements Serializable {
 
     private UserModel currentUser;
 
-    public void login() {
+    public String login() {
 
         UserAndMessage userAndMessage = userManager.findUser(credentials);
 
         if (userAndMessage.getUser() != null) {
             this.currentUser = userAndMessage.getUser();
+            return "/s/myCalendar.xhtml?faces-redirect=true";
         } else {
-            //mostro il messaggio di errore che posso trovare in
-            //userAndMessage.getMessage();
+            RequestContext.getCurrentInstance().update("growl");
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Username or password invalid"));
+            return "/";
         }
+        
     }
 
-    public void logout() {
+    public String logout() {
 
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage("Goodbye, " + currentUser.getName()));
 
         currentUser = null;
+        return "/signUp.xhtml?faces-redirect=true";
 
     }
 

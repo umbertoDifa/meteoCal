@@ -9,8 +9,8 @@ and open the template in the editor.
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://java.sun.com/jsf/passthrough"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
 
     <ui:composition template="/template.xhtml">
         <ui:define name="title">events</ui:define>
@@ -25,7 +25,7 @@ and open the template in the editor.
                     <f:facet name="header">
                         <h:outputText value="Title:"/>
                     </f:facet>
-                    <h:link outcome="/event.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+                    <p:link outcome="/s/event.xhtml?id=#{ev.id}" value="#{ev.title}"/>
                 </h:column>
                 <h:column>
                     <f:facet name="header">

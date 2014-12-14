@@ -1,65 +1,71 @@
-<?xml version='1.0' encoding='UTF-8' ?> 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
-    <body>
-        <h:outputScript library="js" name="autofocus.js" />
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">Log in</ui:define>
 
-        <script>
-            autofocus("loginForm:email");
-        </script>
+        <ui:define name="content">
 
-        <h:form id="loginForm"> 
-            <!--if the user is not logged in show outputLabel "non loggato"-->
-            <h:outputLabel for="email" rendered="#{!login.loggedIn}">
-                "non loggato"</h:outputLabel>
+            <h1>Log in</h1>
 
-            <!--if the user is logged in show outputLabel "loggato"-->
-            <h:outputLabel for="email" rendered="#{login.loggedIn}">
-                Ciao #{login.currentUser.name}</h:outputLabel>
+            <h:form id="loginForm2"> 
+                <!--if the user is not logged in show outputLabel "non loggato"-->
+                <h:outputLabel for="email" rendered="#{!login.loggedIn}">
+                    Non sei ancora loggato</h:outputLabel>
 
-            <!--if the user is not logged show login panel-->
-            <h:panelGroup  layout="block" rendered="#{!login.loggedIn}"> 
-                <h:outputLabel for="email">Email:</h:outputLabel> 
+                <!--if the user is logged in show outputLabel "loggato"-->
+                <h:outputLabel for="email" rendered="#{login.loggedIn}">
+                    #{login.currentUser.name} hai già effettuato il log in</h:outputLabel>
 
-                <h:inputText id="email" value="#{credentials.email}">
-                    <f:passThroughAttribute name="type" value="email"/>
-                </h:inputText>
+                <!--if the user is not logged show login panel-->
+                <p:panelGrid  columns="2" rendered="#{!login.loggedIn}" style="margin:auto"> 
+                    <h:outputLabel for="email">Email:</h:outputLabel> 
 
-                <h:outputLabel for="password">Password:</h:outputLabel> 
+                    <p:inputText id="email" value="#{credentials.email}">
+                        <f:passThroughAttribute name="type" value="email"/>
+                    </p:inputText>
 
-                <h:inputSecret id="password" value="#{credentials.password}" p:required="" />
+                    <h:outputLabel for="password">Password:</h:outputLabel> 
 
-            </h:panelGroup> 
+                    <p:password id="password" value="#{credentials.password}" pt:required="" />
+                    <f:facet name="footer">
+                        <p:commandButton id="login" 
 
-            <!--if the user is not logged in show button to submit credentials-->
-            <h:commandButton id="login" 
+                                         value="Login" 
 
-                             value="Login" 
+                                         action="#{login.login}" 
 
-                             action="#{login.login}" 
+                                         rendered="#{!login.loggedIn}"/>
+                    </f:facet>
+                </p:panelGrid> 
 
-                             rendered="#{!login.loggedIn}"/>
+                <!--if the user is not logged in show button to submit credentials-->
 
-            <!--if the user is not logged in show button to log out-->
-            <h:commandButton id="logout" 
 
-                             value="Logout" 
+                <!--if the user is not logged in show button to log out-->
+                <p:commandButton id="logout" 
 
-                             action="#{login.logout}" 
+                                 value="Logout" 
 
-                             rendered="#{login.loggedIn}"/> 
+                                 action="#{login.logout}" 
 
-            <h:message for="username" style="color:red" />
-            <h:message for="password" style="color:red" />
-        </h:form> 
+                                 rendered="#{login.loggedIn}"/> 
 
-        <h:link outcome="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
-
-    </body>
+<!--                <p:message for="email" style="color:red" />
+                <p:message for="password" style="color:red" />-->
+            </h:form> 
+        </ui:define>
+    </ui:composition>
 </html>

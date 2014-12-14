@@ -9,7 +9,6 @@ and open the template in the editor.
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://java.sun.com/jsf/passthrough"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:composition template="/template.xhtml">
@@ -22,6 +21,8 @@ and open the template in the editor.
         <ui:define name="title">event</ui:define>
 
         <ui:define name="content">
+            <h1><h:outputText value="#{viewEvent.eventToShow.title}" /></h1>
+            
             <h:outputLabel value="Title:" /><h:outputText value="#{viewEvent.eventToShow.title}"/><br/>
             <h:outputLabel value="Starts at:" /><h:outputText value="#{viewEvent.eventToShow.formattedStartDate}"/><br/>
             <h:outputLabel value="Ends at:" /><h:outputText value="#{viewEvent.eventToShow.formattedEndDate}"/><br/>

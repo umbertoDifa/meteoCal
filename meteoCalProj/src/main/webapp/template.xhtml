@@ -14,18 +14,19 @@
         </h:head>
 
         <h:body>
+            <p:growl id="growl" sticky="true" showDetail="true"/>
 
             <p:layout fullPage="true">
 
                 <p:layoutUnit position="north" size="80" resizable="false" closable="true" collapsible="true">
 
-                    <ui:include src="/logIn.xhtml"/>
-                    
+                    <ui:include src="/logInForm.xhtml"/>
+
                 </p:layoutUnit>
 
-<!--                <p:layoutUnit position="south" size="100" closable="true" collapsible="true">
-                    Footer
-                </p:layoutUnit>-->
+                <!--                <p:layoutUnit position="south" size="100" closable="true" collapsible="true">
+                                    Footer
+                                </p:layoutUnit>-->
 
                 <p:layoutUnit position="west" size="250" resizable="false" collapsible="true">
 
