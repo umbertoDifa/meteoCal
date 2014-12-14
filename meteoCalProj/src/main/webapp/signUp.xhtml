@@ -70,7 +70,9 @@ and open the template in the editor.
 
                              rendered="#{login.loggedIn}"/> 
 
-            <h:link outcome="/logIn.xhtml"> LogIn</h:link>
+            <h:link rendered="#{!login.loggedIn}" outcome="/logIn.xhtml">Log In</h:link>
+            
+            <h:message for="signUpForm" />
         </ui:define>
 
     </ui:composition>

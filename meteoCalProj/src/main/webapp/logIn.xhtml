@@ -7,65 +7,59 @@
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-    <ui:composition template="/template.xhtml">
+    <body>
+        <h:outputScript library="js" name="autofocus.js" />
 
-        <ui:define name="logIn">
-            <h:outputScript library="js" name="autofocus.js" />
+        <script>
+            autofocus("loginForm:email");
+        </script>
 
-            <script>
-                autofocus("loginForm:email");
-            </script>
+        <h:form id="loginForm"> 
+            <!--if the user is not logged in show outputLabel "non loggato"-->
+            <h:outputLabel for="email" rendered="#{!login.loggedIn}">
+                "non loggato"</h:outputLabel>
 
-            <h:form id="loginForm"> 
-                <!--if the user is not logged in show outputLabel "non loggato"-->
-                <h:outputLabel for="email" rendered="#{!login.loggedIn}">
-                    "non loggato"</h:outputLabel>
+            <!--if the user is logged in show outputLabel "loggato"-->
+            <h:outputLabel for="email" rendered="#{login.loggedIn}">
+                Ciao #{login.currentUser.name}</h:outputLabel>
 
-                <!--if the user is logged in show outputLabel "loggato"-->
-                <h:outputLabel for="email" rendered="#{login.loggedIn}">
-                    Ciao #{login.currentUser.name}</h:outputLabel>
+            <!--if the user is not logged show login panel-->
+            <h:panelGroup  layout="block" rendered="#{!login.loggedIn}"> 
+                <h:outputLabel for="email">Email:</h:outputLabel> 
 
-                <!--if the user is not logged show login panel-->
-                <h:panelGrid columns="2" 
+                <h:inputText id="email" value="#{credentials.email}">
+                    <f:passThroughAttribute name="type" value="email"/>
+                </h:inputText>
 
-                             rendered="#{!login.loggedIn}"> 
-                    <h:outputLabel for="email">Email:</h:outputLabel> 
+                <h:outputLabel for="password">Password:</h:outputLabel> 
 
-                    <h:inputText id="email" value="#{credentials.email}">
-                        <f:passThroughAttribute name="type" value="email"/>
-                    </h:inputText>
+                <h:inputSecret id="password" value="#{credentials.password}" p:required="" />
 
-                    <h:outputLabel for="password">Password:</h:outputLabel> 
+            </h:panelGroup> 
 
-                    <h:inputSecret id="password" value="#{credentials.password}" p:required="" />
+            <!--if the user is not logged in show button to submit credentials-->
+            <h:commandButton id="login" 
 
-                </h:panelGrid> 
+                             value="Login" 
 
-                <!--if the user is not logged in show button to submit credentials-->
-                <h:commandButton id="login" 
+                             action="#{login.login}" 
 
-                                 value="Login" 
+                             rendered="#{!login.loggedIn}"/>
 
-                                 action="#{login.login}" 
+            <!--if the user is not logged in show button to log out-->
+            <h:commandButton id="logout" 
 
-                                 rendered="#{!login.loggedIn}"/>
+                             value="Logout" 
 
-                <!--if the user is not logged in show button to log out-->
-                <h:commandButton id="logout" 
+                             action="#{login.logout}" 
 
-                                 value="Logout" 
+                             rendered="#{login.loggedIn}"/> 
 
-                                 action="#{login.logout}" 
+            <h:message for="username" style="color:red" />
+            <h:message for="password" style="color:red" />
+        </h:form> 
 
-                                 rendered="#{login.loggedIn}"/> 
+        <h:link outcome="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
 
-                <h:message for="username" style="color:red" />
-                <h:message for="password" style="color:red" />
-            </h:form> 
-
-            <h:link outcome="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
-
-        </ui:define>
-
-    </ui:composition>
+    </body>
 </html>

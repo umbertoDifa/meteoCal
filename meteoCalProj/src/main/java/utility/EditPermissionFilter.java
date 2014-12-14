@@ -51,8 +51,9 @@ public class EditPermissionFilter implements Filter {
                         if (login.getCurrentUser().equals(ev.getOwner())) {
                             chain.doFilter(request, response);
                         } else {
-                            String contextPath = ((HttpServletRequest) request).getContextPath();
-                            ((HttpServletResponse) response).sendRedirect(contextPath + "/s/myCalendar.xhtml");
+                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Non hai i permessi per modificare l'evento");
+//                            String contextPath = ((HttpServletRequest) request).getContextPath();
+//                            ((HttpServletResponse) response).sendRedirect(contextPath + "/s/myCalendar.xhtml");
                         }
                     }
                 } else {

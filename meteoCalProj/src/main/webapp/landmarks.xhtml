@@ -3,14 +3,17 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:ui="http://java.sun.com/jsf/facelets">
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
 
-    <ul>
-        <li><h:link value="Calendar" outcome="/s/myCalendar.xhtml"/></li>
-        <li><h:link value="Events" outcome="/s/events.xhtml"/></li>
-        <li><h:link value="Settings" outcome="/s/setting.xhtml"/></li>
-        <li><h:link value="New Event" outcome="/s/manageEvent.xhtml"/></li>
-    </ul>
-    
+    <p:menu>
+
+        <p:menuitem value="Calendar" url="/s/myCalendar.xhtml" />
+        <p:menuitem value="Events" url="/s/events.xhtml" />
+        <p:menuitem value="Settings" url="/s/settings.xhtml" />
+        <p:menuitem value="New Event" url="/s/manageEvent.xhtml" />
+
+    </p:menu>
+
 </ui:composition>
 

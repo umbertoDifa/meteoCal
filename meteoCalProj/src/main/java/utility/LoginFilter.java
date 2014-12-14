@@ -2,6 +2,8 @@ package utility;
 
 import bakingBeans.LoginBacking;
 import java.io.IOException;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 import javax.servlet.Filter;
@@ -34,7 +36,8 @@ public class LoginFilter implements Filter {
             chain.doFilter(request, response);
         } else {
             String contextPath = ((HttpServletRequest) request).getContextPath();
-            ((HttpServletResponse) response).sendRedirect(contextPath + "/signUp.xhtml");
+            ((HttpServletResponse)response).sendError(HttpServletResponse.SC_FORBIDDEN, "La pagina non è disponibile, effettuare il log in");
+       //     ((HttpServletResponse) response).sendRedirect(contextPath + "/signUp.xhtml");
         }
 
     }
