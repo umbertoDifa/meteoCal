@@ -22,7 +22,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 
 /**
@@ -38,12 +38,14 @@ import javax.persistence.Temporal;
 
 })
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@SequenceGenerator (name = "eventSeq", initialValue =  50)
+//@SequenceGenerator (name = "eventSeq", initialValue = 100 )
 public abstract class Event implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eventSeq")
+    @TableGenerator (name = "EVENT_SEQ", table = "SEQUENCE",  pkColumnName="SEQ_NAME",
+        valueColumnName="SEQ_COUNT", pkColumnValue="EVENT_SEQ")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "EVENT_SEQ")
     private Long id;
 
     @Column(nullable = false)
