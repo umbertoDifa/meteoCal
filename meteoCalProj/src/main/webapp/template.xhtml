@@ -11,9 +11,13 @@
                 <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
                 <title><ui:insert name="title" /></title>
             </f:facet>
+
         </h:head>
 
         <h:body>
+
+            <h:outputStylesheet library="css" name="normalization.css"/>
+            
             <p:growl id="growl" sticky="true" showDetail="true"/>
 
             <p:layout fullPage="true">
@@ -28,7 +32,7 @@
                                     Footer
                                 </p:layoutUnit>-->
 
-                <p:layoutUnit position="west" size="250" resizable="false" collapsible="true">
+                <p:layoutUnit position="west" size="181" resizable="false" collapsible="true">
 
                     <ui:include src="/landmarks.xhtml"/>
 

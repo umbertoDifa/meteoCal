@@ -288,7 +288,7 @@ public class ManageEventBacking implements Serializable {
 
     public String delete() {
         System.out.println("-eventToCreate vale:" + eventToCreate);
-        if (eventManager.DeleteEvent(eventToCreate)) {
+        if (eventManager.deleteEvent(eventToCreate)) {
             System.out.println("-evento cancellato");
             return "/s/myCalendar.xhtml";
         } else {

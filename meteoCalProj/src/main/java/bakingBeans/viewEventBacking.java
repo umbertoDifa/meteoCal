@@ -36,6 +36,8 @@ public class viewEventBacking implements Serializable {
 
     @Inject
     LoginBacking login;
+    
+    private boolean hasAnswered;
 
     /**
      * Creates a new instance of viewEventBacking
@@ -56,8 +58,18 @@ public class viewEventBacking implements Serializable {
         return eventToShow;
     }
 
+    public boolean isHasAnswered() {
+        return hasAnswered;
+    }
+    
+    
+
     public boolean isAllowedToPartecipate() {
         return allowedToPartecipate;
+    }
+
+    public void setHasAnswered(boolean hasAnswered) {
+        this.hasAnswered = hasAnswered;
     }
 
     //posso canc?
@@ -105,7 +117,11 @@ public class viewEventBacking implements Serializable {
         if (!login.getCurrentUser().equals(eventToShow.getOwner()) && ((eventToShow instanceof PublicEvent) || (getInvitees().contains(login.getCurrentUser())))) {
             allowedToPartecipate = true;
             InvitationAnswer answer = getAnswer();
-            //TODO finire
+            if(answer!=null){
+                hasAnswered = true;
+            }
+
+//TODO finire
         }
     }
 
