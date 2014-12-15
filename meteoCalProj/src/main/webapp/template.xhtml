@@ -17,12 +17,12 @@
         <h:body>
 
             <h:outputStylesheet library="css" name="normalization.css"/>
-            
+
             <p:growl id="growl" sticky="true" showDetail="true"/>
 
-            <p:layout fullPage="true">
 
-                <p:layoutUnit position="north" size="80" resizable="false" closable="true" collapsible="true">
+            <p:layout fullPage="false">
+                <p:layoutUnit position="north" size="80" >
 
                     <ui:include src="/logInForm.xhtml"/>
 
@@ -32,16 +32,16 @@
                                     Footer
                                 </p:layoutUnit>-->
 
-                <p:layoutUnit position="west" size="181" resizable="false" collapsible="true">
+                <p:layoutUnit position="west" size="181" >
 
                     <ui:include src="/landmarks.xhtml"/>
 
                 </p:layoutUnit>
 
-                <p:layoutUnit position="center">
+                <p:layoutUnit  position="center" collapsible="false">
                     <ui:insert name="content"/>
                 </p:layoutUnit>
-
+                
             </p:layout>
 
         </h:body>
