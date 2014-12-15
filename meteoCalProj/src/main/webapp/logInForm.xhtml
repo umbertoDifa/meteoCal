@@ -14,53 +14,57 @@
         <script>
             autofocus("loginForm:email");
         </script>
+        <p:toolbar>
+            <f:facet name="right">
+                <h:form id="loginForm"> 
+                    <!--if the user is not logged in show outputLabel "non loggato"-->
+                    <h:outputLabel for="email" rendered="#{!login.loggedIn}" class="ui-messages-error">
+                        Non sei loggato</h:outputLabel>
 
-        <h:form id="loginForm"> 
-            <!--if the user is not logged in show outputLabel "non loggato"-->
-            <h:outputLabel for="email" rendered="#{!login.loggedIn}">
-                Non sei loggato</h:outputLabel>
+                    <!--if the user is logged in show outputLabel "loggato"-->
+                    <h:outputLabel for="email" rendered="#{login.loggedIn}">
+                        Ciao #{login.currentUser.name}</h:outputLabel>
 
-            <!--if the user is logged in show outputLabel "loggato"-->
-            <h:outputLabel for="email" rendered="#{login.loggedIn}">
-                Ciao #{login.currentUser.name}</h:outputLabel>
+                    <!--if the user is not logged show login panel-->
+                    <h:panelGroup  layout="block" rendered="#{!login.loggedIn}"> 
+                        <h:outputLabel for="email">Email:</h:outputLabel> 
 
-            <!--if the user is not logged show login panel-->
-            <h:panelGroup  layout="block" rendered="#{!login.loggedIn}"> 
-                <h:outputLabel for="email">Email:</h:outputLabel> 
+                        <p:inputText id="email" value="#{credentials.email}">
+                            <f:passThroughAttribute name="type" value="email"/>
+                        </p:inputText>
 
-                <p:inputText id="email" value="#{credentials.email}">
-                    <f:passThroughAttribute name="type" value="email"/>
-                </p:inputText>
+                        <h:outputLabel for="password">Password:</h:outputLabel> 
 
-                <h:outputLabel for="password">Password:</h:outputLabel> 
+                        <p:password id="password" value="#{credentials.password}" pt:required="" />
 
-                <p:password id="password" value="#{credentials.password}" pt:required="" />
+                    </h:panelGroup> 
 
-            </h:panelGroup> 
+                    <!--if the user is not logged in show button to submit credentials-->
+                    <p:commandButton id="login" 
 
-            <!--if the user is not logged in show button to submit credentials-->
-            <p:commandButton id="login" 
+                                     value="Login" 
 
-                             value="Login" 
+                                     action="#{login.login}" 
 
-                             action="#{login.login}" 
+                                     rendered="#{!login.loggedIn}"/>
 
-                             rendered="#{!login.loggedIn}"/>
+                    <!--if the user is not logged in show button to log out-->
+                    <p:commandButton id="logout" 
 
-            <!--if the user is not logged in show button to log out-->
-            <p:commandButton id="logout" 
+                                     value="Logout" 
 
-                             value="Logout" 
+                                     action="#{login.logout}" 
 
-                             action="#{login.logout}" 
+                                     rendered="#{login.loggedIn}"/> 
+                    <p:commandButton action="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
 
-                             rendered="#{login.loggedIn}"/> 
+                    <p:message for="email" style="color:red" />
+                    <p:message for="password" style="color:red" />
+                </h:form> 
 
-            <p:message for="email" style="color:red" />
-            <p:message for="password" style="color:red" />
-        </h:form> 
 
-        <h:link outcome="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
 
+            </f:facet>
+        </p:toolbar>
     </body>
 </html>
