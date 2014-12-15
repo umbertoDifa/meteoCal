@@ -22,7 +22,7 @@
 
 
             <p:layout fullPage="false">
-                <p:layoutUnit position="north" size="80" >
+                <p:layoutUnit id="header" position="north" size="62" >
 
                     <ui:include src="/logInForm.xhtml"/>
 
@@ -32,7 +32,7 @@
                                     Footer
                                 </p:layoutUnit>-->
 
-                <p:layoutUnit position="west" size="181" >
+                <p:layoutUnit position="west" size="188" >
 
                     <ui:include src="/landmarks.xhtml"/>
 
@@ -41,7 +41,7 @@
                 <p:layoutUnit  position="center" collapsible="false">
                     <ui:insert name="content"/>
                 </p:layoutUnit>
-                
+                                
             </p:layout>
 
         </h:body>

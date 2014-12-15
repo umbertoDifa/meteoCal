@@ -9,5 +9,10 @@ and open the template in the editor.
 */
 
 .ui-widget{
-    font-family:Arial,sans-serif;font-size: 90% !important;
+    font-family:Arial,sans-serif;font-size: 92% !important;
+}
+
+#header{
+    position: fixed !important;
+    z-index: 1 !important;
 }
