@@ -38,7 +38,7 @@
                     <p:commandButton id="login" 
 
                                      value="Login" 
-                                     
+
                                      icon="ui-icon-key" 
 
                                      action="#{login.login}" 
@@ -46,18 +46,16 @@
                                      rendered="#{!login.loggedIn}"/>
 
                     <!--if the user is not logged in show button to log out-->
-                    <p:commandButton type="button" 
-                                     
-                                     id="logout" 
-                                     
+                    <p:commandButton id="logout" 
+
                                      value="Logout" 
-                                     
+
                                      icon="ui-icon-extlink" 
-                                     
+
                                      action="#{login.logout}" 
-                                     
+
                                      rendered="#{login.loggedIn}"/>
-                    
+
                     <p:commandButton action="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
 
                     <p:message for="email" style="color:red" />
