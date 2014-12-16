@@ -7,7 +7,7 @@
       xmlns:p="http://primefaces.org/ui">
 
     <body>
-        
+
         <p:toolbar>
             <f:facet name="right">
                 <h:form id="loginForm"> 
@@ -38,19 +38,24 @@
                     <p:commandButton id="login" 
 
                                      value="Login" 
+                                     
+                                     icon="ui-icon-key" 
 
                                      action="#{login.login}" 
 
                                      rendered="#{!login.loggedIn}"/>
 
                     <!--if the user is not logged in show button to log out-->
-                    <p:commandButton id="logout" 
-
+                    <p:commandButton type="button" 
+                                     
+                                     id="logout" 
+                                     
                                      value="Logout" 
-
-                                     action="#{login.logout}" 
-
-                                     rendered="#{login.loggedIn}"/> 
+                                     
+                                     icon="ui-icon-extlink" 
+                                     
+                                     rendered="#{login.loggedIn}"/>
+                    
                     <p:commandButton action="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
 
                     <p:message for="email" style="color:red" />
