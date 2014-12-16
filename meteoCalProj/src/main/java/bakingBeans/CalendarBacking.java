@@ -10,7 +10,6 @@ import EJB.interfaces.CalendarManager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -18,8 +17,6 @@ import model.UserModel;
 import utility.ViewModality;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import utility.LoggerLevel;
-import utility.LoggerProducer;
 
 /**
  *
@@ -34,8 +31,6 @@ public class CalendarBacking implements Serializable {
 
     @Inject
     CalendarManager calendarManager;
-
-    Logger logger = LoggerProducer.debugLogger(CalendarBacking.class);
 
     private LoginBacking login;
 
@@ -64,7 +59,6 @@ public class CalendarBacking implements Serializable {
     public List<String> getCalendarNames() {
         if (calendars != null) {
             List<String> r = titlesCalendar(this.calendars);
-            logger.log(LoggerLevel.DEBUG, r.toString());
             return r;
         }
         return null;

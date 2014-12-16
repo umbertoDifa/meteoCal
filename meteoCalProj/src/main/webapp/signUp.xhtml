@@ -9,22 +9,21 @@ and open the template in the editor.
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui">
 
     <ui:composition template="/template.xhtml">
         <ui:define name="title">sign up</ui:define>
 
         <ui:define name="content">
-            <h:outputScript library="js" name="autofocus.js" />
-            <script>
-                autofocus("signForm:email");
-            </script>
+
             <h:messages />
 
             <h1>Sign Up</h1>
 
             <h:form id="signUpForm" rendered="#{!login.loggedIn}"> 
 
+                <p:focus context="signUpForm"/>
                 <h:panelGrid columns="2"> 
 
                     <h:outputLabel for="email">Email*:</h:outputLabel> 

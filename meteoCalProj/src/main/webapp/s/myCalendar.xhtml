@@ -6,20 +6,87 @@ and open the template in the editor.
 -->
 <!DOCTYPE html>
 <html  xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
-    
+       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+       xmlns:h="http://xmlns.jcp.org/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+       xmlns:p="http://primefaces.org/ui">
+
     <ui:composition template="/template.xhtml">
         <ui:define name="title">calendar</ui:define>
 
         <ui:define name="content">
 
-            <h1>Calendar</h1>
-            <h:commandButton>Day</h:commandButton>
-            <h:commandButton>Week</h:commandButton>
-            <h:commandButton>Month</h:commandButton>
-            <ui:insert name="#{calendar.viewModailty}" />
+            <h:form>
+                <h:panelGrid columnClasses="value">
+                    <p:schedule id="schedule" value="#{scheduleView.eventModel}" widgetVar="myschedule" timeZone="GMT+2">
+
+                        <p:ajax event="dateSelect" listener="#{scheduleView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                        <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                        <p:ajax event="eventMove" listener="#{scheduleView.onEventMove}" update=":growl" />
+                        <p:ajax event="eventResize" listener="#{scheduleView.onEventResize}" update=":growl" />
+
+                    </p:schedule>
+                    <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
+                        <h:panelGrid id="eventDetails" columns="2">
+                            <h:outputLabel for="title" value="Title:" />
+                            <p:inputText id="title" value="#{scheduleView.event.title}" required="true" />
+
+                            <h:outputLabel for="from" value="From:" />
+                            <p:inputMask id="from" value="#{scheduleView.event.startDate}" mask="99/99/9999">
+                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+2"/>
+                            </p:inputMask>
+
+                            <h:outputLabel for="to" value="To:" />
+                            <p:inputMask id="to" value="#{scheduleView.event.endDate}" mask="99/99/9999">
+                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+2"/>
+                            </p:inputMask>
+
+                            <h:outputLabel for="allDay" value="All Day:" />
+                            <h:selectBooleanCheckbox id="allDay" value="#{scheduleView.event.allDay}" />
+
+                            <p:commandButton type="reset" value="Reset" />
+                            <p:commandButton id="addButton" value="Save" actionListener="#{scheduleView.addEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
+                        
+<!--                            bottone viewEvent o manage per esteso-->
+                            
+                        </h:panelGrid>
+                    </p:dialog>   
+                </h:panelGrid>
+            </h:form>
+
+
+            <script type="text/javascript">
+                PrimeFaces.locales['tr'] = {
+                    closeText: 'kapat',
+                    prevText: 'geri',
+                    nextText: 'ileri',
+                    currentText: 'bugün',
+                    monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                        'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+                    monthNamesShort: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
+                        'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
+                    dayNames: ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'],
+                    dayNamesShort: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
+                    dayNamesMin: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
+                    weekHeader: 'Hf',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    month: 'Ay',
+                    week: 'Hafta',
+                    day: 'Gün',
+                    allDayText: 'Tüm Gün'
+                };
+            </script>
+
+
+
+            <style type="text/css">
+                .value {
+                    width: 1000px;
+                }
+            </style>
         </ui:define>
 
     </ui:composition>
