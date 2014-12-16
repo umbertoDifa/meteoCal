@@ -7,12 +7,10 @@ package model;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -25,8 +23,9 @@ import javax.persistence.Table;
  */
 @Entity
 @IdClass(CalendarId.class)
-@Table(name="CALENDAR")
- @NamedQuery(name= "findCalbyUserAndTitle", query= "SELECT c FROM CalendarModel c WHERE c.owner =:id AND c.title=:title")
+@Table(name = "CALENDAR")
+@NamedQuery(name = "findCalbyUserAndTitle",
+            query = "SELECT c FROM CalendarModel c WHERE c.owner =:id AND c.title=:title")
 public class CalendarModel implements Serializable {
 
     @Id
@@ -41,13 +40,12 @@ public class CalendarModel implements Serializable {
 
     @ManyToMany
     @JoinTable(name = "EVENT_IN_CALENDAR")
-    private List<Event> eventsInCalendar;//FIXED
-    
-    
+    private List<Event> eventsInCalendar;
+
     /**
-    *
-    *   CONSTRUCTURS
-    */
+     *
+     * CONSTRUCTURS
+     */
     public CalendarModel() {
     }
 
@@ -58,16 +56,10 @@ public class CalendarModel implements Serializable {
         this.isDefault = isDefault;
     }
 
-        public CalendarModel(String title, boolean isPublic, boolean isDefault) {
-        this.title = title;
-        this.isPublic = isPublic;
-        this.isDefault = isDefault;
-    }
     /**
-    *
-    *  SETTERS & GETTERS 
-    */
-    
+     *
+     * SETTERS & GETTERS
+     */
     public String getTitle() {
         return title;
 
@@ -76,7 +68,6 @@ public class CalendarModel implements Serializable {
     public List<Event> getEventsInCalendar() {
         return eventsInCalendar;
     }
-
 
     public void setTitle(String calendar_title) {
         this.title = calendar_title;
@@ -106,12 +97,10 @@ public class CalendarModel implements Serializable {
         this.isDefault = isDefault;
     }
 
-    
     /**
-    *
-    *  METHODS
-    */
-    
+     *
+     * METHODS
+     */
     public boolean addEventInCalendar(Event event) {
         return this.eventsInCalendar.add(event);
     }
