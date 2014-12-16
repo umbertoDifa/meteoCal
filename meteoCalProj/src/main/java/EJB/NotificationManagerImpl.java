@@ -10,7 +10,6 @@ import model.Event;
 import model.Notification;
 import model.UserModel;
 import model.NotificationType;
-import utility.EmailSender;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
 
@@ -22,7 +21,7 @@ public class NotificationManagerImpl implements NotificationManager {
     private EntityManager database;
 
     @Override
-    public void createNotifications(List<UserModel> users, Event event, NotificationType type) {
+    public void createNotifications(List<UserModel> users, Event event, NotificationType type, boolean sendEmail) {
         logger.log(LoggerLevel.DEBUG, "Setting up the notification...");
 
         type.setEventName(event.getTitle()).setEventOwner(
@@ -31,9 +30,12 @@ public class NotificationManagerImpl implements NotificationManager {
         for (UserModel user : users) {
             createNotification(user, event, type);
         }
-        for (UserModel user : users) {
-            type.setInviteeName(user.getName()).buildEmail();
-            sendEmail(user, type);
+
+        if (sendEmail) {
+            for (UserModel user : users) {
+                type.setInviteeName(user.getName()).buildEmail();
+                sendEmail(user, type);
+            }
         }
 
     }
