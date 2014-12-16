@@ -38,7 +38,6 @@ import javax.persistence.Temporal;
 
 })
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-//@SequenceGenerator (name = "eventSeq", initialValue = 100 )
 public abstract class Event implements Serializable {
 
     private static final long serialVersionUID = 1L;
