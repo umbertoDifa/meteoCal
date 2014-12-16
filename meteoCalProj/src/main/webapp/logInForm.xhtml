@@ -1,22 +1,17 @@
 <?xml version='1.0' encoding='UTF-8' ?> 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:p="http://primefaces.org/ui">
 
     <body>
-        <h:outputScript library="js" name="autofocus.js" />
 
-        <script>
-            autofocus("loginForm:email");
-        </script>
         <p:toolbar>
             <f:facet name="right">
                 <h:form id="loginForm"> 
+                    <p:focus context="loginForm"/>
                     <!--if the user is not logged in show outputLabel "non loggato"-->
                     <h:outputLabel for="email" rendered="#{!login.loggedIn}" class="ui-messages-error">
                         Non sei loggato</h:outputLabel>
@@ -43,19 +38,24 @@
                     <p:commandButton id="login" 
 
                                      value="Login" 
+                                     
+                                     icon="ui-icon-key" 
 
                                      action="#{login.login}" 
 
                                      rendered="#{!login.loggedIn}"/>
 
                     <!--if the user is not logged in show button to log out-->
-                    <p:commandButton id="logout" 
-
+                    <p:commandButton type="button" 
+                                     
+                                     id="logout" 
+                                     
                                      value="Logout" 
-
-                                     action="#{login.logout}" 
-
-                                     rendered="#{login.loggedIn}"/> 
+                                     
+                                     icon="ui-icon-extlink" 
+                                     
+                                     rendered="#{login.loggedIn}"/>
+                    
                     <p:commandButton action="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
 
                     <p:message for="email" style="color:red" />

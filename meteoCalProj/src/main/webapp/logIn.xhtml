@@ -21,6 +21,8 @@ and open the template in the editor.
             <h1>Log in</h1>
 
             <h:form id="loginForm2"> 
+                <p:focus context="loginForm2"/>
+
                 <!--if the user is not logged in show outputLabel "non loggato"-->
                 <h:outputLabel for="email" rendered="#{!login.loggedIn}">
                     Non sei ancora loggato</h:outputLabel>
@@ -45,6 +47,8 @@ and open the template in the editor.
 
                                          value="Login" 
 
+                                         icon="ui-icon-key"
+
                                          action="#{login.login}" 
 
                                          rendered="#{!login.loggedIn}"/>
@@ -63,8 +67,8 @@ and open the template in the editor.
 
                                  rendered="#{login.loggedIn}"/> 
 
-<!--                <p:message for="email" style="color:red" />
-                <p:message for="password" style="color:red" />-->
+                <!--                <p:message for="email" style="color:red" />
+                                <p:message for="password" style="color:red" />-->
             </h:form> 
         </ui:define>
     </ui:composition>

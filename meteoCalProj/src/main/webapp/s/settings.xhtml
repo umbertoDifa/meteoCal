@@ -10,7 +10,8 @@ and open the template in the editor.
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:pt="http://java.sun.com/jsf/passthrough"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
 
 
     <ui:composition template="/template.xhtml">
@@ -26,53 +27,53 @@ and open the template in the editor.
 
                 <h:outputLabel>Name, Surname:</h:outputLabel> 
 
-                <h:inputText id="name" value="#{settings.name}" pt:required="" />
+                <p:inputText id="name" value="#{settings.name}" pt:required="" />
 
-                <h:inputText id="surname" value="#{settings.surname}" pt:required=""/><br/>
+                <p:inputText id="surname" value="#{settings.surname}" pt:required=""/><br/>
 
                 <h:outputLabel for="email">Email:</h:outputLabel> 
 
-                <h:inputText id="email" value="#{settings.email}" pt:required="">
+                <p:inputText id="email" value="#{settings.email}" pt:required="">
                     <f:passThroughAttribute name="type" value="email" />
-                </h:inputText>
+                </p:inputText>
 
                 <h2> Change Password: </h2>
                 <h:panelGrid columns="2">
                     <h:outputLabel>Old Password:</h:outputLabel> 
-                    <h:inputSecret id="oldPassword" />
+                    <p:password id="oldPassword" />
 
                     <h:outputLabel>New Password:</h:outputLabel> 
-                    <h:inputSecret id="newPassword1" />
+                    <p:password id="newPassword1" />
 
                     <h:outputLabel>Repeat Password:</h:outputLabel> 
-                    <h:inputSecret id="newPassword2" />
+                    <p:password id="newPassword2" />
                 </h:panelGrid>
                 <br/>
-                <h:commandButton id="save" value="Save" action="#{settings.save}"/>
+                <p:commandButton id="save" value="Save" action="#{settings.save}"/>
 
-                <h:commandButton id="cancel" value="Cancel" action="#{settings.clear}"/>
+                <p:commandButton id="cancel" value="Cancel" action="#{settings.clear}"/>
             </h:form>
             <hr/>
             <h2> Export Calendar: </h2>
             <h:form>
-                <h:selectOneMenu value="#{settings.calendarToExport}">
+                <p:selectOneMenu value="#{settings.calendarToExport}">
                     <c:forEach items="#{calendar.calendarNames}" var="cal">
                         <f:selectItem itemValue="#{cal}" itemLabel="#{cal}" />
                     </c:forEach>
-                </h:selectOneMenu>
-                <h:commandButton id="export" value="Export" action="#{settings.exportCalendar}"/>
+                </p:selectOneMenu>
+                <p:commandButton icon="ui-icon-arrowthickstop-1-s" id="export" value="Export" action="#{settings.exportCalendar}"/>
             </h:form>
             <h2> Import Calendar: </h2>
             <h:form>
-                <input type="file" name=".csv" accept="image/*" />
-                <h:commandButton id="import" value="Import" action="#{settings.importCalendar}"/>
+                <p:fileUpload value="#{settings.calendarToImport}" mode="simple" allowTypes=".csv" />
+                <p:commandButton id="import" value="Import" action="#{settings.importCalendar}"/>
             </h:form>
             <hr/>
             <h2> Delete Account</h2>
             <p>Please be aware that once the account has been deleted, it will not be possible to reactivate
             it later or retrieve calendars and events you have created. If you still wish to delete your account,
             click on "Delete my Account"</p>
-            <h:commandButton id="delete" value="Delete my Account" action="#{settings.deleteAccount}"/>
+            <p:commandButton id="delete" value="Delete my Account" action="#{settings.deleteAccount}"/>
         </ui:define>
     </ui:composition>
 </html>
