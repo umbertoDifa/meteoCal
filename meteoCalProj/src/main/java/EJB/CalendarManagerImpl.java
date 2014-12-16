@@ -25,26 +25,46 @@ public class CalendarManagerImpl implements CalendarManager {
     Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
 
     @Inject
-    WeatherManager weatherManager;       
+    WeatherManager weatherManager;
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
+
+    @Override
+    public boolean checkData() {
+        //TODO implement method
+        return false;
+    }
 
     private void checkWeather() {
         //TODO do             
     }
 
-    private void checkConflicts() {
-        //TODO do
+    private void checkConflicts(UserModel user, Event event) {
+        event = database.find(Event.class, event.getId());
+        int conflictingEventIndex = database.createNamedQuery("isConflicting").setParameter("user", user).setParameter("end", event.getEndDateTime()).setParameter("start", event.getStartDateTime()).setParameter("id", event.getId()).getFirstResult();
+        if (conflictingEventIndex != 0) {
+            int offset = findFreeSlots(user, event);
+            if (offset == 0) {
+                //TODO MA COSA RITORNO QUI?
+                ;
+            }
+        }
     }
 
-    private void findFreeSlots(UserModel user, Event event) {
+    private int findFreeSlots(UserModel user, Event event) {
         int searchRange = 15;
-        //TODO do
-        for (CalendarModel calendar : user.getOwnedCalendars()) {
-            // cerca un giorno in cui non ci sia un evento programmato per la stessa ora dell'evento schedulato.
+        Calendar newStart = event.getStartDateTime();
+        Calendar newEnd = event.getEndDateTime();
+        for (int i = 1; i < searchRange; i++) {
+            newEnd.add(Calendar.DAY_OF_MONTH, i);
+            newStart.add(Calendar.DAY_OF_MONTH, i);
+            int conflictingEventIndex = database.createNamedQuery("isConflicting").setParameter("user", user).setParameter("end", newEnd).setParameter("start", newStart).setParameter("id", event.getId()).getFirstResult();
+            if (conflictingEventIndex == 0) {
+                return i;
+            }
         }
-
+        return 0;
     }
 
     @Override
@@ -69,13 +89,6 @@ public class CalendarManagerImpl implements CalendarManager {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
             return false;
         }
-    }
-
-    @Override
-    public boolean checkData() {
-        this.checkWeather();
-        this.checkConflicts();
-        return true;//TODO do
     }
 
     @Override
@@ -121,7 +134,6 @@ public class CalendarManagerImpl implements CalendarManager {
 
     }
 
-   
     @Override
     public CalendarModel createDefaultCalendar(UserModel user
     ) {

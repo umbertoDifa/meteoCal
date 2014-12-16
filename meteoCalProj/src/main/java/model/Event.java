@@ -7,6 +7,7 @@ package model;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.persistence.Column;
@@ -34,16 +35,20 @@ import javax.persistence.Temporal;
     //COME IMPOSTARE IL PARAMETRO: namedQuery.setParameter("search", "%" + value + "%");
     @NamedQuery(name = "findEventbyString", query = "SELECT e FROM Event e WHERE e.title LIKE :search"),
 
-    @NamedQuery(name = "findEventbyTitle", query = "SELECT e FROM Event e WHERE e.title=:title")
-
+    @NamedQuery(name = "findEventbyTitle", query = "SELECT e FROM Event e WHERE e.title=:title"),
+    
+    //Da chiamare sempre limitando i risulati ad 1 solo!
+    @NamedQuery(name = "isConflicting", query = "SELECT e FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND e.id <> :id AND "
+            +"(e.endDateTime >= :end   AND  (e.startDateTime <= :start  OR   e.endDateTime>=:start) "
+            + "OR (e.startDateTime >= :start AND e.startDateTime <= :end))")
 })
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Event implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator (name = "EVENT_SEQ", table = "SEQUENCE",  pkColumnName="SEQ_NAME",
-        valueColumnName="SEQ_COUNT", pkColumnValue="EVENT_SEQ")
+    @TableGenerator(name = "EVENT_SEQ", table = "SEQUENCE", pkColumnName = "SEQ_NAME",
+            valueColumnName = "SEQ_COUNT", pkColumnValue = "EVENT_SEQ")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "EVENT_SEQ")
     private Long id;
 
@@ -76,10 +81,9 @@ public abstract class Event implements Serializable {
 //   EX ERROR!!
 
     /**
-    *
-    *   CONSTRUCTORS
-    */
-    
+     *
+     * CONSTRUCTORS
+     */
     //costruiscono una anonymus subclass, non bisogna MAI persisterli prima di aver creato la entity giusta!
     public Event(String title, Calendar startDateTime, Calendar endDateTime, String location, String description, boolean isOutdoor, UserModel owner) {
         this.title = title;
@@ -95,12 +99,10 @@ public abstract class Event implements Serializable {
     public Event() {
     }
 
-    
     /**
-    *
-    *   SETTERS & GETTERS
-    */
-
+     *
+     * SETTERS & GETTERS
+     */
     public String getTitle() {
         return title;
     }
@@ -176,12 +178,11 @@ public abstract class Event implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    /**
-    *
-    *   METHODS
-    */
 
+    /**
+     *
+     * METHODS
+     */
     @Override
     public int hashCode() {
         int hash = 0;
@@ -206,15 +207,23 @@ public abstract class Event implements Serializable {
     public String toString() {
         return "model.Event[ id=" + id + " ]";
     }
-    
+
     public String getFormattedStartDate() {
         String formattedDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm").format(this.startDateTime.getTime());
         return formattedDate;
     }
-    
+
     public String getFormattedEndDate() {
         String formattedDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm").format(this.endDateTime.getTime());
         return formattedDate;
     }
-           
+
+    public List<UserModel> getInvitee() {
+        List<UserModel> invitee = new ArrayList<>();
+        for (Invitation invitation : this.getInvitations()) {
+            invitee.add(invitation.getInvitee());
+        }
+        return invitee;
+    }
+
 }
