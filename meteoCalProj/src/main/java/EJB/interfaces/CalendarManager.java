@@ -45,13 +45,9 @@ public interface CalendarManager {
      */
     public ControlMessages addToCalendar(Event event, CalendarModel calendar);
 
-    public void exportCalendar(CalendarModel calendar);
-
-    public void importCalendar(String calendarName);
-
     public CalendarModel createDefaultCalendar(UserModel user);
-    
+
     public CalendarModel findCalendarByName(UserModel user, String name);
-    
+
     public List<String> getCalendarTitles(UserModel user);
 }

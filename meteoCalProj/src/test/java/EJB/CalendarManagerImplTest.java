@@ -123,46 +123,6 @@ public class CalendarManagerImplTest {
     }
 
     /**
-     * Test of exportCalendar method, of class CalendarManagerImpl.
-     */
-    @Test
-    @Ignore
-    public void testExportCalendar() throws Exception {
-        System.out.println("exportCalendar");
-        UserModel owner = new UserModel("nomeDellOwner", "CognomeOwner",
-                "email@owner", "passwordOwner");
-        CalendarModel calendar = new CalendarModel("Titolo del calendario",
-                owner, true, false);
-        
-        Calendar startEvent = Calendar.getInstance();
-        Calendar endEvent = Calendar.getInstance();
-        endEvent.add(Calendar.DATE, 1);
-        
-        Event event = new PublicEvent("Titolo Evento", startEvent, endEvent, "luogo Evento", "descrizione evento", true, owner);
-        event.setId(Long.MAX_VALUE);
-        
-        calendar.init();
-        calendar.addEventInCalendar(event);
-        
-        CalendarManagerImpl instance = new CalendarManagerImpl();
-        instance.exportCalendar(calendar);
-        // TODO review the generated test code and remove the default call to fail.
-    }
-
-    /**
-     * Test of importCalendar method, of class CalendarManagerImpl.
-     */
-    @Test
-    @Ignore
-    public void testImportCalendar() throws Exception {
-        System.out.println("importCalendar");
-
-        CalendarManagerImpl instance = new CalendarManagerImpl();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of createDefaultCalendar method, of class CalendarManagerImpl.
      */
     @Test
