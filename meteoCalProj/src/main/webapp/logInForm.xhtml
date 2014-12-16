@@ -54,6 +54,8 @@
                                      
                                      icon="ui-icon-extlink" 
                                      
+                                     action="#{login.logout}" 
+                                     
                                      rendered="#{login.loggedIn}"/>
                     
                     <p:commandButton action="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
