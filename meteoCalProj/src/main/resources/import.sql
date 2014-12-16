@@ -37,7 +37,8 @@ insert into CALENDAR (TITLE, ISDEFAULT, ISPUBLIC, OWNER_ID)
     ("Public_Cal", 0, 1, 6),
     ("Public_Cal", 0, 1, 7);
 
-   	insert into PRIVATE_EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STARTDATETIME, TITLE, OWNER_ID)
+
+	insert into PRIVATE_EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STARTDATETIME, TITLE, OWNER_ID)
 	values
 	(1, "Evento Privato di amdin", '2014-12-22 01:30', 1 , "a casa mia", '2014-12-22 00:30', "Private Event of admin", 7),
 	(2, "Evento Privato di fra", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Private Event of fra", 6),
@@ -76,6 +77,8 @@ insert into EVENT_IN_CALENDAR (eventsInCalendar_ID, TITLE, OWNER_ID)
 	(12, "Public_Cal", 6),
 	(14, "Public_Cal", 7);
 
-
+UPDATE SEQUENCE
+SET SEQ_COUNT = 14
+WHERE SEQ_NAME = 'EVENT_SEQ';
 
       
