@@ -4,6 +4,6 @@
     <jta-data-source>meteoCalPool</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-    </properties>
+        </properties>
   </persistence-unit>
 </persistence>

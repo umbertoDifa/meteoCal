@@ -47,7 +47,7 @@ public interface CalendarManager {
 
     public void exportCalendar(CalendarModel calendar);
 
-    public void importCalendar(CalendarModel calendar);
+    public void importCalendar(String calendarName);
 
     public CalendarModel createDefaultCalendar(UserModel user);
     
