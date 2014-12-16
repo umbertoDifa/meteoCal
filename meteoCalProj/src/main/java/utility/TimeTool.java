@@ -3,7 +3,6 @@ package utility;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  *
@@ -11,11 +10,18 @@ import java.util.GregorianCalendar;
  */
 public class TimeTool {
 
+    //TODO: queste funzioni sono indentiche, parlo di calendar to text e date to text
+    //si possono unire
+    private final static String defaultPattern = "yyyy-MM-dd";
+    
     public static String calendarToTextDay(Calendar day) {
+        return calendarToTextDay(day, defaultPattern);
+    }
+
+    public static String calendarToTextDay(Calendar day, String pattern) {
         SimpleDateFormat df = new SimpleDateFormat();
         //df.applyPattern("yyyy-MM-dd hh:mm:ss");
-        df.applyPattern("yyyy-MM-dd");
-
+        df.applyPattern(pattern);
         return df.format(day.getTime());
     }
 
@@ -23,7 +29,6 @@ public class TimeTool {
         SimpleDateFormat df = new SimpleDateFormat();
         df.applyPattern("yyyy-MM-dd");
         return df.format(date);
-
     }
 
     /**
