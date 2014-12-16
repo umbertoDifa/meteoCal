@@ -29,7 +29,7 @@ public class InvitationManagerImpl implements InvitationManager {
                 usersToInvite.remove(user);
 
         notificationManager.createNotifications(usersToInvite, event,
-                NotificationType.INVITATION);
+                NotificationType.INVITATION, true);
     }
 
     private boolean createInvitation(UserModel user, Event event) {
