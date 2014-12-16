@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.inject.Named;
@@ -38,7 +39,7 @@ public class ManageEventBacking implements Serializable {
     Event eventToCreate;
 
     String description = "description";
-    String location = "location";
+    String location = "Write the location here";
     boolean outdoor;
     boolean publicAccess;
     String title = "initialTitle";
@@ -242,21 +243,25 @@ public class ManageEventBacking implements Serializable {
         //carico istanza evento specificato in idEvent
         if (idEvent != null) {
             eventToCreate = eventManager.findEventbyId(Long.parseLong(idEvent));
-            //initialize event parameters
-            title = eventToCreate.getTitle();
-            description = eventToCreate.getDescription();
-            location = eventToCreate.getLocation();
-            newGuestEmail = "invita qualcuno";
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-            Calendar cal = Calendar.getInstance();
-            startDate = dateFormat.format(eventToCreate.getStartDateTime().getTime());
-            endDate = dateFormat.format(eventToCreate.getEndDateTime().getTime());
-            startTime = timeFormat.format(eventToCreate.getStartDateTime().getTime());
-            endTime = timeFormat.format(eventToCreate.getEndDateTime().getTime());
-            setSaved(true);
-        } else {
-            showMessage(null, "Nessun evento trovato per la setEditModality", "");
+            if (eventToCreate != null) {
+                //initialize event parameters
+                title = eventToCreate.getTitle();
+                description = eventToCreate.getDescription();
+                location = eventToCreate.getLocation();
+                newGuestEmail = "invita qualcuno";
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+                Calendar cal = Calendar.getInstance();
+                startDate = dateFormat.format(eventToCreate.getStartDateTime().getTime());
+                endDate = dateFormat.format(eventToCreate.getEndDateTime().getTime());
+                startTime = timeFormat.format(eventToCreate.getStartDateTime().getTime());
+                endTime = timeFormat.format(eventToCreate.getEndDateTime().getTime());
+                setSaved(true);
+                publicAccess = eventToCreate instanceof PublicEvent;
+                //inizializzare calendarName
+            } else {
+                showMessage(null, "Nessun evento trovato", "");
+            }
         }
     }
 
@@ -278,11 +283,13 @@ public class ManageEventBacking implements Serializable {
         return null;
     }
 
-    public void save() {
+    public String save() {
 
         createOrLoadInstance();
         setUpInstance();
         saveIt();
+
+        return "/s/event.xhtml?id=" + idEvent; //TODO gestire errori?
 
     }
 
@@ -333,13 +340,26 @@ public class ManageEventBacking implements Serializable {
     }
 
     /**
-     * se l'evento è già stato creato ne carica l'istanza altrimenti ne crea uno
-     * nuovo, sempre in eventToCreate
+     * se l'evento è già stato creato ne carica l'istanza solo se non è cambiata
+     * la privacy. Se la privacy è stata cambiata creo un nuovo evento con la
+     * privacy giusta, il vecchio lo elimino e aggiorno l idEvent. Se l'evento
+     * invece è un nuovo evento lo istanzio, sempre in eventToCreate
      */
     private void createOrLoadInstance() {
         if (isSaved()) {
             if (idEvent != null) {
-                eventToCreate = eventManager.findEventbyId(Long.parseLong(idEvent));
+                Event eventFound = eventManager.findEventbyId(Long.parseLong(idEvent));
+                if (((eventFound instanceof PublicEvent) && (publicAccess)) || ((eventFound instanceof PrivateEvent) && (!publicAccess))) {
+                    eventToCreate = eventFound;
+                } else {
+                    if (publicAccess) {
+                        eventToCreate = new PublicEvent();
+                    } else {
+                        eventToCreate = new PrivateEvent();
+                    }
+                    eventManager.deleteEvent(eventFound);
+                    idEvent = Objects.toString(eventToCreate.getId(), null);
+                }
             } else {
                 System.out.println("idEvent è null");
                 showMessage(null, "Nessun evento trovato", "");
@@ -404,7 +424,7 @@ public class ManageEventBacking implements Serializable {
         //passo all eventManager l'ownerId, l'evento riempito, il calendario
         //dove metterlo e la lista degli invitati
         if (isSaved()) {
-            //eventManager.updateEvent(eventToCreate, calendar, guests);
+            eventManager.updateEvent(eventToCreate, calendar, guests);
         } else {
             if (eventManager.scheduleNewEvent(eventToCreate, calendar, guests)) {
                 setSaved(true);
