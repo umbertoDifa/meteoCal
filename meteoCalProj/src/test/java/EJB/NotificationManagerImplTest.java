@@ -11,7 +11,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Ignore;
 
 /**
@@ -62,13 +61,13 @@ public class NotificationManagerImplTest {
 
         NotificationManagerImpl instance = new NotificationManagerImpl();
 
-        instance.createNotifications(users, event, type);
+        instance.createNotifications(users, event, type, true);
         
         type = NotificationType.EVENT_CHANGED;
-        instance.createNotifications(users, event, type);
+        instance.createNotifications(users, event, type, true);
         
         type = NotificationType.EVENT_CANCELLED;
-        instance.createNotifications(users, event, type);
+        instance.createNotifications(users, event, type, true);
 
     }
 

@@ -8,6 +8,7 @@ package EJB.interfaces;
 import java.util.List;
 import model.CalendarModel;
 import model.Event;
+import model.InvitationAnswer;
 import model.UserModel;
 
 /**
@@ -37,5 +38,7 @@ public interface EventManager {
     public boolean deleteEvent(Event event);
     
     public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees);
+        
+    public List<UserModel> getInviteeFiltred(Event event, InvitationAnswer answer);
     
 }

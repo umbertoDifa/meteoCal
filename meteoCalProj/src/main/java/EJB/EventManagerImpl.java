@@ -3,6 +3,7 @@ package EJB;
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
+import EJB.interfaces.NotificationManager;
 import EJB.interfaces.SearchManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,9 @@ import model.CalendarModel;
 import model.Event;
 import model.Invitation;
 import model.InvitationAnswer;
+import model.NotificationType;
 import model.PublicEvent;
+import model.PrivateEvent;
 import model.UserModel;
 
 @Stateless
@@ -32,6 +35,9 @@ public class EventManagerImpl implements EventManager {
 
     @Inject
     InvitationManager invitationManager;
+
+    @Inject
+    NotificationManager notificationManager;
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
@@ -66,6 +72,26 @@ public class EventManagerImpl implements EventManager {
     public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees) {
         try {
             Event oldEvent = database.find(Event.class, event.getId());
+            List<UserModel> oldinvitees = new ArrayList<>();
+            for (Invitation invitation : oldEvent.getInvitations()) {
+                oldinvitees.add(invitation.getInvitee());
+            }
+            if (oldEvent instanceof PrivateEvent && event instanceof PublicEvent) {
+                event.setId(oldEvent.getId());
+
+                notificationManager.createNotifications(oldinvitees, oldEvent, NotificationType.EVENT_PUBLIC, false);
+                database.remove(oldEvent);
+                database.persist(event);
+
+            } else if (oldEvent instanceof PublicEvent && event instanceof PrivateEvent) {
+                //TODO implementare cambio di privacy da public a private
+            }
+            if (!(oldEvent.getTitle().equals(event.getTitle())
+                    && oldEvent.getStartDateTime().equals(event.getStartDateTime())
+                    && oldEvent.getEndDateTime().equals(event.getEndDateTime()))) {
+                notificationManager.createNotifications(oldinvitees, oldEvent, NotificationType.INVITATION, false);
+            }
+
             database.flush();
             if (invitees != null && invitees.size() > 0) {
                 invitationManager.createInvitations(invitees, event);
@@ -176,5 +202,49 @@ public class EventManagerImpl implements EventManager {
             return false;
         }
 
+    }
+
+    private void findFreeSlots(UserModel user, Event event) {
+        int searchRange = 15;
+        for (CalendarModel calendar : user.getOwnedCalendars()) {
+            boolean found = false;
+            for (int i = 0; (i < searchRange && !found); i++) {
+                calendar.getEventsInCalendar();
+
+            }
+        }
+
+    }
+    
+    @Override
+    public List<UserModel> getInviteeFiltred(Event event, InvitationAnswer answer) {
+        event = database.find(Event.class, event.getId());
+        List<Invitation> invitations = event.getInvitations();
+        List<UserModel> users = new ArrayList<>();
+        switch (answer) {
+            case YES: {
+                for (Invitation invitation : invitations) {
+                    if (invitation.getAnswer().equals(InvitationAnswer.YES)) {
+                        users.add(invitation.getInvitee());
+                    }
+                }
+            }
+            case NO: {
+                for (Invitation invitation : invitations) {
+                    if (invitation.getAnswer().equals(InvitationAnswer.NO)) {
+                        users.add(invitation.getInvitee());
+                    }
+                }
+
+            }
+            case NA: {
+                for (Invitation invitation : invitations) {
+                    if (invitation.getAnswer().equals(InvitationAnswer.NA)) {
+                        users.add(invitation.getInvitee());
+                    }
+                }
+            }
+        }
+        return users;
     }
 }

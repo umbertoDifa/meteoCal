@@ -11,6 +11,7 @@ package model;
  */
 public enum InvitationAnswer {
     YES,
-    NO
+    NO,
+    NA
 }
  
