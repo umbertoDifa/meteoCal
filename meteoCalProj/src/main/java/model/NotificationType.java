@@ -16,13 +16,15 @@ import utility.LoggerProducer;
  */
 public enum NotificationType {
 
-    INVITATION("Invito all''evento {0}",
-            "Ciao {0},\n hai ricevuto un invito per l''evento {1} da {2}.\n "
-            + "Guarda la pagina dell''evento al seguente link:\n{3}\nMeteoCalendarTeam"), //    WEATHER_CHANGED,
-    EVENT_CHANGED("L''evento {0} è stato modficato",
-            "Ciao {0},\n ti informiamo che l''evento {1} è stato modificato.\nLink:{3}"),
-    EVENT_CANCELLED("L''evento {0} è stato cancellato",
-            "Ciao {0},\n ti informiamo che l''evento {1} è stato cancellato.\n");
+    INVITATION("Invitation to event {0}",
+            "Hello {0},\n you've received an invitation for event {1} from {2}.\n "
+            + "Have a look to the event page on the following link:\n{3}\nMeteoCalendarTeam"), //    WEATHER_CHANGED,
+    EVENT_CHANGED("Event {0} has been modified",
+            "Hello {0},\n we inform you that event {1} has been modified\nLink:{3}"),
+    EVENT_CANCELLED("Event {0} has been cancelled",
+            "Hello {0},\n we inform you that event {1} has been cancelled\n"),
+    EVENT_PUBLIC("Event {0} has changed privacy from Private to Public",
+            "Hello {0},\n we inform you that event {1} has changed its privacy from Private to Public.\n");
 
     private String subject;
     private String bodyMessage;

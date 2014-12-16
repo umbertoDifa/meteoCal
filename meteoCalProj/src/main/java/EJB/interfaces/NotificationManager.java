@@ -22,7 +22,9 @@ public interface NotificationManager {
      * @param users list of users ot notify
      * @param event
      * @param type
-     * @return true if success
+     * @param sendEmail
+     * 
      */
-    public void createNotifications(List<UserModel> users, Event event, NotificationType type);
+    public void createNotifications(List<UserModel> users, Event event, NotificationType type, boolean sendEmail);
 }
+
