@@ -37,6 +37,7 @@ public interface EventManager {
     
     public boolean deleteEvent(Event event);
     
+    public boolean updateEvent(Event event, CalendarModel inCalendar);
     public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees);
         
     public List<UserModel> getInviteeFiltred(Event event, InvitationAnswer answer);
