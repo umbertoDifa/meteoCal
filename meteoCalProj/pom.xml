@@ -26,7 +26,7 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <dependency> 
             <groupId>org.glassfish.extras</groupId>
             <artifactId>glassfish-embedded-static-shell</artifactId>
             <version>3.1.1</version>
@@ -57,7 +57,13 @@
             <groupId>ical4j</groupId>
             <artifactId>ical4j</artifactId>
             <version>0.9.20</version>
-        </dependency>           
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.8</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
