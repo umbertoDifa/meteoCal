@@ -75,6 +75,11 @@ public class CalendarBacking implements Serializable {
         }
     }
 
+    /**
+     * da spostare!!
+     * @param c
+     * @return 
+     */
     private List<String> titlesCalendar(List<model.CalendarModel> c) {
         List<String> result = new ArrayList<>();
         if (c != null) {

@@ -5,22 +5,29 @@
  */
 package bakingBeans;
 
+import EJB.interfaces.CalendarManager;
+import EJB.interfaces.EventManager;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 import javax.inject.Named;
+import model.CalendarModel;
+import model.Event;
+import model.PrivateEvent;
 
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
-import org.primefaces.model.LazyScheduleModel;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 
@@ -28,33 +35,35 @@ import org.primefaces.model.ScheduleModel;
 @SessionScoped
 public class ScheduleViewBacking implements Serializable {
 
-    private ScheduleModel eventModel;
+    @Inject
+    LoginBacking login;
 
-    private ScheduleModel lazyEventModel;
+    @Inject
+    CalendarManager calendarManager;
+
+    @Inject
+    EventManager eventManager;
+
+    private ScheduleModel eventsToShow;
 
     private ScheduleEvent event = new DefaultScheduleEvent();
 
+    private List<CalendarModel> calendars;
+
+    private List<String> calendarNames;
+
+    private String calendarSelected;
+
     @PostConstruct
     public void init() {
-        //TODO event model da inizializzare con eventi utente
-        eventModel = new DefaultScheduleModel();
-        eventModel.addEvent(new DefaultScheduleEvent("Champions League Match", previousDay8Pm(), previousDay11Pm()));
-        eventModel.addEvent(new DefaultScheduleEvent("Birthday Party", today1Pm(), today6Pm()));
-        eventModel.addEvent(new DefaultScheduleEvent("Breakfast at Tiffanys", nextDay9Am(), nextDay11Am()));
-        eventModel.addEvent(new DefaultScheduleEvent("Plant the new garden stuff", theDayAfter3Pm(), fourDaysLater3pm()));
+        eventsToShow = new DefaultScheduleModel();
 
-        
-        lazyEventModel = new LazyScheduleModel() {
+        calendars = login.getCurrentUser().getOwnedCalendars();
 
-            @Override
-            public void loadEvents(Date start, Date end) {
-                Date random = getRandomDate(start);
-                addEvent(new DefaultScheduleEvent("Lazy Event 1", random, random));
-
-                random = getRandomDate(start);
-                addEvent(new DefaultScheduleEvent("Lazy Event 2", random, random));
-            }
-        };
+        if (calendars != null && calendars.size() > 0) {
+            calendarNames = titlesCalendar(calendars);
+            updateEventsToShow(calendars.get(0));
+        }
     }
 
     public Date getRandomDate(Date base) {
@@ -68,16 +77,27 @@ public class ScheduleViewBacking implements Serializable {
     public Date getInitialDate() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(calendar.get(Calendar.YEAR), Calendar.FEBRUARY, calendar.get(Calendar.DATE), 0, 0, 0);
-
         return calendar.getTime();
     }
 
-    public ScheduleModel getEventModel() {
-        return eventModel;
+    public ScheduleModel getEventsToShow() {
+        return eventsToShow;
     }
 
-    public ScheduleModel getLazyEventModel() {
-        return lazyEventModel;
+    public void setCalendarNames(List<String> calendarNames) {
+        this.calendarNames = calendarNames;
+    }
+
+    public List<String> getCalendarNames() {
+        return calendarNames;
+    }
+
+    public String getCalendarSelected() {
+        return calendarSelected;
+    }
+
+    public void setCalendarSelected(String calendarSelected) {
+        this.calendarSelected = calendarSelected;
     }
 
     private Calendar today() {
@@ -85,76 +105,6 @@ public class ScheduleViewBacking implements Serializable {
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
 
         return calendar;
-    }
-
-    private Date previousDay8Pm() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.DATE, t.get(Calendar.DATE) - 1);
-        t.set(Calendar.HOUR, 8);
-
-        return t.getTime();
-    }
-
-    private Date previousDay11Pm() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.DATE, t.get(Calendar.DATE) - 1);
-        t.set(Calendar.HOUR, 11);
-
-        return t.getTime();
-    }
-
-    private Date today1Pm() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.HOUR, 1);
-
-        return t.getTime();
-    }
-
-    private Date theDayAfter3Pm() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.DATE, t.get(Calendar.DATE) + 2);
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.HOUR, 3);
-
-        return t.getTime();
-    }
-
-    private Date today6Pm() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.HOUR, 6);
-
-        return t.getTime();
-    }
-
-    private Date nextDay9Am() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.AM);
-        t.set(Calendar.DATE, t.get(Calendar.DATE) + 1);
-        t.set(Calendar.HOUR, 9);
-
-        return t.getTime();
-    }
-
-    private Date nextDay11Am() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.AM);
-        t.set(Calendar.DATE, t.get(Calendar.DATE) + 1);
-        t.set(Calendar.HOUR, 11);
-
-        return t.getTime();
-    }
-
-    private Date fourDaysLater3pm() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.DATE, t.get(Calendar.DATE) + 4);
-        t.set(Calendar.HOUR, 3);
-
-        return t.getTime();
     }
 
     public ScheduleEvent getEvent() {
@@ -166,13 +116,28 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     public void addEvent(ActionEvent actionEvent) {
-        
-        //chiamo backing ManageEvent
-        
+
+        //se l'evento è nuovo
         if (event.getId() == null) {
-            eventModel.addEvent(event);
+            //lo istanzio, privato, senza invitati e non all'aperto
+            Event eventToCreate = new PrivateEvent(event.getTitle(),
+                                                    dateToCalendar(event.getStartDate()),
+                                                    dateToCalendar(event.getEndDate()),
+                                                    null,
+                                                    event.getDescription(),
+                                                    false,
+                                                    login.getCurrentUser());
+            //lo persisto            
+            eventManager.scheduleNewEvent(eventToCreate, calendarManager.findCalendarByName(login.getCurrentUser(), calendarSelected), null);
+            //lo visualizzo
+            eventsToShow.addEvent(event);
         } else {
-            eventModel.updateEvent(event);
+            //lo cerco
+            Event eventToUpdate = eventManager.findEventbyId((Long) event.getData());
+            //lo aggiorno nel db
+            eventManager.updateEvent(eventToUpdate, calendarManager.findCalendarByName(login.getCurrentUser(), calendarSelected));
+            //lo aggiorno a video
+            eventsToShow.updateEvent(event);
         }
 
         event = new DefaultScheduleEvent();
@@ -187,18 +152,16 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     public void onEventMove(ScheduleEntryMoveEvent event) {
-        
+
         //persisto l event con manageEventBacking
-        
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event moved", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
 
         addMessage(message);
     }
 
     public void onEventResize(ScheduleEntryResizeEvent event) {
-        
+
         //persisto l event con manageEventBacking
-        
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
 
         addMessage(message);
@@ -206,5 +169,45 @@ public class ScheduleViewBacking implements Serializable {
 
     private void addMessage(FacesMessage message) {
         FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+
+    public void onCalendarChange() {
+        //dal calendarSelected aggiorno gli eventi da visualizzare
+        for (CalendarModel cal : calendars) {
+            if (cal.getTitle().equals(calendarSelected)) {
+                updateEventsToShow(cal);
+            }
+        }
+
+    }
+
+    private List<String> titlesCalendar(List<model.CalendarModel> c) {
+        List<String> result = new ArrayList<>();
+        if (c != null) {
+            for (model.CalendarModel b : c) {
+                result.add(b.getTitle());
+            }
+        } else {
+            System.out.println("Lista calendari null");
+        }
+        return result;
+    }
+
+    private void updateEventsToShow(CalendarModel cal) {
+        eventsToShow.clear();
+
+        for (Event ev : cal.getEventsInCalendar()) {
+
+            DefaultScheduleEvent e = new DefaultScheduleEvent(ev.getTitle(), ev.getStartDateTime().getTime(), ev.getEndDateTime().getTime(), ev.getId());
+            e.setDescription(ev.getDescription());
+            eventsToShow.addEvent(e);
+        }
+
+    }
+
+    private Calendar dateToCalendar(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
     }
 }
