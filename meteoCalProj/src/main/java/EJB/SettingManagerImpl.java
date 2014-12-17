@@ -1,7 +1,9 @@
 package EJB;
 
+import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.SettingManager;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -13,6 +15,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import model.CalendarModel;
 import model.InvitationAnswer;
 import model.UserModel;
@@ -41,19 +45,43 @@ public class SettingManagerImpl implements SettingManager {
     @Inject
     EventManager eventManager;
 
+    @Inject
+    CalendarManager calendarManager;
+
+    @PersistenceContext(unitName = "meteoCalDB")
+    private EntityManager database;
+
     Logger logger = LoggerProducer.debugLogger(SettingManagerImpl.class);
 
     @Override
     public void exportCalendar(CalendarModel c) {
         String calFile;
-        //TODO trovare un modo per creare la cartella di un utente nella cartella export
-        //se questa non esiste
-        //si potrebbe fare anche che ogni volta che un utenet fa il login la sua cartella
+        //TODO si potrebbe fare anche che ogni volta che un utenet fa il login la sua cartella
         //export viene cancellata cosi la memoria non si riempie
 
-        calFile = ".\\export\\" + TimeTool.calendarToTextDay(
-                Calendar.getInstance(),
-                "yyyy-MM-dd-hh-mm-ss") + ".ics";
+        //creo il percorso della cartella
+        try {
+            boolean result = new File(".\\export\\" + c.getOwner().getId()).mkdirs();
+            if (result) {
+                logger.log(LoggerLevel.DEBUG,
+                        "Cartella di export creata per l''utente {0}",
+                        c.getOwner().getId());
+            } else {
+                throw new SecurityException();
+            }
+
+        } catch (SecurityException ex) {
+            logger.log(Level.SEVERE,
+                    "Non è stato possibile creare il percorso di cartelle di export dell'utente "
+                    + c.getOwner().getId(), ex);
+            //TODO return errore
+        }
+
+        //creo la stringa con l'indirizzo in cui creare il file
+        calFile = ".\\export\\" + c.getOwner().getId() + "\\"
+                + TimeTool.calendarToTextDay(
+                        Calendar.getInstance(),
+                        "yyyy-MM-dd-hh-mm-ss") + ".ics";
 
         logger.log(LoggerLevel.DEBUG, "Salvo calendario con nome: {0}", calFile);
 
@@ -123,6 +151,12 @@ public class SettingManagerImpl implements SettingManager {
                 calendar.getEventsInCalendar().get(eventIndexInCalendar).getOwner().getEmail())));
     }
 
+    /**
+     * Save a calendar in the correct user folder export/userId
+     *
+     * @param calFile name of the calendar to save
+     * @param calendar Calendar to save
+     */
     private void saveExportingCalendar(String calFile, net.fortuna.ical4j.model.Calendar calendar) {
         //Saving an iCalendar file
         FileOutputStream fout = null;
@@ -130,6 +164,7 @@ public class SettingManagerImpl implements SettingManager {
             fout = new FileOutputStream(calFile);
         } catch (FileNotFoundException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
+            //TODO errore magari da non catchare qui
         }
 
         CalendarOutputter outputter = new CalendarOutputter();
@@ -138,26 +173,36 @@ public class SettingManagerImpl implements SettingManager {
             outputter.output(calendar, fout);
         } catch (IOException | ValidationException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-        }
+            //TODO errore magari da non catchare qui
 
-        logger.log(LoggerLevel.DEBUG, "Calendario esportato:\n{0}",
+        }
+        logger.log(LoggerLevel.DEBUG, "Calendario esportato con successo:\n{0}",
                 calendar.toString());
     }
 
     @Override
-    public void importCalendar(String calendarName) {
+    public void importCalendar(UserModel user, String calendarName) {
+        //TODO works only with our exported calendars
         //Now Parsing an iCalendar file
+        calendarName = ".\\import\\" + calendarName;
         FileInputStream fin = null;
         try {
             fin = new FileInputStream(calendarName);
         } catch (FileNotFoundException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            //TODO return error
         }
 
         CalendarBuilder builder = new CalendarBuilder();
 
         //create a ical calendar
         net.fortuna.ical4j.model.Calendar calendar;
+
+        //TODO tutto questo codice non fa nessuna catch di eventuali eccezioni
+        //create a new meteocal calendar to host the imported events
+        user = database.find(UserModel.class, user.getId());
+        CalendarModel calendarForImport = calendarManager.createDefaultCalendar(
+                user);
 
         try {
             //set the calendar with the data taken from the file
@@ -166,14 +211,28 @@ public class SettingManagerImpl implements SettingManager {
             //Iterating over a Calendar
             for (Iterator i = calendar.getComponents().iterator(); i.hasNext();) {
                 Component component = (Component) i.next();
-                System.out.println("Component [" + component.getName() + "]");
+                //If the component is an event
+                if (component.getName().equals("VEVENT")) {
+                    logger.log(LoggerLevel.DEBUG, "Component ["
+                            + component.getName() + "] found in " + calendarName);
 
-                for (Iterator j = component.getProperties().iterator();
-                        j.hasNext();) {
-                    Property property = (Property) j.next();
-                    System.out.println("Property [" + property.getName() + ", "
-                            + property.getValue() + "]");
+                    //I search its proprieties
+                    for (Iterator j = component.getProperties().iterator();
+                            j.hasNext();) {
+                        Property property = (Property) j.next();
+                        //if I find the UID
+                        if (property.getName().equals("UID")) {
+                            logger.log(LoggerLevel.DEBUG, "Property ["
+                                    + property.getName() + ", "
+                                    + property.getValue() + "] found.");
+                            //TODO 
+                            //check if the event still exists
+                            //check if the event is not in any other calendar
+                            //add the event in the calendar
+                        }
+                    }
                 }
+
             }//for
         } catch (IOException ex) {
             logger.log(Level.SEVERE, null, ex);
