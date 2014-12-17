@@ -70,34 +70,16 @@ public class EventManagerImpl implements EventManager {
 
     @Override
     public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees) {
-        try {
-            Event oldEvent = database.find(Event.class, event.getId());
-            List<UserModel> oldinvitees = new ArrayList<>();
-            for (Invitation invitation : oldEvent.getInvitations()) {
-                oldinvitees.add(invitation.getInvitee());
+        if (updateEvent(event, inCalendar)) {
+            try {
+                if (invitees != null && invitees.size() > 0) {
+                    invitationManager.createInvitations(invitees, event);
+                }
+                return true;
+            } catch (PersistenceException e) {
+                return false;
             }
-            if (oldEvent instanceof PrivateEvent && event instanceof PublicEvent) {
-                event.setId(oldEvent.getId());
-
-                notificationManager.createNotifications(oldinvitees, oldEvent, NotificationType.EVENT_PUBLIC, false);
-                database.remove(oldEvent);
-                database.persist(event);
-
-            } else if (oldEvent instanceof PublicEvent && event instanceof PrivateEvent) {
-                //TODO implementare cambio di privacy da public a private
-            }
-            if (!(oldEvent.getTitle().equals(event.getTitle())
-                    && oldEvent.getStartDateTime().equals(event.getStartDateTime())
-                    && oldEvent.getEndDateTime().equals(event.getEndDateTime()))) {
-                notificationManager.createNotifications(oldinvitees, oldEvent, NotificationType.INVITATION, false);
-            }
-
-            database.flush();
-            if (invitees != null && invitees.size() > 0) {
-                invitationManager.createInvitations(invitees, event);
-            }
-            return true;
-        } catch (PersistenceException e) {
+        } else {
             return false;
         }
     }
@@ -215,7 +197,7 @@ public class EventManagerImpl implements EventManager {
         }
 
     }
-    
+
     @Override
     public List<UserModel> getInviteeFiltred(Event event, InvitationAnswer answer) {
         event = database.find(Event.class, event.getId());
@@ -250,7 +232,34 @@ public class EventManagerImpl implements EventManager {
 
     @Override
     public boolean updateEvent(Event event, CalendarModel inCalendar) {
-        //TODO per vale, da usare insieme all'altro updateEvent per updaer tutto tranne la lista degli invitati
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Event oldEvent = database.find(Event.class, event.getId());
+            List<UserModel> oldinvitees = new ArrayList<>();
+            for (Invitation invitation : oldEvent.getInvitations()) {
+                oldinvitees.add(invitation.getInvitee());
+            }
+            if (oldEvent instanceof PrivateEvent && event instanceof PublicEvent) {
+               // event.setId(oldEvent.getId());
+
+                notificationManager.createNotifications(oldinvitees, oldEvent, NotificationType.EVENT_PUBLIC, false);
+                database.remove(oldEvent);
+                database.persist(event);
+
+            } else if (oldEvent instanceof PublicEvent && event instanceof PrivateEvent) {
+                //TODO implementare cambio di privacy da public a private
+            }
+            if (!(oldEvent.getTitle().equals(event.getTitle())
+                    && oldEvent.getStartDateTime().equals(event.getStartDateTime())
+                    && oldEvent.getEndDateTime().equals(event.getEndDateTime()))) {
+                notificationManager.createNotifications(oldinvitees, oldEvent, NotificationType.EVENT_CHANGED, false);
+            }
+
+            database.flush();
+            return true;
+
+        } catch (PersistenceException e) {
+            return false;
+        }
+
     }
 }
