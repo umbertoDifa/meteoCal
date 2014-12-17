@@ -7,14 +7,18 @@ package bakingBeans;
 
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
@@ -121,12 +125,12 @@ public class ScheduleViewBacking implements Serializable {
         if (event.getId() == null) {
             //lo istanzio, privato, senza invitati e non all'aperto
             Event eventToCreate = new PrivateEvent(event.getTitle(),
-                                                    dateToCalendar(event.getStartDate()),
-                                                    dateToCalendar(event.getEndDate()),
-                                                    null,
-                                                    event.getDescription(),
-                                                    false,
-                                                    login.getCurrentUser());
+                    dateToCalendar(event.getStartDate()),
+                    dateToCalendar(event.getEndDate()),
+                    null,
+                    event.getDescription(),
+                    false,
+                    login.getCurrentUser());
             //lo persisto            
             eventManager.scheduleNewEvent(eventToCreate, calendarManager.findCalendarByName(login.getCurrentUser(), calendarSelected), null);
             //lo visualizzo
@@ -145,6 +149,12 @@ public class ScheduleViewBacking implements Serializable {
 
     public void onEventSelect(SelectEvent selectEvent) {
         event = (ScheduleEvent) selectEvent.getObject();
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        try {
+            context.redirect(context.getRequestContextPath() + "/s/event.xhtml?id=" + event.getData());
+        } catch (IOException ex) {
+            //TODO msg error
+        }
     }
 
     public void onDateSelect(SelectEvent selectEvent) {

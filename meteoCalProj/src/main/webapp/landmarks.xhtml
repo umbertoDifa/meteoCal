@@ -6,14 +6,70 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui">
 
-    <p:menu>
+    <!--    <p:menu>
+    
+            <p:menuitem value="Calendar" url="/s/myCalendar.xhtml" />
+            <p:menuitem value="Events" url="/s/events.xhtml" />
+            <p:menuitem value="Settings" url="/s/settings.xhtml" />
+            <p:menuitem value="New Event" url="/s/manageEvent.xhtml" />
+    
+        </p:menu>-->
 
-        <p:menuitem value="Calendar" url="/s/myCalendar.xhtml" />
-        <p:menuitem value="Events" url="/s/events.xhtml" />
-        <p:menuitem value="Settings" url="/s/settings.xhtml" />
-        <p:menuitem value="New Event" url="/s/manageEvent.xhtml" />
+    <style>
+        .ui-stack{
+            top : 400px;
+            left: 20px;
+            width: 93px;
+        }
+        
+        .openStack li span{
+            display: inline-table !important;
+            height:16px !important;
+            left: 60px !important; 
+            right: 0 !important;
+            background-color:#8A9099 !important;
+        }
+    </style>
+    <script>
 
-    </p:menu>
+        PrimeFaces.widget.Stack = PrimeFaces.widget.BaseWidget.extend({init: function (a) {
+                this._super(a);
+                this.cfg.expanded = this.cfg.expanded || false;
+                var b = this;
+                $(this.jqId + ".ui-stack > img").on("click.stack", function () {
+                    if (b.cfg.expanded) {
+                        b.collapse($(this))
+                    } else {
+                        b.open($(this))
+                    }
+                });
+                if (this.cfg.expanded) {
+                    this.open(this.jq.children("img"))
+                }
+            }, open: function (c) {
+                var b = 0, a = 0, d = this;
+                c.next().children().each(function () {
+                    $(this).animate({top: "-" + b + "px", right: a + "px"}, d.cfg.openSpeed);
+                    b = b + 55;
+                    a = (a + 0.75) * 2
+                });
+                c.next().animate({top: "-50px", left: "70px"}, this.cfg.openSpeed).addClass("openStack").find("li a>img").animate({width: "50px", marginRight: "9px"}, this.cfg.openSpeed);
+                c.animate({paddingTop: "0"});
+                this.cfg.expanded = true
+            }, collapse: function (a) {
+                a.next().removeClass("openStack").children("li").animate({top: "55px", right: "-10px"}, this.cfg.closeSpeed);
+                a.next().find("li a>img").animate({width: "79px", marginRight: "0"}, this.cfg.closeSpeed);
+                a.animate({paddingTop: "35"});
+                this.cfg.expanded = false
+            }});
+    </script>
+
+    <p:stack icon="/resources/icons/stack.png" expanded="true">
+        <p:menuitem value="Wall" url="/s/events.xhtml" icon="/resources/icons/Earth.png"/>
+        <p:menuitem value="Settings" url="/s/settings.xhtml" icon="/resources/icons/Settings.png"/>
+        <p:menuitem value="Calendar" url="/s/myCalendar.xhtml" icon="/resources/icons/Calendar.png"/>
+        <p:menuitem value="New_Event" url="/s/manageEvent.xhtml" icon="/resources/icons/NewStand.png" />
+    </p:stack>
 
 </ui:composition>
 
