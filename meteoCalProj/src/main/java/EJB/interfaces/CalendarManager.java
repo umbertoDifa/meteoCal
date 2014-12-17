@@ -50,4 +50,8 @@ public interface CalendarManager {
     public CalendarModel findCalendarByName(UserModel user, String name);
 
     public List<String> getCalendarTitles(UserModel user);
+    
+    public CalendarModel getCalendar(UserModel user, String title);
+    
+    public CalendarModel getCalendar(CalendarModel calendar);
 }

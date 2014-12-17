@@ -42,7 +42,10 @@ public class CalendarManagerImpl implements CalendarManager {
 
     private void checkConflicts(UserModel user, Event event) {
         event = database.find(Event.class, event.getId());
-        int conflictingEventIndex = database.createNamedQuery("isConflicting").setParameter("user", user).setParameter("end", event.getEndDateTime()).setParameter("start", event.getStartDateTime()).setParameter("id", event.getId()).getFirstResult();
+        int conflictingEventIndex = database.createNamedQuery("isConflicting").setParameter(
+                "user", user).setParameter("end", event.getEndDateTime()).setParameter(
+                        "start", event.getStartDateTime()).setParameter("id",
+                        event.getId()).getFirstResult();
         if (conflictingEventIndex != 0) {
             int offset = findFreeSlots(user, event);
             if (offset == 0) {
@@ -59,7 +62,10 @@ public class CalendarManagerImpl implements CalendarManager {
         for (int i = 1; i < searchRange; i++) {
             newEnd.add(Calendar.DAY_OF_MONTH, i);
             newStart.add(Calendar.DAY_OF_MONTH, i);
-            int conflictingEventIndex = database.createNamedQuery("isConflicting").setParameter("user", user).setParameter("end", newEnd).setParameter("start", newStart).setParameter("id", event.getId()).getFirstResult();
+            int conflictingEventIndex = database.createNamedQuery(
+                    "isConflicting").setParameter("user", user).setParameter(
+                            "end", newEnd).setParameter("start", newStart).setParameter(
+                            "id", event.getId()).getFirstResult();
             if (conflictingEventIndex == 0) {
                 return i;
             }
@@ -106,22 +112,26 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public ControlMessages addToCalendar(Event event, CalendarModel calendar) {
+        //TODO fare check che l'event sia non nulla e che la find non sollevi eccezioni
+        //si potrebbe fare un metodo a parte per tutti questi controlli legati
+        //al db e exception handling visto che lo usiamo parecchio
         event = database.find(Event.class, event.getId());
+
         for (CalendarModel cal : event.getOwner().getOwnedCalendars()) {
             cal.getEventsInCalendar().remove(event);
         }
+
         if (calendar != null) {
-            calendar = (CalendarModel) database.createNamedQuery(
-                    "findCalbyUserAndTitle").setParameter("id",
-                            calendar.getOwner()).setParameter(
-                            "title", calendar.getTitle()).getSingleResult();
+            //TODO anche qui il check sulle exception di getSingleResult
+            calendar = getCalendar(calendar);
 
             if (calendar.addEventInCalendar(event)) {
                 //calendar.getEventsInCalendar().add(event);
-                logger.log(Level.INFO, "Evento " + event.getTitle()
-                        + " aggiunto al calendario " + calendar.getTitle()
-                        + " di "
-                        + calendar.getOwner().getEmail());
+                logger.log(Level.INFO,
+                        "Evento {0} aggiunto al calendario {1} di {2}",
+                        new Object[]{event.getTitle(),
+                                     calendar.getTitle(),
+                                     calendar.getOwner().getEmail()});
 
                 logger.log(LoggerLevel.DEBUG, "Events in calendar now: {0}",
                         calendar.getEventsInCalendar());
@@ -134,13 +144,46 @@ public class CalendarManagerImpl implements CalendarManager {
 
     }
 
+    /**
+     * Get a calendar by user the owns the calendar and title of the calendar
+     *
+     * @param user user that owns the calendar
+     * @param title title of the calendar
+     * @return calendar from db
+     */
     @Override
-    public CalendarModel createDefaultCalendar(UserModel user
-    ) {
+    public CalendarModel getCalendar(UserModel user, String title) {
+
+        return (CalendarModel) database.createNamedQuery(
+                "findCalbyUserAndTitle").setParameter("id",
+                        user.getId()).setParameter(
+                        "title", title).getSingleResult();
+
+    }
+
+    /**
+     * Get a calendar by user the owns the calendar and title of the calendar
+     *
+     * @param calendar calendar to get
+     * @return calendar from db
+     */
+    @Override
+    public CalendarModel getCalendar(CalendarModel calendar) {
+        return (CalendarModel) database.createNamedQuery(
+                "findCalbyUserAndTitle").setParameter("id",
+                        calendar.getOwner().getId()).setParameter(
+                        "title", calendar.getTitle()).getSingleResult();
+    }
+
+    @Override
+    public CalendarModel createDefaultCalendar(UserModel user) {
+
         CalendarModel calendar = new CalendarModel();
         calendar.setIsDefault(true);
         calendar.setIsPublic(false);
         calendar.setOwner(user);
+        //TODO questo set deve essere un po' più accurato, ad esempio se già esiste un
+        //calendario chiamato default allora il titolo sarà tipo default2
         calendar.setTitle("Default");
 
         logger.log(Level.INFO, "Default calendar for user +{0} created",
@@ -150,8 +193,7 @@ public class CalendarManagerImpl implements CalendarManager {
     }
 
     @Override
-    public CalendarModel findCalendarByName(UserModel user, String name
-    ) {
+    public CalendarModel findCalendarByName(UserModel user, String name) {
         for (CalendarModel cal : this.getCalendars(user)) {
             if (cal.getTitle().equals(name)) {
                 return cal;

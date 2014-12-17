@@ -247,4 +247,10 @@ public class EventManagerImpl implements EventManager {
         }
         return users;
     }
+
+    @Override
+    public boolean updateEvent(Event event, CalendarModel inCalendar) {
+        //TODO per vale, da usare insieme all'altro updateEvent per updaer tutto tranne la lista degli invitati
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
