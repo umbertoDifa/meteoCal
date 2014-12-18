@@ -20,15 +20,38 @@ and open the template in the editor.
             <h:form>
                 <h:panelGrid columnClasses="value">
                     <h:form>
-                        <h:panelGrid columns="2">
-                            <p:outputLabel for="console" value="Calendar:"/>
-                            <p:selectOneMenu id="console" value="#{scheduleView.calendarSelected}" style="width:125px">
-                                <c:forEach items="#{scheduleView.calendarNames}" var="c">
-                                    <p:ajax listener="#{scheduleView.onCalendarChange}" update="schedule" />
-                                    <f:selectItem itemLabel="#{c}" itemValue="#{c}" />
-                                </c:forEach>
-                            </p:selectOneMenu>
-                        </h:panelGrid>
+
+                        <p:toolbar style="margin-bottom: 12px">
+                            <f:facet name="left">
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel for="console" value="Calendar:"/>
+                                    <p:selectOneMenu id="console" value="#{scheduleView.calendarSelected}" style="width:125px">
+                                        <c:forEach items="#{scheduleView.calendarNames}" var="c">
+                                            <p:ajax listener="#{scheduleView.onCalendarChange}" update="schedule,publicSwitch" />
+                                            <f:selectItem itemLabel="#{c}" itemValue="#{c}" />
+                                        </c:forEach>
+                                    </p:selectOneMenu>
+                                </h:panelGrid>
+                            </f:facet>
+                            <f:facet name="right">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Delete #{scheduleView.calendarSelected}" icon="ui-icon-close" update=":growl">
+                                        <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+
+                                    <h:panelGrid columns="2">
+                                        <p:outputLabel for="publicSwitch" value="Public:"/>
+                                        <p:inputSwitch id="publicSwitch" value="#{scheduleView.calendarShown.isPublic}"/> <!--onchange-->
+                                    </h:panelGrid>
+                                </h:panelGrid>
+
+                                <p:confirmDialog global="true">
+                                    <p:commandButton value="Yes" icon="ui-icon-check" />
+                                    <p:commandButton value="No" icon="ui-icon-close" />
+                                </p:confirmDialog>
+
+                            </f:facet>
+                        </p:toolbar>
 
                         <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" widgetVar="myschedule" timeZone="GMT+2">
 

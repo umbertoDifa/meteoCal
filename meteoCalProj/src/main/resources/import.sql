@@ -1,24 +1,23 @@
 #import.sql file
-DELETE FROM PUBLIC_EVENT;
-DELETE FROM CALENDAR;
-DELETE FROM PRIVATE_EVENT;
-DELETE FROM USER;
-DELETE FROM EVENT;
 DELETE FROM EVENT_IN_CALENDAR;
 DELETE FROM INVITATION;
 DELETE FROM NOTIFICATION;
+DELETE FROM PUBLIC_EVENT;
+DELETE FROM PRIVATE_EVENT;
+DELETE FROM CALENDAR;
+DELETE FROM EVENT;
+DELETE FROM USER;
 
 
-
-insert into USER (ID,EMAIL,NAME,PASSWORD,SURNAME)
+insert into USER (ID,EMAIL,NAME,PASSWORD,SURNAME,GENDER)
 	values
-	(1,"a@a","a","a","a"),
-	(2,"b@b","b","b","b"),
-	(3,"c@c","c","c","c"),
-	(4,"umbo@asp","umbo","umbo","difa"),
-	(5,"vale@figa","vale","vale","cer"),
-	(6,"fra@ang","fra","fra","ang"),
-	(7,"admin@admin","admin","admin","admin");
+	(1,"a@a","a","a","a",NULL),
+	(2,"b@b","b","b","b",NULL),
+	(3,"c@c","c","c","c",NULL),
+	(4,"umbo@asp","umbo","umbo","difa","M"),
+	(5,"vale@figa","vale","vale","cer","F"),
+	(6,"fra@ang","fra","fra","ang","M"),
+	(7,"admin@admin","admin","admin","admin", NULL);
 
 insert into CALENDAR (TITLE, ISDEFAULT, ISPUBLIC, OWNER_ID) 
     values 
@@ -38,7 +37,7 @@ insert into CALENDAR (TITLE, ISDEFAULT, ISPUBLIC, OWNER_ID)
     ("Public_Cal", 0, 1, 7);
 
 
-insert into PRIVATE_EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STARTDATETIME, TITLE, OWNER_ID, IMGPATH)
+insert into EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STARTDATETIME, TITLE, OWNER_ID, IMGPATH)
 	values
 	(1, "Evento Privato di amdin", '2014-12-22 01:30', 1 , "a casa mia", '2014-12-22 00:30', "Private Event of admin", 7, "/img/Event/1.jpg"),
 	(2, "Evento Privato di fra", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Private Event of fra", 6, "/img/Event/2.jpg"),
@@ -48,7 +47,11 @@ insert into PRIVATE_EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, ST
 	(6, "Evento Privato di b", '2015-01-03 11:00', 1 , "a casa mia", '2015-01-03 09:30', "Private Event of b", 2, "/img/Event/6.jpg"),
 	(7, "Evento Privato di a", '2015-01-04 22:00', 1 , "a casa mia", '2015-01-04 20:00', "Private Event of a", 1, "/img/Event/7.jpg");
 
-insert into PUBLIC_EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STARTDATETIME, TITLE, OWNER_ID, IMGPATH)
+insert into PRIVATE_EVENT (ID)
+values
+(1),(2),(3),(4),(5),(6),(7);
+
+insert into EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STARTDATETIME, TITLE, OWNER_ID, IMGPATH)
 	values
 	(8, "Evento Pubblico di a", '2014-12-22 01:30', 1 , "a casa mia", '2014-12-22 00:30', "Public Event of a", 1, "/img/Event/8.jpg"),
 	(9, "Evento Pubblico di b", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Public Event of b", 2, "/img/Event/9.jpg"),
@@ -58,7 +61,9 @@ insert into PUBLIC_EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STA
 	(13, "Evento Pubblico di fra", '2015-01-03 11:00', 1 , "a casa mia", '2015-01-03 09:30', "Public Event of fra", 6, "/img/Event/13.jpg"),
 	(14, "Evento Pubblico di admin", '2015-01-04 22:00', 1 , "a casa mia", '2015-01-04 20:00', "Public Event of admin", 7, "/img/Event/14.jpg");
 
-
+insert into PUBLIC_EVENT (ID)
+values
+(8),(9),(10),(11),(12),(13),(14);
 
 insert into EVENT_IN_CALENDAR (eventsInCalendar_ID, TITLE, OWNER_ID)
 	values
@@ -76,6 +81,14 @@ insert into EVENT_IN_CALENDAR (eventsInCalendar_ID, TITLE, OWNER_ID)
 	(12, "Public_Cal", 5),
 	(12, "Public_Cal", 6),
 	(14, "Public_Cal", 7);
+
+insert into INVITATION (INVITEE_ID, EVENT_ID, ANSWER)
+        values
+        (1,8,"YES");
+
+insert into NOTIFICATION (ID,TYPE, RECIPIENT_ID, RELATEDEVENT_ID)
+    values 
+    (1,1,1,1);
 
 UPDATE SEQUENCE
 SET SEQ_COUNT = 14

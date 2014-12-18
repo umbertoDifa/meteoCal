@@ -30,13 +30,19 @@ public class viewEventBacking implements Serializable {
     Event eventToShow;
     boolean allowedToPartecipate;
     boolean allowedToModify;
+    boolean publicAccess;
+    private List<UserModel> noAnswerInvitations = new ArrayList<>();
+    private List<UserModel> acceptedInvitations = new ArrayList<>();
+    private List<UserModel> declinedInvitations = new ArrayList<>();
+    private List<UserModel> publicJoinUsers = new ArrayList<>();
+    private boolean showInvitees;
 
     @Inject
     EventManager eventManager;
 
     @Inject
     LoginBacking login;
-    
+
     private boolean hasAnswered;
 
     /**
@@ -61,8 +67,6 @@ public class viewEventBacking implements Serializable {
     public boolean isHasAnswered() {
         return hasAnswered;
     }
-    
-    
 
     public boolean isAllowedToPartecipate() {
         return allowedToPartecipate;
@@ -94,6 +98,60 @@ public class viewEventBacking implements Serializable {
         this.eventId = eventId;
     }
 
+    public List<UserModel> getNoAnswerInvitations() {
+        return noAnswerInvitations;
+    }
+
+    public void setNoAnswerInvitations(List<UserModel> noAnswerInvitations) {
+        this.noAnswerInvitations = noAnswerInvitations;
+    }
+
+    public List<UserModel> getAcceptedInvitations() {
+        return acceptedInvitations;
+    }
+
+    public void setAcceptedInvitations(List<UserModel> acceptedInvitations) {
+        this.acceptedInvitations = acceptedInvitations;
+    }
+
+    public List<UserModel> getDeclinedInvitations() {
+        return declinedInvitations;
+    }
+
+    public void setDeclinedInvitations(List<UserModel> declinedInvitations) {
+        this.declinedInvitations = declinedInvitations;
+    }
+
+    public List<UserModel> getPublicJoinUsers() {
+        return publicJoinUsers;
+    }
+
+    public void setPublicJoinUsers(List<UserModel> publicJoinUsers) {
+        this.publicJoinUsers = publicJoinUsers;
+    }
+
+    public boolean isPublicAccess() {
+        return publicAccess;
+    }
+
+    public void setPublicAccess(boolean publicAccess) {
+        this.publicAccess = publicAccess;
+    }
+
+    public boolean isShowInvitees() {
+        return showInvitees;
+    }
+
+    public void setShowInvitees(boolean showInvitees) {
+        this.showInvitees = showInvitees;
+    }
+
+    /*
+    *
+    * METHODS
+    *
+    */
+    
     public void findEventById() {
 
         eventToShow = eventManager.findEventbyId(eventId);
@@ -117,12 +175,14 @@ public class viewEventBacking implements Serializable {
         if (!login.getCurrentUser().equals(eventToShow.getOwner()) && ((eventToShow instanceof PublicEvent) || (getInvitees().contains(login.getCurrentUser())))) {
             allowedToPartecipate = true;
             InvitationAnswer answer = getAnswer();
-            if(answer!=null){
+            if (answer != null) {
                 hasAnswered = true;
             }
 
-//TODO finire
+            //TODO finire
         }
+        publicAccess = eventToShow instanceof PublicEvent;
+        setInvitations();
     }
 
     private List<UserModel> getInvitees() {
@@ -140,11 +200,38 @@ public class viewEventBacking implements Serializable {
         List<Invitation> list = eventToShow.getInvitations();
         if (list != null && list.size() > 0) {
             for (Invitation i : list) {
-                if(i.getInvitee().equals(login.getCurrentUser())){
+                if (i.getInvitee().equals(login.getCurrentUser())) {
                     return i.getAnswer();
                 }
             }
         }
         return null;
+    }
+
+    //TODO da spostare
+    private void setInvitations() {
+        if (eventToShow != null) {
+            List<Invitation> invitations = eventToShow.getInvitations();
+            if (invitations != null && invitations.size() > 0) {
+                showInvitees = true;
+                for (Invitation invitation : invitations) {
+                    switch (invitation.getAnswer()) {
+                        case YES:
+                            acceptedInvitations.add(invitation.getInvitee());
+                            break;
+                        case NO:
+                            declinedInvitations.add(invitation.getInvitee());
+                            break;
+                        case NA:
+                            noAnswerInvitations.add(invitation.getInvitee());
+                            break;
+                        default:
+                            noAnswerInvitations.add(invitation.getInvitee());
+                            break;
+                    }
+
+                }
+            }
+        }
     }
 }

@@ -57,7 +57,8 @@
                     <f:passThroughAttribute name="type" value="time" />
                 </h:inputText><br/>
 
-                <h:outputLabel value="Public:" /><input type="checkbox" data-role="flipswitch"/><br/>
+                <h:outputLabel value="Public:" />
+                <h:selectBooleanCheckbox value="#{eventToManage.publicAccess}"/><br/>
 
                 <h:outputLabel value="Enter Location:"/>
                 <h:inputText value="#{eventToManage.location}"/><br/>
@@ -73,7 +74,7 @@
                 <h:commandButton value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.delete}"/>
                 <h:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/event.xhtml?id=#{eventToManage.idEvent}"/>
 
-                <p:accordionPanel style="width:300px" dynamic="true" >
+                <p:tabView>
                     <p:tab title="Partecipants:">
                         <c:forEach items="#{eventToManage.acceptedInvitations}" var="yesUser">
                             <p:outputLabel value="#{yesUser.email}"/><br/>
@@ -94,7 +95,7 @@
                             <p:outputLabel value="#{publicUser.email}"/><br/>
                         </c:forEach>
                     </p:tab>
-                </p:accordionPanel>
+                </p:tabView>
 
                 <div id="inviteDiv">
                     <h2>Guests:</h2>

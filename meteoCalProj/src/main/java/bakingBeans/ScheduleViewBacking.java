@@ -59,6 +59,8 @@ public class ScheduleViewBacking implements Serializable {
     private List<String> calendarNames;
 
     private String calendarSelected;
+    
+    private CalendarModel calendarShown;
 
     @PostConstruct
     public void init() {
@@ -119,6 +121,14 @@ public class ScheduleViewBacking implements Serializable {
 
     public void setEvent(ScheduleEvent event) {
         this.event = event;
+    }
+
+    public CalendarModel getCalendarShown() {
+        return calendarShown;
+    }
+
+    public void setCalendarShown(CalendarModel calendarShown) {
+        this.calendarShown = calendarShown;
     }
 
     public void updateEvent(ActionEvent actionEvent) {
@@ -203,6 +213,7 @@ public class ScheduleViewBacking implements Serializable {
         for (CalendarModel cal : calendars) {
             if (cal.getTitle().equals(calendarSelected)) {
                 updateEventsToShow(cal);
+                calendarShown = cal;
             }
         }
 
@@ -224,7 +235,8 @@ public class ScheduleViewBacking implements Serializable {
         eventsToShow.clear();
 
         for (Event ev : cal.getEventsInCalendar()) {
-
+            calendarShown = cal;
+            calendarSelected = cal.getTitle();
             DefaultScheduleEvent e = new DefaultScheduleEvent(ev.getTitle(), ev.getStartDateTime().getTime(), ev.getEndDateTime().getTime(), ev.getId());
             e.setDescription(ev.getDescription());
             eventsToShow.addEvent(e);

@@ -45,7 +45,7 @@ import javax.persistence.Temporal;
 })
 
 @NamedNativeQuery (name = "isInAnyCalendar", query="SELECT COUNT(*) FROM EVENT_IN_CALENDAR WHERE evetsInCalendar_ID=? AND OWNER_ID=?")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Event implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -83,8 +83,7 @@ public abstract class Event implements Serializable {
 
     @ManyToMany(mappedBy = "eventsInCalendar")
     private List<model.CalendarModel> inCalendars;
-//   EX ERROR!!
-
+   
     /**
      *
      * CONSTRUCTORS
