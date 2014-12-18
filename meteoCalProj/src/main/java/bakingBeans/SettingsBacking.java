@@ -6,6 +6,7 @@
 package bakingBeans;
 
 import EJB.interfaces.CalendarManager;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -13,8 +14,11 @@ import javax.inject.Named;
 import javax.enterprise.context.Dependent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import model.CalendarModel;
 import model.UserModel;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 /**
  *
@@ -31,6 +35,7 @@ public class SettingsBacking {
     private String surname;
     private List<CalendarModel> calendars;
     private String calendarToExport;
+    private StreamedContent calendarToExportFile;
 
     private List<String> calendarTitles;
 
@@ -57,6 +62,7 @@ public class SettingsBacking {
         surname = login.getSurname();
         calendars = calendarManager.getCalendars(user);
         calendarTitles = titlesCalendar(calendars);
+
     }
 
     public void setEmail(String email) {
@@ -99,6 +105,14 @@ public class SettingsBacking {
         return calendarTitles;
     }
 
+    public StreamedContent getCalendarToExportFile() {
+        return calendarToExportFile;
+    }
+
+    public void setCalendarToExportFile(StreamedContent calendarToExportFile) {
+        this.calendarToExportFile = calendarToExportFile;
+    }
+
     private List<String> titlesCalendar(List<model.CalendarModel> c) {
         List<String> result = new ArrayList<>();
         if (c != null) {
@@ -125,12 +139,15 @@ public class SettingsBacking {
 
     public void exportCalendar() {
         CalendarModel c = findCalendarByName(calendars, calendarToExport);
+        System.out.println("-dentro exportCal");
         if (c != null) {
             //calendarManager.exportCalendar(c);
             //let the user download it
+
         } else {
             //msg nessun cal trovato
         }
+
     }
 
     private CalendarModel findCalendarByName(List<CalendarModel> calendars, String name) {

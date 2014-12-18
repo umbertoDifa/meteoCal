@@ -21,86 +21,110 @@ and open the template in the editor.
 
             <p:tabView>
                 <p:tab title="Owned">
-                    <h:dataTable id="owned" value="#{events.ownedEvents}" var="ev">
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Title:"/>
+                    <h:form>
+                        <p:dataScroller value="#{events.ownedEvents}" var="ev" chunkSize="10">
+                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
+                                <h:panelGrid columns="2">
+                                    <p:graphicImage value="/resources/img/default.png"/> 
+
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:outputText value="Title:" />
+                                            <p:link outcome="/s/event.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+
+                                            <h:outputText value="Date:" />
+                                            <h:outputText value="#{ev.formattedStartDate}"/>
+
+                                            <h:outputText value="By:" />
+                                            <h:outputLabel value="#{ev.owner.email}"/>
+                                        </h:panelGrid>
+                                    </p:outputPanel>
+
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <f:facet name="loader">
+                                <p:commandButton type="button" value="More"/>
                             </f:facet>
-                            <p:link outcome="/s/event.xhtml?id=#{ev.id}" value="#{ev.title}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Data:"/>
-                            </f:facet>
-                            <h:outputText value="#{ev.formattedStartDate}"/>
-                        </h:column>
-                    </h:dataTable>
-                    <h:commandButton value="more" action="#{events.loadMore(EventType.OWNED)}">
-                        <f:ajax execute="@none" render=":owned"/>
-                    </h:commandButton>
+                        </p:dataScroller>
+                    </h:form>
                 </p:tab>
                 <p:tab title="Joined">
-                    <h:dataTable id="joined" value="#{events.joinedEvents}" var="ev">
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Title:"/>
+                    <h:form>
+                        <p:dataScroller value="#{events.joinedEvents}" var="ev" chunkSize="10">
+                            <h:panelGrid columns="2" style="width:100%">
+                                <p:graphicImage/> 
+
+                                <p:outputPanel>
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <h:outputText value="Title:" />
+                                        <p:link outcome="/s/event.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+
+                                        <h:outputText value="Date:" />
+                                        <h:outputText value="#{ev.formattedStartDate}"/>
+
+                                        <h:outputText value="By:" />
+                                        <h:outputLabel value="#{ev.owner.email}"/>
+                                    </h:panelGrid>
+                                </p:outputPanel>
+
+                            </h:panelGrid>
+                            <f:facet name="loader">
+                                <p:commandButton type="button" value="More"/>
                             </f:facet>
-                            <h:link outcome="/s/event.xhtml?id=#{ev.id}" value="#{ev.title}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Data:"/>
-                            </f:facet>
-                            <h:outputText value="#{ev.formattedStartDate}"/>
-                        </h:column>
-                    </h:dataTable>
-                    <h:commandButton value="more" action="#{events.loadMore(EventType.JOINED)}">
-                        <f:ajax execute="@none" render="joined"/>
-                    </h:commandButton>
+                        </p:dataScroller>
+                    </h:form>
                 </p:tab>
                 <p:tab title="Wall">
-                    <h:dataTable id="wall" value="#{events.wallEvents}" var="ev">
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Title:"/>
+                    <h:form>
+                        <p:dataScroller value="#{events.wallEvents}" var="ev" chunkSize="10">
+                            <h:panelGrid columns="2" style="width:100%">
+                                <p:graphicImage/> 
+
+                                <p:outputPanel>
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <h:outputText value="Title:" />
+                                        <p:link outcome="/s/event.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+
+                                        <h:outputText value="Date:" />
+                                        <h:outputText value="#{ev.formattedStartDate}"/>
+
+                                        <h:outputText value="By:" />
+                                        <h:outputLabel value="#{ev.owner.email}"/>
+                                    </h:panelGrid>
+                                </p:outputPanel>
+
+                            </h:panelGrid>
+                            <f:facet name="loader">
+                                <p:commandButton type="button" value="More"/>
                             </f:facet>
-                            <h:link outcome="/s/event.xhtml?id=#{ev.id}" value="#{ev.title}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Data:"/>
-                            </f:facet>
-                            <h:outputText value="#{ev.formattedStartDate}"/>
-                        </h:column>
-                        <h:commandButton value="more" action="#{events.loadMore(EventRequestType.WALL)}">
-                            <f:ajax execute="@none" render=":wall"/>
-                        </h:commandButton>
-                    </h:dataTable>
-                    <h:commandButton value="more" action="#{events.loadMore(EventType.WALL)}">
-                        <f:ajax execute="@none" render="joined"/>
-                    </h:commandButton>
+                        </p:dataScroller>
+                    </h:form>
                 </p:tab>
                 <p:tab title="Invitations">
-                    <h:dataTable id="invitations" value="#{events.invitations}" var="ev">
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Title:"/>
+                    <h:form>
+                        <p:dataScroller value="#{events.invitations}" var="ev" chunkSize="10">
+                            <h:panelGrid columns="2" style="width:100%">
+                                <p:graphicImage/> 
+
+                                <p:outputPanel>
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <h:outputText value="Title:" />
+                                        <p:link outcome="/s/event.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+
+                                        <h:outputText value="Date:" />
+                                        <h:outputText value="#{ev.formattedStartDate}"/>
+
+                                        <h:outputText value="By:" />
+                                        <h:outputLabel value="#{ev.owner.email}"/>
+                                    </h:panelGrid>
+                                </p:outputPanel>
+
+                            </h:panelGrid>
+                            <f:facet name="loader">
+                                <p:commandButton type="button" value="More"/>
                             </f:facet>
-                            <h:link outcome="/s/event.xhtml?id=#{ev.id}" value="#{ev.title}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Data:"/>
-                            </f:facet>
-                            <h:outputText value="#{ev.formattedStartDate}"/>
-                        </h:column>
-                        <h:commandButton value="more" action="#{events.loadMore(EventRequestType.INVITATION)}">
-                            <f:ajax execute="@none" render=":invitations"/>
-                        </h:commandButton>
-                    </h:dataTable>
-                    <h:commandButton value="more" action="#{events.loadMore(EventType.INVITED)}">
-                        <f:ajax execute="@none" render="joined"/>
-                    </h:commandButton>
+                        </p:dataScroller>
+                    </h:form>
                 </p:tab>
             </p:tabView>
             <h:messages />

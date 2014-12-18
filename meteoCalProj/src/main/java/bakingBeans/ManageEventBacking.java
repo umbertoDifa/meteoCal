@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.inject.Named;
@@ -20,6 +19,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import model.CalendarModel;
 import model.Event;
+import model.Invitation;
 import model.PrivateEvent;
 import model.PublicEvent;
 import model.UserModel;
@@ -51,6 +51,10 @@ public class ManageEventBacking implements Serializable {
     String newGuestEmail = "invita qualcuno";
     List<UserModel> resultUsers;
     boolean displayResultUsers;
+    private List<UserModel> noAnswerInvitations = new ArrayList<>();
+    private List<UserModel> acceptedInvitations = new ArrayList<>();
+    private List<UserModel> declinedInvitations = new ArrayList<>();
+    private List<UserModel> publicJoinUsers = new ArrayList<>();
 
     boolean saved;
 
@@ -231,6 +235,38 @@ public class ManageEventBacking implements Serializable {
         this.idEvent = idEvent;
     }
 
+    public List<UserModel> getNoAnswerInvitations() {
+        return noAnswerInvitations;
+    }
+
+    public void setNoAnswerInvitations(List<UserModel> noAnswerInvitations) {
+        this.noAnswerInvitations = noAnswerInvitations;
+    }
+
+    public List<UserModel> getAcceptedInvitations() {
+        return acceptedInvitations;
+    }
+
+    public void setAcceptedInvitations(List<UserModel> acceptedInvitations) {
+        this.acceptedInvitations = acceptedInvitations;
+    }
+
+    public List<UserModel> getDeclinedInvitations() {
+        return declinedInvitations;
+    }
+
+    public void setDeclinedInvitations(List<UserModel> declinedInvitations) {
+        this.declinedInvitations = declinedInvitations;
+    }
+
+    public List<UserModel> getPublicJoinUsers() {
+        return publicJoinUsers;
+    }
+
+    public void setPublicJoinUsers(List<UserModel> publicJoinUsers) {
+        this.publicJoinUsers = publicJoinUsers;
+    }
+
     /*
      *
      * METHODS
@@ -258,7 +294,9 @@ public class ManageEventBacking implements Serializable {
                 endTime = timeFormat.format(eventToCreate.getEndDateTime().getTime());
                 setSaved(true);
                 publicAccess = eventToCreate instanceof PublicEvent;
+                setInvitations();
                 //inizializzare calendarName
+
             } else {
                 showMessage(null, "Nessun evento trovato", "");
             }
@@ -283,14 +321,13 @@ public class ManageEventBacking implements Serializable {
         return null;
     }
 
-    public String save() {
+    public void save() {
         System.out.println("-dentro save");
         createOrLoadInstance();
         setUpInstance();
         saveIt();
 
-        return "/s/event.xhtml?id=" + idEvent; //TODO gestire errori?
-
+         //TODO gestire errori?
     }
 
     public String delete() {
@@ -435,7 +472,7 @@ public class ManageEventBacking implements Serializable {
                 showMessage(null, "L'evento è stato salvato", "");
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                 try {
-                    context.redirect(context.getRequestContextPath() + "/s/manageEvent.xhtml?idEvent=" + idEvent);
+                    context.redirect(context.getRequestContextPath() + "/s/event.xhtml?id=" + idEvent);
                 } catch (IOException ex) {
                     showMessage(null, "Redirect fallita", "");
                 }
@@ -457,5 +494,30 @@ public class ManageEventBacking implements Serializable {
     private void showMessage(String recipient, String msg, String advice) {
         FacesContext ctx = FacesContext.getCurrentInstance();
         ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_WARN, msg, advice));
+    }
+
+    private void setInvitations() {
+        if (eventToCreate != null) {
+            List<Invitation> invitations = eventToCreate.getInvitations();
+            if (invitations != null && invitations.size() > 0) {
+                for (Invitation invitation : invitations) {
+                    switch (invitation.getAnswer()) {
+                        case YES:
+                            acceptedInvitations.add(invitation.getInvitee());
+                            break;
+                        case NO:
+                            declinedInvitations.add(invitation.getInvitee());
+                            break;
+                        case NA:
+                            noAnswerInvitations.add(invitation.getInvitee());
+                            break;
+                        default:
+                            noAnswerInvitations.add(invitation.getInvitee());
+                            break;
+                    }
+
+                }
+            }
+        }
     }
 }

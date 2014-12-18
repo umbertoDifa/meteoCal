@@ -51,7 +51,7 @@ public class LoginBacking implements Serializable {
         } else {
             RequestContext.getCurrentInstance().update("growl");
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Username or password invalid"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", userAndMessage.getControlMessage().getMessage()));
             return "/";
         }
         
