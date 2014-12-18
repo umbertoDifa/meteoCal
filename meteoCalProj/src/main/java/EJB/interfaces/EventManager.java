@@ -42,4 +42,7 @@ public interface EventManager {
         
     public List<UserModel> getInviteeFiltred(Event event, InvitationAnswer answer);
     
+    public List<UserModel> getPublicJoin(Event event);
+    
+    public boolean isInAnyCalendar(Event event, UserModel user);
 }

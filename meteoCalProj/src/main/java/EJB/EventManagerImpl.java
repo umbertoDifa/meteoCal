@@ -262,7 +262,7 @@ public class EventManagerImpl implements EventManager {
         }
 
     }
-
+    @Override
     public List<UserModel> getPublicJoin(Event event) {
         try {
             if (event instanceof PublicEvent) {
@@ -275,6 +275,7 @@ public class EventManagerImpl implements EventManager {
         }
     }
     
+    @Override
     public boolean isInAnyCalendar(Event event, UserModel user) {
         int i = (int) database.createNamedQuery("isInAnyCalendar").setParameter(1, event.getId()).setParameter(2, user.getId()).getSingleResult();
         return i != 0;
