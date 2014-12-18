@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import model.CalendarModel;
+import model.Event;
 import model.InvitationAnswer;
 import model.UserModel;
 import net.fortuna.ical4j.data.CalendarBuilder;
@@ -28,14 +29,8 @@ import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.ValidationException;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.property.Attendee;
-import net.fortuna.ical4j.model.property.CalScale;
-import net.fortuna.ical4j.model.property.Description;
-import net.fortuna.ical4j.model.property.Location;
-import net.fortuna.ical4j.model.property.Organizer;
-import net.fortuna.ical4j.model.property.ProdId;
-import net.fortuna.ical4j.model.property.Uid;
-import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.*;
+
 import utility.LoggerLevel;
 import utility.LoggerProducer;
 import utility.TimeTool;
@@ -67,12 +62,14 @@ public class SettingManagerImpl implements SettingManager {
                         "Cartella di export creata per l''utente {0}",
                         c.getOwner().getId());
             } else {
-                throw new SecurityException();
+                logger.log(LoggerLevel.DEBUG,
+                        "Cartella di export NON creata per l''utente {0}, probabilmente già esiste",
+                        c.getOwner().getId());
             }
 
         } catch (SecurityException ex) {
             logger.log(Level.SEVERE,
-                    "Non è stato possibile creare il percorso di cartelle di export dell'utente "
+                    ex.getMessage()
                     + c.getOwner().getId(), ex);
             //TODO return errore
         }
@@ -130,6 +127,7 @@ public class SettingManagerImpl implements SettingManager {
 
             // Add the event to the calendar 
             calendar.getComponents().add(event);
+            logger.log(LoggerLevel.DEBUG, "Aggiunto evento " + eventName);
         }
 
         saveExportingCalendar(calFile, calendar);
@@ -200,6 +198,7 @@ public class SettingManagerImpl implements SettingManager {
 
         //TODO tutto questo codice non fa nessuna catch di eventuali eccezioni
         //create a new meteocal calendar to host the imported events
+        //questa find serve solo se voglio essere sicuro che l'utente che mi è stato passato esista
         user = database.find(UserModel.class, user.getId());
         CalendarModel calendarForImport = calendarManager.createDefaultCalendar(
                 user);
@@ -225,15 +224,32 @@ public class SettingManagerImpl implements SettingManager {
                             logger.log(LoggerLevel.DEBUG, "Property ["
                                     + property.getName() + ", "
                                     + property.getValue() + "] found.");
-                            //TODO 
+                            
                             //check if the event still exists
-                            //check if the event is not in any other calendar
-                            //add the event in the calendar
+                            Event event = database.find(Event.class,
+                                    property.getValue());
+                            if (event == null) {
+                                //TODO gestisci lista di eventi non reimportati
+                            } else {
+                                //check if the event is not in any other calendar
+                                //if so do not import and add to the list of unimported event
+                                //otherwise
+                                //add the event in the calendar
+                                calendarForImport.addEventInCalendar(event);
+                            }
                         }
                     }
                 }
 
             }//for
+            //persisti il nuovo calendario con gli eventi imoprtati nel db
+            database.persist(calendarForImport);
+
+            logger.log(LoggerLevel.DEBUG,
+                    "Calendario importato per l''utente {0}", user.getEmail());
+            logger.log(LoggerLevel.DEBUG, "Calendario importato:\n {0}",
+                    calendarForImport.toString());
+            
         } catch (IOException ex) {
             logger.log(Level.SEVERE, null, ex);
         } catch (ParserException ex) {

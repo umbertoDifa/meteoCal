@@ -58,13 +58,6 @@ public class CalendarModel implements Serializable {
     }
 
     /**
-     * JUST FOR TESTING
-     */
-    public void init() {
-        eventsInCalendar = new ArrayList<>();
-    }
-
-    /**
      *
      * SETTERS & GETTERS
      */
@@ -103,6 +96,13 @@ public class CalendarModel implements Serializable {
 
     public void setIsDefault(boolean isDefault) {
         this.isDefault = isDefault;
+    }
+
+    @Override
+    public String toString() {
+        return "CalendarModel{" + "title=" + title + ", owner=" + owner
+                + ", isPublic=" + isPublic + ", isDefault=" + isDefault
+                + ", eventsInCalendar=" + eventsInCalendar + '}';
     }
 
     /**
