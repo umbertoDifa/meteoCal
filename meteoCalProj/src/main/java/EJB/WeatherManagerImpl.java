@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
-import objectAndString.WeatherForecast;
+import wrappingObjects.WeatherForecast;
 import org.json.JSONException;
 import utility.ForecastType;
 import utility.LoggerLevel;

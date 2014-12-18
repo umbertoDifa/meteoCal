@@ -197,11 +197,14 @@ public class SettingManagerImpl implements SettingManager {
         net.fortuna.ical4j.model.Calendar calendar;
 
         //TODO tutto questo codice non fa nessuna catch di eventuali eccezioni
+        
         //create a new meteocal calendar to host the imported events
         //questa find serve solo se voglio essere sicuro che l'utente che mi è stato passato esista
         user = database.find(UserModel.class, user.getId());
         CalendarModel calendarForImport = calendarManager.createDefaultCalendar(
                 user);
+        
+        //creo le liste che contengono gli eventi
 
         try {
             //set the calendar with the data taken from the file

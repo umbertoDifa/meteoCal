@@ -1,7 +1,7 @@
 package EJB.interfaces;
 
 import bakingBeans.CredentialsBacking;
-import objectAndString.UserAndMessage;
+import wrappingObjects.UserAndMessage;
 
 /**
  *

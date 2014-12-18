@@ -1,4 +1,4 @@
-package objectAndString;
+package wrappingObjects;
 
 import model.UserModel;
 import utility.ControlMessages;
