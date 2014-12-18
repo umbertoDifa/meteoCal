@@ -19,6 +19,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -36,12 +37,14 @@ import javax.persistence.Temporal;
     @NamedQuery(name = "findEventbyString", query = "SELECT e FROM Event e WHERE e.title LIKE :search"),
 
     @NamedQuery(name = "findEventbyTitle", query = "SELECT e FROM Event e WHERE e.title=:title"),
-    
+
     //Da chiamare sempre limitando i risulati ad 1 solo!
     @NamedQuery(name = "isConflicting", query = "SELECT e FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND e.id <> :id AND "
-            +"(e.endDateTime >= :end   AND  (e.startDateTime <= :start  OR   e.endDateTime>=:start) "
-            + "OR (e.startDateTime >= :start AND e.startDateTime <= :end))")
+            + "(e.endDateTime >= :end   AND  (e.startDateTime <= :start  OR   e.endDateTime>=:start) "
+            + "OR (e.startDateTime >= :start AND e.startDateTime <= :end))")    
 })
+
+@NamedNativeQuery (name = "isInAnyCalendar", query="SELECT COUNT(*) FROM EVENT_IN_CALENDAR WHERE evetsInCalendar_ID=? AND OWNER_ID=?")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Event implements Serializable {
 
@@ -69,6 +72,8 @@ public abstract class Event implements Serializable {
     private String description;
 
     private boolean isOutdoor;
+
+    private String imgPath;
 
     @ManyToOne
     private UserModel owner;
@@ -103,6 +108,14 @@ public abstract class Event implements Serializable {
      *
      * SETTERS & GETTERS
      */
+    public String getImgPath() {
+        return imgPath;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
+
     public String getTitle() {
         return title;
     }
