@@ -8,9 +8,12 @@ package model;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
@@ -31,9 +34,12 @@ public class Notification implements Serializable {
     private UserModel recipient;
     
     @ManyToOne
+    @JoinColumn (referencedColumnName = "ID")
     private Event relatedEvent;
     
-    @Column(nullable = false)
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('INVITATION', 'EVENT_CHANGED', 'EVENT_CANCELLED', 'EVENT_PUBLIC')" , nullable = false)
     private NotificationType type;
 
 

@@ -3,6 +3,7 @@ package EJB;
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.NotificationManager;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -12,6 +13,7 @@ import model.Invitation;
 import model.InvitationAnswer;
 import model.UserModel;
 import model.NotificationType;
+import utility.LoggerLevel;
 
 @Stateless
 public class InvitationManagerImpl implements InvitationManager {
@@ -21,6 +23,9 @@ public class InvitationManagerImpl implements InvitationManager {
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
+    
+    @Inject
+    Logger logger;
 
     @Override
     public void createInvitations(List<UserModel> usersToInvite, Event event) {
@@ -36,12 +41,17 @@ public class InvitationManagerImpl implements InvitationManager {
         //verifico se esiste già un invito per quell'utente a quell'evento 
         //lo cerco nello user (più lento probabilmente) perchè non è detto che quell'evento sia già stato persistito!
         user = database.find(UserModel.class, user.getId());
+        event = database.find(Event.class, event.getId());
             for (Invitation invitation : user.getInvitations()) {
                 if (invitation.getEvent().equals(event)) {
                     return false;
                 }
             }
-       Invitation invitation = new Invitation(user,event);
+       Invitation invitation = new Invitation();
+       invitation.setInvitee(user);
+       logger.log(LoggerLevel.DEBUG, "Invitation impostata per User {0}", user.getEmail());
+       invitation.setEvent(event);
+       logger.log(LoggerLevel.DEBUG, "Invitation impostata per Evento {0}", event.getId());
        database.persist(invitation);
        return true;
     }

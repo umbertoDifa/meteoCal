@@ -62,7 +62,7 @@ public class UserModel implements Serializable {
 
     private String avatarPath;
 
-    //non so se definire sopra una mini-enum per questo campo
+    @Column(columnDefinition = "ENUM('M','F')")
     private char gender;
 
     @ManyToMany(mappedBy = "guests")

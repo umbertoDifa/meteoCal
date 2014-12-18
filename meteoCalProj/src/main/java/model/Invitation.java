@@ -6,9 +6,13 @@
 package model;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 
@@ -26,9 +30,12 @@ public class Invitation implements Serializable {
     private UserModel invitee;
     
     @Id
-    @ManyToOne
+    @ManyToOne (targetEntity = Event.class)
+    @JoinColumn 
     private Event event;
     
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('YES', 'NO', 'NA')")
     private InvitationAnswer answer;
     
     /**
@@ -38,7 +45,7 @@ public class Invitation implements Serializable {
 
     public Invitation(UserModel invitee, Event event) {
         this.invitee = invitee;
-        this.event = event;
+        this.event = (PrivateEvent) event;
         this.answer = InvitationAnswer.NA;
                 
     }
