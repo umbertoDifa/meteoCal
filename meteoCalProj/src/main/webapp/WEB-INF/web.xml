@@ -41,5 +41,19 @@
         <filter-name>EditPermissionFilter</filter-name>
         <url-pattern>/s/*</url-pattern>
     </filter-mapping>
+    
+    <filter>
+        <filter-name>PrivacyEventFilter</filter-name>
+        <filter-class>utility.PrivacyEventFilter</filter-class>
+        <init-param>
+            <param-name>pattern</param-name>
+            <param-value>event.xhtml</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>EditPermissionFilter</filter-name>
+        <url-pattern>/s/*</url-pattern>
+    </filter-mapping>
 
 </web-app>

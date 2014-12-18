@@ -61,8 +61,13 @@ and open the template in the editor.
                         <f:selectItem itemValue="#{cal}" itemLabel="#{cal}" />
                     </c:forEach>
                 </p:selectOneMenu>
-                <p:commandButton icon="ui-icon-arrowthickstop-1-s" id="export" value="Export" action="#{settings.exportCalendar}"/>
             </h:form>
+            <h:form id="download">
+                <p:commandButton value="Download" icon="ui-icon-arrowthickstop-1-s">
+                </p:commandButton>
+            </h:form>
+
+
             <h2> Import Calendar: </h2>
             <h:form>
                 <p:fileUpload value="#{settings.calendarToImport}" mode="simple" allowTypes=".csv" />
@@ -71,8 +76,8 @@ and open the template in the editor.
             <hr/>
             <h2> Delete Account</h2>
             <p>Please be aware that once the account has been deleted, it will not be possible to reactivate
-            it later or retrieve calendars and events you have created. If you still wish to delete your account,
-            click on "Delete my Account"</p>
+                it later or retrieve calendars and events you have created. If you still wish to delete your account,
+                click on "Delete my Account"</p>
             <p:commandButton id="delete" value="Delete my Account" action="#{settings.deleteAccount}"/>
         </ui:define>
     </ui:composition>

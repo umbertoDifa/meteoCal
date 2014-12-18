@@ -57,7 +57,8 @@
                     <f:passThroughAttribute name="type" value="time" />
                 </h:inputText><br/>
 
-                <h:outputLabel value="Public:" /><input type="checkbox" data-role="flipswitch"/><br/>
+                <h:outputLabel value="Public:" />
+                <h:selectBooleanCheckbox value="#{eventToManage.publicAccess}"/><br/>
 
                 <h:outputLabel value="Enter Location:"/>
                 <h:inputText value="#{eventToManage.location}"/><br/>
@@ -72,6 +73,29 @@
                 <h:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/myCalendar.xhtml"/> 
                 <h:commandButton value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.delete}"/>
                 <h:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/event.xhtml?id=#{eventToManage.idEvent}"/>
+
+                <p:tabView>
+                    <p:tab title="Partecipants:">
+                        <c:forEach items="#{eventToManage.acceptedInvitations}" var="yesUser">
+                            <p:outputLabel value="#{yesUser.email}"/><br/>
+                        </c:forEach>
+                    </p:tab>
+                    <p:tab title="Declined:">
+                        <c:forEach items="#{eventToManage.declinedInvitations}" var="noUser">
+                            <p:outputLabel value="#{noUser.email}"/><br/>
+                        </c:forEach>
+                    </p:tab>
+                    <p:tab title="No Asnwer">
+                        <c:forEach items="#{eventToManage.noAnswerInvitations}" var="bhoUser">
+                            <p:outputLabel value="#{bhoUser.email}"/><br/>
+                        </c:forEach>
+                    </p:tab>
+                    <p:tab title="Public Join" rendered="#{eventToManage.publicAccess}">
+                        <c:forEach items="#{eventToManage.publicJoinUsers}" var="publicUser">
+                            <p:outputLabel value="#{publicUser.email}"/><br/>
+                        </c:forEach>
+                    </p:tab>
+                </p:tabView>
 
                 <div id="inviteDiv">
                     <h2>Guests:</h2>

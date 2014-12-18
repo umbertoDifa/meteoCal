@@ -9,12 +9,12 @@ import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import model.CalendarModel;
 import model.Event;
-import model.PrivateEvent;
 
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
@@ -48,6 +47,9 @@ public class ScheduleViewBacking implements Serializable {
     @Inject
     EventManager eventManager;
 
+    @Inject
+    ManageEventBacking manageEvent;
+
     private ScheduleModel eventsToShow;
 
     private ScheduleEvent event = new DefaultScheduleEvent();
@@ -57,6 +59,8 @@ public class ScheduleViewBacking implements Serializable {
     private List<String> calendarNames;
 
     private String calendarSelected;
+    
+    private CalendarModel calendarShown;
 
     @PostConstruct
     public void init() {
@@ -119,32 +123,53 @@ public class ScheduleViewBacking implements Serializable {
         this.event = event;
     }
 
-    public void addEvent(ActionEvent actionEvent) {
+    public CalendarModel getCalendarShown() {
+        return calendarShown;
+    }
 
-        //se l'evento è nuovo
-        if (event.getId() == null) {
-            //lo istanzio, privato, senza invitati e non all'aperto
-            Event eventToCreate = new PrivateEvent(event.getTitle(),
-                    dateToCalendar(event.getStartDate()),
-                    dateToCalendar(event.getEndDate()),
-                    null,
-                    event.getDescription(),
-                    false,
-                    login.getCurrentUser());
-            //lo persisto            
-            eventManager.scheduleNewEvent(eventToCreate, calendarManager.findCalendarByName(login.getCurrentUser(), calendarSelected), null);
-            //lo visualizzo
-            eventsToShow.addEvent(event);
-        } else {
-            //lo cerco
-            Event eventToUpdate = eventManager.findEventbyId((Long) event.getData());
-            //lo aggiorno nel db
-            eventManager.updateEvent(eventToUpdate, calendarManager.findCalendarByName(login.getCurrentUser(), calendarSelected));
-            //lo aggiorno a video
-            eventsToShow.updateEvent(event);
+    public void setCalendarShown(CalendarModel calendarShown) {
+        this.calendarShown = calendarShown;
+    }
+
+    public void updateEvent(ActionEvent actionEvent) {
+
+        manageEvent.setTitle(event.getTitle());
+        manageEvent.setCalendarName(calendarSelected);
+        if (event.getData() != null) {
+            manageEvent.setIdEvent((String) event.getData());
         }
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        manageEvent.setStartDate(dateFormat.format(event.getStartDate()));
+        manageEvent.setStartTime(timeFormat.format(event.getStartDate()));
+        manageEvent.setEndDate(dateFormat.format(event.getEndDate()));
+        manageEvent.setEndTime(timeFormat.format(event.getEndDate()));
+        manageEvent.save();
 
-        event = new DefaultScheduleEvent();
+//        //se l'evento è nuovo
+//        if (event.getId() == null) {
+//            //lo istanzio, privato, senza invitati e non all'aperto
+//            Event eventToCreate = new PrivateEvent(event.getTitle(),
+//                    dateToCalendar(event.getStartDate()),
+//                    dateToCalendar(event.getEndDate()),
+//                    null,
+//                    event.getDescription(),
+//                    false,
+//                    login.getCurrentUser());
+//            //lo persisto            
+//            eventManager.scheduleNewEvent(eventToCreate, calendarManager.findCalendarByName(login.getCurrentUser(), calendarSelected), null);
+//            //lo visualizzo
+//            eventsToShow.addEvent(event);
+//        } else {
+//            //lo cerco
+//            Event eventToUpdate = eventManager.findEventbyId((Long) event.getData());
+//            //lo aggiorno nel db
+//            eventManager.updateEvent(eventToUpdate, calendarManager.findCalendarByName(login.getCurrentUser(), calendarSelected));
+//            //lo aggiorno a video
+//            eventsToShow.updateEvent(event);
+//        }
+//
+//        event = new DefaultScheduleEvent();
     }
 
     public void onEventSelect(SelectEvent selectEvent) {
@@ -163,6 +188,7 @@ public class ScheduleViewBacking implements Serializable {
 
     public void onEventMove(ScheduleEntryMoveEvent event) {
 
+        updateEvent(null);
         //persisto l event con manageEventBacking
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event moved", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
 
@@ -170,7 +196,8 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     public void onEventResize(ScheduleEntryResizeEvent event) {
-
+        
+        updateEvent(null);
         //persisto l event con manageEventBacking
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
 
@@ -186,6 +213,7 @@ public class ScheduleViewBacking implements Serializable {
         for (CalendarModel cal : calendars) {
             if (cal.getTitle().equals(calendarSelected)) {
                 updateEventsToShow(cal);
+                calendarShown = cal;
             }
         }
 
@@ -207,7 +235,8 @@ public class ScheduleViewBacking implements Serializable {
         eventsToShow.clear();
 
         for (Event ev : cal.getEventsInCalendar()) {
-
+            calendarShown = cal;
+            calendarSelected = cal.getTitle();
             DefaultScheduleEvent e = new DefaultScheduleEvent(ev.getTitle(), ev.getStartDateTime().getTime(), ev.getEndDateTime().getTime(), ev.getId());
             e.setDescription(ev.getDescription());
             eventsToShow.addEvent(e);

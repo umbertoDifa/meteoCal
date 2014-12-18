@@ -9,7 +9,8 @@ and open the template in the editor.
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
 
     <ui:composition template="/template.xhtml">
 
@@ -29,9 +30,33 @@ and open the template in the editor.
             <h:outputLabel value="Location:" /><h:outputText value="#{viewEvent.eventToShow.location}"/><br/>
             <h:outputLabel value="Description:" /><h:outputText value="#{viewEvent.eventToShow.description}"/><br/>
             <h:outputLabel value="isOutdoor:" /><h:outputText value="#{viewEvent.eventToShow.isOutdoor}"/><br/>
-            <h:outputLabel value="Owner:" /><h:outputText value="#{viewEvent.eventToShow.owner.name}"/><br/> <!-- owner -->
-            <!--        <h:outputText value=""/>  invitati 
-                        <h:outputText value=""/>  è o meno nel tuo calendario 
+            <h:outputLabel value="Owner:" /><h:outputText value="#{viewEvent.eventToShow.owner.name}"/><br/>
+            <h:outputLabel value="Public:" /><h:outputText value="#{viewEvent.publicAccess}"/><br/>
+
+            <p:tabView rendered="#{viewEvent.showInvitees}">
+                <p:tab title="Partecipants:">
+                    <c:forEach items="#{viewEvent.acceptedInvitations}" var="yesUser">
+                        <p:outputLabel value="#{yesUser.email}"/><br/>
+                    </c:forEach>
+                </p:tab>
+                <p:tab title="Declined:">
+                    <c:forEach items="#{viewEvent.declinedInvitations}" var="noUser">
+                        <p:outputLabel value="#{noUser.email}"/><br/>
+                    </c:forEach>
+                </p:tab>
+                <p:tab title="No Asnwer">
+                    <c:forEach items="#{viewEvent.noAnswerInvitations}" var="bhoUser">
+                        <p:outputLabel value="#{bhoUser.email}"/><br/>
+                    </c:forEach>
+                </p:tab>
+                <p:tab title="Public Join" rendered="#{viewEvent.publicAccess}">
+                    <c:forEach items="#{viewEvent.publicJoinUsers}" var="publicUser">
+                        <p:outputLabel value="#{publicUser.email}"/><br/>
+                    </c:forEach>
+                </p:tab>
+            </p:tabView>
+
+            <!--        <h:outputText value=""/>  è o meno nel tuo calendario 
                         <h:outputText value=""/>  se sei invitato se ci partecipi o no -->
 
             <h:outputText rendered="#{!viewEvent.hasAnswered}">
@@ -41,7 +66,7 @@ and open the template in the editor.
             <h:outputText rendered="#{viewEvent.hasAnswered}">
                 <!-- TODO pulsanti non partecipo più ecc..-->
             </h:outputText>
-            <h:button value="modifica" rendered="#{viewEvent.allowedToModify}" 
+            <p:button value="modifica" rendered="#{viewEvent.allowedToModify}" 
                       outcome="/s/manageEvent.xhtml?idEvent=#{viewEvent.eventId}" /><br/> <!--passare in post id evento -->
         </ui:define>
 
