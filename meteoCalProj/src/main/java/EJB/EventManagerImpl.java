@@ -239,7 +239,7 @@ public class EventManagerImpl implements EventManager {
                 oldinvitees.add(invitation.getInvitee());
             }
             if (oldEvent instanceof PrivateEvent && event instanceof PublicEvent) {
-               // event.setId(oldEvent.getId());
+                // event.setId(oldEvent.getId());
 
                 notificationManager.createNotifications(oldinvitees, oldEvent, NotificationType.EVENT_PUBLIC, false);
                 database.remove(oldEvent);
@@ -262,4 +262,21 @@ public class EventManagerImpl implements EventManager {
         }
 
     }
+
+    public List<UserModel> getPublicJoin(Event event) {
+        try {
+            if (event instanceof PublicEvent) {
+                PublicEvent publicEvent = (PublicEvent) database.find(Event.class, event.getId());
+                return publicEvent.getGuests();
+            }
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
+    public boolean isInAnyCalendar(Event event, UserModel user) {
+        int i = (int) database.createNamedQuery("isInAnyCalendar").setParameter(1, event.getId()).setParameter(2, user.getId()).getSingleResult();
+        return i != 0;
+    } 
 }
