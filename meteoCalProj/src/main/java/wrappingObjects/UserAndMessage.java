@@ -9,7 +9,7 @@ import utility.ControlMessages;
  */
 public class UserAndMessage {
     private UserModel user;
-    private ControlMessages message;
+    private ControlMessages controlMessage;
 
     public UserModel getUser() {
         return user;
@@ -19,12 +19,12 @@ public class UserAndMessage {
         this.user = user;
     }
 
-    public ControlMessages getMessage() {
-        return message;
+    public ControlMessages getControlMessage() {
+        return controlMessage;
     }
 
-    public void setMessage(ControlMessages message) {
-        this.message = message;
+    public void setControlMessage(ControlMessages message) {
+        this.controlMessage = message;
     }
 
     

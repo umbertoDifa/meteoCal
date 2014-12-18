@@ -41,7 +41,7 @@ public class LoginManagerImpl implements LoginManager {
         //query per cercare un utente preciso
         if (results.isEmpty()) {
             userAndMessage.setUser(null);
-            userAndMessage.setMessage(ControlMessages.USER_NOT_FOUND);
+            userAndMessage.setControlMessage(ControlMessages.USER_NOT_FOUND);
         } else if (results.size() > 1) {
             throw new IllegalStateException(
                     //TODO, questa??
@@ -51,11 +51,11 @@ public class LoginManagerImpl implements LoginManager {
             if (results.get(0).getPassword().equals(credentials.getPassword())) {                
                 userAndMessage.setUser(results.get(0));                
                 database.refresh(results.get(0));
-                userAndMessage.setMessage(ControlMessages.LOGIN_SUCCESSFUL);
+                userAndMessage.setControlMessage(ControlMessages.LOGIN_SUCCESSFUL);
             } else {
                 //se password sbagliata, scrivo l'errore e ritorno null
                 userAndMessage.setUser(null);
-                userAndMessage.setMessage(ControlMessages.WRONG_PASSWORD);
+                userAndMessage.setControlMessage(ControlMessages.WRONG_PASSWORD);
             }
         }
 
