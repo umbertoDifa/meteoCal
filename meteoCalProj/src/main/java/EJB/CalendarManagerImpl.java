@@ -82,6 +82,7 @@ public class CalendarManagerImpl implements CalendarManager {
 
     @Override
     //TODO qui user non serve perchè deduco l'id dal calendar
+    //TODO per ora nessuno usa questa funzione!
     public boolean addCalendarToUser(UserModel user, CalendarModel cal) {
         user = database.find(UserModel.class, user.getId());
         cal.setOwner(user);
@@ -171,7 +172,7 @@ public class CalendarManagerImpl implements CalendarManager {
     public CalendarModel getCalendar(CalendarModel calendar) {
         return (CalendarModel) database.createNamedQuery(
                 "findCalbyUserAndTitle").setParameter("id",
-                        calendar.getOwner().getId()).setParameter(
+                        calendar.getOwner()).setParameter(
                         "title", calendar.getTitle()).getSingleResult();
     }
 
