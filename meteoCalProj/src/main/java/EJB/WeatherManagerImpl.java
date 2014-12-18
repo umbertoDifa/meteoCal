@@ -61,6 +61,7 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     //Just for testing!
+    //DELETEME il test si fa con il mock!
     protected void initOpenWeatherMap() {
         openWeatherMap = new OpenWeatherMap("6f165fcce7eddd2405ef5c0596000ff7");
     }
