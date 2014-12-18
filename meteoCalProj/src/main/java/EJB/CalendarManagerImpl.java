@@ -178,7 +178,7 @@ public class CalendarManagerImpl implements CalendarManager {
 
     @Override
     public CalendarModel createDefaultCalendar(UserModel user) {
-
+        //TODO if user == null
         CalendarModel calendar = new CalendarModel();
         calendar.setIsDefault(true);
         calendar.setIsPublic(false);

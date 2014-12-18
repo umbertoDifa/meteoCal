@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +35,7 @@ import net.fortuna.ical4j.model.property.*;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
 import utility.TimeTool;
+import wrappingObjects.Pair;
 
 public class SettingManagerImpl implements SettingManager {
 
@@ -44,7 +46,7 @@ public class SettingManagerImpl implements SettingManager {
     CalendarManager calendarManager;
 
     @PersistenceContext(unitName = "meteoCalDB")
-    private EntityManager database;
+    EntityManager database;
 
     Logger logger = LoggerProducer.debugLogger(SettingManagerImpl.class);
 
@@ -179,7 +181,7 @@ public class SettingManagerImpl implements SettingManager {
     }
 
     @Override
-    public void importCalendar(UserModel user, String calendarName) {
+    public List<Pair<String, String>> importCalendar(UserModel user, String calendarName) {
         //TODO works only with our exported calendars
         //Now Parsing an iCalendar file
         calendarName = ".\\import\\" + calendarName;
@@ -197,14 +199,20 @@ public class SettingManagerImpl implements SettingManager {
         net.fortuna.ical4j.model.Calendar calendar;
 
         //TODO tutto questo codice non fa nessuna catch di eventuali eccezioni
-        
         //create a new meteocal calendar to host the imported events
         //questa find serve solo se voglio essere sicuro che l'utente che mi è stato passato esista
-        user = database.find(UserModel.class, user.getId());
+        user = (UserModel) database.find(UserModel.class, user.getId());
+        logger.log(LoggerLevel.DEBUG, "Trovato utente {0}", user.getEmail());
+
         CalendarModel calendarForImport = calendarManager.createDefaultCalendar(
                 user);
-        
-        //creo le liste che contengono gli eventi
+
+        //creo la lista di coppie che contengono gli eventi non importati
+        List<Pair<String, String>> unimportedEvents = new ArrayList<>();
+        //string to remember the event name
+        String eventName;
+        String eventOwner;
+        String eventId;
 
         try {
             //set the calendar with the data taken from the file
@@ -213,33 +221,73 @@ public class SettingManagerImpl implements SettingManager {
             //Iterating over a Calendar
             for (Iterator i = calendar.getComponents().iterator(); i.hasNext();) {
                 Component component = (Component) i.next();
+
                 //If the component is an event
                 if (component.getName().equals("VEVENT")) {
-                    logger.log(LoggerLevel.DEBUG, "Component ["
-                            + component.getName() + "] found in " + calendarName);
+                    logger.log(LoggerLevel.DEBUG, "Component [{0}] found in {1}",
+                            new Object[]{component.getName(),
+                                         calendarName});
+
+                    //I set default names
+                    eventName = "noTitleFound";
+                    eventOwner = "noOrganizerFound";
+                    eventId = null;
 
                     //I search its proprieties
                     for (Iterator j = component.getProperties().iterator();
                             j.hasNext();) {
                         Property property = (Property) j.next();
-                        //if I find the UID
-                        if (property.getName().equals("UID")) {
-                            logger.log(LoggerLevel.DEBUG, "Property ["
-                                    + property.getName() + ", "
-                                    + property.getValue() + "] found.");
-                            
+
+                        //I save the properies I need
+                        switch (property.getName()) {
+                            case "SUMMARY": eventName = property.getValue();
+                                break;
+                            case "UID": eventId = property.getValue();
+                                break;
+                            case "ORGANIZER": eventOwner = property.getValue();
+                                break;
+
+                        }
+                        logger.log(LoggerLevel.DEBUG,
+                                "Property [{0}] with value {1}", new Object[]{
+                                    property.getName(),
+                                    property.getValue()});
+                    }
+                    if (eventId != null) {
+                        try {
                             //check if the event still exists
                             Event event = database.find(Event.class,
-                                    property.getValue());
+                                    Long.parseLong(eventId));
+                            //se l'evento non esiste
                             if (event == null) {
-                                //TODO gestisci lista di eventi non reimportati
+                                logger.log(LoggerLevel.DEBUG,
+                                        "NON Trovato evento");
+
+                                //aggiungo l'evento a quelli non importati
+                                unimportedEvents.add(new Pair<>(eventName,
+                                        eventOwner));
                             } else {
-                                //check if the event is not in any other calendar
-                                //if so do not import and add to the list of unimported event
-                                //otherwise
-                                //add the event in the calendar
-                                calendarForImport.addEventInCalendar(event);
+                                logger.log(LoggerLevel.DEBUG, "Trovato evento");
+
+                                //TODO check if the event is not in any other calendar
+                                if (eventManager.isInAnyCalendar(event, user)) {
+                                    logger.log(LoggerLevel.DEBUG,
+                                            "Evento già in calendario");
+
+                                    //if so do not import and add to the list of unimported event
+                                    unimportedEvents.add(new Pair<>(eventName,
+                                            eventOwner));
+                                } else {
+                                    //add the event in the calendar
+                                    calendarForImport.addEventInCalendar(event);
+                                }
+
                             }
+                        } catch (NumberFormatException ex) {
+                            logger.log(Level.WARNING,
+                                    "The eventUID is not a number, the event is not imported");
+                            unimportedEvents.add(new Pair<>(eventName,
+                                    eventOwner));
                         }
                     }
                 }
@@ -249,14 +297,19 @@ public class SettingManagerImpl implements SettingManager {
             database.persist(calendarForImport);
 
             logger.log(LoggerLevel.DEBUG,
-                    "Calendario importato per l''utente {0}", user.getEmail());
-            logger.log(LoggerLevel.DEBUG, "Calendario importato:\n {0}",
+                    "Calendario importato per l''utente {0}",
+                    user.getEmail());
+            logger.log(LoggerLevel.DEBUG,
+                    "Calendario importato:\n {0}",
                     calendarForImport.toString());
-            
-        } catch (IOException ex) {
+            logger.log(LoggerLevel.DEBUG, "Eventi non importati:\n{0}",
+                    unimportedEvents.toString());
+
+            return unimportedEvents;
+
+        } catch (IOException | ParserException ex) {
             logger.log(Level.SEVERE, null, ex);
-        } catch (ParserException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            return null; //TODO?
         }
 
     }

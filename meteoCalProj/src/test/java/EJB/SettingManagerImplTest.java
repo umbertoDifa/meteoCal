@@ -1,10 +1,13 @@
 package EJB;
 
+import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
-import EJB.interfaces.SettingManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.lang.Class;
+import java.lang.Long;
+import javax.persistence.EntityManager;
 import model.CalendarModel;
 import model.Event;
 import model.InvitationAnswer;
@@ -15,9 +18,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.mockito.Matchers;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -30,6 +33,10 @@ import static org.mockito.Mockito.when;
 public class SettingManagerImplTest {
 
     private SettingManagerImpl settingManager;
+    private Calendar startEvent;
+    private Calendar endEvent;
+    private Event event;
+    private UserModel owner;
 
     public SettingManagerImplTest() {
     }
@@ -46,6 +53,20 @@ public class SettingManagerImplTest {
     public void setUp() {
         settingManager = new SettingManagerImpl();
         settingManager.eventManager = mock(EventManager.class);
+        settingManager.database = mock(EntityManager.class);
+        settingManager.calendarManager = mock(CalendarManagerImpl.class);
+
+        owner = new UserModel("nomeDellOwner", "CognomeOwner",
+                "email@owner", "passwordOwner");
+        owner.setId(Long.MAX_VALUE / 2);
+
+        startEvent = Calendar.getInstance();
+        endEvent = Calendar.getInstance();
+        endEvent.add(Calendar.DATE, 1);
+        event = new PublicEvent("Titolo Evento", startEvent, endEvent,
+                "luogo Evento", "descrizione evento", true, owner);
+
+        event.setId(Long.MAX_VALUE);
     }
 
     @After
@@ -55,21 +76,9 @@ public class SettingManagerImplTest {
     /**
      * Test of exportCalendar method, of class SettingManagerImpl.
      */
-    @Test
+    @Test   
     public void testExportCalendar() {
         System.out.println("exportCalendar");
-
-        UserModel owner = new UserModel("nomeDellOwner", "CognomeOwner",
-                "email@owner", "passwordOwner");
-        owner.setId(Long.MAX_VALUE / 2);
-
-        Calendar startEvent = Calendar.getInstance();
-        Calendar endEvent = Calendar.getInstance();
-        endEvent.add(Calendar.DATE, 1);
-        Event event = new PublicEvent("Titolo Evento", startEvent, endEvent,
-                "luogo Evento", "descrizione evento", true, owner);
-
-        event.setId(Long.MAX_VALUE);
 
         List<Event> eventList = new ArrayList<>();
         eventList.add(event);
@@ -104,13 +113,37 @@ public class SettingManagerImplTest {
      * Test of importCalendar method, of class SettingManagerImpl.
      */
     @Test
-    @Ignore
     public void testImportCalendar() {
         System.out.println("importCalendar");
-        String calendarName = "basic.ics";
+        String calendarName = "2014-12-18-11-20-37.ics";
 
         UserModel userImporting = new UserModel("nome utente", "cognome utente",
                 "email@tente", "passwordUtente");
+        userImporting.setId(Long.MAX_VALUE);
+
+        //creo evento di prova
+        startEvent = Calendar.getInstance();
+        endEvent = Calendar.getInstance();
+        endEvent.add(Calendar.DATE, 1);
+        event = new PublicEvent("Titolo Evento", startEvent, endEvent,
+                "luogo Evento", "descrizione evento", true, owner);
+
+        event.setId(Long.MAX_VALUE);
+
+        when(settingManager.database.find(UserModel.class, Long.MAX_VALUE)).thenReturn(
+                userImporting);
+
+        when(settingManager.calendarManager.createDefaultCalendar(Matchers.any(
+                UserModel.class))).thenReturn(new CalendarModel(
+                                "Default calendar",
+                                owner, true, true));
+
+        when(settingManager.database.find(Event.class, Long.MAX_VALUE)).thenReturn(
+                event);
+//
+//        when(settingManager.eventManager.isInAnyCalendar(Matchers.any(
+//                Event.class), Matchers.any(UserModel.class))).thenReturn(
+//                        Boolean.FALSE);
 
         settingManager.importCalendar(userImporting, calendarName);
 

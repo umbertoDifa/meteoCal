@@ -40,4 +40,9 @@ public class Pair<L, R> {
                 pairo.getRight());
     }
 
+    @Override
+    public String toString() {
+        return "Pair{" + "left=" + left + ", right=" + right + '}';
+    }
+
 }

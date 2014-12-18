@@ -110,6 +110,9 @@ public class CalendarModel implements Serializable {
      * METHODS
      */
     public boolean addEventInCalendar(Event event) {
+        if (this.eventsInCalendar == null) {
+            this.eventsInCalendar = new ArrayList<>();
+        }
         return this.eventsInCalendar.add(event);
     }
 }

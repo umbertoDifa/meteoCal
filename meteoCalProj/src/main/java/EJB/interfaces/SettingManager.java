@@ -1,7 +1,9 @@
 package EJB.interfaces;
 
+import java.util.List;
 import model.CalendarModel;
 import model.UserModel;
+import wrappingObjects.Pair;
 
 /**
  *
@@ -11,6 +13,6 @@ public interface SettingManager {
 
     public void exportCalendar(CalendarModel c);
 
-    public void importCalendar(UserModel user,String calendarName);
+    public List<Pair<String, String>> importCalendar(UserModel user, String calendarName);
 
 }
