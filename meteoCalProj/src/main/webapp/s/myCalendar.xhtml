@@ -30,10 +30,10 @@ and open the template in the editor.
                             </p:selectOneMenu>
                         </h:panelGrid>
 
-                        <p:schedule id="schedule" view="basicDay" value="#{scheduleView.eventsToShow}" widgetVar="myschedule" timeZone="GMT+2">
+                        <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" widgetVar="myschedule" timeZone="GMT+2">
 
                             <p:ajax event="dateSelect" listener="#{scheduleView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
-                            <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                            <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" />
                             <p:ajax event="eventMove" listener="#{scheduleView.onEventMove}" update=":growl" />
                             <p:ajax event="eventResize" listener="#{scheduleView.onEventResize}" update=":growl" />
 

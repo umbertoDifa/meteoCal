@@ -284,7 +284,7 @@ public class ManageEventBacking implements Serializable {
     }
 
     public String save() {
-
+        System.out.println("-dentro save");
         createOrLoadInstance();
         setUpInstance();
         saveIt();
@@ -346,7 +346,9 @@ public class ManageEventBacking implements Serializable {
      * invece è un nuovo evento lo istanzio, sempre in eventToCreate
      */
     private void createOrLoadInstance() {
+        //se sto modificando un evento esistente
         if (isSaved()) {
+            System.out.println("-dentro createOrL, dentro isSaved");
             if (idEvent != null) {
                 Event eventFound = eventManager.findEventbyId(Long.parseLong(idEvent));
                 if (((eventFound instanceof PublicEvent) && (publicAccess)) || ((eventFound instanceof PrivateEvent) && (!publicAccess))) {
@@ -357,14 +359,14 @@ public class ManageEventBacking implements Serializable {
                     } else {
                         eventToCreate = new PrivateEvent();
                     }
-                    eventManager.deleteEvent(eventFound);
-                    idEvent = Objects.toString(eventToCreate.getId(), null);
+                    eventToCreate.setId(eventFound.getId());
                 }
             } else {
                 System.out.println("idEvent è null");
                 showMessage(null, "Nessun evento trovato", "");
             }
         } else {
+            System.out.println("-dentro createOrL, dentro else di isSaved");
             //se l'utente ha impostato a public l evento
             if (publicAccess) {
                 //istanzio un PublicEvent
@@ -423,6 +425,7 @@ public class ManageEventBacking implements Serializable {
     private void saveIt() {
         //passo all eventManager l'ownerId, l'evento riempito, il calendario
         //dove metterlo e la lista degli invitati
+        System.out.println("-dentro save it");
         if (isSaved()) {
             eventManager.updateEvent(eventToCreate, calendar, guests);
         } else {

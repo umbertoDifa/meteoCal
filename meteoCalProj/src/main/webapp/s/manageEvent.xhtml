@@ -66,6 +66,13 @@
 
                 <h:inputTextarea value="#{eventToManage.description}" style="resize: none" /><br/>
 
+
+
+                <h:commandButton id="save" value="Save" action="#{eventToManage.save}"/>
+                <h:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/myCalendar.xhtml"/> 
+                <h:commandButton value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.delete}"/>
+                <h:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/event.xhtml?id=#{eventToManage.idEvent}"/>
+
                 <div id="inviteDiv">
                     <h2>Guests:</h2>
 
@@ -79,7 +86,7 @@
 
                     <h:form id="inviteForm" >
                         <h:inputText id="email" value="#{eventToManage.newGuestEmail}"/>
-                        <h:commandButton value="search" action="#{eventToManage.showResultUsers}"/><br/>
+                        <h:commandButton value="search" action="#{eventToManage.showResultUsers}" /><br/>
                         <h:message for="email" />
                     </h:form>
                     <h:panelGroup layout="block" rendered="#{eventToManage.displayResultUsers}" >
@@ -90,11 +97,6 @@
 
                     </h:panelGroup>
                 </div>
-
-                <h:commandButton id="save" value="Save" action="#{eventToManage.save}"/>
-                <h:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/myCalendar.xhtml"/> 
-                <h:commandButton value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.delete}"/>
-                <h:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/event.xhtml?id=#{eventToManage.idEvent}"/>
             </h:form><br/>
             <h:messages />
         </ui:define>

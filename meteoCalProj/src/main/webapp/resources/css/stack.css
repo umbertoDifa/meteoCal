@@ -1,0 +1,16 @@
+/* 
+    Created on : 17-dic-2014, 17.26.45
+    Author     : Francesco
+*/
+
+.ui-stack{
+    top : 400px;
+    left: 20px;
+}
+.openStack li span{
+    display: inline-table !important;
+    height:16px !important;
+    left: 60px !important; 
+    right: 0 !important;
+    background-color:#8A9099 !important;
+}
