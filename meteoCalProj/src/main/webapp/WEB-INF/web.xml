@@ -52,7 +52,7 @@
     </filter>
 
     <filter-mapping>
-        <filter-name>EditPermissionFilter</filter-name>
+        <filter-name>PrivacyEventFilter</filter-name>
         <url-pattern>/s/*</url-pattern>
     </filter-mapping>
 

@@ -45,7 +45,7 @@ public class Invitation implements Serializable {
 
     public Invitation(UserModel invitee, Event event) {
         this.invitee = invitee;
-        this.event = (PrivateEvent) event;
+        this.event = event;
         this.answer = InvitationAnswer.NA;
                 
     }
