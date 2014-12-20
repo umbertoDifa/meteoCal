@@ -47,11 +47,7 @@ public class InvitationManagerImpl implements InvitationManager {
                     return false;
                 }
             }
-       Invitation invitation = new Invitation();
-       invitation.setInvitee(user);
-       logger.log(LoggerLevel.DEBUG, "Invitation impostata per User {0}", user.getEmail());
-       invitation.setEvent(event);
-       logger.log(LoggerLevel.DEBUG, "Invitation impostata per Evento {0}", event.getId());
+       Invitation invitation = new Invitation(user, event);
        database.persist(invitation);
        return true;
     }

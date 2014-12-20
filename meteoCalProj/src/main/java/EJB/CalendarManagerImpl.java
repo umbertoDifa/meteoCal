@@ -133,7 +133,7 @@ public class CalendarManagerImpl implements CalendarManager {
                         new Object[]{event.getTitle(),
                                      calendar.getTitle(),
                                      calendar.getOwner().getEmail()});
-
+                database.flush();
                 logger.log(LoggerLevel.DEBUG, "Events in calendar now: {0}",
                         calendar.getEventsInCalendar());
 
