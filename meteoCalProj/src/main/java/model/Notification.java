@@ -21,35 +21,32 @@ import javax.persistence.SequenceGenerator;
  *
  * @author Luckyna
  */
-
 @Entity
-@SequenceGenerator ( name = "notifSeq", initialValue = 50)
+@SequenceGenerator(name = "notifSeq", initialValue = 50)
 public class Notification implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notifSeq")
     private Long id;
-    
+
     @ManyToOne
     private UserModel recipient;
-    
+
     @ManyToOne
-    @JoinColumn (referencedColumnName = "ID")
+    @JoinColumn(referencedColumnName = "ID")
     private Event relatedEvent;
-    
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('INVITATION', 'EVENT_CHANGED', 'EVENT_CANCELLED', 'EVENT_PUBLIC')" , nullable = false)
+    
+    @Column(columnDefinition = "ENUM('INVITATION', 'EVENT_CHANGED', 'EVENT_CANCELLED', 'EVENT_PUBLIC')",
+            nullable = false)
     private NotificationType type;
 
-
-    
- /**
- *
- *   CONSTRUCTORS
- */
-
-
+    /**
+     *
+     * CONSTRUCTORS
+     */
     public Notification(UserModel recipient, Event relatedEvent, NotificationType type) {
         this.recipient = recipient;
         this.relatedEvent = relatedEvent;
@@ -58,14 +55,11 @@ public class Notification implements Serializable {
 
     public Notification() {
     }
-    
-    
-/**
- *
- *   SETTERS & GETTERS
- */
 
-    
+    /**
+     *
+     * SETTERS & GETTERS
+     */
     public Long getId() {
         return id;
     }
@@ -107,12 +101,12 @@ public class Notification implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Notification)) {
             return false;
         }
         Notification other = (Notification) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.id == null && other.id != null) || (this.id != null
+                && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -122,5 +116,5 @@ public class Notification implements Serializable {
     public String toString() {
         return "model.Notification[ id=" + id + " ]";
     }
-    
+
 }

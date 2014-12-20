@@ -10,6 +10,7 @@ import model.Event;
 import model.Notification;
 import model.UserModel;
 import model.NotificationType;
+import utility.EmailSender;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
 
@@ -42,9 +43,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private void sendEmail(UserModel user, NotificationType type) {
         String subject = type.getSubject();
-        String body = type.getBodyMessage();
-        //TODO decommenta per mandare email
-        //EmailSender.sendEmail(user.getEmail(), subject, body);
+        String body = type.getBodyMessage();        
+        EmailSender.sendEmail(user.getEmail(), subject, body);
     }
 
     private void createNotification(UserModel user, Event event, NotificationType type) {

@@ -48,91 +48,138 @@ public class SettingManagerImpl implements SettingManager {
     @PersistenceContext(unitName = "meteoCalDB")
     EntityManager database;
 
+    private final String COMMON_PATH = "." + File.separator + "src"
+            + File.separator + "main" + File.separator
+            + "webapp" + File.separator + "resources" + File.separator + "ics"
+            + File.separator;
+
     Logger logger = LoggerProducer.debugLogger(SettingManagerImpl.class);
 
+    /**
+     * Esporta il calendario passato creando un file .ics nella cartella
+     * personale dell'utente
+     *
+     * @param calendar Calendario da esportare
+     * @return true se tutto ok, false altrimenti
+     */
     @Override
-    public void exportCalendar(CalendarModel c) {
+    public boolean exportCalendar(CalendarModel calendar) {
         String calFile;
-        //TODO si potrebbe fare anche che ogni volta che un utenet fa il login la sua cartella
-        //export viene cancellata cosi la memoria non si riempie
 
-        //creo il percorso della cartella
         try {
-            boolean result = new File(".\\export\\" + c.getOwner().getId()).mkdirs();
-            if (result) {
-                logger.log(LoggerLevel.DEBUG,
-                        "Cartella di export creata per l''utente {0}",
-                        c.getOwner().getId());
-            } else {
-                logger.log(LoggerLevel.DEBUG,
-                        "Cartella di export NON creata per l''utente {0}, probabilmente già esiste",
-                        c.getOwner().getId());
-            }
+            calFile = createExportPath(calendar);
+            logger.log(LoggerLevel.DEBUG, "Salvo calendario al path: {0}",
+                    calFile);
 
         } catch (SecurityException ex) {
             logger.log(Level.SEVERE,
-                    ex.getMessage()
-                    + c.getOwner().getId(), ex);
-            //TODO return errore
+                    "Non è stato possibile creare il path per la cartella di export");
+            return false;
         }
 
+        net.fortuna.ical4j.model.Calendar iCal = createIcal();
+
+        addIcalEvents(calendar, iCal);
+
+        try {
+            saveExportingCalendar(calFile, iCal);
+        } catch (IOException | ValidationException ex) {
+            logger.log(Level.SEVERE,
+                    "Non è stato possibile salvare il calendario.\n"
+                    + ex.getMessage(), ex);
+            return false;
+        }
+
+        logger.log(LoggerLevel.DEBUG, "Calendario esportato con successo:\n{0}",
+                iCal.toString());
+        return true;
+    }
+
+    private String createExportPath(CalendarModel calendar) {
+        String calFile;
+        //creo il percorso della cartella        
+
+        boolean result = new File(
+                COMMON_PATH + "export" + File.separator
+                + calendar.getOwner().getId()).mkdirs();
+
+        if (result) {
+            logger.log(LoggerLevel.DEBUG,
+                    "Cartella di export creata per l''utente {0}",
+                    calendar.getOwner().getId());
+        }
         //creo la stringa con l'indirizzo in cui creare il file
-        calFile = ".\\export\\" + c.getOwner().getId() + "\\"
-                + TimeTool.calendarToTextDay(
-                        Calendar.getInstance(),
+        calFile = COMMON_PATH + "export" + File.separator
+                + calendar.getOwner().getId() + File.separator
+                + TimeTool.dateToTextDay(Calendar.getInstance().getTime(),
                         "yyyy-MM-dd-hh-mm-ss") + ".ics";
+        return calFile;
+    }
 
-        logger.log(LoggerLevel.DEBUG, "Salvo calendario con nome: {0}", calFile);
-
+    private net.fortuna.ical4j.model.Calendar createIcal() {
         //Creating a new calendar
         net.fortuna.ical4j.model.Calendar calendar = new net.fortuna.ical4j.model.Calendar();
         calendar.getProperties().add(
                 new ProdId("-//MeteoCal//iCal4j 1.0//EN"));
         calendar.getProperties().add(Version.VERSION_2_0);
         calendar.getProperties().add(CalScale.GREGORIAN);
+        return calendar;
+    }
 
+    private void addIcalEvents(CalendarModel calendar, net.fortuna.ical4j.model.Calendar iCal) {
         //Define boxes to host the parameters of the events that are to be saved
-        java.util.Calendar startDate;
-        java.util.Calendar endDate;
+        Calendar startDate;
+        Calendar endDate;
         VEvent event;
         Uid uid;
 
         //per ogni evento in quel calendario
-        for (int i = 0; i < c.getEventsInCalendar().size(); i++) {
+        for (int i = 0; i < calendar.getEventsInCalendar().size(); i++) {
 
             //Get start and end time
-            startDate = c.getEventsInCalendar().get(i).getStartDateTime();
-            endDate = c.getEventsInCalendar().get(i).getEndDateTime();
+            startDate = calendar.getEventsInCalendar().get(i).getStartDateTime();
+            endDate = calendar.getEventsInCalendar().get(i).getEndDateTime();
 
             // Create the event
-            String eventName = c.getEventsInCalendar().get(i).getTitle();
+            String eventName = calendar.getEventsInCalendar().get(i).getTitle();
             DateTime start = new DateTime(startDate.getTime());
             DateTime end = new DateTime(endDate.getTime());
 
             event = new VEvent(start, end, eventName);
 
             //Add uid            
-            uid = new Uid(String.valueOf(c.getEventsInCalendar().get(i).getId()));
+            uid = new Uid(String.valueOf(
+                    calendar.getEventsInCalendar().get(i).getId()));
             event.getProperties().add(uid);
 
-            //Add attendees
-            List<UserModel> attendees = eventManager.getInviteeFiltred(
-                    c.getEventsInCalendar().get(i), InvitationAnswer.YES);
-            Attendee attendee;
+            //Add attendees           
+            addIcalAttendees(calendar, i, event);
 
-            for (int j = 0; j < attendees.size(); j++) {
-                attendee = new Attendee(URI.create(attendees.get(j).getEmail()));
-                event.getProperties().add(attendee);
-            }
             //add iCal parameters
-            addIcalParameters(event, c, i);
+            addIcalParameters(event, calendar, i);
 
             // Add the event to the calendar 
-            calendar.getComponents().add(event);
-            logger.log(LoggerLevel.DEBUG, "Aggiunto evento " + eventName);
+            iCal.getComponents().add(event);
+            logger.log(LoggerLevel.DEBUG, "Aggiunto evento {0}", eventName);
         }
+    }
 
-        saveExportingCalendar(calFile, calendar);
+    private void addIcalAttendees(CalendarModel calendar, int eventPosition, VEvent event) {
+        List<UserModel> attendees = eventManager.getInviteeFiltred(
+                calendar.getEventsInCalendar().get(eventPosition),
+                InvitationAnswer.YES);
+
+        if (attendees != null) {
+            Attendee attendee;
+
+            for (UserModel u : attendees) {
+                attendee = new Attendee(URI.create(u.getEmail()));
+                event.getProperties().add(attendee);
+            }
+        } else {
+            logger.log(LoggerLevel.WARNING,
+                    "La lista degli invitati all'evento è nulla");
+        }
     }
 
     /**
@@ -157,161 +204,178 @@ public class SettingManagerImpl implements SettingManager {
      * @param calFile name of the calendar to save
      * @param calendar Calendar to save
      */
-    private void saveExportingCalendar(String calFile, net.fortuna.ical4j.model.Calendar calendar) {
+    private void saveExportingCalendar(String calFile, net.fortuna.ical4j.model.Calendar calendar)
+            throws FileNotFoundException, IOException, ValidationException {
         //Saving an iCalendar file
         FileOutputStream fout = null;
-        try {
-            fout = new FileOutputStream(calFile);
-        } catch (FileNotFoundException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-            //TODO errore magari da non catchare qui
-        }
+
+        fout = new FileOutputStream(calFile);
 
         CalendarOutputter outputter = new CalendarOutputter();
         outputter.setValidating(false);
-        try {
-            outputter.output(calendar, fout);
-        } catch (IOException | ValidationException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-            //TODO errore magari da non catchare qui
 
-        }
-        logger.log(LoggerLevel.DEBUG, "Calendario esportato con successo:\n{0}",
-                calendar.toString());
+        outputter.output(calendar, fout);
+
     }
 
+    /**
+     * Importa un calendario Costruito con MeteoCal, creando un calendario con
+     * gli eventi importati per lo user
+     *
+     * @param user User che sta importando
+     * @param calendarName Nome del file .ics da importare
+     * @return La lista delle coppie di eventi non importati (nome,owner), null
+     * se c'è stato un errore
+     */
     @Override
     public List<Pair<String, String>> importCalendar(UserModel user, String calendarName) {
-        //TODO works only with our exported calendars
-        //Now Parsing an iCalendar file
-        calendarName = ".\\import\\" + calendarName;
-        FileInputStream fin = null;
+        //NB works only with our exported calendars
+
+        //creating and checking input file
+        calendarName = COMMON_PATH + "import" + File.separator + calendarName;
+        FileInputStream fin;
         try {
             fin = new FileInputStream(calendarName);
         } catch (FileNotFoundException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
-            //TODO return error
+            return null;
         }
 
-        CalendarBuilder builder = new CalendarBuilder();
-
-        //create a ical calendar
-        net.fortuna.ical4j.model.Calendar calendar;
-
-        //TODO tutto questo codice non fa nessuna catch di eventuali eccezioni
-        //create a new meteocal calendar to host the imported events
-        //questa find serve solo se voglio essere sicuro che l'utente che mi è stato passato esista
         user = (UserModel) database.find(UserModel.class, user.getId());
-        logger.log(LoggerLevel.DEBUG, "Trovato utente {0}", user.getEmail());
+        if (user != null) {
+            try {
+                return importIcal(fin, user);
+            } catch (IOException | ParserException ex) {
+                logger.log(Level.SEVERE,
+                        "Non è stato possible creare il calendario, problemi con il builder. "
+                        + ex.getMessage(), ex);
+                return null;
+            }
+        } else {
+            logger.log(Level.SEVERE, "L'utente passato non esiste nel db");
+            return null;
+        }
 
+    }
+
+    private List<Pair<String, String>> importIcal(FileInputStream fin, UserModel user)
+            throws ParserException, IOException {
+        //create a new meteocal calendar to host the imported events
         CalendarModel calendarForImport = calendarManager.createDefaultCalendar(
                 user);
 
-        //creo la lista di coppie che contengono gli eventi non importati
-        List<Pair<String, String>> unimportedEvents = new ArrayList<>();
+        CalendarBuilder builder = new CalendarBuilder();
+
+        net.fortuna.ical4j.model.Calendar calendar;
+
         //string to remember the event name
         String eventName;
         String eventOwner;
         String eventId;
+        //set the calendar with the data taken from the file
+        calendar = builder.build(fin);
 
-        try {
-            //set the calendar with the data taken from the file
-            calendar = builder.build(fin);
+        //creo la lista di coppie che contengono gli eventi non importati
+        List<Pair<String, String>> unimportedEvents = new ArrayList<>();
 
-            //Iterating over a Calendar
-            for (Iterator i = calendar.getComponents().iterator(); i.hasNext();) {
-                Component component = (Component) i.next();
+        //Iterating over a Calendar
+        for (Iterator i = calendar.getComponents().iterator();
+                i.hasNext();) {
+            Component component = (Component) i.next();
 
-                //If the component is an event
-                if (component.getName().equals("VEVENT")) {
-                    logger.log(LoggerLevel.DEBUG, "Component [{0}] found in {1}",
-                            new Object[]{component.getName(),
-                                         calendarName});
+            //If the component is an event
+            if (component.getName().equals("VEVENT")) {
 
-                    //I set default names
-                    eventName = "noTitleFound";
-                    eventOwner = "noOrganizerFound";
-                    eventId = null;
+                //I set default names
+                eventName = "noTitleFound";
+                eventOwner = "noOrganizerFound";
+                eventId = null;
 
-                    //I search its proprieties
-                    for (Iterator j = component.getProperties().iterator();
-                            j.hasNext();) {
-                        Property property = (Property) j.next();
+                //I search its proprieties
+                for (Iterator j = component.getProperties().iterator();
+                        j.hasNext();) {
+                    Property property = (Property) j.next();
 
-                        //I save the properies I need
-                        switch (property.getName()) {
-                            case "SUMMARY": eventName = property.getValue();
-                                break;
-                            case "UID": eventId = property.getValue();
-                                break;
-                            case "ORGANIZER": eventOwner = property.getValue();
-                                break;
+                    //I save the properies I need
+                    switch (property.getName()) {
+                        case "SUMMARY": eventName = property.getValue();
+                            break;
+                        case "UID": eventId = property.getValue();
+                            break;
+                        case "ORGANIZER":
+                            eventOwner = property.getValue();
+                            break;
 
-                        }
-                        logger.log(LoggerLevel.DEBUG,
-                                "Property [{0}] with value {1}", new Object[]{
-                                    property.getName(),
-                                    property.getValue()});
                     }
-                    if (eventId != null) {
-                        try {
-                            //check if the event still exists
-                            Event event = database.find(Event.class,
-                                    Long.parseLong(eventId));
-                            //se l'evento non esiste
-                            if (event == null) {
-                                logger.log(LoggerLevel.DEBUG,
-                                        "NON Trovato evento");
 
-                                //aggiungo l'evento a quelli non importati
-                                unimportedEvents.add(new Pair<>(eventName,
-                                        eventOwner));
-                            } else {
-                                logger.log(LoggerLevel.DEBUG, "Trovato evento");
-
-                                //TODO check if the event is not in any other calendar
-                                if (eventManager.isInAnyCalendar(event, user)) {
-                                    logger.log(LoggerLevel.DEBUG,
-                                            "Evento già in calendario");
-
-                                    //if so do not import and add to the list of unimported event
-                                    unimportedEvents.add(new Pair<>(eventName,
-                                            eventOwner));
-                                } else {
-                                    //add the event in the calendar
-                                    calendarForImport.addEventInCalendar(event);
-                                }
-
-                            }
-                        } catch (NumberFormatException ex) {
-                            logger.log(Level.WARNING,
-                                    "The eventUID is not a number, the event is not imported");
-                            unimportedEvents.add(new Pair<>(eventName,
-                                    eventOwner));
-                        }
-                    }
                 }
+                addToCalendar(eventId, unimportedEvents, eventName,
+                        eventOwner, user, calendarForImport);
+            }
 
-            }//for
-            //persisti il nuovo calendario con gli eventi imoprtati nel db
-            database.persist(calendarForImport);
+        }//for
 
-            logger.log(LoggerLevel.DEBUG,
-                    "Calendario importato per l''utente {0}",
-                    user.getEmail());
-            logger.log(LoggerLevel.DEBUG,
-                    "Calendario importato:\n {0}",
-                    calendarForImport.toString());
-            logger.log(LoggerLevel.DEBUG, "Eventi non importati:\n{0}",
-                    unimportedEvents.toString());
+        //TODO vedere se questa persist funziona davvero, in particolare
+        //il campo inCalendars
+        //persisti il nuovo calendario con gli eventi imoprtati nel db
+        database.persist(calendarForImport);
+        logger.log(LoggerLevel.DEBUG,
+                "Calendario importato per l''utente {0}",
+                user.getEmail());
+        logger.log(LoggerLevel.DEBUG,
+                "Calendario importato:\n {0}",
+                calendarForImport.toString());
+        logger.log(LoggerLevel.DEBUG, "Eventi non importati:\n{0}",
+                unimportedEvents.toString());
+        return unimportedEvents;
+    }
 
-            return unimportedEvents;
+    private void addToCalendar(String eventId, List<Pair<String, String>> unimportedEvents, String eventName, String eventOwner, UserModel user, CalendarModel calendarForImport) {
+        if (eventId != null) {
+            try {
+                //check if the event still exists
+                Event event = database.find(Event.class,
+                        Long.parseLong(eventId));
+                //se l'evento non esiste
+                if (event == null) {
+                    logger.log(LoggerLevel.DEBUG,
+                            "NON Trovato evento");
 
-        } catch (IOException | ParserException ex) {
-            logger.log(Level.SEVERE, null, ex);
-            return null; //TODO?
+                    //aggiungo l'evento a quelli non importati
+                    unimportedEvents.add(new Pair<>(eventName,
+                            eventOwner));
+                } else {
+                    logger.log(LoggerLevel.DEBUG, "Trovato evento");
+
+                    //TODO check if the event is not in any other calendar
+                    if (eventManager.isInAnyCalendar(event, user)) {
+                        logger.log(LoggerLevel.DEBUG,
+                                "Evento già in calendario");
+
+                        //if so do not import and add to the list of unimported event
+                        unimportedEvents.add(new Pair<>(eventName,
+                                eventOwner));
+                    } else {
+                        //add the event in the calendar
+                        calendarForImport.addEventInCalendar(event);
+                    }
+
+                }
+            } catch (NumberFormatException ex) {
+                logger.log(Level.WARNING,
+                        "The eventUID is not a number, the event is not imported");
+                unimportedEvents.add(new Pair<>(eventName,
+                        eventOwner));
+            }
         }
+    }
 
+    @Override
+    public boolean deleteExportFolder(UserModel user) {
+        //TODO
+        //checko se esiste
+        //nel caso la cancello        
+        return false;
     }
 
 }

@@ -68,20 +68,23 @@ public class WeatherManagerImpl implements WeatherManager {
 
     @Override
     public WeatherForecast getWeather(Calendar day, String city) {
-        this.city = city;
-        //in base a che giorno è oggi e a quando è schedulato l'evento uso
-        //un tipo diverso di previsioni
-        this.forecastType = inferForecastType(day);
-        logger.log(LoggerLevel.DEBUG, "Forecast infered: {0}", forecastType);
-
         weatherForecast = new WeatherForecast();
 
-        if (forecastType != ForecastType.UNPREDICTABLE) {
-            createWeatherForecast(day);
+        if (isValid(city)) {
+            this.city = city;
+            //in base a che giorno è oggi e a quando è schedulato l'evento uso
+            //un tipo diverso di previsioni
+            this.forecastType = inferForecastType(day);
+            logger.log(LoggerLevel.DEBUG, "Forecast infered: {0}", forecastType);
+
+            if (forecastType != ForecastType.UNPREDICTABLE) {
+                createWeatherForecast(day);
+            } else {
+                weatherForecast.setMessage(WeatherMessages.NOT_AVAILABLE);
+            }
         } else {
             weatherForecast.setMessage(WeatherMessages.NOT_AVAILABLE);
         }
-
         return weatherForecast;
     }
 
@@ -246,6 +249,8 @@ public class WeatherManagerImpl implements WeatherManager {
         }
     }
 
+    //TODO questo controlla il get(0) cioè le previsioni per mezzanotte, sarebbe
+    //opportuno ricevere le previsioni più vicine all'ora dell'eventos
     private boolean infoIsAvailable5Days(Calendar day) {
         try {
             position = this.findDayPositionInForecastList(forecastFiveDays, day);
@@ -374,7 +379,7 @@ public class WeatherManagerImpl implements WeatherManager {
                 if (forecast.getForecast_List().get(i) != null
                         && forecast.getForecast_List().get(i).hasDateTimeText()
                         && forecast.getForecast_List().get(i).getDateTimeText().
-                        contains(TimeTool.calendarToTextDay(day))) {
+                        contains(TimeTool.dateToTextDay(day.getTime()))) {
                     return i;
                 }
             }
@@ -393,7 +398,7 @@ public class WeatherManagerImpl implements WeatherManager {
                         && dailyForecast.getForecast_List().get(i).hasDateTime()
                         && TimeTool.dateToTextDay(dailyForecast.
                                 getForecast_List().get(i).getDateTime()).
-                        contains(TimeTool.calendarToTextDay(day))) {
+                        contains(TimeTool.dateToTextDay(day.getTime()))) {
                     return i;
                 }
             }
@@ -407,6 +412,12 @@ public class WeatherManagerImpl implements WeatherManager {
         } else {
             weatherForecast.setMessage(WeatherMessages.GOOD_WEATHER);
         }
+    }
+
+    private boolean isValid(String city) {
+        //TODO check
+        String[] token = city.split(",");
+        return token.length == 1 || token.length == 2;
     }
 
 }

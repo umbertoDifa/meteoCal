@@ -1,12 +1,9 @@
 package EJB;
 
-import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.lang.Class;
-import java.lang.Long;
 import javax.persistence.EntityManager;
 import model.CalendarModel;
 import model.Event;
@@ -17,10 +14,9 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.mockito.Matchers;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -54,7 +50,7 @@ public class SettingManagerImplTest {
         settingManager = new SettingManagerImpl();
         settingManager.eventManager = mock(EventManager.class);
         settingManager.database = mock(EntityManager.class);
-        settingManager.calendarManager = mock(CalendarManagerImpl.class);
+        settingManager.calendarManager = mock(CalendarManagerImpl_1.class);
 
         owner = new UserModel("nomeDellOwner", "CognomeOwner",
                 "email@owner", "passwordOwner");
@@ -113,9 +109,10 @@ public class SettingManagerImplTest {
      * Test of importCalendar method, of class SettingManagerImpl.
      */
     @Test
+    
     public void testImportCalendar() {
         System.out.println("importCalendar");
-        String calendarName = "2014-12-18-11-20-37.ics";
+        String calendarName = "basic.ics";
 
         UserModel userImporting = new UserModel("nome utente", "cognome utente",
                 "email@tente", "passwordUtente");

@@ -17,7 +17,14 @@ public enum ControlMessages {
     EVENT_ADDED(3, "The event has been added to the user calendar"),
     LOGIN_SUCCESSFUL(4, "The user has been logged in"),
     ERROR_ADDING_EVENT_TO_CAL(5, "The event cannot be added to the calendar"),
-    NO_USER_WITH_CALENDAR(6,"The user doesn't own calendar with the requested name");
+    NO_USER_WITH_CALENDAR(6,
+            "The user doesn't own calendar with the requested name"),
+    BAD_WEATHER_FORECAST(7, "The weather for the event day is bad"),
+    CALENDAR_CONFLICTS(8,
+            "There are events already scheduled for that day and that hour"),
+    NO_PROBLEM(9,
+            "The weather is ok and there are no conflicts for the selected timeslots"),
+    MULTIPLE_USERS_FOUND(10,"There are multiple user correspoding to an ID");
 
     //static?
     private final int index;

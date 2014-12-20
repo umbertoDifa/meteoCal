@@ -9,25 +9,16 @@ import java.util.Date;
  * @author umboDifa
  */
 public class TimeTool {
-
-    //TODO: queste funzioni sono indentiche, parlo di calendar to text e date to text
-    //si possono unire
-    private final static String defaultPattern = "yyyy-MM-dd";
     
-    public static String calendarToTextDay(Calendar day) {
-        return calendarToTextDay(day, defaultPattern);
-    }
-
-    public static String calendarToTextDay(Calendar day, String pattern) {
-        SimpleDateFormat df = new SimpleDateFormat();
-        //df.applyPattern("yyyy-MM-dd hh:mm:ss");
-        df.applyPattern(pattern);
-        return df.format(day.getTime());
-    }
+    private final static String defaultPattern = "yyyy-MM-dd";
 
     public static String dateToTextDay(Date date) {
+        return dateToTextDay(date, defaultPattern);
+    }
+
+    public static String dateToTextDay(Date date, String pattern) {
         SimpleDateFormat df = new SimpleDateFormat();
-        df.applyPattern("yyyy-MM-dd");
+        df.applyPattern(pattern);
         return df.format(date);
     }
 

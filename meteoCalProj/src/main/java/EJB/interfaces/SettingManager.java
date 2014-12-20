@@ -11,8 +11,10 @@ import wrappingObjects.Pair;
  */
 public interface SettingManager {
 
-    public void exportCalendar(CalendarModel c);
+    public boolean exportCalendar(CalendarModel c);
 
     public List<Pair<String, String>> importCalendar(UserModel user, String calendarName);
+    
+    public boolean deleteExportFolder(UserModel user);
 
 }

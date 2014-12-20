@@ -20,8 +20,7 @@ public interface CalendarManager {
 
     public List<CalendarModel> getCalendars(UserModel user);
 
-    public boolean checkData(//TODO: classe backing con tutti i dati da checkare
-            );
+    public List<ControlMessages> checkData(Event event);
 
     public boolean addCalendarToUser(UserModel user, CalendarModel cal);
 
@@ -50,8 +49,8 @@ public interface CalendarManager {
     public CalendarModel findCalendarByName(UserModel user, String name);
 
     public List<String> getCalendarTitles(UserModel user);
-    
+
     public CalendarModel getCalendar(UserModel user, String title);
-    
+
     public CalendarModel getCalendar(CalendarModel calendar);
 }

@@ -34,24 +34,26 @@ import javax.persistence.Temporal;
 @Entity
 @NamedQueries({
     //COME IMPOSTARE IL PARAMETRO: namedQuery.setParameter("search", "%" + value + "%");
-    @NamedQuery(name = "findEventbyString", query = "SELECT e FROM Event e WHERE e.title LIKE :search"),
-
-    @NamedQuery(name = "findEventbyTitle", query = "SELECT e FROM Event e WHERE e.title=:title"),
-
+    @NamedQuery(name = "findEventbyString",
+                query = "SELECT e FROM Event e WHERE e.title LIKE :search"),
+    @NamedQuery(name = "findEventbyTitle",
+                query = "SELECT e FROM Event e WHERE e.title=:title"),
     //Da chiamare sempre limitando i risulati ad 1 solo!
-    @NamedQuery(name = "isConflicting", query = "SELECT e FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND e.id <> :id AND "
-            + "(e.endDateTime >= :end   AND  (e.startDateTime <= :start  OR   e.endDateTime>=:start) "
-            + "OR (e.startDateTime >= :start AND e.startDateTime <= :end))")    
+    @NamedQuery(name = "isConflicting",
+                query = "SELECT e FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND e.id <> :id AND "
+                + "(e.endDateTime >= :end   AND  (e.startDateTime <= :start  OR   e.endDateTime>=:start) "
+                + "OR (e.startDateTime >= :start AND e.startDateTime <= :end))")
 })
-
-@NamedNativeQuery (name = "isInAnyCalendar", query="SELECT COUNT(*) FROM EVENT_IN_CALENDAR WHERE evetsInCalendar_ID=? AND OWNER_ID=?")
+@NamedNativeQuery(name = "isInAnyCalendar",
+                  query = "SELECT COUNT(*) FROM EVENT_IN_CALENDAR WHERE evetsInCalendar_ID=? AND OWNER_ID=?")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Event implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator(name = "EVENT_SEQ", table = "SEQUENCE", pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_COUNT", pkColumnValue = "EVENT_SEQ")
+    @TableGenerator(name = "EVENT_SEQ", table = "SEQUENCE",
+                    pkColumnName = "SEQ_NAME",
+                    valueColumnName = "SEQ_COUNT", pkColumnValue = "EVENT_SEQ")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "EVENT_SEQ")
     private Long id;
 
@@ -83,7 +85,7 @@ public abstract class Event implements Serializable {
 
     @ManyToMany(mappedBy = "eventsInCalendar")
     private List<model.CalendarModel> inCalendars;
-   
+
     /**
      *
      * CONSTRUCTORS
@@ -204,12 +206,12 @@ public abstract class Event implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Event)) {
             return false;
         }
         Event other = (Event) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.id == null && other.id != null) || (this.id != null
+                && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -217,16 +219,23 @@ public abstract class Event implements Serializable {
 
     @Override
     public String toString() {
-        return "model.Event[ id=" + id + " ]";
+        return "Event{" + "id=" + id + "\ntitle=" + title + "\nstartDateTime="
+                + startDateTime + "\nendDateTime=" + endDateTime + "\nlocation="
+                + location + "\ndescription=" + description + "\nisOutdoor="
+                + isOutdoor + "\nimgPath=" + imgPath + "\nowner=" + owner
+                + "\ninvitations=" + invitations + "\ninCalendars="
+                + inCalendars + '}';
     }
 
     public String getFormattedStartDate() {
-        String formattedDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm").format(this.startDateTime.getTime());
+        String formattedDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm").format(
+                this.startDateTime.getTime());
         return formattedDate;
     }
 
     public String getFormattedEndDate() {
-        String formattedDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm").format(this.endDateTime.getTime());
+        String formattedDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm").format(
+                this.endDateTime.getTime());
         return formattedDate;
     }
 
