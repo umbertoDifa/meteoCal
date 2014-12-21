@@ -53,6 +53,7 @@ import org.json.JSONObject;
  * @version 2013/08/07
  * @since 2.5.0.1
  */
+@SuppressWarnings("unchecked")
 public class ForecastWeatherData {
 
     /**

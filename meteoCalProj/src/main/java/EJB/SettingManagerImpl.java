@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -37,6 +38,7 @@ import utility.LoggerProducer;
 import utility.TimeTool;
 import wrappingObjects.Pair;
 
+@Stateless
 public class SettingManagerImpl implements SettingManager {
 
     @Inject

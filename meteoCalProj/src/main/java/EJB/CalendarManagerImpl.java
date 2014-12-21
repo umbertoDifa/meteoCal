@@ -18,6 +18,8 @@ import model.UserModel;
 import utility.ControlMessages;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
+import utility.WeatherMessages;
+import wrappingObjects.WeatherForecast;
 
 @Stateless
 public class CalendarManagerImpl implements CalendarManager {
@@ -31,30 +33,81 @@ public class CalendarManagerImpl implements CalendarManager {
     private EntityManager database;
 
     @Override
-    public boolean checkData() {
-        //TODO implement method
-        return false;
+    public List<ControlMessages> checkData(Event event) {
+        Calendar day = event.getStartDateTime();
+        String city = event.getLocation();
+        UserModel user = event.getOwner();
+        //TODO validate the obtained data oppure viene validata nei rispetti
+        //metodi? penso l'ultima
+
+        List<ControlMessages> result = new ArrayList<>();
+
+        boolean weatherIsOk = checkWeather(day, city);
+        boolean haveConflicts = !checkConflicts(user, event);
+
+        //se tutto ok
+        if (weatherIsOk && !haveConflicts) {
+            result.add(ControlMessages.NO_PROBLEM);
+
+        } else {
+            //se il tempo non è buono 
+            if (!weatherIsOk) {
+                result.add(ControlMessages.BAD_WEATHER_FORECAST);
+            }
+            //se ci sono conflitti
+            if (haveConflicts) {
+                result.add(ControlMessages.CALENDAR_CONFLICTS);
+            }
+        }
+        return result;
     }
 
-    private void checkWeather() {
-        //TODO do             
+
+    /**
+     * Scarica le previsioni del tempo e le controlla
+     *
+     * @param day giorno per cui scaricare le previsioni
+     * @param city città per cui scaricare le previsioni
+     * @return false se il tempo è brutto, true se il tempo è buono o non sono
+     * riuscito ad ottenere informazioni
+     */
+    private boolean checkWeather(Calendar day, String city) {
+        WeatherForecast forecast = weatherManager.getWeather(day, city);
+        //TODO aggiungo il forecast ai dati dell'evento nel db con un metodo
+
+        //se non è buono ritorno false, false true
+        if (forecast.getMessage() != WeatherMessages.BAD_WEATHER) {
+            return false;
+        }
+        return true;
     }
 
-    private void checkConflicts(UserModel user, Event event) {
+     /**
+     * Controlla i conflitti dell'evento che si vuole schedulare
+     *
+     * @param user l'utente che sta facendo l'evento
+     * @param event l'evento da fare
+     * @return true se non conflitti, false se ci sono conflitti
+     */
+    private boolean checkConflicts(UserModel user, Event event) {
         event = database.find(Event.class, event.getId());
+
+        //TODO, qui ho paura della getFirstresult perchè nella javadoc c'è scritto
+        //che bisogna settare setFirstResult
         int conflictingEventIndex = database.createNamedQuery("isConflicting").setParameter(
                 "user", user).setParameter("end", event.getEndDateTime()).setParameter(
                         "start", event.getStartDateTime()).setParameter("id",
                         event.getId()).getFirstResult();
-        if (conflictingEventIndex != 0) {
-            int offset = findFreeSlots(user, event);
-            if (offset == 0) {
-                //TODO MA COSA RITORNO QUI?
-                ;
-            }
-        }
-    }
 
+        //se ci sono conflitti
+        //TODO check if this works
+        if (conflictingEventIndex != 0) {
+            return false;
+        }
+        return true;
+    }
+    
+    //TODO, questa la facciamo chiamare da fra?
     private int findFreeSlots(UserModel user, Event event) {
         int searchRange = 15;
         Calendar newStart = event.getStartDateTime();

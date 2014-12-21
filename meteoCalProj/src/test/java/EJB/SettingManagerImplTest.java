@@ -50,7 +50,7 @@ public class SettingManagerImplTest {
         settingManager = new SettingManagerImpl();
         settingManager.eventManager = mock(EventManager.class);
         settingManager.database = mock(EntityManager.class);
-        settingManager.calendarManager = mock(CalendarManagerImpl_1.class);
+        settingManager.calendarManager = mock(CalendarManagerImpl.class);
 
         owner = new UserModel("nomeDellOwner", "CognomeOwner",
                 "email@owner", "passwordOwner");

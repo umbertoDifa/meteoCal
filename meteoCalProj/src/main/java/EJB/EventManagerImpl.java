@@ -44,12 +44,7 @@ public class EventManagerImpl implements EventManager {
 
     @Inject
     @Default
-    Logger logger;
-
-    @Override
-    public boolean checkData() {
-        return calManager.checkData();//TODO è stupido?
-    }
+    Logger logger;  
 
     @Override
     public boolean scheduleNewEvent(Event event, CalendarModel insertInCalendar, List<UserModel> invitees) {

@@ -17,8 +17,6 @@ import model.UserModel;
  */
 public interface EventManager {
 
-    public boolean checkData();
-
     /**
      * Create the new event, persist it, call create invitation del calendar
      * manager
