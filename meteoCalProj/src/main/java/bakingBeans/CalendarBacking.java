@@ -35,8 +35,9 @@ public class CalendarBacking implements Serializable {
     private LoginBacking login;
 
     private List<model.CalendarModel> calendars;
-    private int indexCurrentCalendar;
-    private ViewModality viewModality = ViewModality.DAY;
+    private String userId;
+    private boolean external;
+    
 
     /**
      * Creates a new instance of CalendarBacking
@@ -52,10 +53,22 @@ public class CalendarBacking implements Serializable {
     public void getCurrent() {
     }
 
-    public String getViewModailty() {
-        return viewModality.toString();
+    public String getUserId() {
+        return userId;
     }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public boolean isExternal() {
+        return external;
+    }
+
+    public void setExternal(boolean external) {
+        this.external = external;
+    }
+    
     public List<String> getCalendarNames() {
         if (calendars != null) {
             List<String> r = titlesCalendar(this.calendars);
@@ -90,5 +103,9 @@ public class CalendarBacking implements Serializable {
             System.out.println("Lista calendari null");
         }
         return result;
+    }
+    
+    public void setExternalView(){
+        external = true;
     }
 }

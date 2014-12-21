@@ -37,29 +37,29 @@ insert into CALENDAR (TITLE, ISDEFAULT, ISPUBLIC, OWNER_ID)
     ("Public_Cal", 0, 1, 7);
 
 
-insert into EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STARTDATETIME, TITLE, OWNER_ID, IMGPATH)
+insert into EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STARTDATETIME, TITLE, OWNER_ID, IMGPATH, TYPE)
 	values
-	(1, "Evento Privato di amdin", '2014-12-22 01:30', 1 , "a casa mia", '2014-12-22 00:30', "Private Event of admin", 7, "/img/Event/1.jpg"),
-	(2, "Evento Privato di fra", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Private Event of fra", 6, "/img/Event/2.jpg"),
-	(3, "Evento Privato di vale", '2015-01-04 13:00', 1 , "a casa mia", '2015-01-04 12:00', "Private Event of vale", 5, "/img/Event/3.jpg"),
-	(4, "Evento Privato di umbo", '2015-02-04 15:00', 1 , "a casa mia", '2015-02-02 13:00', "Private Event of umbo", 4, "/img/Event/4.jpg"),
-	(5, "Evento Privato di c", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Private Event of c", 3, "/img/Event/5.jpg"),
-	(6, "Evento Privato di b", '2015-01-03 11:00', 1 , "a casa mia", '2015-01-03 09:30', "Private Event of b", 2, "/img/Event/6.jpg"),
-	(7, "Evento Privato di a", '2015-01-04 22:00', 1 , "a casa mia", '2015-01-04 20:00', "Private Event of a", 1, "/img/Event/7.jpg");
+	(1, "Evento Privato di amdin", '2014-12-22 01:30', 1 , "a casa mia", '2014-12-22 00:30', "Private Event of admin", 7, "/img/Event/1.jpg", "PRIVATE"),
+	(2, "Evento Privato di fra", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Private Event of fra", 6, "/img/Event/2.jpg", "PRIVATE"),
+	(3, "Evento Privato di vale", '2015-01-04 13:00', 1 , "a casa mia", '2015-01-04 12:00', "Private Event of vale", 5, "/img/Event/3.jpg", "PRIVATE"),
+	(4, "Evento Privato di umbo", '2015-02-04 15:00', 1 , "a casa mia", '2015-02-02 13:00', "Private Event of umbo", 4, "/img/Event/4.jpg", "PRIVATE"),
+	(5, "Evento Privato di c", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Private Event of c", 3, "/img/Event/5.jpg", "PRIVATE"),
+	(6, "Evento Privato di b", '2015-01-03 11:00', 1 , "a casa mia", '2015-01-03 09:30', "Private Event of b", 2, "/img/Event/6.jpg", "PRIVATE"),
+	(7, "Evento Privato di a", '2015-01-04 22:00', 1 , "a casa mia", '2015-01-04 20:00', "Private Event of a", 1, "/img/Event/7.jpg", "PRIVATE");
 
 insert into PRIVATE_EVENT (ID)
 values
 (1),(2),(3),(4),(5),(6),(7);
 
-insert into EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STARTDATETIME, TITLE, OWNER_ID, IMGPATH)
+insert into EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STARTDATETIME, TITLE, OWNER_ID, IMGPATH, TYPE)
 	values
-	(8, "Evento Pubblico di a", '2014-12-22 01:30', 1 , "a casa mia", '2014-12-22 00:30', "Public Event of a", 1, "/img/Event/8.jpg"),
-	(9, "Evento Pubblico di b", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Public Event of b", 2, "/img/Event/9.jpg"),
-	(10, "Evento Pubblico di c", '2015-01-04 13:00', 1 , "a casa mia", '2015-01-04 12:00', "Public Event of c", 3, "/img/Event/10.jpg"),
-	(11, "Evento Pubblico di umbo", '2015-01-04 15:00', 1 , "a casa mia", '2015-01-02 13:00', "Public Event of umbo", 4, "/img/Event/11.jpg"),
-	(12, "Evento Pubblico di vale", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Public Event of vale", 5, "/img/Event/12.jpg"),
-	(13, "Evento Pubblico di fra", '2015-01-03 11:00', 1 , "a casa mia", '2015-01-03 09:30', "Public Event of fra", 6, "/img/Event/13.jpg"),
-	(14, "Evento Pubblico di admin", '2015-01-04 22:00', 1 , "a casa mia", '2015-01-04 20:00', "Public Event of admin", 7, "/img/Event/14.jpg");
+	(8, "Evento Pubblico di a", '2014-12-22 01:30', 1 , "a casa mia", '2014-12-22 00:30', "Public Event of a", 1, "/img/Event/8.jpg", "PUBLIC"),
+	(9, "Evento Pubblico di b", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Public Event of b", 2, "/img/Event/9.jpg", "PUBLIC"),
+	(10, "Evento Pubblico di c", '2015-01-04 13:00', 1 , "a casa mia", '2015-01-04 12:00', "Public Event of c", 3, "/img/Event/10.jpg", "PUBLIC"),
+	(11, "Evento Pubblico di umbo", '2015-01-04 15:00', 1 , "a casa mia", '2015-01-02 13:00', "Public Event of umbo", 4, "/img/Event/11.jpg", "PUBLIC"),
+	(12, "Evento Pubblico di vale", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Public Event of vale", 5, "/img/Event/12.jpg", "PUBLIC"),
+	(13, "Evento Pubblico di fra", '2015-01-03 11:00', 1 , "a casa mia", '2015-01-03 09:30', "Public Event of fra", 6, "/img/Event/13.jpg", "PUBLIC"),
+	(14, "Evento Pubblico di admin", '2015-01-04 22:00', 1 , "a casa mia", '2015-01-04 20:00', "Public Event of admin", 7, "/img/Event/14.jpg", "PUBLIC");
 
 insert into PUBLIC_EVENT (ID)
 values

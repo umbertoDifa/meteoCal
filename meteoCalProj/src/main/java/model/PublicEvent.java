@@ -7,6 +7,7 @@ package model;
 
 import java.util.Calendar;
 import java.util.List;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -21,7 +22,7 @@ import javax.persistence.Table;
 @Table(name = "PUBLIC_EVENT")
 
 @NamedQuery(name= "findNextPublicEvents", query= "SELECT e FROM PublicEvent e WHERE e.endDateTime>= CURRENT_TIMESTAMP AND e.owner <> :user")
-
+@DiscriminatorValue("PUBLIC")
 public class PublicEvent extends Event {
     
     @ManyToMany

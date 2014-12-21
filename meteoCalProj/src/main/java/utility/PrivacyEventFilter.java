@@ -52,15 +52,21 @@ public class PrivacyEventFilter implements Filter {
                         //se l'evento è public
                         if (ev instanceof PublicEvent) {
                             chain.doFilter(request, response);
-                        } else if (ev instanceof PrivateEvent) {
-                            //TODO FINIRE
+                            System.out.println("-Filto:ev public");
+                            //se è privato e se sei l'owner o hai un invito
+                        } else if ((ev instanceof PrivateEvent) && (ev.getOwner().equals(login.getCurrentUser()) || (ev.getInvitee().contains(login.getCurrentUser())))) {
+                            chain.doFilter(request, response);
+                            System.out.println("Filtro:ev privato e hai permessi");
                         } else {
                             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Non hai i permessi per modificare l'evento");
+                            System.out.println("-Filtro: proibito");
 //                            String contextPath = ((HttpServletRequest) request).getContextPath();
 //                            ((HttpServletResponse) response).sendRedirect(contextPath + "/s/myCalendar.xhtml");
                         }
                     }
                 } else {
+
+                    System.out.println("-Filtro: else");
                     //msg?
                 }
             }
