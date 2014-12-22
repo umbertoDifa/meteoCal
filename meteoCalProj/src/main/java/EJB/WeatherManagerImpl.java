@@ -30,14 +30,14 @@ public class WeatherManagerImpl implements WeatherManager {
     private final int MAX_TRIES = 10;
 
     //creo oggetto openWeatherMap per fare le richieste con la mia API key
-    OpenWeatherMap openWeatherMap;
+    private OpenWeatherMap openWeatherMap;
 
     //creo l'oggetto daily forecast che si occuperà di ottenere le previsioni giornaliere
     //per un max di 16 giorni 
     private DailyForecastData dailyForecast;
 
     //position of the wanted day in the list of forecast
-    int position;
+    private int position;
 
     //creo l'oggetto che si occuperà di ottere le previsioni per i prox 5 giorni ogni 3 ore
     private ForecastWeatherData forecastFiveDays;
@@ -54,12 +54,24 @@ public class WeatherManagerImpl implements WeatherManager {
     //city to get forecast for
     private String city;
 
-    Logger logger = LoggerProducer.debugLogger(WeatherManagerImpl.class);
+    private Logger logger = LoggerProducer.debugLogger(WeatherManagerImpl.class);
 
-    @PostConstruct
-    private void init() {
-        openWeatherMap = new OpenWeatherMap("6f165fcce7eddd2405ef5c0596000ff7");
+//    @PostConstruct
+//    private void init() {
+//        openWeatherMap = new OpenWeatherMap("6f165fcce7eddd2405ef5c0596000ff7");
+//    }
+
+    /**
+     * Constructor 
+     *
+     * @param openWeatherMap
+     */
+    public WeatherManagerImpl() {
+        this.openWeatherMap = new OpenWeatherMap(
+                "6f165fcce7eddd2405ef5c0596000ff7");
     }
+
+    
 
     @Override
     public WeatherForecast getWeather(Calendar day, String city) {

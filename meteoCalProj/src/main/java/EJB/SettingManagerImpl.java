@@ -46,13 +46,13 @@ import wrappingObjects.Pair;
 public class SettingManagerImpl implements SettingManager {
 
     @Inject
-    EventManager eventManager;
+    private EventManager eventManager;
 
     @Inject
-    CalendarManager calendarManager;
+    private CalendarManager calendarManager;
 
     @PersistenceContext(unitName = "meteoCalDB")
-    EntityManager database;
+    private EntityManager database;
 
     private final String COMMON_PATH = "." + File.separator + "src"
             + File.separator + "main" + File.separator
@@ -60,6 +60,25 @@ public class SettingManagerImpl implements SettingManager {
             + File.separator;
 
     Logger logger = LoggerProducer.debugLogger(SettingManagerImpl.class);
+
+    /**
+     * Constructor for the test
+     * @param eventManager
+     * @param calendarManager
+     * @param database 
+     */
+    public SettingManagerImpl(EventManager eventManager, CalendarManager calendarManager, EntityManager database) {
+        this.eventManager = eventManager;
+        this.calendarManager = calendarManager;
+        this.database = database;
+    }
+
+    /**
+     * Constructor for the conatiner
+     */
+    public SettingManagerImpl() {
+
+    }
 
     /**
      * Esporta il calendario passato creando un file .ics nella cartella

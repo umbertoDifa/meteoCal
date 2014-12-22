@@ -1,5 +1,6 @@
 package EJB;
 
+import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,6 +30,9 @@ import static org.mockito.Mockito.when;
 public class SettingManagerImplTest {
 
     private SettingManagerImpl settingManager;
+    private EntityManager database;
+    private CalendarManager calendarManager;
+    EventManager eventManager;
     private Calendar startEvent;
     private Calendar endEvent;
     private Event event;
@@ -47,10 +51,11 @@ public class SettingManagerImplTest {
 
     @Before
     public void setUp() {
-        settingManager = new SettingManagerImpl();
-        settingManager.eventManager = mock(EventManager.class);
-        settingManager.database = mock(EntityManager.class);
-        settingManager.calendarManager = mock(CalendarManagerImpl.class);
+        eventManager = mock(EventManagerImpl.class);
+        database = mock(EntityManager.class);
+        calendarManager = mock(CalendarManagerImpl.class);
+        settingManager = new SettingManagerImpl(eventManager, calendarManager,
+                database);
 
         owner = new UserModel("nomeDellOwner", "CognomeOwner",
                 "email@owner", "passwordOwner");
@@ -72,7 +77,7 @@ public class SettingManagerImplTest {
     /**
      * Test of exportCalendar method, of class SettingManagerImpl.
      */
-    @Test    
+    @Test
     public void testExportCalendar() {
         System.out.println("exportCalendar");
 
@@ -93,14 +98,14 @@ public class SettingManagerImplTest {
         attendees.add(attendee);
 
         //comuqnue vada quando chiamo il metodo getInviteeFiltered ritorna la lista di atendees costruita qui
-        when(settingManager.eventManager.getInviteeFiltred(Matchers.any(
+        when(eventManager.getInviteeFiltred(Matchers.any(
                 Event.class), Matchers.any(InvitationAnswer.class))).thenReturn(
                         attendees);
 
         settingManager.exportCalendar(cal);
 
         //verifico che quel metodo venga chiamato una sola volta
-        verify(settingManager.eventManager, times(1)).getInviteeFiltred(
+        verify(eventManager, times(1)).getInviteeFiltred(
                 Matchers.any(Event.class), Matchers.any(InvitationAnswer.class));
 
     }
@@ -108,7 +113,7 @@ public class SettingManagerImplTest {
     /**
      * Test of importCalendar method, of class SettingManagerImpl.
      */
-    @Test    
+    @Test
     public void testImportCalendar() {
         System.out.println("importCalendar");
         String calendarName = "basic.ics";
@@ -126,15 +131,15 @@ public class SettingManagerImplTest {
 
         event.setId(Long.MAX_VALUE);
 
-        when(settingManager.database.find(UserModel.class, Long.MAX_VALUE)).thenReturn(
+        when(database.find(UserModel.class, Long.MAX_VALUE)).thenReturn(
                 userImporting);
 
-        when(settingManager.calendarManager.createDefaultCalendar(Matchers.any(
+        when(calendarManager.createDefaultCalendar(Matchers.any(
                 UserModel.class))).thenReturn(new CalendarModel(
                                 "Default calendar",
                                 owner, true, true));
 
-        when(settingManager.database.find(Event.class, Long.MAX_VALUE)).thenReturn(
+        when(database.find(Event.class, Long.MAX_VALUE)).thenReturn(
                 event);
 //
 //        when(settingManager.eventManager.isInAnyCalendar(Matchers.any(
@@ -148,7 +153,7 @@ public class SettingManagerImplTest {
     /**
      * Test of deleteExportFolder method, of class SettingManagerImpl.
      */
-    @Test    
+    @Test
     public void testDeleteExportFolder() throws Exception {
         System.out.println("deleteExportFolder");
         settingManager.deleteExportFolder(owner);

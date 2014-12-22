@@ -1,20 +1,13 @@
 package EJB;
 
-import java.util.Calendar;
 import java.util.logging.Logger;
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-import wrappingObjects.WeatherForecast;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Ignore;
-import utility.LoggerLevel;
 import utility.LoggerProducer;
-import utility.WeatherMessages;
 import weatherLib.OpenWeatherMap;
 
 /**
@@ -43,8 +36,7 @@ public class WeatherManagerImplTest {
     @Before
     public void setUp() {
         weatherManager = new WeatherManagerImpl();
-        weatherManager.openWeatherMap = new OpenWeatherMap(
-                "6f165fcce7eddd2405ef5c0596000ff7");
+        
     }
 
     @After
