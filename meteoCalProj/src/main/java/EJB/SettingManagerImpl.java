@@ -9,6 +9,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -32,6 +35,7 @@ import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.ValidationException;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.*;
+import org.apache.commons.io.FileUtils;
 
 import utility.LoggerLevel;
 import utility.LoggerProducer;
@@ -373,11 +377,24 @@ public class SettingManagerImpl implements SettingManager {
     }
 
     @Override
-    public boolean deleteExportFolder(UserModel user) {
-        //TODO
+    public void deleteExportFolder(UserModel user) {
+
+        //creo il path
+        String path = COMMON_PATH + "export" + File.separator
+                + user.getId();
+
+        //creo il file
+        File exportDir = new File(path);
+
         //checko se esiste
-        //nel caso la cancello        
-        return false;
+        if (exportDir.exists()) {
+            try {
+                //elimino
+                FileUtils.deleteDirectory(exportDir);
+            } catch (IOException ex) {
+                logger.log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
     }
 
 }

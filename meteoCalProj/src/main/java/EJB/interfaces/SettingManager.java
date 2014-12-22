@@ -15,6 +15,6 @@ public interface SettingManager {
 
     public List<Pair<String, String>> importCalendar(UserModel user, String calendarName);
     
-    public boolean deleteExportFolder(UserModel user);
+    public void deleteExportFolder(UserModel user);
 
 }

@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import model.Event;
 import wrappingObjects.WeatherForecast;
 import org.json.JSONException;
 import utility.ForecastType;
@@ -29,7 +30,7 @@ public class WeatherManagerImpl implements WeatherManager {
     private final int MAX_TRIES = 10;
 
     //creo oggetto openWeatherMap per fare le richieste con la mia API key
-    private OpenWeatherMap openWeatherMap;
+    OpenWeatherMap openWeatherMap;
 
     //creo l'oggetto daily forecast che si occuperà di ottenere le previsioni giornaliere
     //per un max di 16 giorni 
@@ -60,17 +61,11 @@ public class WeatherManagerImpl implements WeatherManager {
         openWeatherMap = new OpenWeatherMap("6f165fcce7eddd2405ef5c0596000ff7");
     }
 
-    //Just for testing!
-    //DELETEME il test si fa con il mock!
-    protected void initOpenWeatherMap() {
-        openWeatherMap = new OpenWeatherMap("6f165fcce7eddd2405ef5c0596000ff7");
-    }
-
     @Override
     public WeatherForecast getWeather(Calendar day, String city) {
         weatherForecast = new WeatherForecast();
 
-        if (isValid(city)) {
+        if (validate(day, city)) {
             this.city = city;
             //in base a che giorno è oggi e a quando è schedulato l'evento uso
             //un tipo diverso di previsioni
@@ -414,10 +409,26 @@ public class WeatherManagerImpl implements WeatherManager {
         }
     }
 
-    private boolean isValid(String city) {
-        //TODO check
-        String[] token = city.split(",");
-        return token.length == 1 || token.length == 2;
+    //TODO check this method
+    private boolean validate(Calendar day, String city) {
+        if (day != null) {
+            String[] token = city.split(",");
+            if (token.length == 1 || token.length == 2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void updateWeather(Event event) {
+        //TODO
+        //scarico il tempo
+        //se ho ottenuto qualche dato
+        //aggiorno il db
+        //se il tempo è cambiato aggiorno le persone
+        //se l'evento è per il giorno dopo aggiorno le persone comuqneu 
+        //vada se il tempo è brutto
     }
 
 }

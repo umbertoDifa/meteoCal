@@ -72,7 +72,7 @@ public class SettingManagerImplTest {
     /**
      * Test of exportCalendar method, of class SettingManagerImpl.
      */
-    @Test   
+    @Test    
     public void testExportCalendar() {
         System.out.println("exportCalendar");
 
@@ -108,8 +108,7 @@ public class SettingManagerImplTest {
     /**
      * Test of importCalendar method, of class SettingManagerImpl.
      */
-    @Test
-    
+    @Test    
     public void testImportCalendar() {
         System.out.println("importCalendar");
         String calendarName = "basic.ics";
@@ -143,6 +142,16 @@ public class SettingManagerImplTest {
 //                        Boolean.FALSE);
 
         settingManager.importCalendar(userImporting, calendarName);
+
+    }
+
+    /**
+     * Test of deleteExportFolder method, of class SettingManagerImpl.
+     */
+    @Test    
+    public void testDeleteExportFolder() throws Exception {
+        System.out.println("deleteExportFolder");
+        settingManager.deleteExportFolder(owner);
 
     }
 

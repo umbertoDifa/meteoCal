@@ -32,13 +32,19 @@ public class CalendarManagerImpl implements CalendarManager {
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
+    /**
+     * Controlla che non ci siano conflitti nel calendario e che non sia brutto
+     * tempo ritorna la lista di messaggi di controllo
+     *
+     * @param event Evento da controllare
+     * @return lista di messaggi di errori o messaggio no_problem se tutto va
+     * bene
+     */
     @Override
     public List<ControlMessages> checkData(Event event) {
         Calendar day = event.getStartDateTime();
         String city = event.getLocation();
         UserModel user = event.getOwner();
-        //TODO validate the obtained data oppure viene validata nei rispetti
-        //metodi? penso l'ultima
 
         List<ControlMessages> result = new ArrayList<>();
 
@@ -62,7 +68,6 @@ public class CalendarManagerImpl implements CalendarManager {
         return result;
     }
 
-
     /**
      * Scarica le previsioni del tempo e le controlla
      *
@@ -74,6 +79,8 @@ public class CalendarManagerImpl implements CalendarManager {
     private boolean checkWeather(Calendar day, String city) {
         WeatherForecast forecast = weatherManager.getWeather(day, city);
         //TODO aggiungo il forecast ai dati dell'evento nel db con un metodo
+        //non posso farlo qui perhè non ho i dati dell'evento
+        //lo devo fare quando lo schedulo
 
         //se non è buono ritorno false, false true
         if (forecast.getMessage() != WeatherMessages.BAD_WEATHER) {
@@ -82,7 +89,7 @@ public class CalendarManagerImpl implements CalendarManager {
         return true;
     }
 
-     /**
+    /**
      * Controlla i conflitti dell'evento che si vuole schedulare
      *
      * @param user l'utente che sta facendo l'evento
@@ -90,23 +97,32 @@ public class CalendarManagerImpl implements CalendarManager {
      * @return true se non conflitti, false se ci sono conflitti
      */
     private boolean checkConflicts(UserModel user, Event event) {
+        //TODO, non capisco qui faccio una find di un evento che sicuro non è nel db
+        //perchè sono nel momento in cui sto controllando se un evento potrebbe avere
+        //conflitti prima di salvarlo
         event = database.find(Event.class, event.getId());
+        if (user != null && event != null) {
+            //TODO, qui ho paura della getFirstresult perchè nella javadoc c'è scritto
+            //che bisogna settare setFirstResult
+            int conflictingEventIndex = database.createNamedQuery(
+                    "isConflicting").setParameter(
+                            "user", user).setParameter("end",
+                            event.getEndDateTime()).setParameter(
+                            "start", event.getStartDateTime()).setParameter("id",
+                            event.getId()).getFirstResult();
 
-        //TODO, qui ho paura della getFirstresult perchè nella javadoc c'è scritto
-        //che bisogna settare setFirstResult
-        int conflictingEventIndex = database.createNamedQuery("isConflicting").setParameter(
-                "user", user).setParameter("end", event.getEndDateTime()).setParameter(
-                        "start", event.getStartDateTime()).setParameter("id",
-                        event.getId()).getFirstResult();
-
-        //se ci sono conflitti
-        //TODO check if this works
-        if (conflictingEventIndex != 0) {
+            //se ci sono conflitti
+            //TODO check if this works
+            if (conflictingEventIndex != 0) {
+                return false;
+            }
+            return true;
+        } else {
+            logger.log(Level.SEVERE, "User or event is null.");
             return false;
         }
-        return true;
     }
-    
+
     //TODO, questa la facciamo chiamare da fra?
     private int findFreeSlots(UserModel user, Event event) {
         int searchRange = 15;

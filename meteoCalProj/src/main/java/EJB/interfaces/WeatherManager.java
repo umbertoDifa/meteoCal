@@ -1,6 +1,7 @@
 package EJB.interfaces;
 
 import java.util.Calendar;
+import model.Event;
 import wrappingObjects.WeatherForecast;
 
 /**
@@ -21,4 +22,6 @@ public interface WeatherManager {
     //TODO sarebbe corretto salvare le previsioni del tempo nel database
     //e aggiornarle ogni tanto senza caricarle in real time ogni volta che un user apre
     //un evento
+
+    public void updateWeather(Event event);
 }
