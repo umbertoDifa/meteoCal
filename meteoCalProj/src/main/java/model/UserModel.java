@@ -82,7 +82,7 @@ public class UserModel implements Serializable {
 
     
 
- /**
+ /*
  *
  *   CONSTRUCTORS
  */
@@ -100,7 +100,7 @@ public class UserModel implements Serializable {
     
 
 
-/**
+/*
  *
  *   SETTERS & GETTERS
  */

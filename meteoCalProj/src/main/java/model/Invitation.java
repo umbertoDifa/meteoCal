@@ -38,10 +38,10 @@ public class Invitation implements Serializable {
     @Column(columnDefinition = "ENUM('YES', 'NO', 'NA')")
     private InvitationAnswer answer;
     
-    /**
-    *
-    *   CONSTRUCTORS
-    */
+    /*
+     *
+     *   CONSTRUCTORS
+     */
 
     public Invitation(UserModel invitee, Event event) {
         this.invitee = invitee;
@@ -53,7 +53,7 @@ public class Invitation implements Serializable {
     public Invitation() {
     }
 
-    /**
+    /*
      *
      *   CONSTRUCTORS
      */

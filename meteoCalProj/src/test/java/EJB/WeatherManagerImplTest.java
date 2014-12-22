@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.logging.Logger;
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
-import wrappingObjects.WeatherForecast;
+import model.WeatherForecast;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
