@@ -89,4 +89,6 @@ public enum WeatherType {
         return true;
     }
 
+    
+
 }

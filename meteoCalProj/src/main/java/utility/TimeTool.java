@@ -9,7 +9,7 @@ import java.util.Date;
  * @author umboDifa
  */
 public class TimeTool {
-    
+
     private final static String defaultPattern = "yyyy-MM-dd";
 
     public static String dateToTextDay(Date date) {
@@ -39,6 +39,34 @@ public class TimeTool {
 
         //uso la compare di libreria
         return day1Normalized.before(day2Normalized);
+    }
+
+    /**
+     * check is day1 is exactly one day before day2, withour considerind
+     * hour,min,sec, and milllisec
+     *
+     * @param day1
+     * @param day2
+     * @return true if day1 is the day before day2
+     */
+    public static boolean isOneDayBefore(Calendar day1, Calendar day2) {
+        Calendar day1Normalized;
+        Calendar day2Normalized;
+
+        //normalizzo i giorni settando le ore a zero 
+        day1Normalized = normalize(day1);
+        day2Normalized = normalize(day2);
+
+        //tolgo un giorno a day2
+        day2Normalized.add(Calendar.DATE, -1);
+
+        //controllo che siano lo stesso giorno
+        if (!day1Normalized.before(day2Normalized) && !day1Normalized.after(
+                day2Normalized)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

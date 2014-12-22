@@ -1,5 +1,6 @@
 package EJB.interfaces;
 
+import java.util.concurrent.ScheduledFuture;
 import model.Event;
 
 /**
@@ -8,6 +9,6 @@ import model.Event;
  */
 public interface UpdateManager {
 
-    public void scheduleUpdates(Event event);
+    public ScheduledFuture<?> scheduleUpdates(Event event);
 
 }

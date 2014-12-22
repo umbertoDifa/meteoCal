@@ -5,6 +5,8 @@ import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.NotificationManager;
 import EJB.interfaces.SearchManager;
+import EJB.interfaces.UpdateManager;
+import EJB.interfaces.WeatherManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,6 +25,7 @@ import model.NotificationType;
 import model.PublicEvent;
 import model.PrivateEvent;
 import model.UserModel;
+import model.WeatherForecast;
 
 @Stateless
 public class EventManagerImpl implements EventManager {
@@ -39,17 +42,36 @@ public class EventManagerImpl implements EventManager {
     @Inject
     NotificationManager notificationManager;
 
+    @Inject
+    WeatherManager weatherManager;
+
+    @Inject
+    UpdateManager updateManager;
+
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
     @Inject
     @Default
-    Logger logger;  
+    Logger logger;
 
     @Override
     public boolean scheduleNewEvent(Event event, CalendarModel insertInCalendar, List<UserModel> invitees) {
+        //salvo evento nel db
         database.persist(event);
         logger.log(Level.INFO, "Event +{0} created", event.getTitle());
+
+        //aggiungo weather
+        WeatherForecast forecast = weatherManager.getWeather(
+                event.getStartDateTime(), event.getLocation());
+        event.setWeather(forecast);
+        database.flush();
+        logger.log(Level.INFO, "Forecast added to Event +{0} ", event.getTitle());
+
+        //schedulo updates weather
+        updateManager.scheduleUpdates(event);
+        logger.log(Level.INFO, "Updates scheduled for Event +{0} ",
+                event.getTitle());
 
         if (insertInCalendar != null) {
             calManager.addToCalendar(event, insertInCalendar);
@@ -113,7 +135,8 @@ public class EventManagerImpl implements EventManager {
     }
 
     private List<PublicEvent> publicEventsOnWall(UserModel user, int n) {
-        return database.createNamedQuery("findNextPublicEvents").setParameter("user", user).setMaxResults(n).getResultList();
+        return database.createNamedQuery("findNextPublicEvents").setParameter(
+                "user", user).setMaxResults(n).getResultList();
 
     }
 
@@ -198,6 +221,8 @@ public class EventManagerImpl implements EventManager {
         event = database.find(Event.class, event.getId());
         List<Invitation> invitations = event.getInvitations();
         List<UserModel> users = new ArrayList<>();
+        //TODO ma qui non basta scrivere invitation.getAnswer().equals(answer) invece
+        //di fare uno switch?
         switch (answer) {
             case YES: {
                 for (Invitation invitation : invitations) {
@@ -236,17 +261,21 @@ public class EventManagerImpl implements EventManager {
             if (oldEvent instanceof PrivateEvent && event instanceof PublicEvent) {
                 // event.setId(oldEvent.getId());
 
-                notificationManager.createNotifications(oldinvitees, oldEvent, NotificationType.EVENT_PUBLIC, false);
+                notificationManager.createNotifications(oldinvitees, oldEvent,
+                        NotificationType.EVENT_PUBLIC, false);
                 database.remove(oldEvent);
                 database.persist(event);
 
-            } else if (oldEvent instanceof PublicEvent && event instanceof PrivateEvent) {
+            } else if (oldEvent instanceof PublicEvent
+                    && event instanceof PrivateEvent) {
                 //TODO implementare cambio di privacy da public a private
             }
             if (!(oldEvent.getTitle().equals(event.getTitle())
-                    && oldEvent.getStartDateTime().equals(event.getStartDateTime())
+                    && oldEvent.getStartDateTime().equals(
+                            event.getStartDateTime())
                     && oldEvent.getEndDateTime().equals(event.getEndDateTime()))) {
-                notificationManager.createNotifications(oldinvitees, oldEvent, NotificationType.EVENT_CHANGED, false);
+                notificationManager.createNotifications(oldinvitees, oldEvent,
+                        NotificationType.EVENT_CHANGED, false);
             }
 
             database.flush();
@@ -257,11 +286,13 @@ public class EventManagerImpl implements EventManager {
         }
 
     }
+
     @Override
     public List<UserModel> getPublicJoin(Event event) {
         try {
             if (event instanceof PublicEvent) {
-                PublicEvent publicEvent = (PublicEvent) database.find(Event.class, event.getId());
+                PublicEvent publicEvent = (PublicEvent) database.find(
+                        Event.class, event.getId());
                 return publicEvent.getGuests();
             }
             return null;
@@ -269,10 +300,11 @@ public class EventManagerImpl implements EventManager {
             return null;
         }
     }
-    
+
     @Override
     public boolean isInAnyCalendar(Event event, UserModel user) {
-        int i = (int) database.createNamedQuery("isInAnyCalendar").setParameter(1, event.getId()).setParameter(2, user.getId()).getSingleResult();
+        int i = (int) database.createNamedQuery("isInAnyCalendar").setParameter(
+                1, event.getId()).setParameter(2, user.getId()).getSingleResult();
         return i != 0;
-    } 
+    }
 }

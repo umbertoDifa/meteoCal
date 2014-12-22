@@ -3,7 +3,6 @@ package EJB;
 import EJB.interfaces.UpdateManager;
 import EJB.interfaces.WeatherManager;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -11,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Startup;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,21 +32,48 @@ public class UpdateManagerImpl implements UpdateManager {
 
     private final int PERIOD = 12;
 
-    @Override
-    public void scheduleUpdates(Event event) {
+    /**
+     * Constructor for testing
+     *
+     * @param database
+     */
+    public UpdateManagerImpl(EntityManager database) {
+        this.database = database;
+    }
 
-        Updater updater = new Updater(event);
-        updater.runTillPast(executor, PERIOD, TimeUnit.HOURS);
-        //periodicamente ogni 12 ore                
-        //il giorno prima notificando se è brutto(inlcuso nella notifica ogni 12 ore)
+    /**
+     * Constructor for container
+     */
+    public UpdateManagerImpl() {
+
+    }
+
+    /**
+     * schedule weather updater for an event
+     *
+     * @param event event for which schedule the updates
+     * @return a scheduledFuture which is the result of the update thread, null
+     * if it wasn't possible to create the updater
+     */
+    @Override
+    public ScheduledFuture<?> scheduleUpdates(Event event) {
+
+        try {
+            Updater updater = new Updater(event);
+            return updater.runTillPast(executor, PERIOD, TimeUnit.HOURS);
+            //periodicamente ogni 12 ore                
+            //il giorno prima notificando se è brutto(inlcuso nella notifica ogni 12 ore)
+        } catch (IllegalArgumentException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            return null;
+        }
     }
 
     private class Updater implements Runnable {
 
-        @Inject
         WeatherManager weatherManager;
 
-        private Event event;
+        private final Event event;
 
         //volatile perchè può essere modificato da thread diversi (i.e. questo e l'executor)
         private volatile ScheduledFuture<?> self;
@@ -57,14 +82,17 @@ public class UpdateManagerImpl implements UpdateManager {
         public void run() {
             //refresho l'evento nel caso la data di fine sia cambiata
             database.refresh(event);
-            
+
             //se oggi è prima della fine dell'evento
             if (Calendar.getInstance().before(event.getEndDateTime())) {
                 //lo aggiorno
+                logger.log(LoggerLevel.DEBUG, "Update fired for event {0}",
+                        event.getTitle());
                 weatherManager.updateWeather(event);
             } else {
                 //l'evento è passato elimino il thread di update
-                logger.log(LoggerLevel.DEBUG, "Canecello il task");
+                logger.log(LoggerLevel.DEBUG, "Updater terminated for event{0}",
+                        event.getTitle());
                 self.cancel(true);
             }
 
@@ -77,11 +105,17 @@ public class UpdateManagerImpl implements UpdateManager {
          */
         public Updater(Event event) {
             //sincronizzo l'evento col database
-            this.event = database.find(Event.class, event.getId());
-            if (this.event == null) {
-                logger.log(Level.SEVERE,
-                        "The event is not in the db. Abort weather updates.");
-                self.cancel(true);
+            if (event == null) {
+                throw new IllegalArgumentException(
+                        "The event is null. Abort weather updates.");
+            } else {
+                this.event = database.find(Event.class, event.getId());
+                this.weatherManager = new WeatherManagerImpl();
+
+                if (this.event == null) {
+                    throw new IllegalArgumentException(
+                            "The event is not in the db. Abort weather updates.");
+                }
             }
         }
 

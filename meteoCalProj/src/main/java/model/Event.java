@@ -111,10 +111,20 @@ public abstract class Event implements Serializable {
     public Event() {
     }
 
+    public WeatherForecast getWeather() {
+        return weather;
+    }
+
+    public void setWeather(WeatherForecast weather) {
+        this.weather = weather;
+    }
+
     /**
      *
      * SETTERS & GETTERS
      */
+    
+    
     public String getImgPath() {
         return imgPath;
     }

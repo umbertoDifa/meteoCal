@@ -27,7 +27,7 @@ public class CalendarManagerImpl implements CalendarManager {
     Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
 
     @Inject
-    WeatherManager weatherManager;
+    private WeatherManager weatherManager;
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;

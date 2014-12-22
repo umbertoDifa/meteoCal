@@ -1,18 +1,22 @@
 package EJB;
 
+import EJB.interfaces.EventManager;
+import EJB.interfaces.NotificationManager;
 import EJB.interfaces.WeatherManager;
 import Exceptions.ForecastDayNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import model.Event;
-import model.Event;
-import model.Event;
-import model.WeatherForecast;
-import model.WeatherForecast;
+import model.InvitationAnswer;
+import model.NotificationType;
+import model.UserModel;
 import model.WeatherForecast;
 import org.json.JSONException;
 import utility.ForecastType;
@@ -58,24 +62,29 @@ public class WeatherManagerImpl implements WeatherManager {
     //city to get forecast for
     private String city;
 
+    @PersistenceContext(unitName = "meteoCalDB")
+    private EntityManager database;
+
+    @Inject
+    private NotificationManager notificationManager;
+
+    @Inject
+    private EventManager eventManager;
+
     private Logger logger = LoggerProducer.debugLogger(WeatherManagerImpl.class);
 
 //    @PostConstruct
 //    private void init() {
 //        openWeatherMap = new OpenWeatherMap("6f165fcce7eddd2405ef5c0596000ff7");
 //    }
-
     /**
-     * Constructor 
+     * Constructor
      *
-     * @param openWeatherMap
      */
     public WeatherManagerImpl() {
         this.openWeatherMap = new OpenWeatherMap(
                 "6f165fcce7eddd2405ef5c0596000ff7");
     }
-
-    
 
     @Override
     public WeatherForecast getWeather(Calendar day, String city) {
@@ -436,15 +445,56 @@ public class WeatherManagerImpl implements WeatherManager {
         return false;
     }
 
+    /**
+     * update Weather for an event, event must be in the db and must not be null
+     *
+     * @param event
+     */
     @Override
     public void updateWeather(Event event) {
-        //TODO
+        //aggiorno l'evento dal db
+        event = database.find(Event.class, event.getId());
+
         //scarico il tempo
+        WeatherForecast newForecast = this.getWeather(event.getStartDateTime(),
+                event.getLocation());
+
         //se ho ottenuto qualche dato
-        //aggiorno il db
-        //se il tempo è cambiato aggiorno le persone
-        //se l'evento è per il giorno dopo aggiorno le persone comuqneu 
-        //vada se il tempo è brutto
+        if (newForecast.getMessage() != WeatherMessages.NOT_AVAILABLE) {
+            //salvo il vecchio tempo
+            WeatherForecast oldForecast = event.getWeather();
+
+            //aggiorno il db
+            event.setWeather(newForecast);
+            database.flush();
+
+            //prima controllo se domani è il giorno dell'evento outdoor
+            //perchè in quel caso se è brutto tempo li informo
+            if (event.isIsOutdoor() && isBadWeatherTomorrow(event, newForecast)) {
+                List<UserModel> participants = eventManager.getInviteeFiltred(
+                        event, InvitationAnswer.YES);
+
+                notificationManager.createNotifications(participants, event,
+                        NotificationType.BAD_WEATHER_TOMORROW, true);
+
+            } else if (!oldForecast.getMain().equals(newForecast.getMain())) {
+                //se è un altro giorno li informo solo se il tempo è cambiato
+                List<UserModel> participants = eventManager.getInviteeFiltred(
+                        event, InvitationAnswer.YES);
+
+                notificationManager.createNotifications(participants, event,
+                        NotificationType.WEATHER_CHANGED, true);
+            }
+            //altrimenti non faccio nulla
+
+        }
+
     }
 
+    private boolean isBadWeatherTomorrow(Event event, WeatherForecast forecast) {
+        Calendar today = Calendar.getInstance();
+
+        return TimeTool.isOneDayBefore(today, event.getStartDateTime())
+                && forecast.getMessage() == WeatherMessages.BAD_WEATHER;
+    }
 }

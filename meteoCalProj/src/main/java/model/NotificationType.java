@@ -15,13 +15,20 @@ import utility.LoggerProducer;
  * @author Luckyna
  */
 public enum NotificationType {
+
     /**
-     * SE AGGIUNGETE ENTITA' A QUESTA CLASSE, DOVETE AGGIUNGERLA ANCHE ALL'ENUM DEL DATABASE
-     * CHE TROVATE NELL'ENTITA' NOTIFICATION NEL CAMPO TYPE
+     * SE AGGIUNGETE ENTITA' A QUESTA CLASSE, DOVETE AGGIUNGERLA ANCHE ALL'ENUM
+     * DEL DATABASE CHE TROVATE NELL'ENTITA' NOTIFICATION NEL CAMPO TYPE
      */
     INVITATION("Invitation to event {0}",
             "Hello {0},\n you''ve received an invitation for event {1} from {2}.\n "
-            + "Have a look to the event page on the following link:\n{3}\nMeteoCalendarTeam"), //    WEATHER_CHANGED,
+            + "Have a look to the event page on the following link:\n{3}\nMeteoCalendarTeam"),
+    WEATHER_CHANGED("Weather changed for event {0}",
+            "Hello {0},\n we inform you that the weather for"
+            + "the event {1} has changed. Check it at:\nLink:{3}"),
+    BAD_WEATHER_TOMORROW("Bad weather forecast for tomorrow event {0}",
+            "Hello {0},\nwe are sorry to inform you that the weather forecast for"
+            + "the tomorrow event {1} is bad.\nLink:{3}"),
     EVENT_CHANGED("Event {0} has been modified",
             "Hello {0},\n we inform you that event {1} has been modified\nLink:{3}"),
     EVENT_CANCELLED("Event {0} has been cancelled",
