@@ -1,14 +1,29 @@
 package EJB;
 
+import EJB.interfaces.EventManager;
+import EJB.interfaces.NotificationManager;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import model.Event;
+import model.InvitationAnswer;
+import model.NotificationType;
+import model.PublicEvent;
+import model.UserModel;
+import model.WeatherForecast;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Ignore;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import utility.LoggerLevel;
 import utility.LoggerProducer;
-import weatherLib.OpenWeatherMap;
 
 /**
  *
@@ -16,10 +31,13 @@ import weatherLib.OpenWeatherMap;
  */
 public class WeatherManagerImplTest {
 
-    static final Logger logger = LoggerProducer.debugLogger(
+    private Logger logger = LoggerProducer.debugLogger(
             WeatherManagerImplTest.class);
 
     private WeatherManagerImpl weatherManager;
+    private EventManager eventManagerMock;
+    private NotificationManager notificationManagerMock;
+    private EntityManager databaseMock;
 
     public WeatherManagerImplTest() {
     }
@@ -35,8 +53,12 @@ public class WeatherManagerImplTest {
 
     @Before
     public void setUp() {
-        weatherManager = new WeatherManagerImpl();
-        
+        eventManagerMock = mock(EventManagerImpl.class);
+        notificationManagerMock = mock(NotificationManagerImpl.class);
+        databaseMock = mock(EntityManager.class);
+        weatherManager = new WeatherManagerImpl(databaseMock,
+                notificationManagerMock, eventManagerMock);
+
     }
 
     @After
@@ -48,21 +70,58 @@ public class WeatherManagerImplTest {
      *
      * @throws java.lang.Exception
      */
-    @Ignore
     @Test
     public void testGetWeather() throws Exception {
         System.out.println("getWeather");
-//        WeatherManagerImpl wm = new WeatherManagerImpl();
-//        wm.initOpenWeatherMap();
-//        Calendar cal = Calendar.getInstance();
-//        cal.add(Calendar.DATE, 1);
-//        WeatherForecast forecast = wm.getWeather(cal, "Rome");
-//        assertTrue(forecast.getMessage() == WeatherMessages.BAD_WEATHER);
-//        assertTrue("Rain".equals(forecast.getMain()));
-//        System.out.println("pressione: " + forecast.getPressure());
-//        System.out.println("temperatura: " + forecast.getTemp());
-//        assertTrue((float)990.73 == forecast.getPressure());
-//        assertTrue((float)0.55 == forecast.getTemp());
-        //USATO PER FARE TESTING, I VALORI VANNO CODATI AL MOMENTO
+        //creo un event che termina dopo 30 secondi
+        Calendar startEvent = Calendar.getInstance();
+        Calendar endEvent = Calendar.getInstance();
+        endEvent.add(Calendar.SECOND, 30);
+        Event event = new PublicEvent("Cena di natale", startEvent, endEvent,
+                "London,UK", "descrizione evento", true, null);
+        event.setId(Long.MAX_VALUE);
+        logger.log(LoggerLevel.DEBUG, weatherManager.getWeather(
+                event.getStartDateTime(), event.getLocation()).toString());
+    }
+
+    /**
+     * Test of updateWeather method, of class WeatherManagerImpl.
+     */
+    @Test
+    public void testUpdateWeather() throws Exception {
+        System.out.println("updateWeather");
+
+        //creo un event che termina dopo 30 secondi
+        Calendar startEvent = Calendar.getInstance();
+        Calendar endEvent = Calendar.getInstance();
+        endEvent.add(Calendar.SECOND, 30);
+        Event event = new PublicEvent("Cena di natale", startEvent, endEvent,
+                "Moscow", "descrizione evento", true, null);
+        event.setId(Long.MAX_VALUE);
+        //setto il weather
+        WeatherForecast forecast = mock(WeatherForecast.class);
+        event.setWeather(forecast);
+
+        //Creo uno user a cui vengono inviate le notifiche
+        UserModel me = new UserModel("umberto", "di fabrizio",
+                "umberto.difabrizio@gmail.com", null);
+        List<UserModel> invitee = new ArrayList<>();
+        invitee.add(me);
+
+        //quando cerca un evento nel db lo trova
+        when(databaseMock.find(Event.class, Long.MAX_VALUE)).thenReturn(event);
+
+        //quando cerca il tempo vecchio lo trova
+        when(forecast.getMain()).thenReturn("Clear");
+
+        //le notifiche vanno mandate a la lista di invitati
+        when(eventManagerMock.getInviteeFiltred(event, InvitationAnswer.YES)).thenReturn(
+                invitee);
+
+        weatherManager.updateWeather(event);
+
+        startEvent.add(Calendar.DATE, 1);
+
+        weatherManager.updateWeather(event);
     }
 }

@@ -73,16 +73,18 @@ public class EventManagerImpl implements EventManager {
         logger.log(Level.INFO, "Updates scheduled for Event +{0} ",
                 event.getTitle());
 
+        //aggiungo l'evento al calendario se necessario
         if (insertInCalendar != null) {
             calManager.addToCalendar(event, insertInCalendar);
         }
 
+        //faccio gli inviti
         if (invitees != null && invitees.size() > 0) {
             invitationManager.createInvitations(invitees, event);
-            return true;//TODO
-        } else {
             return true;
         }
+        return true;
+        //TODO attualmente il metodo ritorna sempre true
     }
 
     @Override

@@ -182,9 +182,7 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public ControlMessages addToCalendar(Event event, CalendarModel calendar) {
-        //TODO fare check che l'event sia non nulla e che la find non sollevi eccezioni
-        //si potrebbe fare un metodo a parte per tutti questi controlli legati
-        //al db e exception handling visto che lo usiamo parecchio
+        //TODO check event!= null e find trova qualcsoa
         event = database.find(Event.class, event.getId());
 
         for (CalendarModel cal : event.getOwner().getOwnedCalendars()) {
@@ -193,7 +191,10 @@ public class CalendarManagerImpl implements CalendarManager {
 
         if (calendar != null) {
             //TODO anche qui il check sulle exception di getSingleResult
-            calendar = getCalendar(calendar);
+            calendar = (CalendarModel) database.createNamedQuery(
+                    "findCalbyUserAndTitle").setParameter("id",
+                            calendar.getOwner()).setParameter(
+                            "title", calendar.getTitle()).getSingleResult();
 
             if (calendar.addEventInCalendar(event)) {
                 //calendar.getEventsInCalendar().add(event);
@@ -212,37 +213,6 @@ public class CalendarManagerImpl implements CalendarManager {
         logger.log(Level.WARNING, "Evento non aggiunto al calendario");
         return ControlMessages.ERROR_ADDING_EVENT_TO_CAL;
 
-    }
-
-    /**
-     * Get a calendar by user the owns the calendar and title of the calendar
-     *
-     * @param user user that owns the calendar
-     * @param title title of the calendar
-     * @return calendar from db
-     */
-    @Override
-    public CalendarModel getCalendar(UserModel user, String title) {
-
-        return (CalendarModel) database.createNamedQuery(
-                "findCalbyUserAndTitle").setParameter("id",
-                        user.getId()).setParameter(
-                        "title", title).getSingleResult();
-
-    }
-
-    /**
-     * Get a calendar by user the owns the calendar and title of the calendar
-     *
-     * @param calendar calendar to get
-     * @return calendar from db
-     */
-    @Override
-    public CalendarModel getCalendar(CalendarModel calendar) {
-        return (CalendarModel) database.createNamedQuery(
-                "findCalbyUserAndTitle").setParameter("id",
-                        calendar.getOwner()).setParameter(
-                        "title", calendar.getTitle()).getSingleResult();
     }
 
     @Override

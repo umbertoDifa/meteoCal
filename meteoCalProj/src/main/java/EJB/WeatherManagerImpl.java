@@ -86,6 +86,13 @@ public class WeatherManagerImpl implements WeatherManager {
                 "6f165fcce7eddd2405ef5c0596000ff7");
     }
 
+    public WeatherManagerImpl(EntityManager database, NotificationManager notificationManager, EventManager eventManager) {
+        this();
+        this.database = database;
+        this.notificationManager = notificationManager;
+        this.eventManager = eventManager;
+    }
+
     @Override
     public WeatherForecast getWeather(Calendar day, String city) {
         weatherForecast = new WeatherForecast();
@@ -470,23 +477,39 @@ public class WeatherManagerImpl implements WeatherManager {
 
             //prima controllo se domani è il giorno dell'evento outdoor
             //perchè in quel caso se è brutto tempo li informo
-            if (event.isIsOutdoor() && isBadWeatherTomorrow(event, newForecast)) {
-                List<UserModel> participants = eventManager.getInviteeFiltred(
-                        event, InvitationAnswer.YES);
+            if (event.isIsOutdoor()) {
+                if (isBadWeatherTomorrow(event, newForecast)) {
+                    logger.log(LoggerLevel.DEBUG,
+                            "Bad weather tomorrow detected");
 
-                notificationManager.createNotifications(participants, event,
-                        NotificationType.BAD_WEATHER_TOMORROW, true);
+                    List<UserModel> participants = eventManager.getInviteeFiltred(
+                            event, InvitationAnswer.YES);
 
-            } else if (!oldForecast.getMain().equals(newForecast.getMain())) {
-                //se è un altro giorno li informo solo se il tempo è cambiato
-                List<UserModel> participants = eventManager.getInviteeFiltred(
-                        event, InvitationAnswer.YES);
+                    notificationManager.createNotifications(participants, event,
+                            NotificationType.BAD_WEATHER_TOMORROW, true);
 
-                notificationManager.createNotifications(participants, event,
-                        NotificationType.WEATHER_CHANGED, true);
+                } else if (!oldForecast.getMain().equals(newForecast.getMain())) {
+                    logger.log(LoggerLevel.DEBUG,
+                            "Weather changed detected");
+
+                    //se è un altro giorno li informo solo se il tempo è cambiato
+                    List<UserModel> participants = eventManager.getInviteeFiltred(
+                            event, InvitationAnswer.YES);
+
+                    notificationManager.createNotifications(participants, event,
+                            NotificationType.WEATHER_CHANGED, true);
+                } else {
+                    logger.log(LoggerLevel.DEBUG,
+                            "No bad weather and non changed in forecast detected");
+                }
+            } else {
+                logger.log(LoggerLevel.DEBUG,
+                        "dati aggiornati, nessuna notifica inviata perchè evento indoor");
             }
             //altrimenti non faccio nulla
 
+        } else {
+            logger.log(LoggerLevel.DEBUG, "Nussun nuovo dato disponibile");
         }
 
     }

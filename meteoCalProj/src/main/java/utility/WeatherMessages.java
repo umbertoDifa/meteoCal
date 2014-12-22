@@ -18,6 +18,6 @@ public enum WeatherMessages {
 
     public String getMessage() {
         return message;
-    }
+    }   
 
 }
