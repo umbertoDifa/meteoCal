@@ -43,7 +43,7 @@ public class CalendarModel implements Serializable {
     @JoinTable(name = "EVENT_IN_CALENDAR")
     private List<Event> eventsInCalendar;
 
-    /**
+    /*
      *
      * CONSTRUCTURS
      */
@@ -57,7 +57,7 @@ public class CalendarModel implements Serializable {
         this.isDefault = isDefault;
     }
 
-    /**
+    /*
      *
      * SETTERS & GETTERS
      */
@@ -105,7 +105,7 @@ public class CalendarModel implements Serializable {
                 + ", eventsInCalendar=" + eventsInCalendar + '}';
     }
 
-    /**
+    /*
      *
      * METHODS
      */

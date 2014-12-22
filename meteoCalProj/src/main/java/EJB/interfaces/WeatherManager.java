@@ -2,7 +2,7 @@ package EJB.interfaces;
 
 import java.util.Calendar;
 import model.Event;
-import wrappingObjects.WeatherForecast;
+import model.WeatherForecast;
 
 /**
  *

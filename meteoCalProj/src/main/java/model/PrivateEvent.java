@@ -20,7 +20,7 @@ import javax.persistence.Table;
 public class PrivateEvent extends Event{
     
 
-    /**
+    /*
     *
     *   CONSTRUCTORS
     */

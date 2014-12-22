@@ -19,7 +19,7 @@ import utility.ControlMessages;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
 import utility.WeatherMessages;
-import wrappingObjects.WeatherForecast;
+import model.WeatherForecast;
 
 @Stateless
 public class CalendarManagerImpl implements CalendarManager {

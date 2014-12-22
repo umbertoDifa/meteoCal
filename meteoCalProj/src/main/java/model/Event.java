@@ -24,6 +24,7 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -87,8 +88,11 @@ public abstract class Event implements Serializable {
 
     @ManyToMany(mappedBy = "eventsInCalendar")
     private List<model.CalendarModel> inCalendars;
+    
+    @OneToOne
+    private WeatherForecast weather;
 
-    /**
+    /*
      *
      * CONSTRUCTORS
      */
@@ -195,7 +199,7 @@ public abstract class Event implements Serializable {
         this.id = id;
     }
 
-    /**
+    /*
      *
      * METHODS
      */

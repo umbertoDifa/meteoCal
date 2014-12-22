@@ -43,7 +43,7 @@ public class Notification implements Serializable {
             nullable = false)
     private NotificationType type;
 
-    /**
+    /*
      *
      * CONSTRUCTORS
      */
@@ -56,7 +56,7 @@ public class Notification implements Serializable {
     public Notification() {
     }
 
-    /**
+    /*
      *
      * SETTERS & GETTERS
      */
