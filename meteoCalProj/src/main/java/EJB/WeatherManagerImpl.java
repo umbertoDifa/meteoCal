@@ -435,7 +435,7 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private void setGoodOrBadWeather() {
-        if (WeatherType.isBadWeather(weatherForecast.getWeatherId())) {
+        if (WeatherType.isBadWeather(weatherForecast.getOpenWeatherId())) {
             weatherForecast.setMessage(WeatherMessages.BAD_WEATHER);
         } else {
             weatherForecast.setMessage(WeatherMessages.GOOD_WEATHER);
@@ -471,10 +471,13 @@ public class WeatherManagerImpl implements WeatherManager {
         if (newForecast.getMessage() != WeatherMessages.NOT_AVAILABLE) {
             //salvo il vecchio tempo
             WeatherForecast oldForecast = event.getWeather();
+            boolean weatherChanged = !oldForecast.getMain().equals(
+                    newForecast.getMain());
 
-            //aggiorno il db
-            event.setWeather(newForecast);
+            //aggiorno il db            
+            oldForecast.update(newForecast);
             database.flush();
+            logger.log(LoggerLevel.DEBUG, "appena flushato il nuovo tempo");
 
             //prima controllo se domani è il giorno dell'evento outdoor
             //perchè in quel caso se è brutto tempo li informo
@@ -489,11 +492,12 @@ public class WeatherManagerImpl implements WeatherManager {
                     notificationManager.createNotifications(participants, event,
                             NotificationType.BAD_WEATHER_TOMORROW, true);
 
-                } else if (!oldForecast.getMain().equals(newForecast.getMain())) {
+                } else if (weatherChanged) {
+                    //se è un altro giorno li informo solo se il tempo è cambiato
+
                     logger.log(LoggerLevel.DEBUG,
                             "Weather changed detected");
 
-                    //se è un altro giorno li informo solo se il tempo è cambiato
                     List<UserModel> participants = eventManager.getInviteeFiltred(
                             event, InvitationAnswer.YES);
 

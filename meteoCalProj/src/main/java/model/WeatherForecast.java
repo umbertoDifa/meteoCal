@@ -20,15 +20,16 @@ import utility.WeatherMessages;
 @Entity
 @Table(name = "WEATHER_FORECAST")
 public class WeatherForecast implements Serializable {
-   
+
     @Id
     @TableGenerator(name = "WEATHER_SEQ", table = "SEQUENCE",
                     pkColumnName = "SEQ_NAME",
                     valueColumnName = "SEQ_COUNT", pkColumnValue = "WEATHER_SEQ")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "WEATHER_SEQ")
     private Long id;
-    
+
     @Enumerated(EnumType.STRING)
+    
     @Column(columnDefinition = "ENUM('BAD_WEATHER', 'GOOD_WEATHER', 'NOT_AVAILABLE')")
     private WeatherMessages message;
 
@@ -46,16 +47,14 @@ public class WeatherForecast implements Serializable {
     private String description;
 
     private String icon;
-    
+
     @OneToOne(mappedBy = "weather")
     private Event event;
-    
-    
+
     /*
      * CONSTRUCTORS
      * 
      */
-    
     public WeatherForecast() {
     }
 
@@ -73,12 +72,10 @@ public class WeatherForecast implements Serializable {
         this.event = event;
     }
 
-    
     /*
      * GETTERS & SETTERS
      * 
      */
-    
     public WeatherMessages getMessage() {
         return message;
     }
@@ -127,7 +124,7 @@ public class WeatherForecast implements Serializable {
         this.humidity = humidity;
     }
 
-    public int getWeatherId() {
+    public int getOpenWeatherId() {
         return openWeatherId;
     }
 
@@ -163,7 +160,6 @@ public class WeatherForecast implements Serializable {
      * 
      * METHODS
      */
-    
     @Override
     public String toString() {
         if (message == null || message == WeatherMessages.NOT_AVAILABLE) {
@@ -174,6 +170,19 @@ public class WeatherForecast implements Serializable {
                 + ", humidity=" + humidity + ", weatherId=" + openWeatherId
                 + ", main=" + main + ", description=" + description + ", icon="
                 + icon + '.';
+    }
+
+    public void update(WeatherForecast newForecast) {
+        this.description = newForecast.getDescription();
+        this.humidity = newForecast.getHumidity();
+        this.icon = newForecast.getIcon();
+        this.main = newForecast.getMain();
+        this.maxTemp = newForecast.getMaxTemp();
+        this.message = newForecast.getMessage();
+        this.minTemp = newForecast.getMinTemp();
+        this.openWeatherId = newForecast.getOpenWeatherId();
+        this.pressure = newForecast.getPressure();
+        this.temp = newForecast.getTemp();
     }
 
 }
