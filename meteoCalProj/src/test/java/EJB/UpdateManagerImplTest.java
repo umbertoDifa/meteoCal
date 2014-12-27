@@ -1,8 +1,6 @@
 package EJB;
 
-import EJB.interfaces.UpdateManager;
 import java.util.Calendar;
-import java.util.concurrent.ScheduledFuture;
 import javax.persistence.EntityManager;
 import model.Event;
 import model.PublicEvent;
@@ -11,7 +9,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Ignore;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -39,7 +36,6 @@ public class UpdateManagerImplTest {
     @Before
     public void setUp() {
         database = mock(EntityManager.class);
-        instance = new UpdateManagerImpl(database);
     }
 
     @After
@@ -50,7 +46,8 @@ public class UpdateManagerImplTest {
      * Test of scheduleUpdates method, of class UpdateManagerImpl.
      */
     @Test
-    @Ignore //il test è ignorato perchè l'esecuzione è molto lenta
+    @Ignore //il test è ignorato perchè l'esecuzione è molto lenta ed il test
+    //è su un vecchio modello
     public void testScheduleUpdates() {
         System.out.println("scheduleUpdates");
 
@@ -75,17 +72,7 @@ public class UpdateManagerImplTest {
         //quando il db cerca l'evento lo trova
         when(database.find(Event.class, Long.MAX_VALUE)).thenReturn(event);
         when(database.find(Event.class, Long.MIN_VALUE)).thenReturn(event2);
-
-        ScheduledFuture<?> result = instance.scheduleUpdates(event);
-        ScheduledFuture<?> result2 = instance.scheduleUpdates(event2);
-
-        
-        //finche entrambi gli eventi non terminano
-        while (!result.isCancelled() || ! result2.isCancelled()) {            
-        };
-
-        assertTrue("Schedule completata", result.isCancelled());
-
+             
     }
 
 }

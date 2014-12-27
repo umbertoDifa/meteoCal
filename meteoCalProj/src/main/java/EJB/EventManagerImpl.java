@@ -5,7 +5,6 @@ import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.NotificationManager;
 import EJB.interfaces.SearchManager;
-import EJB.interfaces.UpdateManager;
 import EJB.interfaces.WeatherManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +44,6 @@ public class EventManagerImpl implements EventManager {
     @Inject
     WeatherManager weatherManager;
 
-    @Inject
-    UpdateManager updateManager;
-
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
@@ -59,18 +55,19 @@ public class EventManagerImpl implements EventManager {
     public boolean scheduleNewEvent(Event event, CalendarModel insertInCalendar, List<UserModel> invitees) {
         //salvo evento nel db
         database.persist(event);
-        logger.log(Level.INFO, "Event +{0} created", event.getTitle());
+        logger.log(Level.INFO, "Event {0} created", event.getTitle());
 
         //aggiungo weather
         WeatherForecast forecast = weatherManager.getWeather(
                 event.getStartDateTime(), event.getLocation());
+        database.persist(forecast);
         event.setWeather(forecast);
         database.flush();
-        logger.log(Level.INFO, "Forecast added to Event +{0} ", event.getTitle());
+        logger.log(Level.INFO, "Forecast added to Event {0} ", event.getTitle());
 
         //schedulo updates weather
-        updateManager.scheduleUpdates(event);
-        logger.log(Level.INFO, "Updates scheduled for Event +{0} ",
+        UpdateManagerImpl.addEvent(event);       
+        logger.log(Level.INFO, "Updates scheduled for Event {0} ",
                 event.getTitle());
 
         //aggiungo l'evento al calendario se necessario

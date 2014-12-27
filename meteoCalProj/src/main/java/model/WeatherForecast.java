@@ -39,7 +39,7 @@ public class WeatherForecast implements Serializable {
     private float pressure;
     private float humidity;
 
-    private int weatherId;
+    private int openWeatherId;
 
     private String main;
 
@@ -66,7 +66,7 @@ public class WeatherForecast implements Serializable {
         this.minTemp = minTemp;
         this.pressure = pressure;
         this.humidity = humidity;
-        this.weatherId = weatherId;
+        this.openWeatherId = weatherId;
         this.main = main;
         this.description = description;
         this.icon = icon;
@@ -128,11 +128,11 @@ public class WeatherForecast implements Serializable {
     }
 
     public int getWeatherId() {
-        return weatherId;
+        return openWeatherId;
     }
 
     public void setWeatherId(int weatherId) {
-        this.weatherId = weatherId;
+        this.openWeatherId = weatherId;
     }
 
     public String getMain() {
@@ -171,7 +171,7 @@ public class WeatherForecast implements Serializable {
         }
         return "WeatherForecast: temp=" + temp + ", maxTemp=" + maxTemp
                 + ", minTemp=" + minTemp + ", pressure=" + pressure
-                + ", humidity=" + humidity + ", weatherId=" + weatherId
+                + ", humidity=" + humidity + ", weatherId=" + openWeatherId
                 + ", main=" + main + ", description=" + description + ", icon="
                 + icon + '.';
     }

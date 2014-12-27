@@ -42,6 +42,8 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public List<ControlMessages> checkData(Event event) {
+        //TODO percaso qui va anche controllata che la data di fine sia 
+        //successiva a quella di inizio, o lo fa fra?
         Calendar day = event.getStartDateTime();
         String city = event.getLocation();
         UserModel user = event.getOwner();

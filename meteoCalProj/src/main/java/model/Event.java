@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
@@ -89,7 +91,8 @@ public abstract class Event implements Serializable {
     @ManyToMany(mappedBy = "eventsInCalendar")
     private List<model.CalendarModel> inCalendars;
     
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST) //TODO ragionare su tutte le cascade
+    @JoinColumn    
     private WeatherForecast weather;
 
     /*

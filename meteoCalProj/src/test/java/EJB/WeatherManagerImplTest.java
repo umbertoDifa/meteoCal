@@ -71,6 +71,7 @@ public class WeatherManagerImplTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Ignore //lento
     public void testGetWeather() throws Exception {
         System.out.println("getWeather");
         //creo un event che termina dopo 30 secondi

@@ -68,7 +68,6 @@ public class WeatherManagerImpl implements WeatherManager {
     @Inject
     private NotificationManager notificationManager;
 
-    @Inject
     private EventManager eventManager;
 
     private Logger logger = LoggerProducer.debugLogger(WeatherManagerImpl.class);
@@ -84,6 +83,8 @@ public class WeatherManagerImpl implements WeatherManager {
     public WeatherManagerImpl() {
         this.openWeatherMap = new OpenWeatherMap(
                 "6f165fcce7eddd2405ef5c0596000ff7");
+        this.eventManager = new EventManagerImpl();
+
     }
 
     public WeatherManagerImpl(EntityManager database, NotificationManager notificationManager, EventManager eventManager) {
@@ -504,7 +505,7 @@ public class WeatherManagerImpl implements WeatherManager {
                 }
             } else {
                 logger.log(LoggerLevel.DEBUG,
-                        "dati aggiornati, nessuna notifica inviata perchè evento indoor");
+                        "Weather data updated, no notification sent becasue event is indoor");
             }
             //altrimenti non faccio nulla
 
