@@ -66,7 +66,7 @@ public class EventManagerImpl implements EventManager {
         logger.log(Level.INFO, "Forecast added to Event {0} ", event.getTitle());
 
         //schedulo updates weather
-        UpdateManagerImpl.addEvent(event);       
+        UpdateManagerImpl.addEvent(event);
         logger.log(Level.INFO, "Updates scheduled for Event {0} ",
                 event.getTitle());
 
@@ -184,8 +184,7 @@ public class EventManagerImpl implements EventManager {
         if (event != null) {
             database.refresh(event);
             return event;
-        } else //TODO ERRORE, O LO CONTROLLA FRA?
-        {
+        } else {
             return null;
         }
 

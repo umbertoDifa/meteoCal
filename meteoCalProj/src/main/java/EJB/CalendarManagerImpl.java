@@ -42,8 +42,6 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public List<ControlMessages> checkData(Event event) {
-        //TODO percaso qui va anche controllata che la data di fine sia 
-        //successiva a quella di inizio, o lo fa fra?
         Calendar day = event.getStartDateTime();
         String city = event.getLocation();
         UserModel user = event.getOwner();
@@ -80,9 +78,6 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     private boolean checkWeather(Calendar day, String city) {
         WeatherForecast forecast = weatherManager.getWeather(day, city);
-        //TODO aggiungo il forecast ai dati dell'evento nel db con un metodo
-        //non posso farlo qui perhè non ho i dati dell'evento
-        //lo devo fare quando lo schedulo
 
         //se non è buono ritorno false, false true
         if (forecast.getMessage() != WeatherMessages.BAD_WEATHER) {
@@ -184,37 +179,43 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public ControlMessages addToCalendar(Event event, CalendarModel calendar) {
-        //TODO check event!= null e find trova qualcsoa
-        event = database.find(Event.class, event.getId());
+        if (event != null) {
+            event = database.find(Event.class, event.getId());
+            if (event != null) {
+                for (CalendarModel cal : event.getOwner().getOwnedCalendars()) {
+                    cal.getEventsInCalendar().remove(event);
+                }
 
-        for (CalendarModel cal : event.getOwner().getOwnedCalendars()) {
-            cal.getEventsInCalendar().remove(event);
-        }
+                if (calendar != null) {
+                    
+                    calendar = (CalendarModel) database.createNamedQuery(
+                            "findCalbyUserAndTitle").setParameter("id",
+                                    calendar.getOwner()).setParameter(
+                                    "title", calendar.getTitle()).getSingleResult();
 
-        if (calendar != null) {
-            //TODO anche qui il check sulle exception di getSingleResult
-            calendar = (CalendarModel) database.createNamedQuery(
-                    "findCalbyUserAndTitle").setParameter("id",
-                            calendar.getOwner()).setParameter(
-                            "title", calendar.getTitle()).getSingleResult();
+                    if (calendar.addEventInCalendar(event)) {
+                        
+                        logger.log(Level.INFO,
+                                "Evento {0} aggiunto al calendario {1} di {2}",
+                                new Object[]{event.getTitle(),
+                                             calendar.getTitle(),
+                                             calendar.getOwner().getEmail()});
+                        database.flush();
+                        logger.log(LoggerLevel.DEBUG,
+                                "Events in calendar now: {0}",
+                                calendar.getEventsInCalendar());
 
-            if (calendar.addEventInCalendar(event)) {
-                //calendar.getEventsInCalendar().add(event);
-                logger.log(Level.INFO,
-                        "Evento {0} aggiunto al calendario {1} di {2}",
-                        new Object[]{event.getTitle(),
-                                     calendar.getTitle(),
-                                     calendar.getOwner().getEmail()});
-                database.flush();
-                logger.log(LoggerLevel.DEBUG, "Events in calendar now: {0}",
-                        calendar.getEventsInCalendar());
-
-                return ControlMessages.EVENT_ADDED;
+                        return ControlMessages.EVENT_ADDED;
+                    }
+                }
+                logger.log(Level.WARNING, "Evento non aggiunto al calendario");
+                return ControlMessages.ERROR_ADDING_EVENT_TO_CAL;
+            } else {
+                return ControlMessages.USER_NOT_FOUND;
             }
+        } else {
+            return ControlMessages.ERROR_ADDING_EVENT_TO_CAL;
         }
-        logger.log(Level.WARNING, "Evento non aggiunto al calendario");
-        return ControlMessages.ERROR_ADDING_EVENT_TO_CAL;
-
     }
 
     @Override

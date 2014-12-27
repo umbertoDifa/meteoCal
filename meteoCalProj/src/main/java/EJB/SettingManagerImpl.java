@@ -369,7 +369,7 @@ public class SettingManagerImpl implements SettingManager {
                 } else {
                     logger.log(LoggerLevel.DEBUG, "Trovato evento");
 
-                    //TODO check if the event is not in any other calendar
+                    //check if the event is not in any other calendar
                     if (eventManager.isInAnyCalendar(event, user)) {
                         logger.log(LoggerLevel.DEBUG,
                                 "Evento già in calendario");

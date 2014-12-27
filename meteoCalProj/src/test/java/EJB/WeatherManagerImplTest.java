@@ -71,11 +71,13 @@ public class WeatherManagerImplTest {
      * @throws java.lang.Exception
      */
     @Test
-    @Ignore //lento
+    @Ignore
     public void testGetWeather() throws Exception {
         System.out.println("getWeather");
-        //creo un event che termina dopo 30 secondi
+
+        //creo un event che inizia domani e  termina dopo 30 secondi
         Calendar startEvent = Calendar.getInstance();
+        startEvent.add(Calendar.DATE, 1);
         Calendar endEvent = Calendar.getInstance();
         endEvent.add(Calendar.SECOND, 30);
         Event event = new PublicEvent("Cena di natale", startEvent, endEvent,
@@ -89,6 +91,7 @@ public class WeatherManagerImplTest {
      * Test of updateWeather method, of class WeatherManagerImpl.
      */
     @Test
+    @Ignore
     public void testUpdateWeather() throws Exception {
         System.out.println("updateWeather");
 

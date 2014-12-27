@@ -402,12 +402,21 @@ public class WeatherManagerImpl implements WeatherManager {
                                               Calendar day) throws ForecastDayNotFoundException {
         logger.log(LoggerLevel.DEBUG, "Trying to find the forecast position...");
 
+        //create an aproximation of the date compatible with the openweather format
+        int offset = day.get(Calendar.HOUR_OF_DAY) % 3;
+        Calendar temp = (Calendar) day.clone();
+        temp.add(Calendar.HOUR_OF_DAY, offset * -1); //approximate to the closest small hour
+        temp.set(Calendar.MINUTE, 0);
+        temp.set(Calendar.SECOND, 0);
+
+
         if (forecast.hasForecast_List()) {
             for (int i = 0; i < forecast.getForecast_List_Count(); i++) {
                 if (forecast.getForecast_List().get(i) != null
                         && forecast.getForecast_List().get(i).hasDateTimeText()
                         && forecast.getForecast_List().get(i).getDateTimeText().
-                        contains(TimeTool.dateToTextDay(day.getTime()))) {
+                        contains(TimeTool.dateToTextDay(temp.getTime(),
+                                        "yyyy-MM-dd hh:mm:ss"))) {
                     return i;
                 }
             }
