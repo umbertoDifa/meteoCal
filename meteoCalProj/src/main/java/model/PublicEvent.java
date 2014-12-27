@@ -7,6 +7,7 @@ package model;
 
 import java.util.Calendar;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
@@ -25,7 +26,7 @@ import javax.persistence.Table;
 @DiscriminatorValue("PUBLIC")
 public class PublicEvent extends Event {
     
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "PUBLIC_JOIN")
     private List<UserModel> guests;
     

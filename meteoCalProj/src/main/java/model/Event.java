@@ -84,14 +84,15 @@ public abstract class Event implements Serializable {
 
     @ManyToOne
     private UserModel owner;
-
-    @OneToMany(mappedBy = "event")
+    
+    @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE)
     private List<Invitation> invitations;
 
-    @ManyToMany(mappedBy = "eventsInCalendar")
+    @ManyToMany(mappedBy = "eventsInCalendar", cascade = CascadeType.REMOVE)
     private List<model.CalendarModel> inCalendars;
     
-    @OneToOne
+
+    @OneToOne(cascade = {CascadeType.REMOVE}) 
     @JoinColumn    
     private WeatherForecast weather;
 

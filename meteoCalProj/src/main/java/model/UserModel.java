@@ -8,6 +8,7 @@ package model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -65,19 +66,19 @@ public class UserModel implements Serializable {
     @Column(columnDefinition = "ENUM('M','F')")
     private char gender;
 
-    @ManyToMany(mappedBy = "guests")
+    @ManyToMany(mappedBy = "guests" , cascade = CascadeType.REMOVE) 
     private List<PublicEvent> publicJoins;
 
-    @OneToMany(mappedBy = "invitee")
+    @OneToMany(mappedBy = "invitee", cascade = CascadeType.REMOVE)
     private List<Invitation> invitations;
 
-    @OneToMany(mappedBy = "recipient")
+    @OneToMany(mappedBy = "recipient", cascade = CascadeType.REMOVE)
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "owner")
     private List<Event> ownedEvents;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner", cascade = CascadeType.REMOVE)
     private List<CalendarModel> ownedCalendars;
 
     
