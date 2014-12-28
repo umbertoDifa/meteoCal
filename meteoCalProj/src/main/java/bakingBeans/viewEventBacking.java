@@ -254,7 +254,7 @@ public class viewEventBacking implements Serializable {
 
         if (publicAccess) {
             //salvo le public join se public
-            setPublicJoin();
+            setUpPublicJoin();
         }
 
         //se è il creatore
@@ -369,9 +369,8 @@ public class viewEventBacking implements Serializable {
         }
     }
 
-    private void setPublicJoin() {
-        //TODO
-
+    private void setUpPublicJoin() {
+        publicJoinUsers = eventManager.getPublicJoin(eventToShow);
     }
 
     public void addMessage(String summary) {

@@ -57,9 +57,9 @@ and open the template in the editor.
                 </p:tab>
             </p:tabView>
 
-            <h:form>
+            <h:form id="formPartecipate">
 
-                <h:commandButton value="Partecipaa" rendered="#{!viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.allowedToModify}" 
+                <p:commandButton value="Partecipa" update="formPartecipate" rendered="#{!viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.allowedToModify}" 
                                  action="#{viewEvent.partecipate()}"/><br/>
 
                 <p:splitButton id="button1" value="#{viewEvent.answerMessage}" rendered="#{viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.allowedToModify}">
