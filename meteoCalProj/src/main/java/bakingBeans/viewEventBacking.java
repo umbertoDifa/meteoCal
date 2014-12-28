@@ -6,9 +6,14 @@
 package bakingBeans;
 
 import EJB.interfaces.EventManager;
+import EJB.interfaces.InvitationManager;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -31,19 +36,26 @@ public class viewEventBacking implements Serializable {
     boolean allowedToPartecipate;
     boolean allowedToModify;
     boolean publicAccess;
+    private boolean hasInvitation;
     private List<UserModel> noAnswerInvitations = new ArrayList<>();
     private List<UserModel> acceptedInvitations = new ArrayList<>();
     private List<UserModel> declinedInvitations = new ArrayList<>();
     private List<UserModel> publicJoinUsers = new ArrayList<>();
     private boolean showInvitees;
+    private String answerMessage;
 
     @Inject
     EventManager eventManager;
 
     @Inject
+    InvitationManager invitationManager;
+
+    @Inject
     LoginBacking login;
 
     private boolean hasAnswered;
+    private boolean publicJoin;
+    private boolean partecipate;
 
     /**
      * Creates a new instance of viewEventBacking
@@ -146,12 +158,43 @@ public class viewEventBacking implements Serializable {
         this.showInvitees = showInvitees;
     }
 
+    public String getAnswerMessage() {
+        return answerMessage;
+    }
+
+    public void setAnswerMessage(String answerMessage) {
+        this.answerMessage = answerMessage;
+    }
+
+    public boolean isHasInvitation() {
+        return hasInvitation;
+    }
+
+    public void setHasInvitation(boolean hasInvitation) {
+        this.hasInvitation = hasInvitation;
+    }
+
+    public boolean isPublicJoin() {
+        return publicJoin;
+    }
+
+    public void setPublicJoin(boolean publicJoin) {
+        this.publicJoin = publicJoin;
+    }
+
+    public boolean isPartecipate() {
+        return partecipate;
+    }
+
+    public void setPartecipate(boolean partecipate) {
+        this.partecipate = partecipate;
+    }
+
     /*
-    *
-    * METHODS
-    *
-    */
-    
+     *
+     * METHODS
+     *
+     */
     public void findEventById() {
 
         eventToShow = eventManager.findEventbyId(eventId);
@@ -160,33 +203,107 @@ public class viewEventBacking implements Serializable {
             setParameters();
         } else {
             System.out.println("-eventToSHow è null");
-            //TODO: reindirizzare a pagina errore
+
+            ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+            try {
+                context.redirect(context.getRequestContextPath() + "/error.xhtml");
+            } catch (IOException ex) {
+
+            }
         }
     }
 
-    public void partecipate() {
-        //invitationManager.addPartecipant(eventId, login.getId);
+    public void doPartecipate() {
+        if (hasInvitation) {
+            invitationManager.setAnswer(getOwnedInvitation(), InvitationAnswer.YES);
+            hasAnswered = true;
+            partecipate = true;
+            answerMessage = "parteciperai";
+
+            addMessage(
+                    "Hai risposto all'evento");
+            System.out.println(
+                    "-doPartecipate");
+        } else {
+            if (publicAccess) {
+                //TODO public join
+                addMessage("da implementare");
+            } else {
+                addMessage("non puoi partecipare");
+            }
+        }
+    }
+
+    public void doDecline() {
+        if (hasInvitation) {
+            invitationManager.setAnswer(getOwnedInvitation(), InvitationAnswer.NO);
+            hasAnswered = true;
+            partecipate = false;
+            answerMessage = "non parteciperai";
+        } else {
+            addMessage("non puoi partecipare");
+        }
     }
 
     private void setParameters() {
+        //salvo se è public
+        publicAccess = eventToShow instanceof PublicEvent;
+
+        //salvo la lista invitati con varie risposte
+        setInvitations();
+
+        if (publicAccess) {
+            //salvo le public join se public
+            setPublicJoin();
+        }
+
+        //se è il creatore
         if (login.getCurrentUser().equals(eventToShow.getOwner())) {
+            //salvo che può modificare
             allowedToModify = true;
         }
+        //se non è il creatore dell evento e o l'evento è pubblico o ha un invito
         if (!login.getCurrentUser().equals(eventToShow.getOwner()) && ((eventToShow instanceof PublicEvent) || (getInvitees().contains(login.getCurrentUser())))) {
+            //allora può partecipare
             allowedToPartecipate = true;
-            InvitationAnswer answer = getAnswer();
-            if (answer != null) {
-                hasAnswered = true;
+
+            //salvo se ha un invito
+            hasInvitation = getInvitees().contains(login.getCurrentUser());
+
+            //se ha un invito
+            if (hasInvitation) {
+                //salvo la sua risposta in answer
+                InvitationAnswer answer = getAnswer();
+                if (answer != null) {
+                    //salvo che ha risposto
+                    hasAnswered = true;
+                    //e il messaggio da visualizzare sul bottone
+                    if (answer.equals(InvitationAnswer.YES)) {
+                        answerMessage = "parteciperai";
+                        partecipate = true;
+                    } else if (answer.equals(InvitationAnswer.NO)) {
+                        answerMessage = "non parteciperai";
+                    } else if (answer.equals(InvitationAnswer.NA)) {
+                        answerMessage = "rispondi";
+                    }
+                }
+                //se non ha un invito ma può partecipare
+            } else {
+                //se ha fatto public join
+                if (publicJoinUsers.contains(login.getCurrentUser())) {
+                    //imposto il msg da visualizzare sul bottone
+                    answerMessage = "parteciperai";
+                    publicJoin = true;
+                } else {
+                    answerMessage = "non parteciperai";
+                }
             }
 
-            //TODO finire
         }
-        publicAccess = eventToShow instanceof PublicEvent;
-        setInvitations();
     }
 
     private List<UserModel> getInvitees() {
-        List<UserModel> invitees = new ArrayList<UserModel>();
+        List<UserModel> invitees = new ArrayList<>();
         List<Invitation> list = eventToShow.getInvitations();
         if (list != null && list.size() > 0) {
             for (Invitation i : list) {
@@ -196,6 +313,21 @@ public class viewEventBacking implements Serializable {
         return invitees;
     }
 
+    private Invitation getOwnedInvitation() {
+        List<Invitation> list = eventToShow.getInvitations();
+        if (list != null && list.size() > 0) {
+            for (Invitation i : list) {
+                if (i.getInvitee().equals(login.getCurrentUser()));
+                return i;
+            }
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @return it returns the InvitationAnswer of the current user
+     */
     private InvitationAnswer getAnswer() {
         List<Invitation> list = eventToShow.getInvitations();
         if (list != null && list.size() > 0) {
@@ -231,7 +363,20 @@ public class viewEventBacking implements Serializable {
                     }
 
                 }
+            } else {
+                showInvitees = false;
             }
         }
     }
+
+    private void setPublicJoin() {
+        //TODO
+
+    }
+
+    public void addMessage(String summary) {
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, null);
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+
 }

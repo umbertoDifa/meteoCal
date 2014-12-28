@@ -22,6 +22,7 @@ and open the template in the editor.
         <ui:define name="title">event</ui:define>
 
         <ui:define name="content">
+
             <h1><h:outputText value="#{viewEvent.eventToShow.title}" /></h1>
 
             <h:outputLabel value="Title:" /><h:outputText value="#{viewEvent.eventToShow.title}"/><br/>
@@ -56,18 +57,26 @@ and open the template in the editor.
                 </p:tab>
             </p:tabView>
 
-            <!--        <h:outputText value=""/>  è o meno nel tuo calendario 
-                        <h:outputText value=""/>  se sei invitato se ci partecipi o no -->
+            <h:form>
 
-            <h:outputText rendered="#{!viewEvent.hasAnswered}">
-                <h:commandButton value="partecipa" rendered="#{viewEvent.allowedToPartecipate}" 
+                <h:commandButton value="Partecipaa" rendered="#{!viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.allowedToModify}" 
                                  action="#{viewEvent.partecipate()}"/><br/>
-            </h:outputText>
-            <h:outputText rendered="#{viewEvent.hasAnswered}">
-                <!-- TODO pulsanti non partecipo più ecc..-->
-            </h:outputText>
+
+                <p:splitButton id="button1" value="#{viewEvent.answerMessage}" rendered="#{viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.allowedToModify}">
+                    <p:menuitem value="Non Partecipa" update="button1" actionListener="#{viewEvent.doDecline()}" rendered="#{viewEvent.publicJoin}" />
+                    <p:menuitem value="partecipaa" update="button1" actionListener="#{viewEvent.doPartecipate()}" rendered="#{!viewEvent.publicJoin}" />
+                </p:splitButton>
+
+
+                <p:splitButton id="button2" value="#{viewEvent.answerMessage}" rendered="#{!viewEvent.publicAccess and !viewEvent.allowedToModify}">
+                    <p:menuitem value="Partecipo" update="button2" actionListener="#{viewEvent.doPartecipate()}" rendered="#{!viewEvent.hasAnswered or !viewEvent.partecipate}" />
+                    <p:menuitem value="Non Partecipo" update="button2" actionListener="#{viewEvent.doDecline()}" rendered="#{!viewEvent.hasAnswered or viewEvent.partecipate}" />
+                </p:splitButton>
+
+            </h:form>
+
             <p:button value="modifica" rendered="#{viewEvent.allowedToModify}" 
-                      outcome="/s/manageEvent.xhtml?idEvent=#{viewEvent.eventId}" /><br/> <!--passare in post id evento -->
+                      outcome="/s/manageEvent.xhtml?idEvent=#{viewEvent.eventId}" /><br/>
         </ui:define>
 
     </ui:composition>

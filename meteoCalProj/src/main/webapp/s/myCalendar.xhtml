@@ -14,6 +14,11 @@ and open the template in the editor.
 
     <ui:composition template="/template.xhtml">
 
+        <f:metadata>
+            <f:viewParam name="id" value="#{scheduleView.userId}"/>
+            <f:viewAction action="#{scheduleView.setUser}"/>
+        </f:metadata>
+
         <ui:define name="title">calendar</ui:define>
 
         <ui:define name="content">

@@ -7,6 +7,7 @@ package bakingBeans;
 
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
+import EJB.interfaces.SearchManager;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -25,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import model.CalendarModel;
 import model.Event;
+import model.UserModel;
 
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
@@ -49,6 +51,9 @@ public class ScheduleViewBacking implements Serializable {
 
     @Inject
     ManageEventBacking manageEvent;
+    
+    @Inject
+    SearchManager search;
 
     private ScheduleModel eventsToShow;
 
@@ -59,8 +64,12 @@ public class ScheduleViewBacking implements Serializable {
     private List<String> calendarNames;
 
     private String calendarSelected;
-    
+
     private CalendarModel calendarShown;
+
+    private String userId;
+    
+    private UserModel user;
 
     @PostConstruct
     public void init() {
@@ -131,6 +140,14 @@ public class ScheduleViewBacking implements Serializable {
         this.calendarShown = calendarShown;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public void updateEvent(ActionEvent actionEvent) {
 
         manageEvent.setTitle(event.getTitle());
@@ -176,7 +193,7 @@ public class ScheduleViewBacking implements Serializable {
         event = (ScheduleEvent) selectEvent.getObject();
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         try {
-            context.redirect(context.getRequestContextPath() + "/s/event.xhtml?id=" + event.getData());
+            context.redirect(context.getRequestContextPath() + "/s/eventPage.xhtml?id=" + event.getData());
         } catch (IOException ex) {
             //TODO msg error
         }
@@ -196,7 +213,7 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     public void onEventResize(ScheduleEntryResizeEvent event) {
-        
+
         updateEvent(null);
         //persisto l event con manageEventBacking
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
@@ -248,5 +265,10 @@ public class ScheduleViewBacking implements Serializable {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal;
+    }
+    
+    public void setUser(){
+        //user = search.findUserbyId(userId);
+        
     }
 }

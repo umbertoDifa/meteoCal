@@ -296,6 +296,7 @@ public class ManageEventBacking implements Serializable {
                 publicAccess = eventToCreate instanceof PublicEvent;
                 setInvitations();
                 //inizializzare calendarName
+                calendarName = searchCalendarByEvent();
 
             } else {
                 showMessage(null, "Nessun evento trovato", "");
@@ -321,13 +322,14 @@ public class ManageEventBacking implements Serializable {
         return null;
     }
 
-    public void save() {
+    public String save() {
         System.out.println("-dentro save");
         createOrLoadInstance();
         setUpInstance();
         saveIt();
 
-         //TODO gestire errori?
+        return "/s/eventPage.xhtml?id=" + idEvent + "&&faces-redirect=true";
+        //TODO gestire errori?
     }
 
     public String delete() {
@@ -470,12 +472,6 @@ public class ManageEventBacking implements Serializable {
                 setSaved(true);
                 idEvent = eventToCreate.getId().toString();
                 showMessage(null, "L'evento è stato salvato", "");
-                ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-                try {
-                    context.redirect(context.getRequestContextPath() + "/s/event.xhtml?id=" + idEvent);
-                } catch (IOException ex) {
-                    showMessage(null, "Redirect fallita", "");
-                }
             }
         }
     }
@@ -519,5 +515,15 @@ public class ManageEventBacking implements Serializable {
                 }
             }
         }
+    }
+
+    private String searchCalendarByEvent() {
+        List<CalendarModel> list = calendarManager.getCalendars(login.getCurrentUser());
+        for (CalendarModel c : list) {
+            if (c.getEventsInCalendar().contains(eventToCreate)) {
+                return c.getTitle();
+            }
+        }
+        return null;
     }
 }

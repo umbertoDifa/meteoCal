@@ -3,6 +3,8 @@ package utility;
 import EJB.interfaces.EventManager;
 import bakingBeans.LoginBacking;
 import java.io.IOException;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -49,25 +51,14 @@ public class PrivacyEventFilter implements Filter {
                 if (eventId != null) {
                     Event ev = eventManager.findEventbyId(Long.parseLong(eventId));
                     if (ev != null) {
-                        //se l'evento è public
-                        if (ev instanceof PublicEvent) {
-                            chain.doFilter(request, response);
-                            System.out.println("-Filto:ev public");
-                            //se è privato e se sei l'owner o hai un invito
-                        } else if ((ev instanceof PrivateEvent) && (ev.getOwner().equals(login.getCurrentUser()) || (ev.getInvitee().contains(login.getCurrentUser())))) {
-                            chain.doFilter(request, response);
-                            System.out.println("Filtro:ev privato e hai permessi");
-                        } else {
-                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Non hai i permessi per modificare l'evento");
+                        //se l'evento non è pubblico o è privato e sei l owner o hai un invito
+                        if (!(ev instanceof PublicEvent) && !((ev instanceof PrivateEvent) && (ev.getOwner().equals(login.getCurrentUser()) || (ev.getInvitee().contains(login.getCurrentUser()))))) {
+                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Non hai i permessi per visualizzare l'evento");
                             System.out.println("-Filtro: proibito");
-//                            String contextPath = ((HttpServletRequest) request).getContextPath();
-//                            ((HttpServletResponse) response).sendRedirect(contextPath + "/s/myCalendar.xhtml");
                         }
                     }
                 } else {
-
-                    System.out.println("-Filtro: else");
-                    //msg?
+                    System.out.println("-Filtro privacy: eventId null");
                 }
             }
         }

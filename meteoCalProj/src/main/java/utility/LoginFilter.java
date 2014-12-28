@@ -37,7 +37,6 @@ public class LoginFilter implements Filter {
         } else {
             String contextPath = ((HttpServletRequest) request).getContextPath();
             ((HttpServletResponse)response).sendError(HttpServletResponse.SC_FORBIDDEN, "La pagina non è disponibile, effettuare il log in");
-       //     ((HttpServletResponse) response).sendRedirect(contextPath + "/signUp.xhtml");
         }
 
     }

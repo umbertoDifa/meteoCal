@@ -47,7 +47,7 @@
         <filter-class>utility.PrivacyEventFilter</filter-class>
         <init-param>
             <param-name>pattern</param-name>
-            <param-value>event.xhtml</param-value>
+            <param-value>eventPage.xhtml</param-value>
         </init-param>
     </filter>
 

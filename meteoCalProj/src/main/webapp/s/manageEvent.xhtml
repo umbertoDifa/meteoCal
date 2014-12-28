@@ -30,12 +30,10 @@
                 <h:inputText value="#{eventToManage.title}" /><br/>
 
                 <h:outputLabel value="Add into:"/>
-                <h:selectOneMenu value="#{eventToManage.calendarName}">
-                    <c:forEach items="#{calendar.calendarNames}" var="cal">
-                        <f:selectItem itemValue="#{cal}" itemLabel="#{cal}" />
-                    </c:forEach>
+                <p:selectOneMenu value="#{eventToManage.calendarName}">
+                    <f:selectItems value="#{calendar.calendarNames}" />
                     <f:selectItem value="#{null}" itemLabel="Nessun Calendario" />
-                </h:selectOneMenu><br/>
+                </p:selectOneMenu><br/>
 
                 <h:outputLabel value="Starting date:" />
                 <h:inputText id="startingDate" value="#{eventToManage.startDate}">
@@ -72,7 +70,7 @@
                 <h:commandButton id="save" value="Save" action="#{eventToManage.save}"/>
                 <h:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/myCalendar.xhtml"/> 
                 <h:commandButton value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.delete}"/>
-                <h:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/event.xhtml?id=#{eventToManage.idEvent}"/>
+                <h:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.idEvent}"/>
 
                 <p:tabView>
                     <p:tab title="Partecipants:">
