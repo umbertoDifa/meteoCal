@@ -187,7 +187,7 @@ public class SettingManagerImpl implements SettingManager {
     }
 
     private void addIcalAttendees(CalendarModel calendar, int eventPosition, VEvent event) {
-        List<UserModel> attendees = eventManager.getInviteeFiltred(
+        List<UserModel> attendees = eventManager.getInviteesFiltered(
                 calendar.getEventsInCalendar().get(eventPosition),
                 InvitationAnswer.YES);
 

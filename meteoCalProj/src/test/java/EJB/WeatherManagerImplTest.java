@@ -119,7 +119,7 @@ public class WeatherManagerImplTest {
         when(forecast.getMain()).thenReturn("Clear");
 
         //le notifiche vanno mandate a la lista di invitati
-        when(eventManagerMock.getInviteeFiltred(event, InvitationAnswer.YES)).thenReturn(
+        when(eventManagerMock.getInviteesFiltered(event, InvitationAnswer.YES)).thenReturn(
                 invitee);
 
         weatherManager.updateWeather(event);

@@ -20,6 +20,10 @@ public enum NotificationType {
      * SE AGGIUNGETE ENTITA' A QUESTA CLASSE, DOVETE AGGIUNGERLA ANCHE ALL'ENUM
      * DEL DATABASE CHE TROVATE NELL'ENTITA' NOTIFICATION NEL CAMPO TYPE
      */
+    /**
+     * SE AGGIUNGETE ENTITA' A QUESTA CLASSE, DOVETE AGGIUNGERLA ANCHE ALL'ENUM
+     * DEL DATABASE CHE TROVATE NELL'ENTITA' NOTIFICATION NEL CAMPO TYPE
+     */
     INVITATION("Invitation to event {0}",
             "Hello {0},\n you''ve received an invitation for event {1} from {2}.\n "
             + "Have a look to the event page on the following link:\n{3}\nMeteoCalendarTeam"),
@@ -33,8 +37,12 @@ public enum NotificationType {
             "Hello {0},\n we inform you that event {1} has been modified\nLink:{3}"),
     EVENT_CANCELLED("Event {0} has been cancelled",
             "Hello {0},\n we inform you that event {1} has been cancelled\n"),
-    EVENT_PUBLIC("Event {0} has changed privacy from Private to Public",
-            "Hello {0},\n we inform you that event {1} has changed its privacy from Private to Public.\n");
+    EVENT_CHANGED_TO_PUBLIC(
+            "Event {0} has changed privacy from Private to Public",
+            "Hello {0},\n we inform you that event {1} has changed its privacy from Private to Public.\nLink:{3}"),
+    EVENT_CHANGED_TO_PRIVATE(
+            "Event {0} has changed privacy from Public to Private",
+            "Hello {0},\n we inform you that event {1} has changed its privacy from Public to Private.\n");
 
     private String subject;
     private String bodyMessage;

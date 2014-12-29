@@ -84,7 +84,9 @@ insert into EVENT_IN_CALENDAR (eventsInCalendar_ID, TITLE, OWNER_ID)
 
 insert into INVITATION (INVITEE_ID, EVENT_ID, ANSWER)
         values
-        (1,8,"YES");
+        (1,8,"YES"),
+        (4,8,"YES"),
+        (5,8,"YES");
 
 insert into NOTIFICATION (ID,TYPE, RECIPIENT_ID, RELATEDEVENT_ID)
     values 

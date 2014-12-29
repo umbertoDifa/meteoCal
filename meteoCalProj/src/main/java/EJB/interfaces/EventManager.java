@@ -23,24 +23,31 @@ public interface EventManager {
      *
      * @param user owner of the event
      * @param event Event to create
-     * @param insertInCalendar calendar in which the event has to be inserted, null if none
+     * @param insertInCalendar calendar in which the event has to be inserted,
+     * null if none
      * @param invitees invitati all'evento, null if none
      * @return true if created with success, false if not
      */
-    public boolean scheduleNewEvent( Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees);
-    
-    public List<Event> eventOnWall (utility.EventType type, int n, UserModel owner);
-    
+    public boolean scheduleNewEvent(Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees);
+
+    public List<Event> eventOnWall(utility.EventType type, int n, UserModel owner);
+
     public Event findEventbyId(Long id);
-    
+
     public boolean deleteEvent(Event event);
-    
-    public boolean updateEvent(Event event, CalendarModel inCalendar);
+
     public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees);
-        
-    public List<UserModel> getInviteeFiltred(Event event, InvitationAnswer answer);
-    
+
+    public List<UserModel> getInviteesFiltered(Event event, InvitationAnswer answer);
+
     public List<UserModel> getPublicJoin(Event event);
-    
+
+    public boolean addPublicJoin(Event event, UserModel user);
+
+    public boolean removePublicJoin(Event event, UserModel user);
+
     public boolean isInAnyCalendar(Event event, UserModel user);
+
+    public boolean changeEventPrivacy(Event event, boolean spreadInvitations);
+
 }

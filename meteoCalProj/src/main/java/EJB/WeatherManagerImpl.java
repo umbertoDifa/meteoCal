@@ -495,7 +495,7 @@ public class WeatherManagerImpl implements WeatherManager {
                     logger.log(LoggerLevel.DEBUG,
                             "Bad weather tomorrow detected");
 
-                    List<UserModel> participants = eventManager.getInviteeFiltred(
+                    List<UserModel> participants = eventManager.getInviteesFiltered(
                             event, InvitationAnswer.YES);
 
                     notificationManager.createNotifications(participants, event,
@@ -507,7 +507,7 @@ public class WeatherManagerImpl implements WeatherManager {
                     logger.log(LoggerLevel.DEBUG,
                             "Weather changed detected");
 
-                    List<UserModel> participants = eventManager.getInviteeFiltred(
+                    List<UserModel> participants = eventManager.getInviteesFiltered(
                             event, InvitationAnswer.YES);
 
                     notificationManager.createNotifications(participants, event,

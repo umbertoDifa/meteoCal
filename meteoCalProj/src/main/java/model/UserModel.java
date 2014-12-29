@@ -28,24 +28,25 @@ import javax.persistence.TableGenerator;
  * @author Luckyna
  */
 @Entity
-
 @NamedQueries({
-    @NamedQuery(name="findOwnedCalendar",query= "SELECT c FROM CalendarModel c WHERE c.owner =:id"),
-   
+    @NamedQuery(name = "findOwnedCalendar",
+                query = "SELECT c FROM CalendarModel c WHERE c.owner =:id"),
     //COME IMPOSTARE IL PARAMETRO: namedQuery.setParameter("search", "%" + value + "%");
-    @NamedQuery(name="findUserbyString",query= "SELECT u FROM UserModel u WHERE u.name LIKE :search OR u.surname LIKE :search OR u.email LIKE :search"),
-    
-    @NamedQuery ( name= "findUserbyEmail", query = "SELECT u FROM UserModel u WHERE u.email=:email")    
+    @NamedQuery(name = "findUserbyString",
+                query = "SELECT u FROM UserModel u WHERE u.name LIKE :search OR u.surname LIKE :search OR u.email LIKE :search"),
+
+    @NamedQuery(name = "findUserbyEmail",
+                query = "SELECT u FROM UserModel u WHERE u.email=:email")
 
 })
-
-@Table(name="USER")
+@Table(name = "USER")
 public class UserModel implements Serializable {
     //ATTRIBUTES
 
     @Id
-    @TableGenerator (name = "USER_SEQ", table = "SEQUENCE",  pkColumnName="SEQ_NAME",
-        valueColumnName="SEQ_COUNT", pkColumnValue="USER_SEQ")
+    @TableGenerator(name = "USER_SEQ", table = "SEQUENCE",
+                    pkColumnName = "SEQ_NAME",
+                    valueColumnName = "SEQ_COUNT", pkColumnValue = "USER_SEQ")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "USER_SEQ")
     private Long id;
 
@@ -66,7 +67,7 @@ public class UserModel implements Serializable {
     @Column(columnDefinition = "ENUM('M','F')")
     private char gender;
 
-    @ManyToMany(mappedBy = "guests" , cascade = CascadeType.REMOVE) 
+    @ManyToMany(mappedBy = "guests", cascade = CascadeType.REMOVE)
     private List<PublicEvent> publicJoins;
 
     @OneToMany(mappedBy = "invitee", cascade = CascadeType.REMOVE)
@@ -78,15 +79,14 @@ public class UserModel implements Serializable {
     @OneToMany(mappedBy = "owner")
     private List<Event> ownedEvents;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner", cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner",
+               cascade = CascadeType.REMOVE)
     private List<CalendarModel> ownedCalendars;
 
-    
-
- /*
- *
- *   CONSTRUCTORS
- */
+    /*
+     *
+     *   CONSTRUCTORS
+     */
     public UserModel() {
     }
 
@@ -96,15 +96,11 @@ public class UserModel implements Serializable {
         this.email = email;
         this.password = password;
     }
-    
-    
-    
 
-
-/*
- *
- *   SETTERS & GETTERS
- */
+    /*
+     *
+     *   SETTERS & GETTERS
+     */
     public String getSurname() {
         return surname;
     }
@@ -126,7 +122,7 @@ public class UserModel implements Serializable {
     }
 
     public List<CalendarModel> getOwnedCalendars() {
-        
+
         return ownedCalendars;
     }
 
@@ -152,6 +148,14 @@ public class UserModel implements Serializable {
 
     public void setPublicJoins(List<PublicEvent> publicJoins) {
         this.publicJoins = publicJoins;
+    }
+
+    public void addPublicJoin(PublicEvent event) {
+        this.publicJoins.add(event);
+    }
+
+    public void deletePublicJoin(PublicEvent event) {
+        this.publicJoins.remove(event);
     }
 
     public List<Invitation> getInvitations() {
@@ -215,7 +219,8 @@ public class UserModel implements Serializable {
             return false;
         }
         UserModel other = (UserModel) object;
-        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
+        return !((this.id == null && other.id != null) || (this.id != null
+                && !this.id.equals(other.id)));
     }
 
 }

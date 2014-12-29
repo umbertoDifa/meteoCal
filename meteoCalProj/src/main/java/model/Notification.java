@@ -39,7 +39,7 @@ public class Notification implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('INVITATION', 'EVENT_CHANGED',"
-            + " 'EVENT_CANCELLED', 'EVENT_PUBLIC', 'WEATHER_CHANGED','BAD_WEATHER_TOMORROW' )",
+            + " 'EVENT_CANCELLED', 'EVENT_CHANGED_TO_PUBLIC','EVENT_CHANGED_TO_PRIVATE', 'WEATHER_CHANGED','BAD_WEATHER_TOMORROW' )",
             nullable = false)
     private NotificationType type;
 

@@ -25,6 +25,7 @@ import model.PublicEvent;
 import model.PrivateEvent;
 import model.UserModel;
 import model.WeatherForecast;
+import utility.LoggerLevel;
 
 @Stateless
 public class EventManagerImpl implements EventManager {
@@ -84,20 +85,198 @@ public class EventManagerImpl implements EventManager {
         //TODO attualmente il metodo ritorna sempre true
     }
 
+    //TODO check
     @Override
     public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees) {
+        logger.log(LoggerLevel.DEBUG, "Appena entrato in UpdateEvent");
+        //se l'update dei parametri generici va a buon fine
         if (updateEvent(event, inCalendar)) {
+            //cerco di creare gli inviti per i nuovi initees
             try {
                 if (invitees != null && invitees.size() > 0) {
                     invitationManager.createInvitations(invitees, event);
-                }
+                }                
                 return true;
             } catch (PersistenceException e) {
+                logger.log(Level.SEVERE, e.getMessage(), e);
                 return false;
             }
+
         } else {
+            logger.log(Level.SEVERE, "Failed to updateEvent");
             return false;
         }
+
+    }
+
+    /**
+     * Aggiorna possibilmente tutti i parametri cambiati dell'evento
+     *
+     * @param event evento da aggiornare
+     * @param inCalendar calendario in cui aggiungerlo (se necessario)
+     * @return true se tutto ok, false altrimenti
+     */
+    private boolean updateEvent(Event event, CalendarModel inCalendar) {
+        try {
+
+            //recupero l'evento
+            Event vecchioEvento = database.find(Event.class, event.getId());
+            logger.log(LoggerLevel.DEBUG, "il vecchio evento \u00e8:\n{0}",
+                    vecchioEvento.toString());
+            logger.log(LoggerLevel.DEBUG, "il nuovo evento \u00e8:\n{0}",
+                    event.toString());
+
+            //salvo i vecchi invitati
+            List<UserModel> oldInvitees = vecchioEvento.getInvitee();
+            logger.log(LoggerLevel.DEBUG, "I vecchi invitati sono:\n{0}",
+                    oldInvitees);
+
+            //update event data
+            if (updateEventData(event)) {
+                //mando la notifica
+                notificationManager.createNotifications(oldInvitees,
+                        vecchioEvento,
+                        NotificationType.EVENT_CHANGED, false);
+            }
+            //a questo punto se ci sono stati cambiamenti il vecchio evento
+            //ha tutte le info del nuovo tranne la privacy
+
+            //aggiungo l'evento al (nuovo) calendario se necessario
+            if (inCalendar != null) {
+                calManager.addToCalendar(vecchioEvento, inCalendar);
+                logger.log(LoggerLevel.DEBUG, "evento aggiunto al celendario{0}",
+                        inCalendar);
+            }
+
+            //sincronizza il db nel dubbio
+            database.flush();
+            return true;
+
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
+            return false;
+        }
+
+    }
+
+    /**
+     * Aggiorna tutti i dati (tranne calendario e invitati) dell'evento
+     *
+     * @param event evento da aggiornare
+     * @return true se alcuni parametri sono stati aggiornati
+     */
+    private boolean updateEventData(Event event) {
+        Event oldEvent = database.find(Event.class, event.getId());
+        boolean changed = false;
+
+        //aggiorno la descrizione
+        if (!oldEvent.getDescription().equals(event.getDescription())) {
+            oldEvent.setDescription(event.getDescription());
+            changed = true;
+        }
+        //aggiorno fine evento
+        if (oldEvent.getEndDateTime() != event.getEndDateTime()) {
+            oldEvent.setEndDateTime(event.getEndDateTime());
+            changed = true;
+        }
+        //aggiorno imgPath
+        if (!oldEvent.getImgPath().equals(event.getImgPath())) {
+            oldEvent.setImgPath(event.getImgPath());
+            changed = true;
+        }
+        //aggiorno location
+        if (!oldEvent.getLocation().equals(event.getLocation())) {
+            oldEvent.setLocation(event.getLocation());
+            changed = true;
+        }
+        //aggiorno inizio evento
+        if (oldEvent.getStartDateTime() != event.getStartDateTime()) {
+            oldEvent.setStartDateTime(event.getStartDateTime());
+            changed = true;
+        }
+        //aggiorno titolo
+        if (!oldEvent.getTitle().equals(event.getTitle())) {
+            oldEvent.setTitle(event.getTitle());
+            changed = true;
+        }
+        //aggiorno outdoor
+        if (oldEvent.isIsOutdoor() != event.isIsOutdoor()) {
+            oldEvent.setIsOutdoor(event.isIsOutdoor());
+            changed = true;
+        }
+
+        //sincronizzo ogni eventuale cambiamento col db
+        database.flush();
+
+        logger.log(LoggerLevel.DEBUG,
+                "Event Data updated with modification: {0}", changed);
+
+        return changed;
+    }
+
+    //TODO check
+    @Override
+    public boolean changeEventPrivacy(Event event, boolean spreadInvitations) {
+        //mi salvo il vecchio id
+        Long oldId = event.getId();
+
+        //cerco il vecchio evento
+        Event oldEvent = database.find(Event.class, oldId);
+
+        List<UserModel> oldInvitees = oldEvent.getInvitee();
+        List<Invitation> oldInvitations = oldEvent.getInvitations();
+
+        //se passo da private a public
+        if (oldEvent instanceof PrivateEvent && event instanceof PublicEvent) {
+
+            database.remove(oldEvent);//TODO qui le cascade?            
+            database.persist(event);
+
+            //a questo punto ho creato un evento con un id nuovo, quindi 
+            //ripristino il vecchio id
+            event.setId(oldId);
+
+            //risetto anche gli invitati vecchi
+            event.setInvitations(oldInvitations);
+
+            //persisto i cambiamenti
+            database.flush();
+
+            notificationManager.createNotifications(oldInvitees, event,
+                    NotificationType.EVENT_CHANGED_TO_PUBLIC, false);
+            return true;
+
+        } else if (oldEvent instanceof PublicEvent
+                && event instanceof PrivateEvent) {
+            //se passo da public a private
+
+            //semplicemente persisto in nuovo evento privato eliminando
+            //il pubblico
+            database.remove(oldEvent);//TODO qui le cascade?            
+            database.persist(event);
+
+            //a questo punto ho creato un evento con un id nuovo, quindi 
+            //ripristino il vecchio id
+            event.setId(oldId);
+
+            // risetto  gli invitati vecchi
+            event.setInvitations(oldInvitations);
+
+            //se l'utente vuole creare inviti anche per la gente con le public join
+            if (spreadInvitations) {
+                List<UserModel> newInvitees = getPublicJoin(oldEvent);
+                invitationManager.createInvitations(newInvitees, event);
+            }
+
+            //persisto i cambiamenti
+            database.flush();
+
+            notificationManager.createNotifications(oldInvitees, event,
+                    NotificationType.EVENT_CHANGED_TO_PRIVATE, false);
+
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -214,75 +393,25 @@ public class EventManagerImpl implements EventManager {
 
     }
 
+    /**
+     * Get all the invitees with a particular answer
+     *
+     * @param event event to serch invitees for
+     * @param answer answer of the invitees
+     * @return the invitees who answered like answer
+     */
     @Override
-    public List<UserModel> getInviteeFiltred(Event event, InvitationAnswer answer) {
+    public List<UserModel> getInviteesFiltered(Event event, InvitationAnswer answer) {
         event = database.find(Event.class, event.getId());
         List<Invitation> invitations = event.getInvitations();
         List<UserModel> users = new ArrayList<>();
-        //TODO ma qui non basta scrivere invitation.getAnswer().equals(answer) invece
-        //di fare uno switch?
-        switch (answer) {
-            case YES: {
-                for (Invitation invitation : invitations) {
-                    if (invitation.getAnswer().equals(InvitationAnswer.YES)) {
-                        users.add(invitation.getInvitee());
-                    }
-                }
-            }
-            case NO: {
-                for (Invitation invitation : invitations) {
-                    if (invitation.getAnswer().equals(InvitationAnswer.NO)) {
-                        users.add(invitation.getInvitee());
-                    }
-                }
 
-            }
-            case NA: {
-                for (Invitation invitation : invitations) {
-                    if (invitation.getAnswer().equals(InvitationAnswer.NA)) {
-                        users.add(invitation.getInvitee());
-                    }
-                }
+        for (Invitation invitation : invitations) {
+            if (invitation.getAnswer().equals(answer)) {
+                users.add(invitation.getInvitee());
             }
         }
         return users;
-    }
-
-    @Override
-    public boolean updateEvent(Event event, CalendarModel inCalendar) {
-        try {
-            Event oldEvent = database.find(Event.class, event.getId());
-            List<UserModel> oldinvitees = new ArrayList<>();
-            for (Invitation invitation : oldEvent.getInvitations()) {
-                oldinvitees.add(invitation.getInvitee());
-            }
-            if (oldEvent instanceof PrivateEvent && event instanceof PublicEvent) {
-                // event.setId(oldEvent.getId());
-
-                notificationManager.createNotifications(oldinvitees, oldEvent,
-                        NotificationType.EVENT_PUBLIC, false);
-                database.remove(oldEvent);
-                database.persist(event);
-
-            } else if (oldEvent instanceof PublicEvent
-                    && event instanceof PrivateEvent) {
-                //TODO implementare cambio di privacy da public a private
-            }
-            if (!(oldEvent.getTitle().equals(event.getTitle())
-                    && oldEvent.getStartDateTime().equals(
-                            event.getStartDateTime())
-                    && oldEvent.getEndDateTime().equals(event.getEndDateTime()))) {
-                notificationManager.createNotifications(oldinvitees, oldEvent,
-                        NotificationType.EVENT_CHANGED, false);
-            }
-
-            database.flush();
-            return true;
-
-        } catch (PersistenceException e) {
-            return false;
-        }
-
     }
 
     @Override
@@ -300,9 +429,43 @@ public class EventManagerImpl implements EventManager {
     }
 
     @Override
-    public boolean isInAnyCalendar(Event event, UserModel user) {
+    public boolean addPublicJoin(Event event, UserModel user) {
+
+        if (user != null && event != null) {
+            if (event instanceof PublicEvent) {
+                user = database.find(UserModel.class, user.getId());
+                if (user != null) {
+                    user.addPublicJoin((PublicEvent) event);
+                    database.flush();
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    @Override
+    public boolean removePublicJoin(Event event, UserModel user) {
+        if (user != null && event != null) {
+            if (event instanceof PublicEvent) {
+                user = database.find(UserModel.class, user.getId());
+                if (user != null) {
+                    user.deletePublicJoin((PublicEvent) event);
+                    database.flush();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isInAnyCalendar(Event event, UserModel user
+    ) {
         int i = (int) database.createNamedQuery("isInAnyCalendar").setParameter(
                 1, event.getId()).setParameter(2, user.getId()).getSingleResult();
         return i != 0;
     }
+
 }

@@ -201,6 +201,7 @@ public class CalendarManagerImpl implements CalendarManager {
                                              calendar.getTitle(),
                                              calendar.getOwner().getEmail()});
                         database.flush();
+                        database.refresh(calendar);
                         logger.log(LoggerLevel.DEBUG,
                                 "Events in calendar now: {0}",
                                 calendar.getEventsInCalendar());

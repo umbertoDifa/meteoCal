@@ -98,14 +98,14 @@ public class SettingManagerImplTest {
         attendees.add(attendee);
 
         //comuqnue vada quando chiamo il metodo getInviteeFiltered ritorna la lista di atendees costruita qui
-        when(eventManager.getInviteeFiltred(Matchers.any(
+        when(eventManager.getInviteesFiltered(Matchers.any(
                 Event.class), Matchers.any(InvitationAnswer.class))).thenReturn(
                         attendees);
 
         settingManager.exportCalendar(cal);
 
         //verifico che quel metodo venga chiamato una sola volta
-        verify(eventManager, times(1)).getInviteeFiltred(
+        verify(eventManager, times(1)).getInviteesFiltered(
                 Matchers.any(Event.class), Matchers.any(InvitationAnswer.class));
 
     }
