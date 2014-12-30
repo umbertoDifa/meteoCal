@@ -11,9 +11,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import model.CalendarModel;
 import model.Event;
+import model.PrivateEvent;
 import model.UserModel;
 import utility.ControlMessages;
 import utility.LoggerLevel;
@@ -49,7 +51,7 @@ public class CalendarManagerImpl implements CalendarManager {
         List<ControlMessages> result = new ArrayList<>();
 
         boolean weatherIsOk = checkWeather(day, city);
-        boolean haveConflicts = !checkConflicts(user, event);
+        boolean haveConflicts = isInConflict(user, event);
 
         //se tutto ok
         if (weatherIsOk && !haveConflicts) {
@@ -91,52 +93,62 @@ public class CalendarManagerImpl implements CalendarManager {
      *
      * @param user l'utente che sta facendo l'evento
      * @param event l'evento da fare
-     * @return true se non conflitti, false se ci sono conflitti
+     * @return false se non conflitti, true se ci sono conflitti
      */
-    private boolean checkConflicts(UserModel user, Event event) {
-        //TODO, non capisco qui faccio una find di un evento che sicuro non è nel db
-        //perchè sono nel momento in cui sto controllando se un evento potrebbe avere
-        //conflitti prima di salvarlo
-        event = database.find(Event.class, event.getId());
+    @Override
+    public boolean isInConflict(UserModel user, Event event) {
+        //TODO controllare che questo metodo venga chiamato anche quando faccio l'update cambiando data/ora
         if (user != null && event != null) {
-            //TODO, qui ho paura della getFirstresult perchè nella javadoc c'è scritto
-            //che bisogna settare setFirstResult
-            int conflictingEventIndex = database.createNamedQuery(
+            try {
+            Event firstConflict = (Event) database.createNamedQuery(
                     "isConflicting").setParameter(
                             "user", user).setParameter("end",
                             event.getEndDateTime()).setParameter(
                             "start", event.getStartDateTime()).setParameter("id",
-                            event.getId()).getFirstResult();
-
-            //se ci sono conflitti
-            //TODO check if this works
-            if (conflictingEventIndex != 0) {
-                return false;
-            }
+                            event.getId()).getSingleResult();
+            
+            //se non alza eccezioni è perchè ha trovato conflitti
             return true;
+            
+            //TODO questo workaround è bruttino ma non ho trovato altri metodi altrettanto efficienti.
+            //Un'altra opzione sarebbe quella di far tornare una lista e farne la size, ma è molto meno efficiente
+            }catch (NoResultException e)  {
+                return false;
+                
+            }
         } else {
+            
+            //TODO da gestire con una eccezione!
             logger.log(Level.SEVERE, "User or event is null.");
-            return false;
+            return true;
         }
     }
 
-    //TODO, questa la facciamo chiamare da fra?
-    private int findFreeSlots(UserModel user, Event event) {
+    @Override
+    //TODO, questa la facciamo chiamare da fra? --> sì, ma in abbinamento a isInConflict (da chiamare solo se quello ritorna true)
+    public int findFreeSlots(UserModel user, Event event) {
         int searchRange = 15;
-        Calendar newStart = event.getStartDateTime();
-        Calendar newEnd = event.getEndDateTime();
+        Calendar tempDateTime;
+        Event tempEvent = new PrivateEvent();
+        tempEvent.setId(event.getId());
         for (int i = 1; i < searchRange; i++) {
-            newEnd.add(Calendar.DAY_OF_MONTH, i);
-            newStart.add(Calendar.DAY_OF_MONTH, i);
-            int conflictingEventIndex = database.createNamedQuery(
-                    "isConflicting").setParameter("user", user).setParameter(
-                            "end", newEnd).setParameter("start", newStart).setParameter(
-                            "id", event.getId()).getFirstResult();
-            if (conflictingEventIndex == 0) {
-                return i;
-            }
+
+            //setto nuova data inizio
+            tempDateTime = event.getStartDateTime();
+            tempDateTime.add(Calendar.DAY_OF_MONTH, i);
+            tempEvent.setStartDateTime(tempDateTime);
+            //setto nuova data fine
+            tempDateTime = event.getEndDateTime();
+            tempDateTime.add(Calendar.DAY_OF_MONTH, i);
+            tempEvent.setEndDateTime(tempDateTime);
+            
+            
+            if (!isInConflict(user, tempEvent));
+            return i;
         }
-        return 0;
+        
+        //TODO modificare questo orrore
+        return -1;
     }
 
     @Override

@@ -50,4 +50,7 @@ public interface CalendarManager {
 
     public List<String> getCalendarTitles(UserModel user);
 
+    public boolean isInConflict(UserModel user, Event event);
+    
+    public int findFreeSlots(UserModel user, Event event);
 }
