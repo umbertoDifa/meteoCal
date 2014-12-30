@@ -372,10 +372,11 @@ public class EventManagerImpl implements EventManager {
     @Override
     public boolean deleteEvent(Event event) {
         try {
-            database.find(Event.class, event.getId());
+           event =  database.find(Event.class, event.getId());
             database.remove(event);
             return true;
         } catch (IllegalArgumentException e) {
+            logger.log(LoggerLevel.DEBUG, "Evento: {0} non trovato", event.getId());
             return false;
         }
 
