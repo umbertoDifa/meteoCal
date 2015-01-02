@@ -49,5 +49,8 @@ public interface EventManager {
     public boolean isInAnyCalendar(Event event, UserModel user);
 
     public boolean changeEventPrivacy(Event event, boolean spreadInvitations);
+    
+    public void setEventPicture(String path, Event event);
+    
 
 }
