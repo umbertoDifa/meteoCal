@@ -95,7 +95,7 @@ public class EventManagerImpl implements EventManager {
             try {
                 if (invitees != null && invitees.size() > 0) {
                     invitationManager.createInvitations(invitees, event);
-                }                
+                }
                 return true;
             } catch (PersistenceException e) {
                 logger.log(Level.SEVERE, e.getMessage(), e);
@@ -372,24 +372,12 @@ public class EventManagerImpl implements EventManager {
     @Override
     public boolean deleteEvent(Event event) {
         try {
-           event =  database.find(Event.class, event.getId());
+            event = database.find(Event.class, event.getId());
             database.remove(event);
             return true;
         } catch (IllegalArgumentException e) {
             logger.log(LoggerLevel.DEBUG, "Evento: {0} non trovato", event.getId());
             return false;
-        }
-
-    }
-
-    private void findFreeSlots(UserModel user, Event event) {
-        int searchRange = 15;
-        for (CalendarModel calendar : user.getOwnedCalendars()) {
-            boolean found = false;
-            for (int i = 0; (i < searchRange && !found); i++) {
-                calendar.getEventsInCalendar();
-
-            }
         }
 
     }
@@ -467,6 +455,13 @@ public class EventManagerImpl implements EventManager {
         int i = (int) database.createNamedQuery("isInAnyCalendar").setParameter(
                 1, event.getId()).setParameter(2, user.getId()).getSingleResult();
         return i != 0;
+    }
+
+    @Override
+    public void setEventPicture(String path, Event event) {
+        event = database.find(Event.class, event.getId());
+        event.setImgPath(path);
+        database.flush();
     }
 
 }

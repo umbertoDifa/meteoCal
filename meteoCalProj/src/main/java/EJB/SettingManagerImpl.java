@@ -60,9 +60,10 @@ public class SettingManagerImpl implements SettingManager {
 
     /**
      * Constructor for the test
+     *
      * @param eventManager
      * @param calendarManager
-     * @param database 
+     * @param database
      */
     public SettingManagerImpl(EventManager eventManager, CalendarManager calendarManager, EntityManager database) {
         this.eventManager = eventManager;
@@ -320,9 +321,11 @@ public class SettingManagerImpl implements SettingManager {
 
                     //I save the properies I need
                     switch (property.getName()) {
-                        case "SUMMARY": eventName = property.getValue();
+                        case "SUMMARY":
+                            eventName = property.getValue();
                             break;
-                        case "UID": eventId = property.getValue();
+                        case "UID":
+                            eventId = property.getValue();
                             break;
                         case "ORGANIZER":
                             eventOwner = property.getValue();
@@ -413,4 +416,10 @@ public class SettingManagerImpl implements SettingManager {
         }
     }
 
+    @Override
+    public void setAvatar(String path, UserModel user) {
+        user = database.find(UserModel.class ,user.getId());
+        user.setAvatarPath(path);
+        database.flush();
+    }
 }
