@@ -43,17 +43,27 @@ public class EditPermissionFilter implements Filter {
             String uri = ((HttpServletRequest) request).getRequestURI();
             // check whether a query string exists and check if it starts with the pattern
             if (uri != null && uri.endsWith(pattern)) {
-                //se l'evento che cerchi di modificare ha come owner te
+                // salvo il parametro idEvent
                 String eventId = ((HttpServletRequest) request).getParameter("idEvent");
+                // se c è
                 if (eventId != null) {
+                    // cerco evento corrispondente
                     Event ev = eventManager.findEventbyId(Long.parseLong(eventId));
+                    // se c è
                     if (ev != null) {
+                        // se l utente non è l owner
                         if (!login.getCurrentUser().equals(ev.getOwner())) {
-                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Non hai i permessi per modificare l'evento");
+                            // sollevo un errore 403
+                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Non hai i permessi per modificare questo evento");
                         }
+                    } else {
+                        System.out.println("-l'ev vale: " + ev);
+                        // se non c è sollevo un errore 404
+                        ((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND, "Non è stato trovato alcun evento");
                     }
                 } else {
-                    ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Non è stato trovato alcun errore");
+                    System.out.println("-nell else, l'eventId vale: " + eventId);
+
                 }
             }
         }

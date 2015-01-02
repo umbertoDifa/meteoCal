@@ -51,23 +51,25 @@ and open the template in the editor.
                 <p:tab title="Joined">
                     <h:form>
                         <p:dataScroller value="#{events.joinedEvents}" var="ev" chunkSize="10">
-                            <h:panelGrid columns="2" style="width:100%">
-                                <p:graphicImage/> 
+                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
+                                <h:panelGrid columns="2">
+                                    <p:graphicImage value="/resources/img/default.png"/> 
 
-                                <p:outputPanel>
-                                    <h:panelGrid columns="2" cellpadding="5">
-                                        <h:outputText value="Title:" />
-                                        <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:outputText value="Title:" />
+                                            <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
 
-                                        <h:outputText value="Date:" />
-                                        <h:outputText value="#{ev.formattedStartDate}"/>
+                                            <h:outputText value="Date:" />
+                                            <h:outputText value="#{ev.formattedStartDate}"/>
 
-                                        <h:outputText value="By:" />
-                                        <h:outputLabel value="#{ev.owner.email}"/>
-                                    </h:panelGrid>
-                                </p:outputPanel>
+                                            <h:outputText value="By:" />
+                                            <h:outputLabel value="#{ev.owner.email}"/>
+                                        </h:panelGrid>
+                                    </p:outputPanel>
 
-                            </h:panelGrid>
+                                </h:panelGrid>
+                            </p:fieldset>
                             <f:facet name="loader">
                                 <p:commandButton type="button" value="More"/>
                             </f:facet>
@@ -77,23 +79,25 @@ and open the template in the editor.
                 <p:tab title="Wall">
                     <h:form>
                         <p:dataScroller value="#{events.wallEvents}" var="ev" chunkSize="10">
-                            <h:panelGrid columns="2" style="width:100%">
-                                <p:graphicImage/> 
+                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
+                                <h:panelGrid columns="2">
+                                    <p:graphicImage value="/resources/img/default.png"/> 
 
-                                <p:outputPanel>
-                                    <h:panelGrid columns="2" cellpadding="5">
-                                        <h:outputText value="Title:" />
-                                        <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:outputText value="Title:" />
+                                            <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
 
-                                        <h:outputText value="Date:" />
-                                        <h:outputText value="#{ev.formattedStartDate}"/>
+                                            <h:outputText value="Date:" />
+                                            <h:outputText value="#{ev.formattedStartDate}"/>
 
-                                        <h:outputText value="By:" />
-                                        <h:outputLabel value="#{ev.owner.email}"/>
-                                    </h:panelGrid>
-                                </p:outputPanel>
+                                            <h:outputText value="By:" />
+                                            <h:outputLabel value="#{ev.owner.email}"/>
+                                        </h:panelGrid>
+                                    </p:outputPanel>
 
-                            </h:panelGrid>
+                                </h:panelGrid>
+                            </p:fieldset>
                             <f:facet name="loader">
                                 <p:commandButton type="button" value="More"/>
                             </f:facet>
@@ -103,23 +107,25 @@ and open the template in the editor.
                 <p:tab title="Invitations">
                     <h:form>
                         <p:dataScroller value="#{events.invitations}" var="ev" chunkSize="10">
-                            <h:panelGrid columns="2" style="width:100%">
-                                <p:graphicImage/> 
+                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
+                                <h:panelGrid columns="2">
+                                    <p:graphicImage value="/resources/img/default.png"/> 
 
-                                <p:outputPanel>
-                                    <h:panelGrid columns="2" cellpadding="5">
-                                        <h:outputText value="Title:" />
-                                        <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:outputText value="Title:" />
+                                            <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
 
-                                        <h:outputText value="Date:" />
-                                        <h:outputText value="#{ev.formattedStartDate}"/>
+                                            <h:outputText value="Date:" />
+                                            <h:outputText value="#{ev.formattedStartDate}"/>
 
-                                        <h:outputText value="By:" />
-                                        <h:outputLabel value="#{ev.owner.email}"/>
-                                    </h:panelGrid>
-                                </p:outputPanel>
+                                            <h:outputText value="By:" />
+                                            <h:outputLabel value="#{ev.owner.email}"/>
+                                        </h:panelGrid>
+                                    </p:outputPanel>
 
-                            </h:panelGrid>
+                                </h:panelGrid>
+                            </p:fieldset>
                             <f:facet name="loader">
                                 <p:commandButton type="button" value="More"/>
                             </f:facet>

@@ -465,14 +465,18 @@ public class ManageEventBacking implements Serializable {
         //passo all eventManager l'ownerId, l'evento riempito, il calendario
         //dove metterlo e la lista degli invitati
         System.out.println("-dentro save it");
-        if (isSaved()) {
-            eventManager.updateEvent(eventToCreate, calendar, guests);
-        } else {
-            if (eventManager.scheduleNewEvent(eventToCreate, calendar, guests)) {
-                setSaved(true);
-                idEvent = eventToCreate.getId().toString();
-                showMessage(null, "L'evento è stato salvato", "");
+        if (eventToCreate.getEndDateTime().compareTo(eventToCreate.getStartDateTime()) >= 0) {
+            if (isSaved()) {
+                eventManager.updateEvent(eventToCreate, calendar, guests);
+            } else {
+                if (eventManager.scheduleNewEvent(eventToCreate, calendar, guests)) {
+                    setSaved(true);
+                    idEvent = eventToCreate.getId().toString();
+                    showMessage(null, "L'evento è stato salvato", "");
+                }
             }
+        } else {
+            showMessage(login.getCurrentUser().getEmail(), "evento non salvato", "date non corrette");
         }
     }
 
