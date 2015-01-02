@@ -294,6 +294,7 @@ public class ManageEventBacking implements Serializable {
                 endTime = timeFormat.format(eventToCreate.getEndDateTime().getTime());
                 setSaved(true);
                 publicAccess = eventToCreate instanceof PublicEvent;
+                outdoor = eventToCreate.isIsOutdoor();
                 setInvitations();
                 //inizializzare calendarName
                 calendarName = searchCalendarByEvent();
