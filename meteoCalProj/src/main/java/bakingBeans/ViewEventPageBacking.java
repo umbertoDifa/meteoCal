@@ -29,7 +29,7 @@ import model.UserModel;
  */
 @Named(value = "viewEvent")
 @ViewScoped
-public class ViewEventBacking implements Serializable {
+public class ViewEventPageBacking implements Serializable {
 
     Long eventId;
     Event eventToShow;
@@ -60,7 +60,7 @@ public class ViewEventBacking implements Serializable {
     /**
      * Creates a new instance of viewEventBacking
      */
-    public ViewEventBacking() {
+    public ViewEventPageBacking() {
     }
 
     /**
