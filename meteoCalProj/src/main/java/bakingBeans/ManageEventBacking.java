@@ -4,7 +4,6 @@ import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.SearchManager;
-import java.io.IOException;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -333,8 +331,8 @@ public class ManageEventBacking implements Serializable {
         //TODO gestire errori?
     }
 
-    public String delete() {
-        System.out.println("-eventToCreate vale:" + eventToCreate);
+    public String deleteEvent() {
+        System.out.println("-dentro delete, eventToCreate vale:" + eventToCreate);
         if (eventManager.deleteEvent(eventToCreate)) {
             System.out.println("-evento cancellato");
             return "/s/myCalendar.xhtml";
@@ -353,7 +351,11 @@ public class ManageEventBacking implements Serializable {
             if (userToInvite != null) {
                 System.out.println("--userToInvite è" + userToInvite);
                 if (!guests.contains(userToInvite)) {
-                    guests.add(userToInvite);
+                    if (!userToInvite.equals(login.getCurrentUser())) {
+                        guests.add(userToInvite);
+                    } else {
+                        showMessage("inviteForm:email", "partecipi automaticamente ai tuoi eventi", "");
+                    }
                 } else {
                     showMessage("inviteForm:email", "l'utente è già in lista", "");
                 }
@@ -388,7 +390,7 @@ public class ManageEventBacking implements Serializable {
     private void createOrLoadInstance() {
         //se sto modificando un evento esistente
         if (isSaved()) {
-            System.out.println("-dentro createOrL, dentro isSaved");
+            System.out.println("-dentro createOrL, dentro isSaved, idEvent vale:" + idEvent);
             if (idEvent != null) {
                 Event eventFound = eventManager.findEventbyId(Long.parseLong(idEvent));
                 if (((eventFound instanceof PublicEvent) && (publicAccess)) || ((eventFound instanceof PrivateEvent) && (!publicAccess))) {
@@ -530,5 +532,11 @@ public class ManageEventBacking implements Serializable {
             }
         }
         return null;
+    }
+
+    private void checkDates() {
+        if (!startDateTime.before(endDateTime)) {
+            
+        }
     }
 }

@@ -24,16 +24,16 @@ and open the template in the editor.
         <ui:define name="content">
 
             <h1><h:outputText value="#{viewEvent.eventToShow.title}" /></h1>
-
-            <h:outputLabel value="Title:" /><h:outputText value="#{viewEvent.eventToShow.title}"/><br/>
-            <h:outputLabel value="Starts at:" /><h:outputText value="#{viewEvent.eventToShow.formattedStartDate}"/><br/>
-            <h:outputLabel value="Ends at:" /><h:outputText value="#{viewEvent.eventToShow.formattedEndDate}"/><br/>
-            <h:outputLabel value="Location:" /><h:outputText value="#{viewEvent.eventToShow.location}"/><br/>
-            <h:outputLabel value="Description:" /><h:outputText value="#{viewEvent.eventToShow.description}"/><br/>
-            <h:outputLabel value="isOutdoor:" /><h:outputText value="#{viewEvent.eventToShow.isOutdoor}"/><br/>
-            <h:outputLabel value="Owner:" /><h:outputText value="#{viewEvent.eventToShow.owner.name}"/><br/>
-            <h:outputLabel value="Public:" /><h:outputText value="#{viewEvent.publicAccess}"/><br/>
-
+            <p:panelGrid columns="2">
+                <h:outputLabel value="Title:" /><h:outputText value="#{viewEvent.eventToShow.title}"/>
+                <h:outputLabel value="Starts at:" /><h:outputText value="#{viewEvent.eventToShow.formattedStartDate}"/>
+                <h:outputLabel value="Ends at:" /><h:outputText value="#{viewEvent.eventToShow.formattedEndDate}"/>
+                <h:outputLabel value="Location:" /><h:outputText value="#{viewEvent.eventToShow.location}"/>
+                <h:outputLabel value="Description:" /><h:outputText value="#{viewEvent.eventToShow.description}"/>
+                <h:outputLabel value="isOutdoor:" /><h:outputText value="#{viewEvent.eventToShow.isOutdoor}"/>
+                <h:outputLabel value="Owner:" /><h:outputText value="#{viewEvent.eventToShow.owner.name}"/>
+                <h:outputLabel value="Public:" /><h:outputText value="#{viewEvent.publicAccess}"/>
+            </p:panelGrid>
             <p:tabView rendered="#{viewEvent.showInvitees}">
                 <p:tab title="Partecipants:">
                     <c:forEach items="#{viewEvent.acceptedInvitations}" var="yesUser">

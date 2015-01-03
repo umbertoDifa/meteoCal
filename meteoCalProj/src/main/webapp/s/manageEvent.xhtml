@@ -29,97 +29,100 @@
 
                 <h:inputText value="#{eventToManage.title}" /><br/>
 
-                <h:outputLabel value="Add into:"/>
-                <p:selectOneMenu value="#{eventToManage.calendarName}">
-                    <f:selectItems value="#{calendar.calendarNames}" />
-                    <f:selectItem value="#{null}" itemLabel="Nessun Calendario" />
-                </p:selectOneMenu><br/>
+                <p:panelGrid columns="2">
+                    <h:outputLabel value="Add into:"/>
+                    <p:selectOneMenu value="#{eventToManage.calendarName}">
+                        <f:selectItems value="#{calendar.calendarNames}" />
+                        <f:selectItem value="#{null}" itemLabel="Nessun Calendario" />
+                    </p:selectOneMenu>
 
-                <h:outputLabel value="Starting date:" />
-                <h:inputText id="startingDate" value="#{eventToManage.startDate}">
-                    <f:passThroughAttribute name="type" value="date" />
-                </h:inputText><br/>
+                    <h:outputLabel value="Starting date:" />
+                    <h:inputText id="startingDate" value="#{eventToManage.startDate}">
+                        <f:passThroughAttribute name="type" value="date" />
+                    </h:inputText>
 
-                <h:outputLabel value="Until:" />
-                <h:inputText value="#{eventToManage.endDate}">
-                    <f:passThroughAttribute name="type" value="date" />
-                </h:inputText><br/>
+                    <h:outputLabel value="Until:" />
+                    <h:inputText value="#{eventToManage.endDate}">
 
-                <h:outputLabel value="From:" />
-                <h:inputText value="#{eventToManage.startTime}">
-                    <f:passThroughAttribute name="type" value="time" />
-                </h:inputText><br/>
+                        <f:passThroughAttribute name="type" value="date" />
+                    </h:inputText>
 
-                <h:outputLabel value="To:" />
-                <h:inputText value="#{eventToManage.endTime}">
-                    <f:passThroughAttribute name="type" value="time" />
-                </h:inputText><br/>
+                    <h:outputLabel value="From:" />
+                    <h:inputText value="#{eventToManage.startTime}">
+                        <f:passThroughAttribute name="type" value="time" />
+                    </h:inputText>
 
-                <h:outputLabel value="Public:" />
-                <h:selectBooleanCheckbox value="#{eventToManage.publicAccess}"/><br/>
+                    <h:outputLabel value="To:" />
+                    <h:inputText value="#{eventToManage.endTime}">
+                        <f:passThroughAttribute name="type" value="time" />
+                    </h:inputText>
 
-                <h:outputLabel value="Enter Location:"/>
-                <h:inputText value="#{eventToManage.location}"/><br/>
+                    <h:outputLabel value="Public:" />
+                    <h:selectBooleanCheckbox value="#{eventToManage.publicAccess}"/>
 
-                <h:selectBooleanCheckbox value="#{eventToManage.outdoor}"/><h:outputLabel value="Outdoor" /><br/>
+                    <h:outputLabel value="Enter Location:"/>
+                    <h:inputText value="#{eventToManage.location}"/>
+
+                    <h:outputLabel value="Outdoor" /><h:selectBooleanCheckbox value="#{eventToManage.outdoor}"/>
+                </p:panelGrid>
 
                 <h:inputTextarea value="#{eventToManage.description}" style="resize: none" /><br/>
-
-
-
-                <h:commandButton id="save" value="Save" action="#{eventToManage.save}"/>
-                <h:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/myCalendar.xhtml"/> 
-                <h:commandButton value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.delete}"/>
-                <h:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.idEvent}"/>
-
-                <p:tabView>
-                    <p:tab title="Partecipants:">
-                        <c:forEach items="#{eventToManage.acceptedInvitations}" var="yesUser">
-                            <p:outputLabel value="#{yesUser.email}"/><br/>
-                        </c:forEach>
-                    </p:tab>
-                    <p:tab title="Declined:">
-                        <c:forEach items="#{eventToManage.declinedInvitations}" var="noUser">
-                            <p:outputLabel value="#{noUser.email}"/><br/>
-                        </c:forEach>
-                    </p:tab>
-                    <p:tab title="No Asnwer">
-                        <c:forEach items="#{eventToManage.noAnswerInvitations}" var="bhoUser">
-                            <p:outputLabel value="#{bhoUser.email}"/><br/>
-                        </c:forEach>
-                    </p:tab>
-                    <p:tab title="Public Join" rendered="#{eventToManage.publicAccess}">
-                        <c:forEach items="#{eventToManage.publicJoinUsers}" var="publicUser">
-                            <p:outputLabel value="#{publicUser.email}"/><br/>
-                        </c:forEach>
-                    </p:tab>
-                </p:tabView>
 
                 <div id="inviteDiv">
                     <h2>Guests:</h2>
 
-                    <div>
-                        <h3>To invite:</h3>
+                    <p:fieldset legend="To invite" >
                         <c:forEach items="#{eventToManage.guests}" var="g" >
                             <h:outputText value="#{g.email}"/><br/>
                         </c:forEach>
-                    </div>
-
+                    </p:fieldset>
 
                     <h:form id="inviteForm" >
                         <h:inputText id="email" value="#{eventToManage.newGuestEmail}"/>
                         <h:commandButton value="search" action="#{eventToManage.showResultUsers}" /><br/>
                         <h:message for="email" />
                     </h:form>
-                    <h:panelGroup layout="block" rendered="#{eventToManage.displayResultUsers}" >
+                    <p:panel rendered="#{eventToManage.displayResultUsers}" >
 
-                        <ui:repeat value="#{eventToManage.resultUsers}" var="u">
-                            <h:commandLink value="#{u.email}" onclick="#{eventToManage.invite(u.email)}" /><br/>
-                        </ui:repeat>
+                        <c:forEach items="#{eventToManage.resultUsers}" var="u">
+                            <h:commandButton class="linkStyle" value="#{u.email}" action="#{eventToManage.invite(u.email)}" /><br/>
+                        </c:forEach>
 
-                    </h:panelGroup>
+                    </p:panel>
                 </div>
-            </h:form><br/>
+
+                <h:commandButton id="save" value="Save" action="#{eventToManage.save}"/>
+                <h:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/myCalendar.xhtml"/> 
+
+            </h:form>
+            <h:form>
+                <h:commandButton id="delete" value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.deleteEvent}"/>
+            </h:form>
+            <h:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.idEvent}"/>
+
+            <p:tabView>
+                <p:tab title="Partecipants">
+                    <c:forEach items="#{eventToManage.acceptedInvitations}" var="yesUser">
+                        <p:outputLabel value="#{yesUser.email}"/><br/>
+                    </c:forEach>
+                </p:tab>
+                <p:tab title="Declined">
+                    <c:forEach items="#{eventToManage.declinedInvitations}" var="noUser">
+                        <p:outputLabel value="#{noUser.email}"/><br/>
+                    </c:forEach>
+                </p:tab>
+                <p:tab title="No Asnwer">
+                    <c:forEach items="#{eventToManage.noAnswerInvitations}" var="bhoUser">
+                        <p:outputLabel value="#{bhoUser.email}"/><br/>
+                    </c:forEach>
+                </p:tab>
+                <p:tab title="Public Join" rendered="#{eventToManage.publicAccess}">
+                    <c:forEach items="#{eventToManage.publicJoinUsers}" var="publicUser">
+                        <p:outputLabel value="#{publicUser.email}"/><br/>
+                    </c:forEach>
+                </p:tab>
+            </p:tabView>
+
             <h:messages />
         </ui:define>
 

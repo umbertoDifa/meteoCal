@@ -219,15 +219,28 @@ public class ViewEventPageBacking implements Serializable {
             hasAnswered = true;
             partecipate = true;
             answerMessage = "parteciperai";
-
-            addMessage(
-                    "Hai risposto all'evento");
-            System.out.println(
-                    "-doPartecipate");
+            if (!acceptedInvitations.contains(login.getCurrentUser())) {
+                acceptedInvitations.add(login.getCurrentUser());
+            }
+            if (declinedInvitations.contains(login.getCurrentUser())) {
+                declinedInvitations.remove(login.getCurrentUser());
+            }
+            if (noAnswerInvitations.contains(login.getCurrentUser())) {
+                noAnswerInvitations.remove(login.getCurrentUser());
+            }
+            if (publicJoinUsers.contains(login.getCurrentUser())) {
+                publicJoinUsers.remove(login.getCurrentUser());
+            }
+            addMessage("Hai risposto all'evento");
+            System.out.println("-doPartecipate");
         } else {
             if (publicAccess) {
-                //TODO public join
-                addMessage("da implementare");
+                eventManager.addPublicJoin(eventToShow, login.getCurrentUser());
+                addMessage("Hai fatto public join");
+                if (!publicJoinUsers.contains(login.getCurrentUser())) {
+                    publicJoinUsers.add(login.getCurrentUser());
+                }
+
             } else {
                 addMessage("non puoi partecipare");
             }
@@ -240,6 +253,19 @@ public class ViewEventPageBacking implements Serializable {
             hasAnswered = true;
             partecipate = false;
             answerMessage = "non parteciperai";
+
+            if (acceptedInvitations.contains(login.getCurrentUser())) {
+                acceptedInvitations.remove(login.getCurrentUser());
+            }
+            if (!declinedInvitations.contains(login.getCurrentUser())) {
+                declinedInvitations.add(login.getCurrentUser());
+            }
+            if (noAnswerInvitations.contains(login.getCurrentUser())) {
+                noAnswerInvitations.remove(login.getCurrentUser());
+            }
+            if (publicJoinUsers.contains(login.getCurrentUser())) {
+                publicJoinUsers.remove(login.getCurrentUser());
+            }
         } else {
             addMessage("non puoi partecipare");
         }
