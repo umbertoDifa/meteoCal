@@ -18,7 +18,7 @@ public class SearchManagerImpl implements SearchManager {
     @Override
     public List<UserModel> searchUsers(String stringToSearch) {
         return database.createNamedQuery("findUserbyString").setParameter(
-                "search", "%"+stringToSearch+"%").getResultList();
+                "search", "%" + stringToSearch + "%").getResultList();
     }
 
     @Override
@@ -29,18 +29,27 @@ public class SearchManagerImpl implements SearchManager {
 
     @Override
     public UserModel findUserbyEmail(String email) {
-       UserModel user = (UserModel) database.createNamedQuery("findUserbyEmail").setParameter("email", email).getSingleResult();
-       return user;
+        UserModel user = (UserModel) database.createNamedQuery("findUserbyEmail").setParameter(
+                "email", email).getSingleResult();
+        return user;
     }
-    
+
+    //TODO non è mai usata
     @Override
-    public List<UserModel> searchUserForInvitation (String stringToSearch, Event event) {
+    public List<UserModel> searchUserForInvitation(String stringToSearch, Event event) {
         List<UserModel> users = searchUsers(stringToSearch);
         event = database.find(Event.class, event.getId());
         if (event != null) {
-            for (Invitation invitation : event.getInvitations())
-                    users.remove(invitation.getInvitee());
+            for (Invitation invitation : event.getInvitations()) {
+                users.remove(invitation.getInvitee());
+            }
         }
         return users;
+    }
+
+    @Override
+    public UserModel findUserById(Long id) {
+        UserModel user = database.find(UserModel.class, id);
+        return user;
     }
 }

@@ -27,4 +27,6 @@ public interface SearchManager {
     
     public List<UserModel> searchUserForInvitation (String stringToSearch, Event event);
     
+    public UserModel findUserById(Long id);
+    
 }
