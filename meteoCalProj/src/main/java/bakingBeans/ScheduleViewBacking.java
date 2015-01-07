@@ -27,6 +27,7 @@ import javax.inject.Named;
 import model.CalendarModel;
 import model.Event;
 import model.UserModel;
+import org.primefaces.context.RequestContext;
 
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
@@ -35,6 +36,7 @@ import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
+import utility.DeleteCalendarOption;
 
 @Named(value = "scheduleView")
 @SessionScoped
@@ -269,6 +271,28 @@ public class ScheduleViewBacking implements Serializable {
     
     public void setUser(){
         //user = search.findUserbyId(userId);
+        
+    }
+    
+        private void showMessage(String recipient, String msg, String advice) {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_WARN, msg, advice));
+    }
+
+    public void canDeleteCalendar() {
+        if (calendarManager.isDefault(calendarShown)) {
+            showMessage(null, "Cannot Delete Default Calendar", "You cannot delete the default calendar. Please make default another calenar and then remove this one.");
+        } else {
+            RequestContext context = RequestContext.getCurrentInstance();
+            context.execute("PF('delOpt').show();");
+        }
+    }
+    
+    public void deleteCalendar ( DeleteCalendarOption option) {
+        if (calendarManager.deleteCalendar(calendarShown, option))
+            showMessage(null, "Calendar Deleted", "Your calendar has been succesfully deleted");
+        else
+            showMessage(null, "Cannot delete calendar", "An error has occured.");
         
     }
 }
