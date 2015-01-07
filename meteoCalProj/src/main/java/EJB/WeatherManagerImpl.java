@@ -409,7 +409,6 @@ public class WeatherManagerImpl implements WeatherManager {
         temp.set(Calendar.MINUTE, 0);
         temp.set(Calendar.SECOND, 0);
 
-
         if (forecast.hasForecast_List()) {
             for (int i = 0; i < forecast.getForecast_List_Count(); i++) {
                 if (forecast.getForecast_List().get(i) != null
@@ -451,14 +450,12 @@ public class WeatherManagerImpl implements WeatherManager {
         }
     }
 
-    //TODO check this method
     private boolean validate(Calendar day, String city) {
-        if (day != null) {
-            String[] token = city.split(",");
-            if (token.length == 1 || token.length == 2) {
-                return true;
-            }
+        if (city != null) {
+            return true;
+            //TODO completa
         }
+
         return false;
     }
 
@@ -468,7 +465,8 @@ public class WeatherManagerImpl implements WeatherManager {
      * @param event
      */
     @Override
-    public void updateWeather(Event event) {
+    public
+            void updateWeather(Event event) {
         //aggiorno l'evento dal db
         event = database.find(Event.class, event.getId());
 
@@ -477,7 +475,8 @@ public class WeatherManagerImpl implements WeatherManager {
                 event.getLocation());
 
         //se ho ottenuto qualche dato
-        if (newForecast.getMessage() != WeatherMessages.NOT_AVAILABLE) {
+        if (newForecast.getMessage()
+                != WeatherMessages.NOT_AVAILABLE) {
             //salvo il vecchio tempo
             WeatherForecast oldForecast = event.getWeather();
             boolean weatherChanged = !oldForecast.getMain().equals(

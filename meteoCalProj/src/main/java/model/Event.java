@@ -5,11 +5,17 @@
  */
 package model;
 
+import com.google.maps.model.LatLng;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -51,7 +57,7 @@ import javax.persistence.Temporal;
 @NamedNativeQuery(name = "isInAnyCalendar",
                   query = "SELECT COUNT(*) FROM EVENT_IN_CALENDAR WHERE evetsInCalendar_ID=? AND OWNER_ID=?")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name="TYPE")
+@DiscriminatorColumn(name = "TYPE")
 public abstract class Event implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -84,18 +90,21 @@ public abstract class Event implements Serializable {
 
     @ManyToOne
     private UserModel owner;
-    
+
     @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE)
     private List<Invitation> invitations;
 
     @ManyToMany(mappedBy = "eventsInCalendar", cascade = CascadeType.REMOVE)
     private List<model.CalendarModel> inCalendars;
-    
 
-    @OneToOne(cascade = {CascadeType.REMOVE}) 
-    @JoinColumn    
+    @OneToOne(cascade = {CascadeType.REMOVE})
+    @JoinColumn
     private WeatherForecast weather;
 
+    //vars to store position coordinates if any
+    private double latitude;    
+    private double longitude;
+    
     /*
      *
      * CONSTRUCTORS
@@ -108,12 +117,13 @@ public abstract class Event implements Serializable {
         this.location = location;
         this.description = description;
         this.isOutdoor = isOutdoor;
-        this.owner = owner;
+        this.owner = owner;          
     }
 
     //costruiscono una anonymus subclass, non bisogna MAI persisterli prima di aver creato la entity giusta!
-    public Event() {
+    public Event() {             
     }
+    
 
     public WeatherForecast getWeather() {
         return weather;
@@ -127,8 +137,6 @@ public abstract class Event implements Serializable {
      *
      * SETTERS & GETTERS
      */
-    
-    
     public String getImgPath() {
         return imgPath;
     }
@@ -156,6 +164,22 @@ public abstract class Event implements Serializable {
     public void setInvitations(List<Invitation> invitations) {
         this.invitations = invitations;
     }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }        
 
     public List<CalendarModel> getInCalendars() {
         return inCalendars;

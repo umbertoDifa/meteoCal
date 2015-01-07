@@ -6,6 +6,9 @@ import EJB.interfaces.InvitationManager;
 import EJB.interfaces.NotificationManager;
 import EJB.interfaces.SearchManager;
 import EJB.interfaces.WeatherManager;
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.model.GeocodingResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -56,6 +59,10 @@ public class EventManagerImpl implements EventManager {
     public boolean scheduleNewEvent(Event event, CalendarModel insertInCalendar, List<UserModel> invitees) {
         //salvo evento nel db
         database.persist(event);
+
+        //aggiungo coordinate all'evento
+        setEventLatLng(event);
+
         logger.log(Level.INFO, "Event {0} created", event.getTitle());
 
         //aggiungo weather
@@ -63,6 +70,7 @@ public class EventManagerImpl implements EventManager {
                 event.getStartDateTime(), event.getLocation());
         database.persist(forecast);
         event.setWeather(forecast);
+
         database.flush();
         logger.log(Level.INFO, "Forecast added to Event {0} ", event.getTitle());
 
@@ -83,6 +91,32 @@ public class EventManagerImpl implements EventManager {
         }
         return true;
         //TODO attualmente il metodo ritorna sempre true
+    }
+
+    private void setEventLatLng(Event event) {
+        GeoApiContext context = new GeoApiContext().setApiKey(
+                "AIzaSyCAlR8JiKO0QPZ_tm51cJITop7aGTDcnlo");
+        GeocodingResult[] results;
+
+        //se l'utente ha inserito un indirizzo
+        if (event.getLocation() != null) {
+            try {
+                //cerco di trovare le coordinate corrispondenti
+                results = GeocodingApi.geocode(context,
+                        event.getLocation()).await();
+
+                //e setto le coordinate nell'evento
+                event.setLatitude(results[0].geometry.location.lat);
+                event.setLongitude(results[0].geometry.location.lng);
+
+                logger.log(LoggerLevel.DEBUG, "Trovate lat e long: "
+                        + event.getLatitude() + " ," + event.getLongitude());
+
+            } catch (Exception ex) {
+                logger.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+
     }
 
     //TODO check
@@ -170,7 +204,8 @@ public class EventManagerImpl implements EventManager {
         boolean changed = false;
 
         //aggiorno la descrizione
-        if (!oldEvent.getDescription().equals(event.getDescription())) {
+        if (oldEvent.getDescription() == null ? (event.getDescription()) != null : !oldEvent.getDescription().equals(
+                event.getDescription())) {
             oldEvent.setDescription(event.getDescription());
             changed = true;
         }
@@ -180,12 +215,14 @@ public class EventManagerImpl implements EventManager {
             changed = true;
         }
         //aggiorno imgPath
-        if (!oldEvent.getImgPath().equals(event.getImgPath())) {
+        if (oldEvent.getImgPath() == null ? (event.getImgPath()) != null : !oldEvent.getImgPath().equals(
+                event.getImgPath())) {
             oldEvent.setImgPath(event.getImgPath());
             changed = true;
         }
         //aggiorno location
-        if (!oldEvent.getLocation().equals(event.getLocation())) {
+        if (oldEvent.getLocation() == null ? (event.getLocation()) != null : !oldEvent.getLocation().equals(
+                event.getLocation())) {
             oldEvent.setLocation(event.getLocation());
             changed = true;
         }
@@ -195,7 +232,8 @@ public class EventManagerImpl implements EventManager {
             changed = true;
         }
         //aggiorno titolo
-        if (!oldEvent.getTitle().equals(event.getTitle())) {
+        if (oldEvent.getTitle() == null ? (event.getTitle()) != null : !oldEvent.getTitle().equals(
+                event.getTitle())) {
             oldEvent.setTitle(event.getTitle());
             changed = true;
         }
@@ -376,7 +414,8 @@ public class EventManagerImpl implements EventManager {
             database.remove(event);
             return true;
         } catch (IllegalArgumentException e) {
-            logger.log(LoggerLevel.DEBUG, "Evento: {0} non trovato", event.getId());
+            logger.log(LoggerLevel.DEBUG, "Evento: {0} non trovato",
+                    event.getId());
             return false;
         }
 
