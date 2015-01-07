@@ -61,13 +61,12 @@ public class EventManagerImpl implements EventManager {
         database.persist(event);
 
         //aggiungo coordinate all'evento
-        setEventLatLng(event);
+        updateEventLatLng(event);
 
         logger.log(Level.INFO, "Event {0} created", event.getTitle());
 
         //aggiungo weather
-        WeatherForecast forecast = weatherManager.getWeather(
-                event.getStartDateTime(), event.getLocation());
+        WeatherForecast forecast = weatherManager.getWeather(event);
         database.persist(forecast);
         event.setWeather(forecast);
 
@@ -93,7 +92,7 @@ public class EventManagerImpl implements EventManager {
         //TODO attualmente il metodo ritorna sempre true
     }
 
-    private void setEventLatLng(Event event) {
+    private void updateEventLatLng(Event event) {
         GeoApiContext context = new GeoApiContext().setApiKey(
                 "AIzaSyCAlR8JiKO0QPZ_tm51cJITop7aGTDcnlo");
         GeocodingResult[] results;
@@ -109,8 +108,9 @@ public class EventManagerImpl implements EventManager {
                 event.setLatitude(results[0].geometry.location.lat);
                 event.setLongitude(results[0].geometry.location.lng);
 
-                logger.log(LoggerLevel.DEBUG, "Trovate lat e long: "
-                        + event.getLatitude() + " ," + event.getLongitude());
+                logger.log(LoggerLevel.DEBUG, "Trovate lat e long: {0} ,{1}",
+                        new Object[]{event.getLatitude(),
+                                     event.getLongitude()});
 
             } catch (Exception ex) {
                 logger.log(Level.WARNING, ex.getMessage(), ex);
@@ -224,6 +224,7 @@ public class EventManagerImpl implements EventManager {
         if (oldEvent.getLocation() == null ? (event.getLocation()) != null : !oldEvent.getLocation().equals(
                 event.getLocation())) {
             oldEvent.setLocation(event.getLocation());
+            this.updateEventLatLng(event);
             changed = true;
         }
         //aggiorno inizio evento

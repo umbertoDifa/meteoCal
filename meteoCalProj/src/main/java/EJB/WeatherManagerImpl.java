@@ -59,8 +59,8 @@ public class WeatherManagerImpl implements WeatherManager {
     //oggetto ritornato dalle richieste di previsioni
     private WeatherForecast weatherForecast;
 
-    //city to get forecast for
-    private String city;
+    //event to get forecast for
+    private Event event;
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
@@ -95,11 +95,13 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     @Override
-    public WeatherForecast getWeather(Calendar day, String city) {
+    public WeatherForecast getWeather(Event event) {
         weatherForecast = new WeatherForecast();
 
-        if (validate(day, city)) {
-            this.city = city;
+        //valido e aggiorno l'evento
+        if (validate(event)) {
+            Calendar day = event.getStartDateTime();
+
             //in base a che giorno è oggi e a quando è schedulato l'evento uso
             //un tipo diverso di previsioni
             this.forecastType = inferForecastType(day);
@@ -191,16 +193,16 @@ public class WeatherManagerImpl implements WeatherManager {
 
             switch (forecastType) {
                 case FORECAST_5_3HOURS:
-                    forecastFiveDays = openWeatherMap.forecastWeatherByCityName(
-                            city);
+                    forecastFiveDays = openWeatherMap.forecastWeatherByCoordinates(
+                            event.getLatitude(), event.getLongitude());
                     break;
                 case CURRENT_WEATHER:
-                    currentWeather = openWeatherMap.currentWeatherByCityName(
-                            city);
+                    currentWeather = openWeatherMap.currentWeatherByCoordinates(
+                            event.getLatitude(), event.getLongitude());
                     break;
                 case FORECAST_16_DAILY:
-                    dailyForecast = openWeatherMap.dailyForecastByCityName(city,
-                            (byte) 16);
+                    dailyForecast = openWeatherMap.dailyForecastByCoordinates(
+                           event.getLatitude(), event.getLongitude(), (byte)16);
                     break;
             }
             logger.log(LoggerLevel.DEBUG, "Weather Downloaded");
@@ -450,10 +452,12 @@ public class WeatherManagerImpl implements WeatherManager {
         }
     }
 
-    private boolean validate(Calendar day, String city) {
-        if (city != null) {
-            return true;
-            //TODO completa
+    private boolean validate(Event event) {
+        if (event != null) {
+            event = database.find(Event.class, event.getId());
+            if (event != null && event.getLocation() != null) {
+                return true;
+            }
         }
 
         return false;
@@ -466,13 +470,9 @@ public class WeatherManagerImpl implements WeatherManager {
      */
     @Override
     public
-            void updateWeather(Event event) {
-        //aggiorno l'evento dal db
-        event = database.find(Event.class, event.getId());
-
+            void updateWeather(Event event) {        
         //scarico il tempo
-        WeatherForecast newForecast = this.getWeather(event.getStartDateTime(),
-                event.getLocation());
+        WeatherForecast newForecast = this.getWeather(event);
 
         //se ho ottenuto qualche dato
         if (newForecast.getMessage()
