@@ -53,4 +53,6 @@ public interface CalendarManager {
     public boolean isInConflict(UserModel user, Event event);
     
     public int findFreeSlots(UserModel user, Event event);
+    
+    public void toggleCalendarPrivacy (CalendarModel calendar);
 }
