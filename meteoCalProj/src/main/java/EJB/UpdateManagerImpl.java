@@ -1,6 +1,9 @@
 package EJB;
 
 import EJB.interfaces.WeatherManager;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -20,6 +23,7 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import model.Event;
+import model.PrivateEvent;
 import utility.EntityManagerHelper;
 import utility.LoggerLevel;
 import utility.LoggerProducer;

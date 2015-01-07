@@ -37,10 +37,10 @@ public class ManageEventBacking implements Serializable {
     Event eventToCreate;
 
     String description = "description";
-    String location = "Write the location here";
+    String location;
     boolean outdoor;
     boolean publicAccess;
-    String title = "initialTitle";
+    String title;
     String startDate = "10/12/2015";
     String endDate = "12/12/2015";
     String startTime = "01:03";
@@ -85,10 +85,8 @@ public class ManageEventBacking implements Serializable {
         //e crea o modifica l evento
         login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(facesContext, "#{login}", LoginBacking.class);
 
-        //initialize event parameters
-        title = "initialTitle";
+        //initialize event parameters;
         description = "description";
-        location = "location";
         newGuestEmail = "invita qualcuno";
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");

@@ -6,11 +6,136 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:pm="http://primefaces.org/mobile">
+      xmlns:pm="http://primefaces.org/mobile"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
 
     <ui:composition template="/template.xhtml">
+        <ui:define name="secondaryHead">
 
+            <style>
+                #map-canvas {
+                    height: 100%;
+                    margin: 0px;
+                    padding: 0px
+                }
+            </style>
+
+            <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
+
+            <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;libraries=places" />
+            <h:outputScript library="js" name="maps.js" />
+
+            <style>
+                #locationField, #controls {
+                    position: relative;
+                    width: 480px;
+                }
+                .label {
+                    text-align: right;
+                    font-weight: bold;
+                    width: 100px;
+                    color: #303030;
+                }
+                #address {
+                    border: 1px solid #000090;
+                    background-color: #f0f0ff;
+                    width: 480px;
+                    padding-right: 2px;
+                }
+                #address td {
+                    font-size: 10pt;
+                }
+                .field {
+                    width: 99%;
+                }
+                .slimField {
+                    width: 80px;
+                }
+                .wideField {
+                    width: 200px;
+                }
+                #locationField {
+                    height: 20px;
+                    margin-bottom: 2px;
+                }
+            </style>
+            <script>
+
+                $(document).ready(function () {
+                    initialize();
+                });
+
+
+
+// This example displays an address form, using the autocomplete feature
+// of the Google Places API to help users fill in the information.
+
+                var placeSearch, autocomplete;
+                var componentForm = {
+                    street_number: 'short_name',
+                    route: 'long_name',
+                    locality: 'long_name',
+                    administrative_area_level_1: 'short_name',
+                    country: 'long_name',
+                    postal_code: 'short_name'
+                };
+
+                function initialize() {
+                    // Create the autocomplete object, restricting the search
+                    // to geographical location types.
+                    autocomplete = new google.maps.places.Autocomplete(
+                            /** @type {HTMLInputElement} */(document.getElementById('autocomplete')),
+                            {types: ['geocode']});
+                    // When the user selects an address from the dropdown,
+                    // populate the address fields in the form.
+                    google.maps.event.addListener(autocomplete, 'place_changed', function () {
+                        fillInAddress();
+                    });
+                }
+
+// [START region_fillform]
+                function fillInAddress() {
+                    // Get the place details from the autocomplete object.
+                    var place = autocomplete.getPlace();
+
+                    for (var component in componentForm) {
+                        document.getElementById(component).value = '';
+                        document.getElementById(component).disabled = false;
+                    }
+
+                    // Get each component of the address from the place details
+                    // and fill the corresponding field on the form.
+                    for (var i = 0; i &lt; place.address_components.length; i++) {
+                        var addressType = place.address_components[i].types[0];
+                        if (componentForm[addressType]) {
+                            var val = place.address_components[i][componentForm[addressType]];
+                            document.getElementById(addressType).value = val;
+                        }
+                    }
+                }
+// [END region_fillform]
+
+// [START region_geolocation]
+// Bias the autocomplete object to the user's geographical location,
+// as supplied by the browser's 'navigator.geolocation' object.
+                function geolocate() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function (position) {
+                            var geolocation = new google.maps.LatLng(
+                                    position.coords.latitude, position.coords.longitude);
+                            var circle = new google.maps.Circle({
+                                center: geolocation,
+                                radius: position.coords.accuracy
+                            });
+                            autocomplete.setBounds(circle.getBounds());
+                        });
+                    }
+                }
+// [END region_geolocation]
+
+            </script>
+        </ui:define>
         <f:metadata>
             <f:viewParam name="idEvent" value="#{eventToManage.idEvent}"/>
             <f:viewAction action="#{eventToManage.setEditModality}"/>
@@ -27,7 +152,7 @@
             </h1>
             <h:form id="newEventForm">
 
-                <h:inputText value="#{eventToManage.title}" /><br/>
+                <h:inputText pt:placeholder="Title" value="#{eventToManage.title}" /><br/>
 
                 <p:panelGrid columns="2">
                     <h:outputLabel value="Add into:"/>
@@ -61,37 +186,18 @@
                     <h:selectBooleanCheckbox value="#{eventToManage.publicAccess}"/>
 
                     <h:outputLabel value="Enter Location:"/>
-                    <h:inputText value="#{eventToManage.location}"/>
+                    <div id="locationField">
+
+                        <input id="autocomplete" value="#{eventToManage.location}" placeholder="Enter your address"
+                               onFocus="geolocate()" type="text"/>
+                    </div>
 
                     <h:outputLabel value="Outdoor" /><h:selectBooleanCheckbox value="#{eventToManage.outdoor}"/>
                 </p:panelGrid>
 
                 <h:inputTextarea value="#{eventToManage.description}" style="resize: none" /><br/>
 
-                <div id="inviteDiv">
-                    <h2>Guests:</h2>
-
-                    <p:fieldset legend="To invite" >
-                        <c:forEach items="#{eventToManage.guests}" var="g" >
-                            <h:outputText value="#{g.email}"/><br/>
-                        </c:forEach>
-                    </p:fieldset>
-
-                    <h:form id="inviteForm" >
-                        <h:inputText id="email" value="#{eventToManage.newGuestEmail}"/>
-                        <h:commandButton value="search" action="#{eventToManage.showResultUsers}" /><br/>
-                        <h:message for="email" />
-                    </h:form>
-                    <p:panel rendered="#{eventToManage.displayResultUsers}" >
-
-                        <c:forEach items="#{eventToManage.resultUsers}" var="u">
-                            <h:commandButton class="linkStyle" value="#{u.email}" action="#{eventToManage.invite(u.email)}" /><br/>
-                        </c:forEach>
-
-                    </p:panel>
-                </div>
-
-                <h:commandButton id="save" value="Save" action="#{eventToManage.save}"/>
+                <p:commandButton id="save" value="Save" action="#{eventToManage.save}"/>
                 <h:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/myCalendar.xhtml"/> 
 
             </h:form>
@@ -100,6 +206,28 @@
             </h:form>
             <h:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.idEvent}"/>
 
+            <div id="inviteDiv">
+                <h2>Guests:</h2>
+
+                <p:fieldset legend="To invite" >
+                    <c:forEach items="#{eventToManage.guests}" var="g" >
+                        <h:outputText value="#{g.email}"/><br/>
+                    </c:forEach>
+                </p:fieldset>
+
+                <h:form id="inviteForm" >
+                    <h:inputText id="email" value="#{eventToManage.newGuestEmail}"/>
+                    <h:commandButton value="search" action="#{eventToManage.showResultUsers}" /><br/>
+                    <h:message for="email" />
+                </h:form>
+                <p:panel rendered="#{eventToManage.displayResultUsers}" >
+
+                    <c:forEach items="#{eventToManage.resultUsers}" var="u">
+                        <h:commandButton class="linkStyle" value="#{u.email}" action="#{eventToManage.invite(u.email)}" /><br/>
+                    </c:forEach>
+
+                </p:panel>
+            </div>
             <p:tabView>
                 <p:tab title="Partecipants">
                     <c:forEach items="#{eventToManage.acceptedInvitations}" var="yesUser">

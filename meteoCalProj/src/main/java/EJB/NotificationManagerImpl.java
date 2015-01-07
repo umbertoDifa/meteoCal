@@ -26,7 +26,7 @@ public class NotificationManagerImpl implements NotificationManager {
         logger.log(LoggerLevel.DEBUG, "Setting up the notification...");
 
         type.setEventName(event.getTitle()).setEventOwner(
-                event.getOwner().getEmail());
+                event.getOwner().getEmail()).setLink(event.getId());
 
         for (UserModel user : users) {
             createNotification(user, event, type);
@@ -43,7 +43,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private void sendEmail(UserModel user, NotificationType type) {
         String subject = type.getSubject();
-        String body = type.getBodyMessage();        
+        String body = type.getBodyMessage();
         EmailSender.sendEmail(user.getEmail(), subject, body);
     }
 

@@ -51,6 +51,8 @@ public enum NotificationType {
     private String eventName;
     private String link;
 
+    private final String STATIC_LINK = "localhost:8080/meteoCalProj/s/eventPage.xhtml?id=";
+
     Object[] subjParams;
     Object[] bodyParams;
 
@@ -76,6 +78,11 @@ public enum NotificationType {
         return this;
     }
 
+    public NotificationType setLink(Long id) {
+        this.link = STATIC_LINK + id;
+        return this;
+    }
+
     public String getSubject() {
         return subject;
     }
@@ -85,7 +92,7 @@ public enum NotificationType {
     }
 
     public NotificationType buildEmail() {
-        link = "llink temporaneo";
+        //link = "llink temporaneo";
 
         subjParams = new Object[]{eventName};
         bodyParams = new Object[]{inviteeName, eventName, eventOwner, link};
