@@ -37,6 +37,9 @@ public class ManageEventBacking implements Serializable {
     Event eventToCreate;
 
     String description;
+    @Inject
+    private Place place;
+
     String location;
     boolean outdoor;
     boolean publicAccess;
@@ -83,7 +86,8 @@ public class ManageEventBacking implements Serializable {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         //mi salvo il login per ottenere l'info di chi è loggato
         //e crea o modifica l evento
-        login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(facesContext, "#{login}", LoginBacking.class);
+        login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(
+                facesContext, "#{login}", LoginBacking.class);
 
         //initialize event parameters;
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -281,10 +285,14 @@ public class ManageEventBacking implements Serializable {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 DateFormat timeFormat = new SimpleDateFormat("HH:mm");
                 Calendar cal = Calendar.getInstance();
-                startDate = dateFormat.format(eventToCreate.getStartDateTime().getTime());
-                endDate = dateFormat.format(eventToCreate.getEndDateTime().getTime());
-                startTime = timeFormat.format(eventToCreate.getStartDateTime().getTime());
-                endTime = timeFormat.format(eventToCreate.getEndDateTime().getTime());
+                startDate = dateFormat.format(
+                        eventToCreate.getStartDateTime().getTime());
+                endDate = dateFormat.format(
+                        eventToCreate.getEndDateTime().getTime());
+                startTime = timeFormat.format(
+                        eventToCreate.getStartDateTime().getTime());
+                endTime = timeFormat.format(
+                        eventToCreate.getEndDateTime().getTime());
                 setSaved(true);
                 publicAccess = eventToCreate instanceof PublicEvent;
                 outdoor = eventToCreate.isIsOutdoor();
@@ -299,7 +307,8 @@ public class ManageEventBacking implements Serializable {
     }
 
     public void setInCalendar(String calendarName) {
-        List<CalendarModel> calendars = calendarManager.getCalendars(login.getCurrentUser());
+        List<CalendarModel> calendars = calendarManager.getCalendars(
+                login.getCurrentUser());
         if (calendarName != null) {
             //salvo in calendar l istanza di Calendar che appartiene all utente
             //e che ha il title specificato nel form
@@ -318,6 +327,9 @@ public class ManageEventBacking implements Serializable {
 
     public String save() {
         System.out.println("-dentro save");
+
+        System.out.println("PLACE: " + place.getLocality()+ " numero: "
+                + place.getStreetNumber());
         createOrLoadInstance();
         setUpInstance();
         saveIt();
@@ -349,10 +361,12 @@ public class ManageEventBacking implements Serializable {
                     if (!userToInvite.equals(login.getCurrentUser())) {
                         guests.add(userToInvite);
                     } else {
-                        showMessage("inviteForm:email", "partecipi automaticamente ai tuoi eventi", "");
+                        showMessage("inviteForm:email",
+                                "partecipi automaticamente ai tuoi eventi", "");
                     }
                 } else {
-                    showMessage("inviteForm:email", "l'utente è già in lista", "");
+                    showMessage("inviteForm:email", "l'utente è già in lista",
+                            "");
                 }
             } else {
                 showMessage("inviteForm:email", "Nessun utente trovato", "");
@@ -385,10 +399,14 @@ public class ManageEventBacking implements Serializable {
     private void createOrLoadInstance() {
         //se sto modificando un evento esistente
         if (isSaved()) {
-            System.out.println("-dentro createOrL, dentro isSaved, idEvent vale:" + idEvent);
+            System.out.println(
+                    "-dentro createOrL, dentro isSaved, idEvent vale:" + idEvent);
             if (idEvent != null) {
-                Event eventFound = eventManager.findEventbyId(Long.parseLong(idEvent));
-                if (((eventFound instanceof PublicEvent) && (publicAccess)) || ((eventFound instanceof PrivateEvent) && (!publicAccess))) {
+                Event eventFound = eventManager.findEventbyId(Long.parseLong(
+                        idEvent));
+                if (((eventFound instanceof PublicEvent) && (publicAccess))
+                        || ((eventFound instanceof PrivateEvent)
+                        && (!publicAccess))) {
                     eventToCreate = eventFound;
                 } else {
                     if (publicAccess) {
@@ -445,6 +463,8 @@ public class ManageEventBacking implements Serializable {
         //riempio un entità di Event con i vari attributi
         eventToCreate.setDescription(description);
         eventToCreate.setTitle(title);
+        location = place.toString();
+        System.out.println("Complete location is: "+location);
         eventToCreate.setLocation(location);
         eventToCreate.setIsOutdoor(outdoor);
         eventToCreate.setStartDateTime(startDateTime);
@@ -463,18 +483,21 @@ public class ManageEventBacking implements Serializable {
         //passo all eventManager l'ownerId, l'evento riempito, il calendario
         //dove metterlo e la lista degli invitati
         System.out.println("-dentro save it");
-        if (eventToCreate.getEndDateTime().compareTo(eventToCreate.getStartDateTime()) >= 0) {
+        if (eventToCreate.getEndDateTime().compareTo(
+                eventToCreate.getStartDateTime()) >= 0) {
             if (isSaved()) {
                 eventManager.updateEvent(eventToCreate, calendar, guests);
             } else {
-                if (eventManager.scheduleNewEvent(eventToCreate, calendar, guests)) {
+                if (eventManager.scheduleNewEvent(eventToCreate, calendar,
+                        guests)) {
                     setSaved(true);
                     idEvent = eventToCreate.getId().toString();
                     showMessage(null, "L'evento è stato salvato", "");
                 }
             }
         } else {
-            showMessage(login.getCurrentUser().getEmail(), "evento non salvato", "date non corrette");
+            showMessage(login.getCurrentUser().getEmail(), "evento non salvato",
+                    "date non corrette");
         }
     }
 
@@ -491,7 +514,8 @@ public class ManageEventBacking implements Serializable {
 
     private void showMessage(String recipient, String msg, String advice) {
         FacesContext ctx = FacesContext.getCurrentInstance();
-        ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_WARN, msg, advice));
+        ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                msg, advice));
     }
 
     private void setInvitations() {
@@ -520,7 +544,8 @@ public class ManageEventBacking implements Serializable {
     }
 
     private String searchCalendarByEvent() {
-        List<CalendarModel> list = calendarManager.getCalendars(login.getCurrentUser());
+        List<CalendarModel> list = calendarManager.getCalendars(
+                login.getCurrentUser());
         for (CalendarModel c : list) {
             if (c.getEventsInCalendar().contains(eventToCreate)) {
                 return c.getTitle();
@@ -531,7 +556,7 @@ public class ManageEventBacking implements Serializable {
 
     private void checkDates() {
         if (!startDateTime.before(endDateTime)) {
-            
+
         }
     }
 }
