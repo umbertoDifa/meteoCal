@@ -33,6 +33,9 @@ public enum NotificationType {
     BAD_WEATHER_TOMORROW("Bad weather forecast for tomorrow event {0}",
             "Hello {0},\nwe are sorry to inform you that the weather forecast for"
             + "the tomorrow event {1} is bad.\nLink:{3}"),
+    BAD_WEATHER_IN_THREE_DAYS("Bad weather forecast for event {0}",
+            "Hello {0},\nwe are sorry to inform you that the weather forecast for"
+            + "the event {1} is bad. If you want you can reschedule your event.\nLink:{3}"),
     EVENT_CHANGED("Event {0} has been modified",
             "Hello {0},\n we inform you that event {1} has been modified\nLink:{3}"),
     EVENT_CANCELLED("Event {0} has been cancelled",
