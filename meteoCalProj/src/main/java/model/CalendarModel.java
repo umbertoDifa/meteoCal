@@ -8,6 +8,7 @@ package model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -15,6 +16,7 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
@@ -25,8 +27,12 @@ import javax.persistence.Table;
 @Entity
 @IdClass(CalendarId.class)
 @Table(name = "CALENDAR")
-@NamedQuery(name = "findCalbyUserAndTitle",
-            query = "SELECT c FROM CalendarModel c WHERE c.owner =:id AND c.title=:title")
+@NamedQueries ({
+    @NamedQuery (name = "findCalbyUserAndTitle",
+            query = "SELECT c FROM CalendarModel c WHERE c.owner =:id AND c.title=:title"),
+    @NamedQuery (name = "findDefaultCalendar", query = "SELECT c FROM CalendarModel c WHERE c.owner=:user AND c.isDefault = TRUE")
+})
+
 public class CalendarModel implements Serializable {
 
     @Id
@@ -39,7 +45,7 @@ public class CalendarModel implements Serializable {
 
     private boolean isDefault;
 
-    @ManyToMany
+    @ManyToMany (cascade = CascadeType.REMOVE)
     @JoinTable(name = "EVENT_IN_CALENDAR")
     private List<Event> eventsInCalendar;
 
@@ -114,5 +120,12 @@ public class CalendarModel implements Serializable {
             this.eventsInCalendar = new ArrayList<>();
         }
         return this.eventsInCalendar.add(event);
+    }
+    
+    public boolean removeEventInCalendar(Event event) {
+        if (this.eventsInCalendar != null) {
+           return eventsInCalendar.remove(event);
+        }
+        return false;
     }
 }

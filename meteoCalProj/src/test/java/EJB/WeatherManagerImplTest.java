@@ -83,8 +83,7 @@ public class WeatherManagerImplTest {
         Event event = new PublicEvent("Cena di natale", startEvent, endEvent,
                 "London,UK", "descrizione evento", true, null);
         event.setId(Long.MAX_VALUE);
-        logger.log(LoggerLevel.DEBUG, weatherManager.getWeather(
-                event.getStartDateTime(), event.getLocation()).toString());
+        logger.log(LoggerLevel.DEBUG, weatherManager.getWeather(event).toString());
     }
 
     /**
