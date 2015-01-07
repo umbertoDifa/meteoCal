@@ -14,7 +14,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import model.UserModel;
-import utility.ViewModality;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
@@ -37,7 +36,6 @@ public class CalendarBacking implements Serializable {
     private List<model.CalendarModel> calendars;
     private String userId;
     private boolean external;
-    
 
     /**
      * Creates a new instance of CalendarBacking
@@ -68,7 +66,7 @@ public class CalendarBacking implements Serializable {
     public void setExternal(boolean external) {
         this.external = external;
     }
-    
+
     public List<String> getCalendarNames() {
         if (calendars != null) {
             List<String> r = titlesCalendar(this.calendars);
@@ -90,8 +88,9 @@ public class CalendarBacking implements Serializable {
 
     /**
      * da spostare!!
+     *
      * @param c
-     * @return 
+     * @return
      */
     private List<String> titlesCalendar(List<model.CalendarModel> c) {
         List<String> result = new ArrayList<>();
@@ -104,8 +103,10 @@ public class CalendarBacking implements Serializable {
         }
         return result;
     }
-    
-    public void setExternalView(){
+
+    public void setExternalView() {
         external = true;
     }
+
+
 }

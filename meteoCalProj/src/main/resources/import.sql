@@ -14,9 +14,9 @@ insert into USER (ID,EMAIL,NAME,PASSWORD,SURNAME,GENDER)
 	(1,"a@a","a","a","a",NULL),
 	(2,"b@b","b","b","b",NULL),
 	(3,"c@c","c","c","c",NULL),
-	(4,"umbo@asp","umbo","umbo","difa","M"),
-	(5,"vale@figa","vale","vale","cer","F"),
-	(6,"fra@ang","fra","fra","ang","M"),
+	(4,"umberto.difabrizio@gmail.com","umbo","umbo","difa","M"),
+	(5,"v.ceriani92@gmail.com","vale","vale","cer","F"),
+	(6,"angelo.francesco.mobile@gmail.com","fra","fra","ang","M"),
 	(7,"admin@admin","admin","admin","admin", NULL);
 
 insert into CALENDAR (TITLE, ISDEFAULT, ISPUBLIC, OWNER_ID) 

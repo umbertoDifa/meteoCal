@@ -11,6 +11,7 @@ import model.CalendarModel;
 import model.Event;
 import model.UserModel;
 import utility.ControlMessages;
+import utility.DeleteCalendarOption;
 
 /**
  *
@@ -55,4 +56,8 @@ public interface CalendarManager {
     public int findFreeSlots(UserModel user, Event event);
     
     public void toggleCalendarPrivacy (CalendarModel calendar);
+    
+    public boolean deleteCalendar(CalendarModel calendar, DeleteCalendarOption opt);
+    
+    public boolean isDefault(CalendarModel calendar);
 }
