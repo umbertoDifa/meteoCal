@@ -51,7 +51,7 @@ public class CalendarManagerImpl implements CalendarManager {
 
         List<ControlMessages> result = new ArrayList<>();
 
-        boolean weatherIsOk = checkWeather(day, city);
+        boolean weatherIsOk = checkWeather(event);
         boolean haveConflicts = isInConflict(user, event);
 
         //se tutto ok
@@ -79,8 +79,8 @@ public class CalendarManagerImpl implements CalendarManager {
      * @return false se il tempo è brutto, true se il tempo è buono o non sono
      * riuscito ad ottenere informazioni
      */
-    private boolean checkWeather(Calendar day, String city) {
-        WeatherForecast forecast = weatherManager.getWeather(day, city);
+    private boolean checkWeather(Event event) {
+        WeatherForecast forecast = weatherManager.getWeather(event);
 
         //se non è buono ritorno false, false true
         if (forecast.getMessage() != WeatherMessages.BAD_WEATHER) {
