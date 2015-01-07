@@ -268,5 +268,15 @@ public class CalendarManagerImpl implements CalendarManager {
         return names;
 
     }
+    
+    @Override
+    public void toggleCalendarPrivacy (CalendarModel calendar) {
+        calendar =(CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id", calendar.getOwner()).setParameter("title", calendar.getTitle()).getSingleResult();
+        if (calendar.isIsPublic()) {
+            calendar.setIsPublic(false);
+        }
+        else 
+            calendar.setIsPublic(false);
+    }
 
 }
