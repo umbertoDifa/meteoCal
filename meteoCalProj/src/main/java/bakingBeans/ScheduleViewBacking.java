@@ -351,7 +351,8 @@ public class ScheduleViewBacking implements Serializable {
         }
     }
     
-    public void deleteCalendar ( DeleteCalendarOption option) {
+    public void deleteCalendar ( String response) {
+        DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
         if (calendarManager.deleteCalendar(calendarShown, option))
             showMessage(null, "Calendar Deleted", "Your calendar has been succesfully deleted");
         else
