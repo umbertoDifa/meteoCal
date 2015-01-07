@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
@@ -26,6 +29,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import model.CalendarModel;
 import model.Event;
+import model.PrivateEvent;
+import model.PublicEvent;
 import model.UserModel;
 
 import org.primefaces.event.ScheduleEntryMoveEvent;
@@ -51,7 +56,7 @@ public class ScheduleViewBacking implements Serializable {
 
     @Inject
     ManageEventBacking manageEvent;
-    
+
     @Inject
     SearchManager search;
 
@@ -68,35 +73,16 @@ public class ScheduleViewBacking implements Serializable {
     private CalendarModel calendarShown;
 
     private String userId;
-    
+
     private UserModel user;
 
-    @PostConstruct
-    public void init() {
-        eventsToShow = new DefaultScheduleModel();
+    private boolean readOnly;
 
-        calendars = login.getCurrentUser().getOwnedCalendars();
-
-        if (calendars != null && calendars.size() > 0) {
-            calendarNames = titlesCalendar(calendars);
-            updateEventsToShow(calendars.get(0));
-        }
-    }
-
-    public Date getRandomDate(Date base) {
-        Calendar date = Calendar.getInstance();
-        date.setTime(base);
-        date.add(Calendar.DATE, ((int) (Math.random() * 30)) + 1);    //set random day of month
-
-        return date.getTime();
-    }
-
-    public Date getInitialDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(calendar.get(Calendar.YEAR), Calendar.FEBRUARY, calendar.get(Calendar.DATE), 0, 0, 0);
-        return calendar.getTime();
-    }
-
+    /*
+     *
+     * SETTERS & GETTERS
+     *
+     */
     public ScheduleModel getEventsToShow() {
         return eventsToShow;
     }
@@ -115,13 +101,6 @@ public class ScheduleViewBacking implements Serializable {
 
     public void setCalendarSelected(String calendarSelected) {
         this.calendarSelected = calendarSelected;
-    }
-
-    private Calendar today() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
-
-        return calendar;
     }
 
     public ScheduleEvent getEvent() {
@@ -148,12 +127,50 @@ public class ScheduleViewBacking implements Serializable {
         this.userId = userId;
     }
 
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    /*
+     *
+     * METHODS
+     *
+     */
+    @PostConstruct
+    public void init() {
+        setUser();
+        eventsToShow = new DefaultScheduleModel();
+
+        if (user != null) {
+            calendars = user.getOwnedCalendars();
+
+            // tolgo i calendari privati
+            if (readOnly) {
+                for (CalendarModel calendar : calendars) {
+                    if (!calendar.isIsPublic()) {
+                        calendars.remove(calendar);
+                    }
+                }
+            }
+
+            if (calendars != null && calendars.size() > 0) {
+                calendarNames = titlesCalendar(calendars);
+                updateEventsToShow(calendars.get(0));
+            }
+        }
+
+    }
+
     public void updateEvent(ActionEvent actionEvent) {
 
         manageEvent.setTitle(event.getTitle());
         manageEvent.setCalendarName(calendarSelected);
-        if (event.getData() != null) {
-            manageEvent.setIdEvent((String) event.getData());
+        if (event.getData() != null && ((EventDetails) event.getData()).getId() != null) {
+            manageEvent.setIdEvent(Objects.toString(((EventDetails) event.getData()).getId()));
         }
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -162,40 +179,19 @@ public class ScheduleViewBacking implements Serializable {
         manageEvent.setEndDate(dateFormat.format(event.getEndDate()));
         manageEvent.setEndTime(timeFormat.format(event.getEndDate()));
         manageEvent.save();
-
-//        //se l'evento è nuovo
-//        if (event.getId() == null) {
-//            //lo istanzio, privato, senza invitati e non all'aperto
-//            Event eventToCreate = new PrivateEvent(event.getTitle(),
-//                    dateToCalendar(event.getStartDate()),
-//                    dateToCalendar(event.getEndDate()),
-//                    null,
-//                    event.getDescription(),
-//                    false,
-//                    login.getCurrentUser());
-//            //lo persisto            
-//            eventManager.scheduleNewEvent(eventToCreate, calendarManager.findCalendarByName(login.getCurrentUser(), calendarSelected), null);
-//            //lo visualizzo
-//            eventsToShow.addEvent(event);
-//        } else {
-//            //lo cerco
-//            Event eventToUpdate = eventManager.findEventbyId((Long) event.getData());
-//            //lo aggiorno nel db
-//            eventManager.updateEvent(eventToUpdate, calendarManager.findCalendarByName(login.getCurrentUser(), calendarSelected));
-//            //lo aggiorno a video
-//            eventsToShow.updateEvent(event);
-//        }
-//
-//        event = new DefaultScheduleEvent();
     }
 
     public void onEventSelect(SelectEvent selectEvent) {
         event = (ScheduleEvent) selectEvent.getObject();
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         try {
-            context.redirect(context.getRequestContextPath() + "/s/eventPage.xhtml?id=" + event.getData());
+            // se l evento è public o sei l owner
+            if ((event.getData() != null && ((EventDetails) event.getData()).isPub()) || !readOnly) {
+                context.redirect(context.getRequestContextPath() + "/s/eventPage.xhtml?id=" + ((EventDetails) event.getData()).getId());
+            }
         } catch (IOException ex) {
-            //TODO msg error
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Redirect fallita", "");
+            addMessage(message);
         }
     }
 
@@ -254,9 +250,27 @@ public class ScheduleViewBacking implements Serializable {
         for (Event ev : cal.getEventsInCalendar()) {
             calendarShown = cal;
             calendarSelected = cal.getTitle();
-            DefaultScheduleEvent e = new DefaultScheduleEvent(ev.getTitle(), ev.getStartDateTime().getTime(), ev.getEndDateTime().getTime(), ev.getId());
-            e.setDescription(ev.getDescription());
-            eventsToShow.addEvent(e);
+            // se l'evento è privato e non sei l'owner
+            if (ev instanceof PrivateEvent && readOnly) {
+                // creo una slot senza dettagli
+                System.out.println("-creata slot: inizia a "+ev.getStartDateTime().getTime()+" e finisce a "+
+                        ev.getEndDateTime().getTime());
+                DefaultScheduleEvent e = new DefaultScheduleEvent(
+                        "evento privato",
+                        ev.getStartDateTime().getTime(),
+                        ev.getEndDateTime().getTime(),
+                        new EventDetails(ev.getId(), (ev instanceof PublicEvent)));
+                eventsToShow.addEvent(e);
+            } else {
+                DefaultScheduleEvent e = new DefaultScheduleEvent(
+                        ev.getTitle(),
+                        ev.getStartDateTime().getTime(),
+                        ev.getEndDateTime().getTime(),
+                        new EventDetails(ev.getId(), (ev instanceof PublicEvent)));
+                e.setDescription(ev.getDescription());
+                eventsToShow.addEvent(e);
+            }
+
         }
 
     }
@@ -266,9 +280,58 @@ public class ScheduleViewBacking implements Serializable {
         cal.setTime(date);
         return cal;
     }
-    
-    public void setUser(){
-        //user = search.findUserbyId(userId);
-        
+
+    public void setUser() {
+        if (userId != null) {
+            if (!Objects.equals(Long.valueOf(userId).longValue(), login.getCurrentUser().getId())) {
+                readOnly = true;
+                System.out.println("-userId:"+ userId);
+                System.out.println("-userId castato to long:" + Long.valueOf(userId).longValue());
+                user = search.findUserById(Long.valueOf(userId).longValue());
+                if (user == null) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage("Nessun utente trovato"));
+                    ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+                    try {
+                        context.redirect(context.getRequestContextPath() + "error.xhtml");
+                    } catch (IOException ex) {
+                        Logger.getLogger(ScheduleViewBacking.class.getName()).log(Level.SEVERE, null, ex);
+                        System.out.println("Redirect fallita");
+                    }
+                }
+            } else {
+                user = login.getCurrentUser();
+            }
+        } else {
+            user = login.getCurrentUser();
+        }
+    }
+
+    private class EventDetails {
+
+        private Long id;
+        private boolean pub;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public boolean isPub() {
+            return pub;
+        }
+
+        public void setPub(boolean pub) {
+            this.pub = pub;
+        }
+
+        public EventDetails(Long id, boolean pub) {
+            this.id = id;
+            this.pub = pub;
+        }
+
     }
 }

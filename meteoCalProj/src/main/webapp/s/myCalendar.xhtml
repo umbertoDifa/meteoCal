@@ -16,7 +16,7 @@ and open the template in the editor.
 
         <f:metadata>
             <f:viewParam name="id" value="#{scheduleView.userId}"/>
-            <f:viewAction action="#{scheduleView.setUser}"/>
+            <f:viewAction action="#{scheduleView.init}"/>
         </f:metadata>
 
         <ui:define name="title">calendar</ui:define>
@@ -40,7 +40,7 @@ and open the template in the editor.
                                 </h:panelGrid>
                             </f:facet>
                             <f:facet name="right">
-                                <h:panelGrid columns="2">
+                                <h:panelGrid columns="2" rendered="#{!scheduleView.readOnly}">
                                     <p:commandButton value="Delete #{scheduleView.calendarSelected}" icon="ui-icon-close" update=":growl">
                                         <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" />
                                     </p:commandButton>
@@ -61,15 +61,15 @@ and open the template in the editor.
 
                         <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" widgetVar="myschedule" timeZone="GMT+2">
 
-                            <p:ajax event="dateSelect" listener="#{scheduleView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                            <p:ajax event="dateSelect" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
                             <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" />
-                            <p:ajax event="eventMove" listener="#{scheduleView.onEventMove}" update=":growl" />
-                            <p:ajax event="eventResize" listener="#{scheduleView.onEventResize}" update=":growl" />
+                            <p:ajax event="eventMove" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onEventMove}" update=":growl" />
+                            <p:ajax event="eventResize" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onEventResize}" update=":growl" />
 
                         </p:schedule>
 
 
-                        <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
+                        <p:dialog rendered="#{!scheduleView.readOnly}" widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
                             <h:panelGrid id="eventDetails" columns="2">
                                 <h:outputLabel for="title" value="Title:" />
                                 <p:inputText id="title" value="#{scheduleView.event.title}" required="true" />
