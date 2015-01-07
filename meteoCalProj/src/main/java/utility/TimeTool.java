@@ -42,14 +42,14 @@ public class TimeTool {
     }
 
     /**
-     * check is day1 is exactly one day before day2, withour considerind
-     * hour,min,sec, and milllisec
+     * Check if day1 is 'daysBefore' day2
      *
-     * @param day1
-     * @param day2
-     * @return true if day1 is the day before day2
+     * @param daysBefore how many days before day2
+     * @param day1 day before
+     * @param day2 day after
+     * @return
      */
-    public static boolean isOneDayBefore(Calendar day1, Calendar day2) {
+    public static boolean isNDayBefore(int daysBefore, Calendar day1, Calendar day2) {
         Calendar day1Normalized;
         Calendar day2Normalized;
 
@@ -57,8 +57,8 @@ public class TimeTool {
         day1Normalized = normalize(day1);
         day2Normalized = normalize(day2);
 
-        //tolgo un giorno a day2
-        day2Normalized.add(Calendar.DATE, -1);
+        //tolgo un tot di giorni da day2
+        day2Normalized.add(Calendar.DATE, daysBefore * -1);
 
         //controllo che siano lo stesso giorno
         if (!day1Normalized.before(day2Normalized) && !day1Normalized.after(

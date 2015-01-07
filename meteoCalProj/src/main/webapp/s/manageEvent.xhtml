@@ -205,28 +205,28 @@
                 <h:commandButton id="delete" value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.deleteEvent}"/>
             </h:form>
             <h:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.idEvent}"/>
-
             <div id="inviteDiv">
                 <h2>Guests:</h2>
-
-                <p:fieldset legend="To invite" >
-                    <c:forEach items="#{eventToManage.guests}" var="g" >
-                        <h:outputText value="#{g.email}"/><br/>
-                    </c:forEach>
-                </p:fieldset>
-
                 <h:form id="inviteForm" >
+                    <p:fieldset legend="To invite" >
+                        <c:forEach items="#{eventToManage.guests}" var="g" >
+                            <h:outputText value="#{g.email}"/><br/>
+                        </c:forEach>
+                    </p:fieldset>
+
+
                     <h:inputText id="email" value="#{eventToManage.newGuestEmail}"/>
                     <h:commandButton value="search" action="#{eventToManage.showResultUsers}" /><br/>
                     <h:message for="email" />
+
+                    <p:panel rendered="#{eventToManage.displayResultUsers}" >
+
+                        <c:forEach items="#{eventToManage.resultUsers}" var="u">
+                            <p:commandButton class="linkStyle" update="inviteForm" value="#{u.email}" action="#{eventToManage.invite(u.email)}" /><br/>
+                        </c:forEach>
+
+                    </p:panel>
                 </h:form>
-                <p:panel rendered="#{eventToManage.displayResultUsers}" >
-
-                    <c:forEach items="#{eventToManage.resultUsers}" var="u">
-                        <h:commandButton class="linkStyle" value="#{u.email}" action="#{eventToManage.invite(u.email)}" /><br/>
-                    </c:forEach>
-
-                </p:panel>
             </div>
             <p:tabView>
                 <p:tab title="Partecipants">
