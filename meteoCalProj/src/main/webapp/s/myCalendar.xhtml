@@ -52,9 +52,16 @@ and open the template in the editor.
                                 </h:panelGrid>
 
                                 <p:confirmDialog global="true">
-                                    <p:commandButton value="Yes" icon="ui-icon-check" />
+                                    <p:commandButton action=""   value="Yes" icon="ui-icon-check" />
                                     <p:commandButton value="No" icon="ui-icon-close" />
                                 </p:confirmDialog>
+
+                                <p:dialog header="Delete Options" widgetVar="delOpt" minHeight="40">
+                                    <h:outputText value="Do you want to delete, move or detach the events in the calendar?" />
+                                    <p:commandButton value="Move" type="button" onclick="#{sceduleView.deleteCalendar(DeleteCalendarOption.MOVE_EVENTS_AND_DELETE)}" />
+                                    <p:commandButton value="Detach" type="button" onclick="#{sceduleView.deleteCalendar(DeleteCalendarOption.DELETE_CALENDAR_ONLY)}" />
+                                    <p:commandButton value="Delete" type="button" onclick="#{sceduleView.deleteCalendar(DeleteCalendarOption.DELETE_ALL)}" /> 
+                                </p:dialog>
 
                             </f:facet>
                         </p:toolbar>
