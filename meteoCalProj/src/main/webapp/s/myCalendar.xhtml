@@ -51,9 +51,9 @@ and open the template in the editor.
                                     </h:panelGrid>
                                 </h:panelGrid>
 
-                                <p:confirmDialog global="true">
-                                    <p:commandButton value="Yes" icon="ui-icon-check" action="#{scheduleView.canDeleteCalendar}" />
-                                    <p:commandButton value="No" icon="ui-icon-close" />
+                                <p:confirmDialog  id="confirmationDialog" global="true">
+                                    <p:commandButton value="Yes" icon="ui-icon-check" onclick="#{scheduleView.canDeleteCalendar()},confirmationDialog.close" />
+                                    <p:commandButton value="No" icon="ui-icon-close" onclick="confirmationDialog.close" />
                                 </p:confirmDialog>
 
                                 <p:dialog header="Delete Options" widgetVar="delOpt" minHeight="40">
