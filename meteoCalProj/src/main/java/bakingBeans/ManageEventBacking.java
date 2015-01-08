@@ -21,6 +21,7 @@ import model.Invitation;
 import model.PrivateEvent;
 import model.PublicEvent;
 import model.UserModel;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -524,6 +525,7 @@ public class ManageEventBacking implements Serializable {
         FacesContext ctx = FacesContext.getCurrentInstance();
         ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_WARN,
                 msg, advice));
+        RequestContext.getCurrentInstance().update("growl");
     }
 
     private void setInvitations() {

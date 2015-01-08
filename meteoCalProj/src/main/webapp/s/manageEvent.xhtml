@@ -21,73 +21,75 @@
 
             <script>
 
-                $(document).ready(function () {
-                    initialize();
+                        $(document).ready(function () {
+                initialize();
                 });
-
 // This example displays an address form, using the autocomplete feature
 // of the Google Places API to help users fill in the information.
 
-                var placeSearch, autocomplete;
-
-                var componentForm = {
-                    street_number: 'short_name',
-                    route: 'long_name',
-                    locality: 'long_name',
-                    administrative_area_level_1: 'short_name',
-                    country: 'long_name',
-                    postal_code: 'short_name'
-                };
-
-                function initialize() {
-                    // Create the autocomplete object, restricting the search
-                    // to geographical location types.
-                    autocomplete = new google.maps.places.Autocomplete(
-                            /** @type {HTMLInputElement} */(document.getElementById('autocomplete')),
-                            {types: ['geocode']});
-                    // When the user selects an address from the dropdown,
-                    // populate the address fields in the form.
-                    google.maps.event.addListener(autocomplete, 'place_changed', function () {
-                        fillInAddress();
-                    });
-
-                }
+                        var placeSearch, autocomplete;
+                        var componentForm = {
+                        street_number: 'short_name',
+                                route: 'long_name',
+                                locality: 'long_name',
+                                administrative_area_level_1: 'short_name',
+                                country: 'long_name',
+                                postal_code: 'short_name'
+                        };
+                        function initialize() {
+                        // Create the autocomplete object, restricting the search
+                        // to geographical location types.
+                        autocomplete = new google.maps.places.Autocomplete(
+                                /** @type {HTMLInputElement} */(document.getElementById('autocomplete')),
+                        {types: ['geocode']});
+                                // When the user selects an address from the dropdown,
+                                // populate the address fields in the form.
+                                google.maps.event.addListener(autocomplete, 'place_changed', function () {
+                                fillInAddress();
+                                });
+                        }
 // [START region_fillform]
                 function fillInAddress() {
                     // Get the place details from the autocomplete object.
-                    var place = autocomplete.getPlace();
-                    for (var component in componentForm) {
-                        document.getElementById("newEventForm:"+component).value = '';
-                        document.getElementById("newEventForm:"+component).disabled = false;
-                    }
 
-                    // Get each component of the address from the place details
-                    // and fill the corresponding field on the form.
-                    for (var i = 0; i &lt; place.address_components.length; i++) {
-                        var addressType = place.address_components[i].types[0];
-                        if (componentForm[addressType]) {
-                            var val = place.address_components[i][componentForm[addressType]];
-                            document.getElementById("newEventForm:"+addressType).value = val;
+                    if (typeof autocomplete.getPlace() !== 'undefined'){
+                        var place = autocomplete.getPlace();
+                        for (var component in componentForm) {
+                        document.getElementById("newEventForm:" + component).value = '';
+                        document.getElementById("newEventForm:" + component).disabled = false;
                         }
+
+                        // Get each component of the address from the place details
+                        // and fill the corresponding field on the form.
+                        for (var i = 0; i &lt; place.address_components.length; i++) {
+                            var addressType = place.address_components[i].types[0];
+                            if (componentForm[addressType]) {
+                                var val = place.address_components[i][componentForm[addressType]];
+                                document.getElementById("newEventForm:" + addressType).value = val;
+                            }
+                        }
+                    } else {
+                        document.getElementById("newEventForm:locality").value = document.getElementById("autocomplete").value;
                     }
                 }
+
 // [END region_fillform]
-                
+
 // [START region_geolocation]
 // Bias the autocomplete object to the user's geographical location,
 // as supplied by the browser's 'navigator.geolocation' object.
                 function geolocate() {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(function (position) {
-                            var geolocation = new google.maps.LatLng(
-                                    position.coords.latitude, position.coords.longitude);
-                            var circle = new google.maps.Circle({
-                                center: geolocation,
+                if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                var geolocation = new google.maps.LatLng(
+                        position.coords.latitude, position.coords.longitude);
+                        var circle = new google.maps.Circle({
+                        center: geolocation,
                                 radius: position.coords.accuracy
-                            });
-                            autocomplete.setBounds(circle.getBounds());
                         });
-                    }
+                        autocomplete.setBounds(circle.getBounds());
+                });
+                }
                 }
 // [END region_geolocation]
 
@@ -109,7 +111,10 @@
             </h1>
             <h:form id="newEventForm">
 
-                <h:inputText pt:placeholder="Title" value="#{eventToManage.title}" /><br/>
+                <h:inputText id="titleInput" pt:placeholder="Title" value="#{eventToManage.title}" required="true" >
+                    <f:validateLength minimum="3" maximum="50"/>
+                    <p:ajax update="msgTitleInput" event="blur" />
+                </h:inputText><p:message id="msgTitleInput" for="titleInput"/><br/>
 
                 <p:panelGrid columns="2">
                     <h:outputLabel value="Add into:"/>
@@ -146,21 +151,23 @@
                     <div id="locationField">
 
                         <input id="autocomplete"  placeholder="Enter your address"
-                               onFocus="geolocate()" type="text"/>
+                               onFocus="geolocate()"  onBlur="fillInAddress()" type="text"/>
                     </div>                                        
 
                     <h:outputLabel value="Outdoor" /><h:selectBooleanCheckbox value="#{eventToManage.outdoor}"/>
-                    
-                   
+
+
                 </p:panelGrid>
-                 <h:inputHidden class="field" id="street_number" value="#{place.streetNumber}" ></h:inputHidden>
-                    <h:inputHidden class="field" id="route" value="#{place.route}"  ></h:inputHidden>
-                    <h:inputHidden class="field" id="locality" value="#{place.locality}"   ></h:inputHidden>
-                    <h:inputHidden class="field" id="administrative_area_level_1" value="#{place.administrativeArea}" ></h:inputHidden>
-                    <h:inputHidden class="field" id="postal_code" value="#{place.postalCode}" ></h:inputHidden>
-                    <h:inputHidden class="field" id="country" value="#{place.country}" ></h:inputHidden>
-                    
-                <h:inputTextarea value="#{eventToManage.description}" style="resize: none" /><br/>
+                <h:inputHidden class="field" id="street_number" value="#{place.streetNumber}" ></h:inputHidden>
+                <h:inputHidden class="field" id="route" value="#{place.route}"  ></h:inputHidden>
+                <h:inputHidden class="field" id="locality" value="#{place.locality}"   ></h:inputHidden>
+                <h:inputHidden class="field" id="administrative_area_level_1" value="#{place.administrativeArea}" ></h:inputHidden>
+                <h:inputHidden class="field" id="postal_code" value="#{place.postalCode}" ></h:inputHidden>
+                <h:inputHidden class="field" id="country" value="#{place.country}" ></h:inputHidden>
+
+                <h:inputTextarea value="#{eventToManage.description}" style="resize: none" >
+                    <f:validateLength maximum="255"/>
+                </h:inputTextarea><br/>
 
                 <p:commandButton id="save" value="Save" action="#{eventToManage.save}"/>
                 <h:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/myCalendar.xhtml"/> 

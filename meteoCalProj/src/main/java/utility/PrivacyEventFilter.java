@@ -40,6 +40,8 @@ public class PrivacyEventFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        boolean error = false;
+        System.out.println("-dentro PrivacyEventFilter");
         // check whether we have a httpServletRequest and a pattern
         if (this.pattern != null && request instanceof HttpServletRequest) {
             // resolve the query string from the httpServletRequest
@@ -55,6 +57,7 @@ public class PrivacyEventFilter implements Filter {
                         if (!(ev instanceof PublicEvent) && !((ev instanceof PrivateEvent) && (ev.getOwner().equals(login.getCurrentUser()) || (ev.getInvitee().contains(login.getCurrentUser()))))) {
                             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Non hai i permessi per visualizzare l'evento");
                             System.out.println("-Filtro: proibito");
+                            error = true;
                         }
                     }
                 } else {
@@ -62,7 +65,9 @@ public class PrivacyEventFilter implements Filter {
                 }
             }
         }
-        chain.doFilter(request, response);
+        if (error == false) {
+            chain.doFilter(request, response);
+        }
     }
 
     @Override

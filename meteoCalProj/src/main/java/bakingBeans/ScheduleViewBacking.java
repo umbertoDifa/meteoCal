@@ -202,7 +202,6 @@ public class ScheduleViewBacking implements Serializable {
 
     public void onEventMove(ScheduleEntryMoveEvent event) {
 
-        updateEvent(null);
         //persisto l event con manageEventBacking
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event moved", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
 
@@ -211,7 +210,6 @@ public class ScheduleViewBacking implements Serializable {
 
     public void onEventResize(ScheduleEntryResizeEvent event) {
 
-        updateEvent(null);
         //persisto l event con manageEventBacking
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
 
@@ -219,11 +217,13 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     private void addMessage(FacesMessage message) {
+        System.out.println("-dentro addMsg");
         FacesContext.getCurrentInstance().addMessage(null, message);
+        RequestContext.getCurrentInstance().update("growl");
     }
 
     public void onCalendarChange() {
-        System.out.println ("DENTRO onCalendarChange");
+        System.out.println("DENTRO onCalendarChange");
         //dal calendarSelected aggiorno gli eventi da visualizzare
         for (CalendarModel cal : calendars) {
             if (cal.getTitle().equals(calendarSelected)) {
@@ -243,8 +243,8 @@ public class ScheduleViewBacking implements Serializable {
             // se l'evento è privato e non sei l'owner
             if (ev instanceof PrivateEvent && readOnly) {
                 // creo una slot senza dettagli
-                System.out.println("-creata slot: inizia a "+ev.getStartDateTime().getTime()+" e finisce a "+
-                        ev.getEndDateTime().getTime());
+                System.out.println("-creata slot: inizia a " + ev.getStartDateTime().getTime() + " e finisce a "
+                        + ev.getEndDateTime().getTime());
                 DefaultScheduleEvent e = new DefaultScheduleEvent(
                         "evento privato",
                         ev.getStartDateTime().getTime(),
@@ -275,7 +275,7 @@ public class ScheduleViewBacking implements Serializable {
         if (userId != null) {
             if (!Objects.equals(Long.valueOf(userId).longValue(), login.getCurrentUser().getId())) {
                 readOnly = true;
-                System.out.println("-userId:"+ userId);
+                System.out.println("-userId:" + userId);
                 System.out.println("-userId castato to long:" + Long.valueOf(userId).longValue());
                 user = search.findUserById(Long.valueOf(userId).longValue());
                 if (user == null) {
@@ -324,31 +324,34 @@ public class ScheduleViewBacking implements Serializable {
         }
 
     }
-    
-        private void showMessage(String recipient, String msg, String advice) {
+
+    private void showMessage(String recipient, String msg, String advice) {
         FacesContext ctx = FacesContext.getCurrentInstance();
         ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_WARN, msg, advice));
+        RequestContext.getCurrentInstance().update("growl");
     }
 
     public void canDeleteCalendar() {
-        System.out.println ("DENTRO canDeleteCalendar");
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.execute("PF('confirmationDialog').hide();");
+        System.out.println("DENTRO canDeleteCalendar");
         if (calendarManager.isDefault(calendarShown)) {
-            System.out.println (calendarShown.getTitle()+" è default");
+            System.out.println(calendarShown.getTitle() + " è default");
             showMessage(null, "Cannot Delete Default Calendar", "You cannot delete the default calendar. Please make default another calenar and then remove this one.");
         } else {
-            System.out.println (calendarShown.getTitle()+ "non è default");
-            RequestContext context = RequestContext.getCurrentInstance();
+            System.out.println(calendarShown.getTitle() + "non è default");
             context.execute("PF('delOpt').show();");
         }
     }
-    
-    public void deleteCalendar ( String response) {
-        System.out.println ("DENTRO deleteCalendar");
+
+    public void deleteCalendar(String response) {
+        System.out.println("-DENTRO deleteCalendar");
         DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
-        if (calendarManager.deleteCalendar(calendarShown, option))
+        if (calendarManager.deleteCalendar(calendarShown, option)) {
             showMessage(null, "Calendar Deleted", "Your calendar has been succesfully deleted");
-        else
+        } else {
             showMessage(null, "Cannot delete calendar", "An error has occured.");
-        
+        }
+
     }
 }

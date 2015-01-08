@@ -37,6 +37,8 @@ public class EditPermissionFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        boolean error = false;
+        System.out.println("-dentro EditPermissionFilter");
         // check whether we have a httpServletRequest and a pattern
         if (this.pattern != null && request instanceof HttpServletRequest) {
             // resolve the query string from the httpServletRequest
@@ -55,11 +57,13 @@ public class EditPermissionFilter implements Filter {
                         if (!login.getCurrentUser().equals(ev.getOwner())) {
                             // sollevo un errore 403
                             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Non hai i permessi per modificare questo evento");
+                            error = true;
                         }
                     } else {
                         System.out.println("-l'ev vale: " + ev);
                         // se non c è sollevo un errore 404
                         ((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND, "Non è stato trovato alcun evento");
+                        error = true;
                     }
                 } else {
                     System.out.println("-nell else, l'eventId vale: " + eventId);
@@ -67,7 +71,9 @@ public class EditPermissionFilter implements Filter {
                 }
             }
         }
-        chain.doFilter(request, response);
+        if (error == false) {
+            chain.doFilter(request, response);
+        }
     }
 
     @Override

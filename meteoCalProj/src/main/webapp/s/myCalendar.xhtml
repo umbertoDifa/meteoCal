@@ -23,120 +23,98 @@ and open the template in the editor.
 
         <ui:define name="content">
 
-            <h:form>
-                <h:panelGrid columnClasses="value">
-                    <h:form>
 
-                        <p:toolbar style="margin-bottom: 12px">
-                            <f:facet name="left">
-                                <h:panelGrid columns="2">
-                                    <p:outputLabel for="console" value="Calendar:"/>
-                                    <p:selectOneMenu id="console" value="#{scheduleView.calendarSelected}" style="width:125px">
-                                        <c:forEach items="#{scheduleView.calendarNames}" var="c">
-                                            <p:ajax listener="#{scheduleView.onCalendarChange}" update="schedule,publicSwitch" />
-                                            <f:selectItem itemLabel="#{c}" itemValue="#{c}" />
-                                        </c:forEach>
-                                    </p:selectOneMenu>
-                                </h:panelGrid>
-                            </f:facet>
-                            <f:facet name="right">
-                                <h:form>
+            <h:panelGrid columnClasses="value">
 
-                                    <h:panelGrid columns="2">
-                                        <p:inputSwitch id="publicSwitch" value="#{scheduleView.calendarShown.isPublic}"/>
-                                        <p:outputLabel for="publicSwitch" value="Public:"/>
-                                    </h:panelGrid>
 
-                                    <h:panelGrid columns="2" rendered="#{!scheduleView.readOnly}">
-                                        <p:commandButton value="Delete #{scheduleView.calendarSelected}" onclick="confirmationDialog.show()" icon="ui-icon-close" update=":growl" />
+                <p:toolbar style="margin-bottom: 12px">
 
-                                    </h:panelGrid>
-
-                                    <p:confirmDialog  id="confirmationDialog" severity="alert">
-
-                                        <p:commandButton value="Yes" icon="ui-icon-check" update=":growl" oncomplete="confirmation.hide()" actionListener="#{scheduleView.canDeleteCalendar()}" /> 
-                                        <p:commandButton value="No" icon="ui-icon-close" onclick="confirmationDialog.hide()" />
-
-                                    </p:confirmDialog>
-                                </h:form>
-
-                                <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" minHeight="40">
-                                    <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
-                                    <h:form>
-                                        <p:commandButton value="Move" type="button" onclick="#{sceduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
-                                        <p:commandButton value="Detach" type="button" onclick="#{sceduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
-                                        <p:commandButton value="Delete" type="button" onclick="#{sceduleView.deleteCalendar('DELETE_ALL')}" /> 
-                                        <p:commandButton value="Cancel" type="button" onclick="delOpt.close" />
-                                    </h:form>
-                                </p:dialog>
-
-                            </f:facet>
-                        </p:toolbar>
-                        <h:form>
-                        <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" widgetVar="myschedule" timeZone="GMT+2">
-
-                            <p:ajax event="dateSelect" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
-                            <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" />
-                            <p:ajax event="eventMove" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onEventMove}" update=":growl" />
-                            <p:ajax event="eventResize" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onEventResize}" update=":growl" />
-
-                        </p:schedule>
+                    <f:facet name="left">
+                        <h:panelGrid columns="2">
+                            <h:form>
+                                <p:outputLabel for="console" value="Calendar:"/>
+                                <p:selectOneMenu id="console" value="#{scheduleView.calendarSelected}" style="width:125px">
+                                    <c:forEach items="#{scheduleView.calendarNames}" var="c">
+                                        <p:ajax listener="#{scheduleView.onCalendarChange}" update=":scheduleForm:schedule, :publicSwitchForm:publicSwitch" />
+                                        <f:selectItem itemLabel="#{c}" itemValue="#{c}" />
+                                    </c:forEach>
+                                </p:selectOneMenu>
                             </h:form>
-
-                        <p:dialog rendered="#{!scheduleView.readOnly}" widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
-                            <h:panelGrid id="eventDetails" columns="2">
-                                <h:outputLabel for="title" value="Title:" />
-                                <p:inputText id="title" value="#{scheduleView.event.title}" required="true" />
-
-                                <h:outputLabel for="from" value="From:" />
-                                <p:inputMask id="from" value="#{scheduleView.event.startDate}" mask="99/99/9999">
-                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+2"/>
-                                </p:inputMask>
-
-                                <h:outputLabel for="to" value="To:" />
-                                <p:inputMask id="to" value="#{scheduleView.event.endDate}" mask="99/99/9999">
-                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+2"/>
-                                </p:inputMask>
-
-                                <h:outputLabel for="allDay" value="All Day:" />
-                                <h:selectBooleanCheckbox id="allDay" value="#{scheduleView.event.allDay}" />
-
-                                <p:commandButton type="reset" value="Reset" />
-                                <p:commandButton id="addButton" value="Save" actionListener="#{scheduleView.updateEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
-
+                        </h:panelGrid>
+                    </f:facet>
+                    <f:facet name="right">
+                        <h:form id="publicSwitchForm">
+                            <h:panelGrid columns="2">
+                                <p:outputLabel for="publicSwitch" value="Public:"/>
+                                <p:inputSwitch id="publicSwitch" value="#{scheduleView.calendarShown.isPublic}"/>
                             </h:panelGrid>
-                        </p:dialog>   
-                    </h:form>
-                </h:panelGrid>
-            </h:form>
+                        </h:form>
+                        <h:form id="deleteForm">
+                            <h:panelGrid columns="2" rendered="#{!scheduleView.readOnly}">
+                                <p:commandButton value="Delete #{scheduleView.calendarSelected}" onclick="PF('confirmationDialog').show()" icon="ui-icon-close" type="button"/>
+                            </h:panelGrid>
+
+                            <p:confirmDialog message="Are you sure?" global="true" widgetVar="confirmationDialog" header="Initiating delete process" severity="alert">
+                                <p:commandButton type="button" value="Yes" icon="ui-icon-check" update=":growl">
+                                    <f:ajax event="click" listener="#{scheduleView.canDeleteCalendar()}" />  
+                                </p:commandButton> 
+                                <p:commandButton type="button" value="No" icon="ui-icon-close" onclick="PF('confirmationDialog').hide()"/>
+                            </p:confirmDialog>
 
 
-            <script type="text/javascript">
-                PrimeFaces.locales['tr'] = {
-                    closeText: 'kapat',
-                    prevText: 'geri',
-                    nextText: 'ileri',
-                    currentText: 'bugün',
-                    monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                        'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
-                    monthNamesShort: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
-                        'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
-                    dayNames: ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'],
-                    dayNamesShort: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
-                    dayNamesMin: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
-                    weekHeader: 'Hf',
-                    firstDay: 1,
-                    isRTL: false,
-                    showMonthAfterYear: false,
-                    yearSuffix: '',
-                    month: 'Ay',
-                    week: 'Hafta',
-                    day: 'Gün',
-                    allDayText: 'Tüm Gün'
-                };
-            </script>
+                            <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" minHeight="40" resizable="false">
+                                <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
+                                <h:form>
+                                    <p:commandButton value="Move" type="button"  >
+                                        <f:ajax event="click" listener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
+                                    </p:commandButton>
+                                    <p:commandButton value="Detach" oncomplete="PF('delOpt').hide()" type="button" onclick="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
+                                    <p:commandButton value="Delete" oncomplete="PF('delOpt').hide()" type="button" onclick="#{scheduleView.deleteCalendar('DELETE_ALL')}" /> 
+                                    <p:commandButton value="Cancel" type="button" onclick="PF('delOpt').hide()" />
+                                </h:form>
+                            </p:dialog>
+
+                        </h:form>
+
+                    </f:facet>
+                </p:toolbar>
+                <h:form id="scheduleForm">
+                    <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" widgetVar="myschedule" timeZone="GMT+2">
+
+                        <p:ajax event="dateSelect" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                        <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" />
+                        <p:ajax event="eventMove" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onEventMove}" update=":growl" />
+                        <p:ajax event="eventResize" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onEventResize}" update=":growl" />
+
+                    </p:schedule>
+                    <p:dialog rendered="#{!scheduleView.readOnly}" widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
+                        <h:panelGrid id="eventDetails" columns="2">
+                            <h:outputLabel for="title" value="Title:" />
+                            <p:inputText id="title" value="#{scheduleView.event.title}" required="true" />
+
+                            <h:outputLabel for="from" value="From:" />
+                            <p:inputMask id="from" value="#{scheduleView.event.startDate}" mask="99/99/9999">
+                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+2"/>
+                            </p:inputMask>
+
+                            <h:outputLabel for="to" value="To:" />
+                            <p:inputMask id="to" value="#{scheduleView.event.endDate}" mask="99/99/9999">
+                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+2"/>
+                            </p:inputMask>
+
+                            <h:outputLabel for="allDay" value="All Day:" />
+                            <h:selectBooleanCheckbox id="allDay" value="#{scheduleView.event.allDay}" />
+
+                            <p:commandButton type="reset" value="Reset" />
+                            <p:commandButton id="addButton" value="Save" actionListener="#{scheduleView.updateEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
+
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
 
 
+
+            </h:panelGrid>
 
             <style type="text/css">
                 .value {
