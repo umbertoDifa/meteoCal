@@ -242,21 +242,33 @@ public class CalendarManagerImpl implements CalendarManager {
         }
     }
 
+    /**
+     * Create a calendar named default for the user provided without persisting
+     *
+     * @param user user to create a calendar for
+     * @return a default calendar, null if the user is null
+     */
     @Override
     public CalendarModel createDefaultCalendar(UserModel user) {
-        //TODO if user == null
-        CalendarModel calendar = new CalendarModel();
-        calendar.setIsDefault(true);
-        calendar.setIsPublic(false);
-        calendar.setOwner(user);
-        //TODO questo set deve essere un po' più accurato, ad esempio se già esiste un
-        //calendario chiamato default allora il titolo sarà tipo default2
-        calendar.setTitle("Default");
+        if (user != null) {
+            CalendarModel calendar = new CalendarModel();
 
-        logger.log(Level.INFO, "Default calendar for user +{0} created",
-                user.getEmail());
+            //setto proprietà calendario
+            calendar.setIsDefault(true);
+            calendar.setIsPublic(false);
+            calendar.setOwner(user);
 
-        return calendar;
+            //il titolo è default + timestamp
+            calendar.setTitle("Default (" + Calendar.getInstance().toString()
+                    + ")");
+
+            logger.log(Level.INFO, "Default calendar for user "
+                    + "{0} created",
+                    user.getEmail());
+
+            return calendar;
+        }
+        return null;
     }
 
     @Override
