@@ -175,7 +175,11 @@ public class CalendarManagerImpl implements CalendarManager {
         return null;
 
     }
-
+    @Override
+    public CalendarModel getCalendarUpdated (CalendarModel calendar) {
+        return (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id",
+                calendar.getOwner()).setParameter("title", calendar.getTitle()).getSingleResult();
+    }
     @Override
     //TODO qui user non serve perchè deduco l'id dal calendar
     //TODO per ora nessuno usa questa funzione!

@@ -251,7 +251,7 @@ public class ScheduleViewBacking implements Serializable {
 
     private void updateEventsToShow(CalendarModel cal) {
         eventsToShow.clear();
-
+        cal = calendarManager.getCalendarUpdated(cal);
         for (Event ev : cal.getEventsInCalendar()) {
             calendarShown = cal;
             calendarSelected = cal.getTitle();

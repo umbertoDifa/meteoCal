@@ -34,6 +34,8 @@ public interface CalendarManager {
      */
     public ControlMessages addToCalendar(Event event, CalendarModel calendar);
 
+    public CalendarModel getCalendarUpdated (CalendarModel calendar);
+    
     public CalendarModel createDefaultCalendar(UserModel user);
 
     public CalendarModel findCalendarByName(UserModel user, String name);
