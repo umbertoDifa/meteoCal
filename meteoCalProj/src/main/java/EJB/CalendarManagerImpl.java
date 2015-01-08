@@ -194,11 +194,6 @@ public class CalendarManagerImpl implements CalendarManager {
         }
     }
 
-    @Override
-    public Calendar findFreeDay(Calendar fromBusyDay, int weeksAhead) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     /**
      * aggiunge un evento al calendario, cancellandolo se è presente in altri
      * calendari dello stesso utente

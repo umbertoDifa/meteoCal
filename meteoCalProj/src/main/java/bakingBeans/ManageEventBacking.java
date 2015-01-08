@@ -1,5 +1,6 @@
 package bakingBeans;
 
+import EJB.CalendarManagerImpl;
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
@@ -10,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -22,6 +24,9 @@ import model.PrivateEvent;
 import model.PublicEvent;
 import model.UserModel;
 import org.primefaces.context.RequestContext;
+import utility.ControlMessages;
+import utility.LoggerLevel;
+import utility.LoggerProducer;
 
 /**
  *
@@ -80,6 +85,8 @@ public class ManageEventBacking implements Serializable {
 
     @Inject
     SearchManager searchManager;
+    
+    private Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
 
     private UserModel newGuest;
 
@@ -329,8 +336,6 @@ public class ManageEventBacking implements Serializable {
     public String save() {
         System.out.println("-dentro save");
 
-        System.out.println("PLACE: " + place.getLocality() + " numero: "
-                + place.getStreetNumber());
         createOrLoadInstance();
         setUpInstance();
         saveIt();
@@ -382,7 +387,8 @@ public class ManageEventBacking implements Serializable {
     public void showResultUsers() {
         System.out.println("-newGuestEmail" + newGuestEmail);
         if (saved) {
-            resultUsers = searchManager.searchUserForInvitation(newGuestEmail, eventToCreate);
+            resultUsers = searchManager.searchUserForInvitation(newGuestEmail,
+                    eventToCreate);
         } else {
             resultUsers = searchManager.searchUsers(newGuestEmail);
             resultUsers.remove(login.getCurrentUser());
@@ -492,11 +498,14 @@ public class ManageEventBacking implements Serializable {
         //passo all eventManager l'ownerId, l'evento riempito, il calendario
         //dove metterlo e la lista degli invitati
         System.out.println("-dentro save it");
+        //TODO check se questa funziona e comunque va spostata nel checkEvent
         if (eventToCreate.getEndDateTime().compareTo(
                 eventToCreate.getStartDateTime()) >= 0) {
             if (isSaved()) {
+                //TODO check conflicts prima di update
                 eventManager.updateEvent(eventToCreate, calendar, guests);
             } else {
+                //TODO checkconflicts prima di salvare un nuovo evento                                                                              
                 if (eventManager.scheduleNewEvent(eventToCreate, calendar,
                         guests)) {
                     setSaved(true);
@@ -508,6 +517,49 @@ public class ManageEventBacking implements Serializable {
             showMessage(login.getCurrentUser().getEmail(), "evento non salvato",
                     "date non corrette");
         }
+    }
+
+    public void checkEvent() {
+        //TODO decomment
+
+//        //controllo se ci osno porblemi i,e, conflitti o tempo malo
+//        List<ControlMessages> outcome = calendarManager.checkData(eventToCreate);
+//
+//        //se tutto ok 
+//        if (outcome.contains(ControlMessages.NO_PROBLEM)) {
+//            //salvo l'evento /update
+//            saveIt();//TODO chiama la save
+//        } else {
+//            //Listo gli errori
+//            String detail = "";
+//            for (ControlMessages mex : outcome) {
+//                detail += mex.getMessage() + "\n";
+//            }
+//            
+//            // cerco un free day
+//            //TODO chech for -1
+//            int offset = calendarManager.findFreeSlots(eventToCreate);
+//            Calendar rescheduleDay = eventToCreate.getStartDateTime();
+//            rescheduleDay.add(Calendar.DATE, offset);
+//
+//            //informo l'utente con una dialog box
+//            RequestContext context = RequestContext.getCurrentInstance();
+//            context.showMessageInDialog(new FacesMessage(
+//                    FacesMessage.SEVERITY_WARN, "Conflicts detected", detail));
+//            
+//            showMessage("conflictDialog", detail, null);
+//            context.execute("PF('conflictDialog').show();");
+//        }
+        
+        //TODO deleteme
+        logger.log(LoggerLevel.DEBUG, "Sono qui nel checkevent");
+        
+        String detail = "PROva evviva eviva";
+        //informo l'utente con una dialog box
+        RequestContext context = RequestContext.getCurrentInstance();        
+
+        showMessage("conflictDialog", detail, null);
+        context.execute("PF('conflictDialog').show();");
     }
 
     private UserModel findGuest(List<UserModel> users, String email) {

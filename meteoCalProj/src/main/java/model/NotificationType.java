@@ -26,26 +26,26 @@ public enum NotificationType {
      */
     INVITATION("Invitation to event {0}",
             "Hello {0},\nyou''ve received an invitation for event {1} from {2}.\n\n "
-            + "Have a look to the event page on the following link:\n\n{3}\n\nMeteoCalendarTeam"),
+            + "Have a look to the event page on the following link:\n\n{3}\n\nMeteoCalendar Team"),
     WEATHER_CHANGED("Weather changed for event {0}",
             "Hello {0},\n we inform you that the weather for"
-            + "the event {1} has changed. Check it at:\nLink:{3}"),
+            + "the event {1} has changed.\n\n Check it at:\n\nLink:{3}\n\nMeteoCalendar Team"),
     BAD_WEATHER_TOMORROW("Bad weather forecast for tomorrow event {0}",
             "Hello {0},\nwe are sorry to inform you that the weather forecast for"
-            + "the tomorrow event {1} is bad.\nLink:{3}"),
+            + "the tomorrow event {1} is bad.\n\nLink:{3}\n\nMeteoCalendar Team"),
     BAD_WEATHER_IN_THREE_DAYS("Bad weather forecast for event {0}",
             "Hello {0},\nwe are sorry to inform you that the weather forecast for"
-            + "the event {1} is bad. If you want you can reschedule your event.\nLink:{3}"),
+            + "the event {1} is bad.\n If you want you can reschedule your event.\n\nLink:{3}\n\nMeteoCalendar Team"),
     EVENT_CHANGED("Event {0} has been modified",
-            "Hello {0},\n we inform you that event {1} has been modified\nLink:{3}"),
+            "Hello {0},\n we inform you that event {1} has been modified\n\nLink:{3}\n\nMeteoCalendar Team"),
     EVENT_CANCELLED("Event {0} has been cancelled",
-            "Hello {0},\n we inform you that event {1} has been cancelled\n"),
+            "Hello {0},\n we inform you that event {1} has been cancelled\n\nMeteoCalendarTeam"),
     EVENT_CHANGED_TO_PUBLIC(
             "Event {0} has changed privacy from Private to Public",
-            "Hello {0},\n we inform you that event {1} has changed its privacy from Private to Public.\nLink:{3}"),
+            "Hello {0},\n we inform you that event {1} has changed its privacy from Private to Public.\n\nLink:{3}\n\nMeteoCalendar Team"),
     EVENT_CHANGED_TO_PRIVATE(
             "Event {0} has changed privacy from Public to Private",
-            "Hello {0},\n we inform you that event {1} has changed its privacy from Public to Private.\n");
+            "Hello {0},\n we inform you that event {1} has changed its privacy from Public to Private.\n\nMeteoCalendar Team");
 
     private String subject;
     private String bodyMessage;

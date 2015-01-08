@@ -23,18 +23,7 @@ public interface CalendarManager {
 
     public List<ControlMessages> checkData(Event event);
 
-    public boolean addCalendarToUser(UserModel user, CalendarModel cal);
-
-    /**
-     * Returns the first available free day within the next weeksAhead
-     *
-     * @param fromBusyDay the day that has problems and from which the system
-     * checks free days
-     * @param weeksAhead max number of weeks in the future to limit the search
-     * space
-     * @return a free Calendar day if one is found, null if not
-     */
-    public Calendar findFreeDay(Calendar fromBusyDay, int weeksAhead);
+    public boolean addCalendarToUser(UserModel user, CalendarModel cal); 
 
     /**
      * Dato un evento ed un calendario, inserisce l'evento nel calendario
