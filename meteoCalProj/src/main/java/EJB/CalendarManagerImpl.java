@@ -47,8 +47,10 @@ public class CalendarManagerImpl implements CalendarManager {
     @Override
     public List<ControlMessages> checkData(Event event) {
         List<ControlMessages> result = new ArrayList<>();
+        logger.log(LoggerLevel.DEBUG, "Evento ad ora: "+event.getTitle());
 
-        boolean weatherIsOk = checkWeather(event);
+        boolean weatherIsOk = isGoodWeather(event);
+        logger.log(LoggerLevel.DEBUG, "Evento ad ora: "+event.getTitle());
         boolean haveConflicts = isInConflict(event);
 
         //se tutto ok
@@ -76,16 +78,16 @@ public class CalendarManagerImpl implements CalendarManager {
      * @return false se il tempo è brutto, true se il tempo è buono o non sono
      * riuscito ad ottenere informazioni
      */
-    private boolean checkWeather(Event event) {
+    private boolean isGoodWeather(Event event) {
         WeatherForecast forecast = weatherManager.getWeather(event);
 
-        //se non è buono ritorno false, false true
+        //se non è buono ritorno false
         if (forecast.getMessage() != WeatherMessages.BAD_WEATHER) {
-            logger.log(LoggerLevel.DEBUG, "Bad weather found in CheckWeather");
-            return false;
+            logger.log(LoggerLevel.DEBUG, "Good weather found in CheckWeather");
+            return true;
         }
-        logger.log(LoggerLevel.DEBUG, "Good weather foudn in checkWeather");
-        return true;
+        logger.log(LoggerLevel.DEBUG, "Bad weather foudn in checkWeather");
+        return false;
     }
 
     /**
@@ -98,6 +100,7 @@ public class CalendarManagerImpl implements CalendarManager {
     @Override
     public boolean isInConflict(Event event) {
         //TODO controllare che questo metodo venga chiamato anche quando faccio l'update cambiando data/ora
+
         if (event != null) {
             try {
                 Event firstConflict = (Event) database.createNamedQuery(
@@ -127,8 +130,15 @@ public class CalendarManagerImpl implements CalendarManager {
         }
     }
 
+    /**
+     * trova uno spazio libero nei porssimi quindici giorni che non abbia
+     * conflitti
+     *
+     * @param event evento per il quale trovare una nuova posizione
+     * @return tra quanti giorni è possibile fare un rischedule, -1 se non ho
+     * trovato niente
+     */
     @Override
-    //TODO, questa la facciamo chiamare da fra? --> sì, ma in abbinamento a isInConflict (da chiamare solo se quello ritorna true)
     public int findFreeSlots(Event event) {
         int searchRange = 15;
 
@@ -150,7 +160,7 @@ public class CalendarManagerImpl implements CalendarManager {
             //setto nuova data fine           
             tempEvent.getEndDateTime().add(Calendar.DAY_OF_MONTH, i);
 
-            if (!isInConflict(tempEvent) && checkWeather(tempEvent)) {
+            if (!isInConflict(tempEvent) && isGoodWeather(tempEvent)) {
                 return i;
             }
         }
@@ -175,11 +185,14 @@ public class CalendarManagerImpl implements CalendarManager {
         return null;
 
     }
+
     @Override
-    public CalendarModel getCalendarUpdated (CalendarModel calendar) {
-        return (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id",
+    public CalendarModel getCalendarUpdated(CalendarModel calendar) {
+        return (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter(
+                "id",
                 calendar.getOwner()).setParameter("title", calendar.getTitle()).getSingleResult();
     }
+
     @Override
     //TODO qui user non serve perchè deduco l'id dal calendar
     //TODO per ora nessuno usa questa funzione!
@@ -227,8 +240,8 @@ public class CalendarManagerImpl implements CalendarManager {
                         logger.log(Level.INFO,
                                 "Evento {0} aggiunto al calendario {1} di {2}",
                                 new Object[]{event.getTitle(),
-                                    calendar.getTitle(),
-                                    calendar.getOwner().getEmail()});
+                                             calendar.getTitle(),
+                                             calendar.getOwner().getEmail()});
                         database.flush();
                         database.refresh(calendar);
                         logger.log(LoggerLevel.DEBUG,
@@ -335,10 +348,12 @@ public class CalendarManagerImpl implements CalendarManager {
                         CalendarModel defaultCalendar = (CalendarModel) database.createNamedQuery(
                                 "findDefaultCalendar").setParameter("user",
                                         calendar.getOwner()).getSingleResult();
-                        for (int i=0; i< calendar.getEventsInCalendar().size() ; i++) {
-                            defaultCalendar.addEventInCalendar(calendar.getEventsInCalendar().get(i));
+                        for (int i = 0; i
+                                < calendar.getEventsInCalendar().size(); i++) {
+                            defaultCalendar.addEventInCalendar(
+                                    calendar.getEventsInCalendar().get(i));
                         }
-                    calendar.getEventsInCalendar().clear();
+                        calendar.getEventsInCalendar().clear();
                     case DELETE_CALENDAR_ONLY:
                         calendar.getEventsInCalendar().clear();
                     case DELETE_ALL:
