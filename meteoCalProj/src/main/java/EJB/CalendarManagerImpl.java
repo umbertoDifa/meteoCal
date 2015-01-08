@@ -105,13 +105,14 @@ public class CalendarManagerImpl implements CalendarManager {
                         "isConflicting").setParameter(
                                 "user", user).setParameter("end",
                                 event.getEndDateTime()).setParameter(
-                                "start", event.getStartDateTime()).setParameter("id",
+                                "start", event.getStartDateTime()).setParameter(
+                                "id",
                                 event.getId()).getSingleResult();
 
                 //se non alza eccezioni è perchè ha trovato conflitti
                 return true;
 
-            //TODO questo workaround è bruttino ma non ho trovato altri metodi altrettanto efficienti.
+                //TODO questo workaround è bruttino ma non ho trovato altri metodi altrettanto efficienti.
                 //Un'altra opzione sarebbe quella di far tornare una lista e farne la size, ma è molto meno efficiente
             } catch (NoResultException e) {
                 return false;
@@ -153,9 +154,19 @@ public class CalendarManagerImpl implements CalendarManager {
 
     @Override
     public List<CalendarModel> getCalendars(UserModel user) {
-        user = database.find(UserModel.class, user.getId());
-        database.refresh(user);
-        return user.getOwnedCalendars();
+        //se lo user passato è diverso da null
+        if (user != null) {
+            user = database.find(UserModel.class, user.getId());
+            //se trovo lo user nel db
+            if (user != null) {
+                //refresho lo stato dello user
+                database.refresh(user);
+                //e ritorno i suoi calendari
+                return user.getOwnedCalendars();
+            }
+        }
+        return null;
+
     }
 
     @Override
@@ -210,8 +221,8 @@ public class CalendarManagerImpl implements CalendarManager {
                         logger.log(Level.INFO,
                                 "Evento {0} aggiunto al calendario {1} di {2}",
                                 new Object[]{event.getTitle(),
-                                    calendar.getTitle(),
-                                    calendar.getOwner().getEmail()});
+                                             calendar.getTitle(),
+                                             calendar.getOwner().getEmail()});
                         database.flush();
                         database.refresh(calendar);
                         logger.log(LoggerLevel.DEBUG,
@@ -231,21 +242,33 @@ public class CalendarManagerImpl implements CalendarManager {
         }
     }
 
+    /**
+     * Create a calendar named default for the user provided without persisting
+     *
+     * @param user user to create a calendar for
+     * @return a default calendar, null if the user is null
+     */
     @Override
     public CalendarModel createDefaultCalendar(UserModel user) {
-        //TODO if user == null
-        CalendarModel calendar = new CalendarModel();
-        calendar.setIsDefault(true);
-        calendar.setIsPublic(false);
-        calendar.setOwner(user);
-        //TODO questo set deve essere un po' più accurato, ad esempio se già esiste un
-        //calendario chiamato default allora il titolo sarà tipo default2
-        calendar.setTitle("Default");
+        if (user != null) {
+            CalendarModel calendar = new CalendarModel();
 
-        logger.log(Level.INFO, "Default calendar for user +{0} created",
-                user.getEmail());
+            //setto proprietà calendario
+            calendar.setIsDefault(true);
+            calendar.setIsPublic(false);
+            calendar.setOwner(user);
 
-        return calendar;
+            //il titolo è default + timestamp
+            calendar.setTitle("Default (" + Calendar.getInstance().toString()
+                    + ")");
+
+            logger.log(Level.INFO, "Default calendar for user "
+                    + "{0} created",
+                    user.getEmail());
+
+            return calendar;
+        }
+        return null;
     }
 
     @Override
@@ -271,7 +294,9 @@ public class CalendarManagerImpl implements CalendarManager {
 
     @Override
     public void toggleCalendarPrivacy(CalendarModel calendar) {
-        calendar = (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id", calendar.getOwner()).setParameter("title", calendar.getTitle()).getSingleResult();
+        calendar = (CalendarModel) database.createNamedQuery(
+                "findCalbyUserAndTitle").setParameter("id", calendar.getOwner()).setParameter(
+                        "title", calendar.getTitle()).getSingleResult();
         if (calendar.isIsPublic()) {
             calendar.setIsPublic(false);
         } else {
@@ -281,44 +306,51 @@ public class CalendarManagerImpl implements CalendarManager {
 
     @Override
     public boolean isDefault(CalendarModel calendar) {
-        calendar = (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id", calendar.getOwner()).setParameter("title", calendar.getTitle()).getSingleResult();
+        calendar = (CalendarModel) database.createNamedQuery(
+                "findCalbyUserAndTitle").setParameter("id", calendar.getOwner()).setParameter(
+                        "title", calendar.getTitle()).getSingleResult();
         if (calendar.isIsDefault()) {
             return true;
         } else {
             return false;
         }
     }
-    
+
     @Override
     public boolean deleteCalendar(CalendarModel calendar, DeleteCalendarOption opt) {
-        try{
-        if (!isDefault(calendar)) {
-            calendar = (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id", calendar.getOwner()).setParameter("title", calendar.getTitle()).getSingleResult();
-            switch (opt) {
-                case MOVE_EVENTS_AND_DELETE:
-                    CalendarModel defaultCalendar = (CalendarModel) database.createNamedQuery("findDefaultCalendar").setParameter("user",calendar.getOwner()).getSingleResult();
-                    for (Event event: calendar.getEventsInCalendar()) {
-                        defaultCalendar.addEventInCalendar(event);
-                        calendar.removeEventInCalendar(event);
-                    }
-                case DELETE_CALENDAR_ONLY:
-                   for (Event event: calendar.getEventsInCalendar()) {
-                        calendar.removeEventInCalendar(event);
-                    }
-                case DELETE_ALL:
+        try {
+            if (!isDefault(calendar)) {
+                calendar = (CalendarModel) database.createNamedQuery(
+                        "findCalbyUserAndTitle").setParameter("id",
+                                calendar.getOwner()).setParameter("title",
+                                calendar.getTitle()).getSingleResult();
+                switch (opt) {
+                    case MOVE_EVENTS_AND_DELETE:
+                        CalendarModel defaultCalendar = (CalendarModel) database.createNamedQuery(
+                                "findDefaultCalendar").setParameter("user",
+                                        calendar.getOwner()).getSingleResult();
+                        for (Event event : calendar.getEventsInCalendar()) {
+                            defaultCalendar.addEventInCalendar(event);
+                            calendar.removeEventInCalendar(event);
+                        }
+                    case DELETE_CALENDAR_ONLY:
+                        for (Event event : calendar.getEventsInCalendar()) {
+                            calendar.removeEventInCalendar(event);
+                        }
+                    case DELETE_ALL:
                     //non faccio nulla, perchè il CASCADE è già come opzione default del DB.
-                       
+
+                }
+
+                database.flush();
+                database.remove(calendar);
+                return true;
+            } else {
+                return false;
             }
-            
-            database.flush();
-            database.remove(calendar);
-            return true;
-        }
-        else return false;
-    }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return false;
         }
     }
-    
+
 }

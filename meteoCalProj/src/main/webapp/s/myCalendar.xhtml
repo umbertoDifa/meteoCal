@@ -40,32 +40,39 @@ and open the template in the editor.
                                 </h:panelGrid>
                             </f:facet>
                             <f:facet name="right">
-                                <h:panelGrid columns="2" rendered="#{!scheduleView.readOnly}">
-                                    <p:commandButton value="Delete #{scheduleView.calendarSelected}" icon="ui-icon-close" update=":growl">
-                                        <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" />
-                                    </p:commandButton>
+                                <h:form>
 
                                     <h:panelGrid columns="2">
+                                        <p:inputSwitch id="publicSwitch" value="#{scheduleView.calendarShown.isPublic}"/>
                                         <p:outputLabel for="publicSwitch" value="Public:"/>
-                                        <p:inputSwitch id="publicSwitch" value="#{scheduleView.calendarShown.isPublic}"/> <!--onchange-->
                                     </h:panelGrid>
-                                </h:panelGrid>
 
-                                <p:confirmDialog  id="confirmationDialog" global="true">
-                                    <p:commandButton value="Yes" icon="ui-icon-check" onclick="#{scheduleView.canDeleteCalendar()},confirmationDialog.close" />
-                                    <p:commandButton value="No" icon="ui-icon-close" onclick="confirmationDialog.close" />
-                                </p:confirmDialog>
+                                    <h:panelGrid columns="2" rendered="#{!scheduleView.readOnly}">
+                                        <p:commandButton value="Delete #{scheduleView.calendarSelected}" onclick="confirmationDialog.show()" icon="ui-icon-close" update=":growl" />
 
-                                <p:dialog header="Delete Options" widgetVar="delOpt" minHeight="40">
-                                    <h:outputText value="Do you want to delete, move or detach the events in the calendar?" />
-                                    <p:commandButton value="Move" type="button" onclick="#{sceduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
-                                    <p:commandButton value="Detach" type="button" onclick="#{sceduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
-                                    <p:commandButton value="Delete" type="button" onclick="#{sceduleView.deleteCalendar('DELETE_ALL')}" /> 
+                                    </h:panelGrid>
+
+                                    <p:confirmDialog  id="confirmationDialog" severity="alert">
+
+                                        <p:commandButton value="Yes" icon="ui-icon-check" update=":growl" oncomplete="confirmation.hide()" actionListener="#{scheduleView.canDeleteCalendar()}" /> 
+                                        <p:commandButton value="No" icon="ui-icon-close" onclick="confirmationDialog.hide()" />
+
+                                    </p:confirmDialog>
+                                </h:form>
+
+                                <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" minHeight="40">
+                                    <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
+                                    <h:form>
+                                        <p:commandButton value="Move" type="button" onclick="#{sceduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
+                                        <p:commandButton value="Detach" type="button" onclick="#{sceduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
+                                        <p:commandButton value="Delete" type="button" onclick="#{sceduleView.deleteCalendar('DELETE_ALL')}" /> 
+                                        <p:commandButton value="Cancel" type="button" onclick="delOpt.close" />
+                                    </h:form>
                                 </p:dialog>
 
                             </f:facet>
                         </p:toolbar>
-
+                        <h:form>
                         <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" widgetVar="myschedule" timeZone="GMT+2">
 
                             <p:ajax event="dateSelect" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
@@ -74,7 +81,7 @@ and open the template in the editor.
                             <p:ajax event="eventResize" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onEventResize}" update=":growl" />
 
                         </p:schedule>
-
+                            </h:form>
 
                         <p:dialog rendered="#{!scheduleView.readOnly}" widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
                             <h:panelGrid id="eventDetails" columns="2">
