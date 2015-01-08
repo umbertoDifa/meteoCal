@@ -224,6 +224,7 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     public void onCalendarChange() {
+        System.out.println ("DENTRO onCalendarChange");
         //dal calendarSelected aggiorno gli eventi da visualizzare
         for (CalendarModel cal : calendars) {
             if (cal.getTitle().equals(calendarSelected)) {
@@ -343,15 +344,19 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     public void canDeleteCalendar() {
+        System.out.println ("DENTRO canDeleteCalendar");
         if (calendarManager.isDefault(calendarShown)) {
+            System.out.println (calendarShown.getTitle()+" è default");
             showMessage(null, "Cannot Delete Default Calendar", "You cannot delete the default calendar. Please make default another calenar and then remove this one.");
         } else {
+            System.out.println (calendarShown.getTitle()+ "non è default");
             RequestContext context = RequestContext.getCurrentInstance();
             context.execute("PF('delOpt').show();");
         }
     }
     
     public void deleteCalendar ( String response) {
+        System.out.println ("DENTRO deleteCalendar");
         DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
         if (calendarManager.deleteCalendar(calendarShown, option))
             showMessage(null, "Calendar Deleted", "Your calendar has been succesfully deleted");
