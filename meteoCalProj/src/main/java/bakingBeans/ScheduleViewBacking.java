@@ -48,19 +48,19 @@ import utility.DeleteCalendarOption;
 public class ScheduleViewBacking implements Serializable {
 
     @Inject
-    LoginBacking login;
+    private LoginBacking login;
 
     @Inject
-    CalendarManager calendarManager;
+    private CalendarManager calendarManager;
 
     @Inject
-    EventManager eventManager;
+    private EventManager eventManager;
 
     @Inject
-    ManageEventBacking manageEvent;
+    private ManageEventBacking manageEvent;
 
     @Inject
-    SearchManager search;
+    private SearchManager search;
 
     private ScheduleModel eventsToShow;
 
@@ -79,6 +79,10 @@ public class ScheduleViewBacking implements Serializable {
     private UserModel user;
 
     private boolean readOnly;
+
+    private boolean messageToAppend = false;
+    private String message;
+    private String messageTitle;
 
     /*
      *
@@ -142,6 +146,11 @@ public class ScheduleViewBacking implements Serializable {
      * METHODS
      *
      */
+    /**
+     * set the user to the current or the one specified in the id loads the
+     * calendars set the calendar titles fill the schedule component with the
+     * event of the first calendar
+     */
     public void init() {
         setUser();
         eventsToShow = new DefaultScheduleModel();
@@ -151,9 +160,9 @@ public class ScheduleViewBacking implements Serializable {
 
             // tolgo i calendari privati
             if (readOnly) {
-                for (CalendarModel calendar : calendars) {
-                    if (!calendar.isIsPublic()) {
-                        calendars.remove(calendar);
+                for (int i = 0; i < calendars.size(); i++) {
+                    if (!calendars.get(i).isIsPublic()) {
+                        calendars.remove(i);
                     }
                 }
             }
@@ -164,6 +173,10 @@ public class ScheduleViewBacking implements Serializable {
             }
         }
 
+        System.out.println("messageToAppend è " + messageToAppend);
+        if (messageToAppend) {
+            showMessage(null, messageTitle, message);
+        }
     }
 
     public void updateEvent(ActionEvent actionEvent) {
@@ -180,6 +193,8 @@ public class ScheduleViewBacking implements Serializable {
         manageEvent.setEndDate(dateFormat.format(event.getEndDate()));
         manageEvent.setEndTime(timeFormat.format(event.getEndDate()));
         manageEvent.save();
+
+        refreshCalendar();
     }
 
     public void onEventSelect(SelectEvent selectEvent) {
@@ -297,6 +312,11 @@ public class ScheduleViewBacking implements Serializable {
         }
     }
 
+    private void refreshCalendar() {
+        calendarShown = calendarManager.findCalendarByName(user, calendarShown.getTitle());
+        updateEventsToShow(calendarShown);
+    }
+
     private class EventDetails {
 
         private Long id;
@@ -348,9 +368,15 @@ public class ScheduleViewBacking implements Serializable {
         System.out.println("-DENTRO deleteCalendar");
         DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
         if (calendarManager.deleteCalendar(calendarShown, option)) {
-            showMessage(null, "Calendar Deleted", "Your calendar has been succesfully deleted");
+            messageTitle = "Calendar Deleted";
+            message = "Your calendar has been succesfully deleted";
+            messageToAppend = true;
+
+            init();
         } else {
-            showMessage(null, "Cannot delete calendar", "An error has occured.");
+            messageTitle = "Cannot delete calendar";
+            message = "An error has occured.";
+            messageToAppend = true;
         }
 
     }
