@@ -223,8 +223,8 @@ public class CalendarManagerImpl implements CalendarManager {
                         logger.log(Level.INFO,
                                 "Evento {0} aggiunto al calendario {1} di {2}",
                                 new Object[]{event.getTitle(),
-                                             calendar.getTitle(),
-                                             calendar.getOwner().getEmail()});
+                                    calendar.getTitle(),
+                                    calendar.getOwner().getEmail()});
                         database.flush();
                         database.refresh(calendar);
                         logger.log(LoggerLevel.DEBUG,
@@ -331,14 +331,12 @@ public class CalendarManagerImpl implements CalendarManager {
                         CalendarModel defaultCalendar = (CalendarModel) database.createNamedQuery(
                                 "findDefaultCalendar").setParameter("user",
                                         calendar.getOwner()).getSingleResult();
-                        for (Event event : calendar.getEventsInCalendar()) {
-                            defaultCalendar.addEventInCalendar(event);
-                            calendar.removeEventInCalendar(event);
+                        for (int i=0; i< calendar.getEventsInCalendar().size() ; i++) {
+                            defaultCalendar.addEventInCalendar(calendar.getEventsInCalendar().get(i));
                         }
+                    calendar.getEventsInCalendar().clear();
                     case DELETE_CALENDAR_ONLY:
-                        for (Event event : calendar.getEventsInCalendar()) {
-                            calendar.removeEventInCalendar(event);
-                        }
+                        calendar.getEventsInCalendar().clear();
                     case DELETE_ALL:
                     //non faccio nulla, perchè il CASCADE è già come opzione default del DB.
 

@@ -51,7 +51,7 @@ and open the template in the editor.
                         </h:form>
                         <h:form id="deleteForm">
                             <h:panelGrid columns="2" rendered="#{!scheduleView.readOnly}">
-                                <p:commandButton value="Delete #{scheduleView.calendarSelected}" onclick="PF('confirmationDialog').show()" icon="ui-icon-close" type="button"/>
+                                <p:commandButton value="Delete Calendar" onclick="PF('confirmationDialog').show()" icon="ui-icon-close" type="button"/>
                             </h:panelGrid>
 
                             <p:confirmDialog message="Are you sure?" global="true" widgetVar="confirmationDialog" header="Initiating delete process" severity="alert">
@@ -65,11 +65,15 @@ and open the template in the editor.
                             <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" minHeight="40" resizable="false">
                                 <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
                                 <h:form>
-                                    <p:commandButton value="Move" type="button"  >
-                                        <f:ajax event="click" listener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
+                                    <p:commandButton value="Move" type="button" onclick="PF('delOpt').hide()" >
+                                        <f:ajax event="click" listener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}"  />
                                     </p:commandButton>
-                                    <p:commandButton value="Detach" oncomplete="PF('delOpt').hide()" type="button" onclick="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
-                                    <p:commandButton value="Delete" oncomplete="PF('delOpt').hide()" type="button" onclick="#{scheduleView.deleteCalendar('DELETE_ALL')}" /> 
+                                    <p:commandButton value="Detach" onclick="PF('delOpt').hide()" type="button" >
+                                        <f:ajax event="click" listener="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
+                                    </p:commandButton>
+                                    <p:commandButton value="Delete" update="@all" onclick="PF('delOpt').hide()" type="button" >
+                                        <f:ajax event="click" listener="#{scheduleView.deleteCalendar('DELETE_ALL')}" />
+                                    </p:commandButton>
                                     <p:commandButton value="Cancel" type="button" onclick="PF('delOpt').hide()" />
                                 </h:form>
                             </p:dialog>
