@@ -58,7 +58,11 @@ public class EventManagerImpl implements EventManager {
     @Override
     public boolean scheduleNewEvent(Event event, CalendarModel insertInCalendar, List<UserModel> invitees) {
         //salvo evento nel db
-        database.persist(event);
+        if (event.getTitle().isEmpty()) {
+           return false;
+      
+        }
+        database.persist(event);  
 
         //aggiungo coordinate all'evento
         updateEventLatLng(event);
