@@ -40,6 +40,7 @@ public class SearchManagerImpl implements SearchManager {
         List<UserModel> users = searchUsers(stringToSearch);
         event = database.find(Event.class, event.getId());
         if (event != null) {
+            users.remove(event.getOwner());
             for (Invitation invitation : event.getInvitations()) {
                 users.remove(invitation.getInvitee());
             }

@@ -328,7 +328,7 @@ public class ManageEventBacking implements Serializable {
     public String save() {
         System.out.println("-dentro save");
 
-        System.out.println("PLACE: " + place.getLocality()+ " numero: "
+        System.out.println("PLACE: " + place.getLocality() + " numero: "
                 + place.getStreetNumber());
         createOrLoadInstance();
         setUpInstance();
@@ -380,7 +380,15 @@ public class ManageEventBacking implements Serializable {
 
     public void showResultUsers() {
         System.out.println("-newGuestEmail" + newGuestEmail);
-        resultUsers = searchManager.searchUsers(newGuestEmail);
+        if (saved) {
+            resultUsers = searchManager.searchUserForInvitation(newGuestEmail, eventToCreate);
+        } else {
+            resultUsers = searchManager.searchUsers(newGuestEmail);
+            resultUsers.remove(login.getCurrentUser());
+            for (UserModel guest : guests) {
+                resultUsers.remove(guest);
+            }
+        }
         System.out.println("-newGuestEmail" + newGuestEmail);
         System.out.println("-resultUsers" + resultUsers);
         if (resultUsers != null && resultUsers.size() > 0) {
@@ -464,7 +472,7 @@ public class ManageEventBacking implements Serializable {
         eventToCreate.setDescription(description);
         eventToCreate.setTitle(title);
         location = place.toString();
-        System.out.println("Complete location is: "+location);
+        System.out.println("Complete location is: " + location);
         eventToCreate.setLocation(location);
         eventToCreate.setIsOutdoor(outdoor);
         eventToCreate.setStartDateTime(startDateTime);
