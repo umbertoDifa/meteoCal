@@ -59,10 +59,10 @@ public class EventManagerImpl implements EventManager {
     public boolean scheduleNewEvent(Event event, CalendarModel insertInCalendar, List<UserModel> invitees) {
         //salvo evento nel db
         if (event.getTitle().isEmpty()) {
-           return false;
-      
+            return false;
+
         }
-        database.persist(event);  
+        database.persist(event);
 
         //aggiungo coordinate all'evento
         updateEventLatLng(event);
@@ -102,13 +102,15 @@ public class EventManagerImpl implements EventManager {
         //TODO attualmente il metodo ritorna sempre true
     }
 
-    private void updateEventLatLng(Event event) {
+    //NB non usare il database in questo metodo
+    @Override
+    public void updateEventLatLng(Event event) {
         GeoApiContext context = new GeoApiContext().setApiKey(
                 "AIzaSyCAlR8JiKO0QPZ_tm51cJITop7aGTDcnlo");
         GeocodingResult[] results;
 
-        //se l'utente ha inserito un indirizzo
-        if (event.getLocation() != null) {
+        //se l'utente ha inserito un indirizzo e l'indirizzo è capito da google 
+        if (event.hasLocation() && event.getLocation() != null) {
             try {
                 //cerco di trovare le coordinate corrispondenti
                 results = GeocodingApi.geocode(context,
@@ -219,7 +221,7 @@ public class EventManagerImpl implements EventManager {
             changed = true;
         }
         //aggiorno inizio evento
-        if (oldEvent.getStartDateTime() != event.getStartDateTime()) {            
+        if (oldEvent.getStartDateTime() != event.getStartDateTime()) {
             oldEvent.setStartDateTime(event.getStartDateTime());
             changed = true;
         }

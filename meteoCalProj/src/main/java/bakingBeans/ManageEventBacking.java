@@ -46,7 +46,11 @@ public class ManageEventBacking implements Serializable {
     @Inject
     private Place place;
 
+    //luogo dell'evento
     String location;
+    //boolean che indica se l'utente ha selezionato un lugo con l'aiuto di google
+    private boolean hasLocation;
+    
     boolean outdoor;
     boolean publicAccess;
     String title;
@@ -64,6 +68,7 @@ public class ManageEventBacking implements Serializable {
     private List<UserModel> publicJoinUsers = new ArrayList<>();
 
     boolean saved;
+    private String dialogueMessage;
 
     CalendarModel calendar;
 
@@ -85,7 +90,7 @@ public class ManageEventBacking implements Serializable {
 
     @Inject
     SearchManager searchManager;
-    
+
     private Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
 
     private UserModel newGuest;
@@ -117,6 +122,14 @@ public class ManageEventBacking implements Serializable {
         this.title = title;
     }
 
+    public String getDialogueMessage() {
+        return dialogueMessage;
+    }
+
+    public void setDialogueMessage(String dialogueMessage) {
+        this.dialogueMessage = dialogueMessage;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -132,6 +145,14 @@ public class ManageEventBacking implements Serializable {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    public boolean isHasLocation() {
+        return hasLocation;
+    }
+
+    public void setHasLocation(boolean hasLocation) {
+        this.hasLocation = hasLocation;
+    }        
 
     public void setOutdoor(boolean isOutdoor) {
         this.outdoor = isOutdoor;
@@ -336,8 +357,9 @@ public class ManageEventBacking implements Serializable {
     public String save() {
         System.out.println("-dentro save");
 
-        createOrLoadInstance();
-        setUpInstance();
+        //spostati in checkEvent
+//        createOrLoadInstance();
+//        setUpInstance();
         saveIt();
 
         return "/s/eventPage.xhtml?id=" + idEvent + "&&faces-redirect=true";
@@ -479,13 +501,15 @@ public class ManageEventBacking implements Serializable {
         eventToCreate.setDescription(description);
         eventToCreate.setTitle(title);
         location = place.toString();
+        
         System.out.println("Complete location is: " + location);
         eventToCreate.setLocation(location);
+        eventToCreate.setHasLocation(hasLocation);
         eventToCreate.setIsOutdoor(outdoor);
         eventToCreate.setStartDateTime(startDateTime);
         eventToCreate.setEndDateTime(endDateTime);
         eventToCreate.setOwner(login.getCurrentUser());
-
+        eventManager.updateEventLatLng(eventToCreate);
         //setto calendar all'entità corrispondente al calendarName
         setInCalendar(calendarName);
     }
@@ -520,46 +544,39 @@ public class ManageEventBacking implements Serializable {
     }
 
     public void checkEvent() {
-        //TODO decomment
 
-//        //controllo se ci osno porblemi i,e, conflitti o tempo malo
-//        List<ControlMessages> outcome = calendarManager.checkData(eventToCreate);
-//
-//        //se tutto ok 
-//        if (outcome.contains(ControlMessages.NO_PROBLEM)) {
-//            //salvo l'evento /update
-//            saveIt();//TODO chiama la save
-//        } else {
-//            //Listo gli errori
-//            String detail = "";
-//            for (ControlMessages mex : outcome) {
-//                detail += mex.getMessage() + "\n";
-//            }
-//            
-//            // cerco un free day
-//            //TODO chech for -1
-//            int offset = calendarManager.findFreeSlots(eventToCreate);
-//            Calendar rescheduleDay = eventToCreate.getStartDateTime();
-//            rescheduleDay.add(Calendar.DATE, offset);
-//
-//            //informo l'utente con una dialog box
-//            RequestContext context = RequestContext.getCurrentInstance();
-//            context.showMessageInDialog(new FacesMessage(
-//                    FacesMessage.SEVERITY_WARN, "Conflicts detected", detail));
-//            
-//            showMessage("conflictDialog", detail, null);
-//            context.execute("PF('conflictDialog').show();");
-//        }
-        
-        //TODO deleteme
-        logger.log(LoggerLevel.DEBUG, "Sono qui nel checkevent");
-        
-        String detail = "PROva evviva eviva";
-        //informo l'utente con una dialog box
-        RequestContext context = RequestContext.getCurrentInstance();        
+        createOrLoadInstance();
+        setUpInstance();
 
-        showMessage("conflictDialog", detail, null);
-        context.execute("PF('conflictDialog').show();");
+        //controllo se ci osno porblemi i,e, conflitti o tempo malo
+        List<ControlMessages> outcome = calendarManager.checkData(eventToCreate);
+
+        //se tutto ok 
+        if (outcome.contains(ControlMessages.NO_PROBLEM) && false) {//TODO delete false
+            //salvo l'evento/update
+            save();
+        } else {
+            //Listo gli errori
+
+            for (ControlMessages mex : outcome) {
+                dialogueMessage += mex.getMessage() + "\n";
+            }
+
+            // cerco un free day           
+            int offset = calendarManager.findFreeSlots(eventToCreate);
+            if (offset != -1) {
+                Calendar rescheduleDay = eventToCreate.getStartDateTime();
+                rescheduleDay.add(Calendar.DATE, offset);
+                dialogueMessage += "Do you want to reschedule the event to the: "
+                        + rescheduleDay.getTime().toString();
+            } else {
+                dialogueMessage += "It wasn't possible to find a sunny day for a reschedule.";
+            }
+            //informo l'utente con una dialog box
+            RequestContext context = RequestContext.getCurrentInstance();
+            context.execute("PF('conflictDialog').show();");
+        }
+
     }
 
     private UserModel findGuest(List<UserModel> users, String email) {
@@ -614,11 +631,5 @@ public class ManageEventBacking implements Serializable {
             }
         }
         return null;
-    }
-
-    private void checkDates() {
-        if (!startDateTime.before(endDateTime)) {
-
-        }
     }
 }

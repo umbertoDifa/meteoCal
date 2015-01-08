@@ -52,5 +52,6 @@ public interface EventManager {
     
     public void setEventPicture(String path, Event event);
     
+    public void updateEventLatLng(Event event) ;
 
 }

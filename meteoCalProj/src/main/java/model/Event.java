@@ -80,8 +80,6 @@ public abstract class Event implements Serializable {
     @Column(nullable = false)
     private java.util.Calendar endDateTime;
 
-    private String location;
-
     private String description;
 
     private boolean isOutdoor;
@@ -101,6 +99,9 @@ public abstract class Event implements Serializable {
     @JoinColumn
     private WeatherForecast weather;
 
+    private String location;
+
+    private boolean hasLocation;
     //vars to store position coordinates if any
     private double latitude;
     private double longitude;
@@ -142,6 +143,14 @@ public abstract class Event implements Serializable {
 
     public void setImgPath(String imgPath) {
         this.imgPath = imgPath;
+    }
+
+    public boolean hasLocation() {
+        return hasLocation;
+    }
+
+    public void setHasLocation(boolean hasLocation) {
+        this.hasLocation = hasLocation;
     }
 
     public String getTitle() {
@@ -259,7 +268,7 @@ public abstract class Event implements Serializable {
         }
         return true;
     }
-  
+
     @Override
     public String toString() {
         return "Event{" + "id=" + id + "\ntitle=" + title + "\nstartDateTime="

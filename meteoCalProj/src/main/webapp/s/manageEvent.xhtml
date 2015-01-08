@@ -55,24 +55,32 @@
 // [START region_fillform]
                 function fillInAddress() {
                     // Get the place details from the autocomplete object.
-                    var place = autocomplete.getPlace();
-                    for (var component in componentForm) {
-                        document.getElementById("newEventForm:"+component).value = '';
-                        document.getElementById("newEventForm:"+component).disabled = false;
-                    }
 
-                    // Get each component of the address from the place details
-                    // and fill the corresponding field on the form.
-                    for (var i = 0; i &lt; place.address_components.length; i++) {
-                        var addressType = place.address_components[i].types[0];
-                        if (componentForm[addressType]) {
-                            var val = place.address_components[i][componentForm[addressType]];
-                            document.getElementById("newEventForm:"+addressType).value = val;
+                    if (typeof autocomplete.getPlace() !== 'undefined'){
+                            var place = autocomplete.getPlace();
+                            for (var component in componentForm) {
+                                document.getElementById("newEventForm:" + component).value = '';
+                                document.getElementById("newEventForm:" + component).disabled = false;
+                            }
+
+                        // Get each component of the address from the place details
+                        // and fill the corresponding field on the form.
+                        for (var i = 0; i &lt; place.address_components.length; i++) {
+                            var addressType = place.address_components[i].types[0];
+                            if (componentForm[addressType]) {
+                                var val = place.address_components[i][componentForm[addressType]];
+                                document.getElementById("newEventForm:" + addressType).value = val;
+                            }
                         }
+                        document.getElementById("newEventForm:autocompleteUsed").value = true;
+                    } else {
+                        document.getElementById("newEventForm:locality").value = document.getElementById("autocomplete").value;
+                        document.getElementById("newEventForm:autocompleteUsed").value = false;
                     }
                 }
+
 // [END region_fillform]
-                
+
 // [START region_geolocation]
 // Bias the autocomplete object to the user's geographical location,
 // as supplied by the browser's 'navigator.geolocation' object.
@@ -150,19 +158,20 @@
                     </div>                                        
 
                     <h:outputLabel value="Outdoor" /><h:selectBooleanCheckbox value="#{eventToManage.outdoor}"/>
-                    
-                   
+
+
                 </p:panelGrid>
-                 <h:inputHidden class="field" id="street_number" value="#{place.streetNumber}" ></h:inputHidden>
-                    <h:inputHidden class="field" id="route" value="#{place.route}"  ></h:inputHidden>
-                    <h:inputHidden class="field" id="locality" value="#{place.locality}"   ></h:inputHidden>
-                    <h:inputHidden class="field" id="administrative_area_level_1" value="#{place.administrativeArea}" ></h:inputHidden>
-                    <h:inputHidden class="field" id="postal_code" value="#{place.postalCode}" ></h:inputHidden>
-                    <h:inputHidden class="field" id="country" value="#{place.country}" ></h:inputHidden>
-                    
+                <h:inputHidden class="field" id="street_number" value="#{place.streetNumber}" ></h:inputHidden>
+                <h:inputHidden class="field" id="route" value="#{place.route}"  ></h:inputHidden>
+                <h:inputHidden class="field" id="locality" value="#{place.locality}"   ></h:inputHidden>
+                <h:inputHidden class="field" id="administrative_area_level_1" value="#{place.administrativeArea}" ></h:inputHidden>
+                <h:inputHidden class="field" id="postal_code" value="#{place.postalCode}" ></h:inputHidden>
+                <h:inputHidden class="field" id="country" value="#{place.country}" ></h:inputHidden>
+                <h:inputHidden class="field" id="autocompleteUsed" value="#{eventToManage.hasLocation}" ></h:inputHidden>
+
                 <h:inputTextarea value="#{eventToManage.description}" style="resize: none" /><br/>
 
-                <p:commandButton id="save" value="Save" action="#{eventToManage.save}"/>
+                <p:commandButton id="save" value="Save" action="#{eventToManage.checkEvent()}"/>
                 <h:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/myCalendar.xhtml"/> 
 
             </h:form>
@@ -217,6 +226,12 @@
             </p:tabView>
 
             <h:messages />
+            <p:dialog header="Delete Options" id="conflictDialog" widgetVar="conflictDialog" minHeight="40" resizable="false">
+                <h:outputText  value="#{eventToManage.dialogueMessage}"></h:outputText>  
+                 <p:commandButton value="YES" onclick="PF('conflictDialog').hide();" />
+                <p:commandButton value="NO" onclick="PF('conflictDialog').hide()" type="button" />                                   
+                <p:commandButton value="Cancel" type="button" onclick="PF('conflictDialog').hide()" />
+            </p:dialog>
         </ui:define>
 
     </ui:composition>

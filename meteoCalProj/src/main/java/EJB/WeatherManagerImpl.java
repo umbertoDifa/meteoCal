@@ -98,7 +98,8 @@ public class WeatherManagerImpl implements WeatherManager {
     @Override
     public WeatherForecast getWeather(Event event) {
         weatherForecast = new WeatherForecast();
-
+        this.event = event;
+        
         //valido e aggiorno l'evento
         if (validate(event)) {
             Calendar day = event.getStartDateTime();
@@ -191,7 +192,7 @@ public class WeatherManagerImpl implements WeatherManager {
     private boolean downloadWeather(ForecastType forecastType) {
 
         try {
-            
+
             switch (forecastType) {
                 case FORECAST_5_3HOURS:
                     forecastFiveDays = openWeatherMap.forecastWeatherByCoordinates(
@@ -454,13 +455,9 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private boolean validate(Event event) {
-        if (event != null) {
-            this.event = database.find(Event.class, event.getId());
-            if (this.event != null && event.getLocation() != null) {
-                return true;
-            }
+        if (event != null && event.hasLocation()) {
+            return true;
         }
-
         return false;
     }
 
