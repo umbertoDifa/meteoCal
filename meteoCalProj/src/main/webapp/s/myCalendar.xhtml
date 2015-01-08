@@ -65,17 +65,12 @@ and open the template in the editor.
                             <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" minHeight="40" resizable="false">
                                 <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
                                 <h:form>
-                                    <p:commandButton value="Move" actionListener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" oncomplete="PF('schedule').update();PF('console').update();Pf('publicSwitch').update();PF('eventDialog').hide();" />
+                                    <p:commandButton value="Move" update="@(form)" oncomplete="PF('delOpt').hide();"  actionListener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
                                     
-                                    <p:commandButton value="Detach" onclick="PF('delOpt').hide()" type="button" >
-                                        <f:ajax event="click" listener="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
-                                    </p:commandButton>
-                                    <p:commandButton value="Delete" ajax="false" actionListener="#{scheduleView.deleteCalendar('DELETE_ALL')}" >
-                                        
-                                    </p:commandButton>
+                                    <p:commandButton value="Detach" update="@(form)" oncomplete="PF('delOpt').hide();" actionListener="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
                                     
-                                    <p:commandButton id="addButton" value="Save" actionListener="#{scheduleView.updateEvent}" oncomplete="PF('schedule').update();PF('eventDialog').hide();" />
-
+                                    <p:commandButton value="Delete" update="@(form)" oncomplete="PF('delOpt').hide();" actionListener="#{scheduleView.deleteCalendar('DELETE_ALL')}" />
+                                    
                                     <p:commandButton value="Cancel" type="button" onclick="PF('delOpt').hide()" />
                                 </h:form>
                             </p:dialog>
@@ -85,7 +80,7 @@ and open the template in the editor.
                     </f:facet>
                 </p:toolbar>
                 <h:form id="scheduleForm">
-                    <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" widgetVar="schedule" timeZone="GMT+2">
+                    <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" widgetVar="schedule" draggable="false" resizable="false" timeZone="GMT+2">
 
                         <p:ajax event="dateSelect" disabled="#{scheduleView.readOnly}" listener="#{scheduleView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
                         <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" />

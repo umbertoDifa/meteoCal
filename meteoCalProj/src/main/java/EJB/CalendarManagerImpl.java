@@ -27,12 +27,12 @@ import utility.DeleteCalendarOption;
 
 @Stateless
 public class CalendarManagerImpl implements CalendarManager {
-
+    
     Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
-
+    
     @Inject
     private WeatherManager weatherManager;
-
+    
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
@@ -47,14 +47,14 @@ public class CalendarManagerImpl implements CalendarManager {
     @Override
     public List<ControlMessages> checkData(Event event) {
         List<ControlMessages> result = new ArrayList<>();
-
+        
         boolean weatherIsOk = checkWeather(event);
         boolean haveConflicts = isInConflict(event);
 
         //se tutto ok
         if (weatherIsOk && !haveConflicts) {
             result.add(ControlMessages.NO_PROBLEM);
-
+            
         } else {
             //se il tempo non è buono 
             if (!weatherIsOk) {
@@ -110,7 +110,7 @@ public class CalendarManagerImpl implements CalendarManager {
 
                 //se non alza eccezioni è perchè ha trovato esattamente un conflitto
                 logger.log(LoggerLevel.DEBUG, "Conflict found");
-
+                
                 return true;
             } catch (NoResultException e) {
                 //se non trova risultati allora non ci sono conflitti
@@ -126,12 +126,12 @@ public class CalendarManagerImpl implements CalendarManager {
             return false;
         }
     }
-
+    
     @Override
     //TODO, questa la facciamo chiamare da fra? --> sì, ma in abbinamento a isInConflict (da chiamare solo se quello ritorna true)
     public int findFreeSlots(Event event) {
         int searchRange = 15;
-
+        
         Event tempEvent = new PrivateEvent(event.getTitle(),
                 (Calendar) event.getStartDateTime().clone(),
                 (Calendar) event.getEndDateTime().clone(), event.getLocation(),
@@ -141,7 +141,7 @@ public class CalendarManagerImpl implements CalendarManager {
         tempEvent.setId(event.getId());
         tempEvent.setLatitude(event.getLatitude());
         tempEvent.setLongitude(event.getLongitude());
-
+        
         for (int i = 1; i < searchRange; i++) {
 
             //setto nuova data inizio
@@ -149,7 +149,7 @@ public class CalendarManagerImpl implements CalendarManager {
 
             //setto nuova data fine           
             tempEvent.getEndDateTime().add(Calendar.DAY_OF_MONTH, i);
-
+            
             if (!isInConflict(tempEvent) && checkWeather(tempEvent)) {
                 return i;
             }
@@ -158,7 +158,7 @@ public class CalendarManagerImpl implements CalendarManager {
         //TODO modificare questo orrore
         return -1;
     }
-
+    
     @Override
     public List<CalendarModel> getCalendars(UserModel user) {
         //se lo user passato è diverso da null
@@ -173,13 +173,26 @@ public class CalendarManagerImpl implements CalendarManager {
             }
         }
         return null;
+        
+    }
 
-    }
     @Override
-    public CalendarModel getCalendarUpdated (CalendarModel calendar) {
-        return (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id",
+    public CalendarModel getCalendarUpdated(CalendarModel calendar) {
+        calendar = (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id",
                 calendar.getOwner()).setParameter("title", calendar.getTitle()).getSingleResult();
+        database.refresh(calendar);
+        return calendar;
     }
+    
+    @Override
+    public List<Event> getEventsUpdated(CalendarModel calendar) {
+        calendar = (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id",
+                calendar.getOwner()).setParameter("title", calendar.getTitle()).getSingleResult();
+        database.refresh(calendar);
+        return calendar.getEventsInCalendar();
+        
+    }
+
     @Override
     //TODO qui user non serve perchè deduco l'id dal calendar
     //TODO per ora nessuno usa questa funzione!
@@ -214,16 +227,16 @@ public class CalendarManagerImpl implements CalendarManager {
                 for (CalendarModel cal : event.getOwner().getOwnedCalendars()) {
                     cal.getEventsInCalendar().remove(event);
                 }
-
+                
                 if (calendar != null) {
-
+                    
                     calendar = (CalendarModel) database.createNamedQuery(
                             "findCalbyUserAndTitle").setParameter("id",
                                     calendar.getOwner()).setParameter(
                                     "title", calendar.getTitle()).getSingleResult();
-
+                    
                     if (calendar.addEventInCalendar(event)) {
-
+                        
                         logger.log(Level.INFO,
                                 "Evento {0} aggiunto al calendario {1} di {2}",
                                 new Object[]{event.getTitle(),
@@ -234,7 +247,7 @@ public class CalendarManagerImpl implements CalendarManager {
                         logger.log(LoggerLevel.DEBUG,
                                 "Events in calendar now: {0}",
                                 calendar.getEventsInCalendar());
-
+                        
                         return ControlMessages.EVENT_ADDED;
                     }
                 }
@@ -267,16 +280,16 @@ public class CalendarManagerImpl implements CalendarManager {
             //il titolo è default + timestamp
             calendar.setTitle("Default (" + Calendar.getInstance().toString()
                     + ")");
-
+            
             logger.log(Level.INFO, "Default calendar for user "
                     + "{0} created",
                     user.getEmail());
-
+            
             return calendar;
         }
         return null;
     }
-
+    
     @Override
     public CalendarModel findCalendarByName(UserModel user, String name) {
         for (CalendarModel cal : this.getCalendars(user)) {
@@ -286,18 +299,20 @@ public class CalendarManagerImpl implements CalendarManager {
         }
         return null;
     }
-
+    
     @Override
     public List<String> getCalendarTitles(UserModel user
     ) {
+        user = database.find(UserModel.class, user.getId());
+        database.refresh(user);
         List<String> names = new ArrayList<>();
         for (CalendarModel cal : this.getCalendars(user)) {
             names.add(cal.getTitle());
         }
         return names;
-
+        
     }
-
+    
     @Override
     public void toggleCalendarPrivacy(CalendarModel calendar) {
         calendar = (CalendarModel) database.createNamedQuery(
@@ -309,7 +324,7 @@ public class CalendarManagerImpl implements CalendarManager {
             calendar.setIsPublic(false);
         }
     }
-
+    
     @Override
     public boolean isDefault(CalendarModel calendar) {
         calendar = (CalendarModel) database.createNamedQuery(
@@ -321,7 +336,7 @@ public class CalendarManagerImpl implements CalendarManager {
             return false;
         }
     }
-
+    
     @Override
     public boolean deleteCalendar(CalendarModel calendar, DeleteCalendarOption opt) {
         try {
@@ -335,17 +350,17 @@ public class CalendarManagerImpl implements CalendarManager {
                         CalendarModel defaultCalendar = (CalendarModel) database.createNamedQuery(
                                 "findDefaultCalendar").setParameter("user",
                                         calendar.getOwner()).getSingleResult();
-                        for (int i=0; i< calendar.getEventsInCalendar().size() ; i++) {
+                        for (int i = 0; i < calendar.getEventsInCalendar().size(); i++) {
                             defaultCalendar.addEventInCalendar(calendar.getEventsInCalendar().get(i));
                         }
-                    calendar.getEventsInCalendar().clear();
+                        calendar.getEventsInCalendar().clear();
                     case DELETE_CALENDAR_ONLY:
                         calendar.getEventsInCalendar().clear();
                     case DELETE_ALL:
                     //non faccio nulla, perchè il CASCADE è già come opzione default del DB.
 
                 }
-
+                
                 database.flush();
                 database.remove(calendar);
                 return true;
@@ -356,5 +371,5 @@ public class CalendarManagerImpl implements CalendarManager {
             return false;
         }
     }
-
+    
 }

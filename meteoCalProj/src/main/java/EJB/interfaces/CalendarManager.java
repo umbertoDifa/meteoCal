@@ -36,6 +36,8 @@ public interface CalendarManager {
 
     public CalendarModel getCalendarUpdated (CalendarModel calendar);
     
+    public List<Event> getEventsUpdated (CalendarModel calendar);
+    
     public CalendarModel createDefaultCalendar(UserModel user);
 
     public CalendarModel findCalendarByName(UserModel user, String name);
