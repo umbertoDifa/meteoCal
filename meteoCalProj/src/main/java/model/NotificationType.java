@@ -25,8 +25,8 @@ public enum NotificationType {
      * DEL DATABASE CHE TROVATE NELL'ENTITA' NOTIFICATION NEL CAMPO TYPE
      */
     INVITATION("Invitation to event {0}",
-            "Hello {0},\n you''ve received an invitation for event {1} from {2}.\n "
-            + "Have a look to the event page on the following link:\n{3}\nMeteoCalendarTeam"),
+            "Hello {0},\nyou''ve received an invitation for event {1} from {2}.\n\n "
+            + "Have a look to the event page on the following link:\n\n{3}\n\nMeteoCalendarTeam"),
     WEATHER_CHANGED("Weather changed for event {0}",
             "Hello {0},\n we inform you that the weather for"
             + "the event {1} has changed. Check it at:\nLink:{3}"),
