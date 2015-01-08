@@ -5,7 +5,6 @@
  */
 package EJB.interfaces;
 
-import java.util.Calendar;
 import java.util.List;
 import model.CalendarModel;
 import model.Event;
@@ -53,4 +52,6 @@ public interface CalendarManager {
     public boolean deleteCalendar(CalendarModel calendar, DeleteCalendarOption opt);
     
     public boolean isDefault(CalendarModel calendar);
+    
+    public boolean makeDefault(CalendarModel calendar);
 }

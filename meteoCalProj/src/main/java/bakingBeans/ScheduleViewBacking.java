@@ -168,11 +168,6 @@ public class ScheduleViewBacking implements Serializable {
                 System.out.println("-dentro init, calendar è" + calendars);
             }
         }
-
-        System.out.println("messageToAppend è " + messageToAppend);
-        if (messageToAppend) {
-            showMessage(null, messageTitle, message);
-        }
     }
 
     /**
@@ -215,7 +210,7 @@ public class ScheduleViewBacking implements Serializable {
     public void onDateSelect(SelectEvent selectEvent) {
         event = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
     }
-    
+
     /**
      * quando il calendario cambia faccio il refresh degli eventi da
      * visualizzare
@@ -263,7 +258,7 @@ public class ScheduleViewBacking implements Serializable {
         System.out.println("DENTRO canDeleteCalendar");
         if (calendarManager.isDefault(calendarShown)) {
             System.out.println(calendarShown.getTitle() + " è default");
-            showMessage(null, "Cannot Delete Default Calendar", "You cannot delete the default calendar. Please make default another calenar and then remove this one.");
+            showMessage(null, "Cannot Delete Default Calendar", "You cannot delete the default calendar. Please make default another calenar and then remove this one.", FacesMessage.SEVERITY_ERROR);
         } else {
             System.out.println(calendarShown.getTitle() + "non è default");
             context.execute("PF('delOpt').show();");
@@ -274,15 +269,11 @@ public class ScheduleViewBacking implements Serializable {
         System.out.println("-DENTRO deleteCalendar");
         DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
         if (calendarManager.deleteCalendar(calendarShown, option)) {
-            messageTitle = "Calendar Deleted";
-            message = "Your calendar has been succesfully deleted";
-            messageToAppend = true;
-
+            showMessage(null, "Calendar Deleted", "Your calendar has been succesfully deleted");
             init();
         } else {
-            messageTitle = "Cannot delete calendar";
-            message = "An error has occured.";
-            messageToAppend = true;
+            showMessage(null, "Error", "An error has occured.", FacesMessage.SEVERITY_ERROR);
+
         }
 
     }
@@ -327,7 +318,13 @@ public class ScheduleViewBacking implements Serializable {
 
     private void showMessage(String recipient, String msg, String advice) {
         FacesContext ctx = FacesContext.getCurrentInstance();
-        ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_WARN, msg, advice));
+        ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_INFO, msg, advice));
+        RequestContext.getCurrentInstance().update("growl");
+    }
+
+    private void showMessage(String recipient, String msg, String advice, FacesMessage.Severity severity) {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        ctx.addMessage(recipient, new FacesMessage(severity, msg, advice));
         RequestContext.getCurrentInstance().update("growl");
     }
 
@@ -362,6 +359,14 @@ public class ScheduleViewBacking implements Serializable {
             this.pub = pub;
         }
 
+    }
+
+    public void makeDefault() {
+        if (calendarManager.makeDefault(calendarShown)) {
+            showMessage(null, "Defaul Calendar Changed", "Calendar " + calendarSelected + " has been set as Default.");
+        } else {
+            showMessage(null, "Error", "An error has occured.", FacesMessage.SEVERITY_ERROR);
+        }
     }
 
 }

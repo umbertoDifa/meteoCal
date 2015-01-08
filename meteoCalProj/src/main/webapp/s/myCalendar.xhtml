@@ -49,6 +49,21 @@ and open the template in the editor.
                                 <p:inputSwitch id="publicSwitch" widgetVar="publicSwitch" value="#{scheduleView.calendarShown.isPublic}"/>
                             </h:panelGrid>
                         </h:form>
+                        
+                        <h:form id="changeDefault">
+                            <h:panelGrid columns="2" rendered="#{!scheduleView.readOnly}">
+                                <p:commandButton value="Make Default" onclick="PF('confirmChangeDef').show()" type="button"/>
+                            </h:panelGrid>
+                            
+                            <p:confirmDialog message="Do you really want to set the Current Calendar as Default?" global="true" widgetVar="confirmChangeDef" header="Change Default Calendar" severity="alert">
+                                <p:commandButton type="button" value="Yes - growl" icon="ui-icon-check" update=":growl" oncomplete="PF('confirmChangeDef').hide();">
+                                    <f:ajax event="click" listener="#{scheduleView.makeDefault()}" /> 
+                                 </p:commandButton>   
+                                <p:commandButton value="Yes" icon="ui-icon-check" oncomplete="PF('confirmChangeDef').hide();PF('growl').update;"  actionListener="#{scheduleView.makeDefault()}" />
+                                <p:commandButton value="No" icon="ui-icon-close" onclick="PF('confirmDialog').hide()"/>
+                            </p:confirmDialog>
+                          </h:form>
+                        
                         <h:form id="deleteForm">
                             <h:panelGrid columns="2" rendered="#{!scheduleView.readOnly}">
                                 <p:commandButton value="Delete Calendar" onclick="PF('confirmationDialog').show()" icon="ui-icon-close" type="button"/>
@@ -65,11 +80,11 @@ and open the template in the editor.
                             <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" minHeight="40" resizable="false">
                                 <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
                                 <h:form>
-                                    <p:commandButton value="Move" update="@(form)" oncomplete="PF('delOpt').hide();"  actionListener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
+                                    <p:commandButton value="Move" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
                                     
-                                    <p:commandButton value="Detach" update="@(form)" oncomplete="PF('delOpt').hide();" actionListener="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
+                                    <p:commandButton value="Detach" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
                                     
-                                    <p:commandButton value="Delete" update="@(form)" oncomplete="PF('delOpt').hide();" actionListener="#{scheduleView.deleteCalendar('DELETE_ALL')}" />
+                                    <p:commandButton value="Delete" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_ALL')}" />
                                     
                                     <p:commandButton value="Cancel" type="button" onclick="PF('delOpt').hide()" />
                                 </h:form>
