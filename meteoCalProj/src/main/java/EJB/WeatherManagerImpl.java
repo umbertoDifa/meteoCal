@@ -191,7 +191,7 @@ public class WeatherManagerImpl implements WeatherManager {
     private boolean downloadWeather(ForecastType forecastType) {
 
         try {
-
+            
             switch (forecastType) {
                 case FORECAST_5_3HOURS:
                     forecastFiveDays = openWeatherMap.forecastWeatherByCoordinates(
@@ -455,8 +455,8 @@ public class WeatherManagerImpl implements WeatherManager {
 
     private boolean validate(Event event) {
         if (event != null) {
-            event = database.find(Event.class, event.getId());
-            if (event != null && event.getLocation() != null) {
+            this.event = database.find(Event.class, event.getId());
+            if (this.event != null && event.getLocation() != null) {
                 return true;
             }
         }

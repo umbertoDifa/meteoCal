@@ -72,8 +72,34 @@ public class Place implements Serializable {
 
     @Override
     public String toString() {
-        return streetNumber + "," + locality + "," + route + "," + country + ","
-                + postalCode + "," + administrativeArea;
+        String toReturn = "";
+        String separator = "";
+
+        if (streetNumber != null && !streetNumber.isEmpty()) {
+            toReturn += streetNumber;
+            separator = ",";
+        }
+        if (locality != null && !locality.isEmpty()) {
+            toReturn += separator + locality;
+            separator = ",";
+        }
+        if (route != null && ! route.isEmpty()) {
+            toReturn += separator + route;
+            separator = ",";
+        }
+        if (country != null && !country.isEmpty()) {
+            toReturn += separator + country;
+            separator = ",";
+        }
+        if (postalCode != null && !postalCode.isEmpty()) {
+            toReturn += separator + postalCode;
+            separator = ",";
+        }
+        if (administrativeArea != null && !administrativeArea.isEmpty()) {
+            toReturn += separator + administrativeArea;
+        }
+
+        return toReturn;
     }
 
 }

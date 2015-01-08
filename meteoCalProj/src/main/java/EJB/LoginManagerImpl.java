@@ -19,6 +19,7 @@ import javax.persistence.PersistenceContext;
 import model.UserModel;
 import wrappingObjects.UserAndMessage;
 import utility.ControlMessages;
+import utility.LoggerLevel;
 import utility.LoggerProducer;
 
 @Stateless
@@ -60,6 +61,7 @@ public class LoginManagerImpl implements LoginManager {
                     "There are multiple users corresponding to a single id.Database is corrupted.");
         } else {
             //verifico la password
+            logger.log(LoggerLevel.DEBUG, "utente trovato:"+results.get(0).getEmail());
             if (results.get(0).getPassword().equals(credentials.getPassword())) {
                 userAndMessage.setUser(results.get(0));
                 database.refresh(results.get(0));

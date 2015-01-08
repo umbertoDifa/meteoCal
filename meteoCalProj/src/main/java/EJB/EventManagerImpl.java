@@ -65,12 +65,18 @@ public class EventManagerImpl implements EventManager {
 
         logger.log(Level.INFO, "Event {0} created", event.getTitle());
 
+        database.flush();
+        logger.log(LoggerLevel.DEBUG, "Attualment lat e long:{0} e {1}",
+                new Object[]{event.getLatitude(),
+                             event.getLongitude()});
+        
         //aggiungo weather
         WeatherForecast forecast = weatherManager.getWeather(event);
         database.persist(forecast);
         event.setWeather(forecast);
 
         database.flush();
+        
         logger.log(Level.INFO, "Forecast added to Event {0} ", event.getTitle());
 
         //schedulo updates weather
