@@ -142,13 +142,12 @@ public class ScheduleViewBacking implements Serializable {
      * METHODS
      *
      */
-    @PostConstruct
     public void init() {
         setUser();
         eventsToShow = new DefaultScheduleModel();
 
         if (user != null) {
-            calendars = user.getOwnedCalendars();
+            calendars = calendarManager.getCalendars(user);
 
             // tolgo i calendari privati
             if (readOnly) {
@@ -159,8 +158,8 @@ public class ScheduleViewBacking implements Serializable {
                 }
             }
 
-            if (calendars != null && calendars.size() > 0) {
-                calendarNames = titlesCalendar(calendars);
+            if (calendars != null && !calendars.isEmpty()) {
+                calendarNames = calendarManager.getCalendarTitles(user);
                 updateEventsToShow(calendars.get(0));
             }
         }
@@ -233,18 +232,6 @@ public class ScheduleViewBacking implements Serializable {
             }
         }
 
-    }
-
-    private List<String> titlesCalendar(List<model.CalendarModel> c) {
-        List<String> result = new ArrayList<>();
-        if (c != null) {
-            for (model.CalendarModel b : c) {
-                result.add(b.getTitle());
-            }
-        } else {
-            System.out.println("Lista calendari null");
-        }
-        return result;
     }
 
     private void updateEventsToShow(CalendarModel cal) {
