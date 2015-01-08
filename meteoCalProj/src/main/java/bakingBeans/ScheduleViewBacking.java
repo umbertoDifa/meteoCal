@@ -12,14 +12,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -34,8 +31,6 @@ import model.PublicEvent;
 import model.UserModel;
 import org.primefaces.context.RequestContext;
 
-import org.primefaces.event.ScheduleEntryMoveEvent;
-import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
@@ -170,6 +165,7 @@ public class ScheduleViewBacking implements Serializable {
             if (calendars != null && !calendars.isEmpty()) {
                 calendarNames = calendarManager.getCalendarTitles(user);
                 updateEventsToShow(calendars.get(0));
+                System.out.println("-dentro init, calendar è" + calendars);
             }
         }
 
@@ -179,6 +175,12 @@ public class ScheduleViewBacking implements Serializable {
         }
     }
 
+    /**
+     * salva l'evento con i parametri impostati dalla pagina myCalendar e faccio
+     * un refresh del calendario che la pagina visualizza
+     *
+     * @param actionEvent
+     */
     public void updateEvent(ActionEvent actionEvent) {
 
         manageEvent.setTitle(event.getTitle());
@@ -206,39 +208,19 @@ public class ScheduleViewBacking implements Serializable {
                 context.redirect(context.getRequestContextPath() + "/s/eventPage.xhtml?id=" + ((EventDetails) event.getData()).getId());
             }
         } catch (IOException ex) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Redirect fallita", "");
-            addMessage(message);
+            showMessage(null, "Redirect fallita", "");
         }
     }
 
     public void onDateSelect(SelectEvent selectEvent) {
         event = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
     }
-
-    public void onEventMove(ScheduleEntryMoveEvent event) {
-
-        //persisto l event con manageEventBacking
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event moved", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
-
-        addMessage(message);
-    }
-
-    public void onEventResize(ScheduleEntryResizeEvent event) {
-
-        //persisto l event con manageEventBacking
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
-
-        addMessage(message);
-    }
-
-    private void addMessage(FacesMessage message) {
-        System.out.println("-dentro addMsg");
-        FacesContext.getCurrentInstance().addMessage(null, message);
-        RequestContext.getCurrentInstance().update("growl");
-    }
-
+    
+    /**
+     * quando il calendario cambia faccio il refresh degli eventi da
+     * visualizzare
+     */
     public void onCalendarChange() {
-        System.out.println("DENTRO onCalendarChange");
         //dal calendarSelected aggiorno gli eventi da visualizzare
         for (CalendarModel cal : calendars) {
             if (cal.getTitle().equals(calendarSelected)) {
@@ -249,10 +231,73 @@ public class ScheduleViewBacking implements Serializable {
 
     }
 
+    public void setUser() {
+        if (userId != null) {
+            if (!Objects.equals(Long.valueOf(userId).longValue(), login.getCurrentUser().getId())) {
+                readOnly = true;
+                System.out.println("-userId:" + userId);
+                System.out.println("-userId castato to long:" + Long.valueOf(userId).longValue());
+                user = search.findUserById(Long.valueOf(userId).longValue());
+                if (user == null) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage("Nessun utente trovato"));
+                    ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+                    try {
+                        context.redirect(context.getRequestContextPath() + "error.xhtml");
+                    } catch (IOException ex) {
+                        Logger.getLogger(ScheduleViewBacking.class.getName()).log(Level.SEVERE, null, ex);
+                        System.out.println("Redirect fallita");
+                    }
+                }
+            } else {
+                user = login.getCurrentUser();
+            }
+        } else {
+            user = login.getCurrentUser();
+        }
+    }
+
+    public void canDeleteCalendar() {
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.execute("PF('confirmationDialog').hide();");
+        System.out.println("DENTRO canDeleteCalendar");
+        if (calendarManager.isDefault(calendarShown)) {
+            System.out.println(calendarShown.getTitle() + " è default");
+            showMessage(null, "Cannot Delete Default Calendar", "You cannot delete the default calendar. Please make default another calenar and then remove this one.");
+        } else {
+            System.out.println(calendarShown.getTitle() + "non è default");
+            context.execute("PF('delOpt').show();");
+        }
+    }
+
+    public void deleteCalendar(String response) {
+        System.out.println("-DENTRO deleteCalendar");
+        DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
+        if (calendarManager.deleteCalendar(calendarShown, option)) {
+            messageTitle = "Calendar Deleted";
+            message = "Your calendar has been succesfully deleted";
+            messageToAppend = true;
+
+            init();
+        } else {
+            messageTitle = "Cannot delete calendar";
+            message = "An error has occured.";
+            messageToAppend = true;
+        }
+
+    }
+
+    /**
+     * aggiorno gli eventi (del calendario cal) che lo schedule visualizza
+     *
+     * @param cal
+     */
     private void updateEventsToShow(CalendarModel cal) {
         eventsToShow.clear();
+        System.out.println("Dentro updateEvent e eventToShow dopo clear = " + eventsToShow.getEventCount());
         cal = calendarManager.getCalendarUpdated(cal);
-        for (Event ev : cal.getEventsInCalendar()) {
+        for (Event ev : calendarManager.getEventsUpdated(cal)) {
+            System.out.println("Evento caricato è " + ev.getTitle());
             calendarShown = cal;
             calendarSelected = cal.getTitle();
             // se l'evento è privato e non sei l'owner
@@ -280,36 +325,10 @@ public class ScheduleViewBacking implements Serializable {
 
     }
 
-    private Calendar dateToCalendar(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        return cal;
-    }
-
-    public void setUser() {
-        if (userId != null) {
-            if (!Objects.equals(Long.valueOf(userId).longValue(), login.getCurrentUser().getId())) {
-                readOnly = true;
-                System.out.println("-userId:" + userId);
-                System.out.println("-userId castato to long:" + Long.valueOf(userId).longValue());
-                user = search.findUserById(Long.valueOf(userId).longValue());
-                if (user == null) {
-                    FacesContext.getCurrentInstance().addMessage(null,
-                            new FacesMessage("Nessun utente trovato"));
-                    ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-                    try {
-                        context.redirect(context.getRequestContextPath() + "error.xhtml");
-                    } catch (IOException ex) {
-                        Logger.getLogger(ScheduleViewBacking.class.getName()).log(Level.SEVERE, null, ex);
-                        System.out.println("Redirect fallita");
-                    }
-                }
-            } else {
-                user = login.getCurrentUser();
-            }
-        } else {
-            user = login.getCurrentUser();
-        }
+    private void showMessage(String recipient, String msg, String advice) {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_WARN, msg, advice));
+        RequestContext.getCurrentInstance().update("growl");
     }
 
     private void refreshCalendar() {
@@ -345,39 +364,4 @@ public class ScheduleViewBacking implements Serializable {
 
     }
 
-    private void showMessage(String recipient, String msg, String advice) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_WARN, msg, advice));
-        RequestContext.getCurrentInstance().update("growl");
-    }
-
-    public void canDeleteCalendar() {
-        RequestContext context = RequestContext.getCurrentInstance();
-        context.execute("PF('confirmationDialog').hide();");
-        System.out.println("DENTRO canDeleteCalendar");
-        if (calendarManager.isDefault(calendarShown)) {
-            System.out.println(calendarShown.getTitle() + " è default");
-            showMessage(null, "Cannot Delete Default Calendar", "You cannot delete the default calendar. Please make default another calenar and then remove this one.");
-        } else {
-            System.out.println(calendarShown.getTitle() + "non è default");
-            context.execute("PF('delOpt').show();");
-        }
-    }
-
-    public void deleteCalendar(String response) {
-        System.out.println("-DENTRO deleteCalendar");
-        DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
-        if (calendarManager.deleteCalendar(calendarShown, option)) {
-            messageTitle = "Calendar Deleted";
-            message = "Your calendar has been succesfully deleted";
-            messageToAppend = true;
-
-            init();
-        } else {
-            messageTitle = "Cannot delete calendar";
-            message = "An error has occured.";
-            messageToAppend = true;
-        }
-
-    }
 }
