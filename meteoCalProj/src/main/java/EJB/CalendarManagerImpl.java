@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import model.CalendarModel;
 import model.Event;
@@ -45,14 +46,10 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public List<ControlMessages> checkData(Event event) {
-        Calendar day = event.getStartDateTime();
-        String city = event.getLocation();
-        UserModel user = event.getOwner();
-
         List<ControlMessages> result = new ArrayList<>();
 
         boolean weatherIsOk = checkWeather(event);
-        boolean haveConflicts = isInConflict(user, event);
+        boolean haveConflicts = isInConflict(event);
 
         //se tutto ok
         if (weatherIsOk && !haveConflicts) {
@@ -84,68 +81,78 @@ public class CalendarManagerImpl implements CalendarManager {
 
         //se non è buono ritorno false, false true
         if (forecast.getMessage() != WeatherMessages.BAD_WEATHER) {
+            logger.log(LoggerLevel.DEBUG, "Bad weather found in CheckWeather");
             return false;
         }
+        logger.log(LoggerLevel.DEBUG, "Good weather foudn in checkWeather");
         return true;
     }
 
     /**
-     * Controlla i conflitti dell'evento che si vuole schedulare
+     * Controlla i conflitti dell'evento che si vuole schedulare REQUIRES event
+     * not null
      *
-     * @param user l'utente che sta facendo l'evento
      * @param event l'evento da fare
      * @return false se non conflitti, true se ci sono conflitti
      */
     @Override
-    public boolean isInConflict(UserModel user, Event event) {
+    public boolean isInConflict(Event event) {
         //TODO controllare che questo metodo venga chiamato anche quando faccio l'update cambiando data/ora
-        if (user != null && event != null) {
+        if (event != null) {
             try {
                 Event firstConflict = (Event) database.createNamedQuery(
                         "isConflicting").setParameter(
-                                "user", user).setParameter("end",
+                                "user", event.getOwner()).setParameter("end",
                                 event.getEndDateTime()).setParameter(
                                 "start", event.getStartDateTime()).setParameter(
                                 "id",
                                 event.getId()).getSingleResult();
 
-                //se non alza eccezioni è perchè ha trovato conflitti
+                //se non alza eccezioni è perchè ha trovato esattamente un conflitto
+                logger.log(LoggerLevel.DEBUG, "Conflict found");
+
                 return true;
-
-                //TODO questo workaround è bruttino ma non ho trovato altri metodi altrettanto efficienti.
-                //Un'altra opzione sarebbe quella di far tornare una lista e farne la size, ma è molto meno efficiente
             } catch (NoResultException e) {
+                //se non trova risultati allora non ci sono conflitti
+                logger.log(LoggerLevel.DEBUG, "Conflict NOT found");
                 return false;
-
+            } catch (NonUniqueResultException e) {
+                //se trova molti risultati allora ci sono conflitti
+                logger.log(LoggerLevel.DEBUG, "Conflict found");
+                return true;
             }
         } else {
-
-            //TODO da gestire con una eccezione!
-            logger.log(Level.SEVERE, "User or event is null.");
-            return true;
+            logger.log(Level.SEVERE, "Event is null.");
+            return false;
         }
     }
 
     @Override
     //TODO, questa la facciamo chiamare da fra? --> sì, ma in abbinamento a isInConflict (da chiamare solo se quello ritorna true)
-    public int findFreeSlots(UserModel user, Event event) {
+    public int findFreeSlots(Event event) {
         int searchRange = 15;
-        Calendar tempDateTime;
-        Event tempEvent = new PrivateEvent();
+
+        Event tempEvent = new PrivateEvent(event.getTitle(),
+                (Calendar) event.getStartDateTime().clone(),
+                (Calendar) event.getEndDateTime().clone(), event.getLocation(),
+                null, event.isIsOutdoor(), event.getOwner());
+
+        //set temp event with event data (kind of clone)
         tempEvent.setId(event.getId());
+        tempEvent.setLatitude(event.getLatitude());
+        tempEvent.setLongitude(event.getLongitude());
+
         for (int i = 1; i < searchRange; i++) {
 
             //setto nuova data inizio
-            tempDateTime = event.getStartDateTime();
-            tempDateTime.add(Calendar.DAY_OF_MONTH, i);
-            tempEvent.setStartDateTime(tempDateTime);
-            //setto nuova data fine
-            tempDateTime = event.getEndDateTime();
-            tempDateTime.add(Calendar.DAY_OF_MONTH, i);
-            tempEvent.setEndDateTime(tempDateTime);
+            tempEvent.getStartDateTime().add(Calendar.DAY_OF_MONTH, i);
 
-            if (!isInConflict(user, tempEvent));
-            return i;
+            //setto nuova data fine           
+            tempEvent.getEndDateTime().add(Calendar.DAY_OF_MONTH, i);
+
+            if (!isInConflict(tempEvent) && checkWeather(tempEvent)) {
+                return i;
+            }
         }
 
         //TODO modificare questo orrore

@@ -27,7 +27,6 @@ public class EmailSender {
         }
 
         sendFromGMail(from, pass, to, subject, body);
-        logger.log(LoggerLevel.DEBUG, "Email successfully sent to {0}", to);
     }
 
     private static void sendFromGMail(String from, String pass, String[] to,
@@ -60,13 +59,16 @@ public class EmailSender {
             message.setSubject(subject);
             message.setText(body);
             Transport transport = session.getTransport("smtp");
-            transport.connect(host, from, pass);//TODO solelva exception da controllare
+            transport.connect(host, from, pass);
             transport.sendMessage(message, message.getAllRecipients());
             transport.close();
+            logger.log(LoggerLevel.DEBUG, "Email succesfully sent to {0}", to);
         } catch (AddressException ae) {
             logger.log(LoggerLevel.SEVERE, ae.getMessage(), ae);
+            logger.log(LoggerLevel.DEBUG, "Email NOT sent to {0}", to);
         } catch (MessagingException me) {
             logger.log(LoggerLevel.SEVERE, me.getMessage(), me);
+            logger.log(LoggerLevel.DEBUG, "Email NOT sent to {0}", to);
 
         }
     }

@@ -69,14 +69,14 @@ public class EventManagerImpl implements EventManager {
         logger.log(LoggerLevel.DEBUG, "Attualment lat e long:{0} e {1}",
                 new Object[]{event.getLatitude(),
                              event.getLongitude()});
-        
+
         //aggiungo weather
         WeatherForecast forecast = weatherManager.getWeather(event);
         database.persist(forecast);
         event.setWeather(forecast);
 
         database.flush();
-        
+
         logger.log(Level.INFO, "Forecast added to Event {0} ", event.getTitle());
 
         //schedulo updates weather
@@ -125,7 +125,6 @@ public class EventManagerImpl implements EventManager {
 
     }
 
-    //TODO check
     @Override
     public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees) {
         logger.log(LoggerLevel.DEBUG, "Appena entrato in UpdateEvent");
@@ -215,6 +214,11 @@ public class EventManagerImpl implements EventManager {
             oldEvent.setDescription(event.getDescription());
             changed = true;
         }
+        //aggiorno inizio evento
+        if (oldEvent.getStartDateTime() != event.getStartDateTime()) {            
+            oldEvent.setStartDateTime(event.getStartDateTime());
+            changed = true;
+        }
         //aggiorno fine evento
         if (oldEvent.getEndDateTime() != event.getEndDateTime()) {
             oldEvent.setEndDateTime(event.getEndDateTime());
@@ -233,11 +237,7 @@ public class EventManagerImpl implements EventManager {
             this.updateEventLatLng(event);
             changed = true;
         }
-        //aggiorno inizio evento
-        if (oldEvent.getStartDateTime() != event.getStartDateTime()) {
-            oldEvent.setStartDateTime(event.getStartDateTime());
-            changed = true;
-        }
+
         //aggiorno titolo
         if (oldEvent.getTitle() == null ? (event.getTitle()) != null : !oldEvent.getTitle().equals(
                 event.getTitle())) {
