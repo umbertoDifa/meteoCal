@@ -102,9 +102,9 @@ public abstract class Event implements Serializable {
     private WeatherForecast weather;
 
     //vars to store position coordinates if any
-    private double latitude;    
+    private double latitude;
     private double longitude;
-    
+
     /*
      *
      * CONSTRUCTORS
@@ -117,13 +117,12 @@ public abstract class Event implements Serializable {
         this.location = location;
         this.description = description;
         this.isOutdoor = isOutdoor;
-        this.owner = owner;          
+        this.owner = owner;
     }
 
     //costruiscono una anonymus subclass, non bisogna MAI persisterli prima di aver creato la entity giusta!
-    public Event() {             
+    public Event() {
     }
-    
 
     public WeatherForecast getWeather() {
         return weather;
@@ -179,7 +178,7 @@ public abstract class Event implements Serializable {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
-    }        
+    }
 
     public List<CalendarModel> getInCalendars() {
         return inCalendars;
@@ -260,7 +259,7 @@ public abstract class Event implements Serializable {
         }
         return true;
     }
-
+  
     @Override
     public String toString() {
         return "Event{" + "id=" + id + "\ntitle=" + title + "\nstartDateTime="

@@ -51,9 +51,9 @@ public interface CalendarManager {
 
     public List<String> getCalendarTitles(UserModel user);
 
-    public boolean isInConflict(UserModel user, Event event);
+    public boolean isInConflict(Event event);
     
-    public int findFreeSlots(UserModel user, Event event);
+    public int findFreeSlots(Event event);
     
     public void toggleCalendarPrivacy (CalendarModel calendar);
     
