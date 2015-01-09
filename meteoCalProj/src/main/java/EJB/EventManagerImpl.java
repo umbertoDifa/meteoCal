@@ -10,7 +10,7 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.List; 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -57,10 +57,7 @@ public class EventManagerImpl implements EventManager {
 
     @Override
     public boolean scheduleNewEvent(Event event, CalendarModel insertInCalendar, List<UserModel> invitees) {
-        //salvo evento nel db
-        if (event.getTitle().isEmpty()) {
-            return false;
-        }
+        //salvo evento nel db        
         database.persist(event);
 
         //aggiungo coordinate all'evento

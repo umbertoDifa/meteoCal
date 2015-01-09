@@ -78,7 +78,7 @@ and open the template in the editor.
                 </p:tab>
                 <p:tab title="Wall">
                     <h:form>
-                        <p:dataScroller value="#{events.wallEvents}" var="ev" chunkSize="10">
+                        <p:dataScroller value="#{events.wallEvents}" var="ev" chunkSize="3">
                             <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default.png"/> 
@@ -133,7 +133,6 @@ and open the template in the editor.
                     </h:form>
                 </p:tab>
             </p:tabView>
-            <h:messages />
         </ui:define>
 
     </ui:composition>

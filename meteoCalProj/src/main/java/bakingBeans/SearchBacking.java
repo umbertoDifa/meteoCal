@@ -6,12 +6,19 @@
 package bakingBeans;
 
 import EJB.interfaces.SearchManager;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import model.Event;
 import model.UserModel;
+import utility.LoggerLevel;
 import utility.SearchResult;
 
 /**
@@ -23,12 +30,19 @@ import utility.SearchResult;
 public class SearchBacking {
 
     private String searchKey;
-    private List<SearchResult> results;
+    private List<SearchResult> eventResults = new ArrayList<>();
+    private List<SearchResult> userResults = new ArrayList<>();
     private boolean searchForUsers;
     private boolean searchForEvents;
 
     @Inject
     private SearchManager searchManager;
+
+    @Inject
+    Logger logger;
+
+    private List<UserModel> users;
+    private List<Event> events;
 
     /*
      * 
@@ -41,14 +55,6 @@ public class SearchBacking {
 
     public void setSearchKey(String searchKey) {
         this.searchKey = searchKey;
-    }
-
-    public List<SearchResult> getResults() {
-        return results;
-    }
-
-    public void setResults(List<SearchResult> results) {
-        this.results = results;
     }
 
     public boolean isSearchForUsers() {
@@ -67,6 +73,38 @@ public class SearchBacking {
         this.searchForEvents = searchForEvents;
     }
 
+    public List<SearchResult> getEventResults() {
+        return eventResults;
+    }
+
+    public void setEventResults(List<SearchResult> eventResults) {
+        this.eventResults = eventResults;
+    }
+
+    public List<SearchResult> getUserResults() {
+        return userResults;
+    }
+
+    public void setUserResults(List<SearchResult> userResults) {
+        this.userResults = userResults;
+    }
+
+    public List<UserModel> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserModel> users) {
+        this.users = users;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
+    }
+
     /*
      * METHODS
      */
@@ -76,21 +114,38 @@ public class SearchBacking {
     public SearchBacking() {
     }
 
-    public void doSearch() {
-        List<UserModel> users = searchManager.searchUsers(searchKey);
-        List<Event> events = searchManager.searchEvents(searchKey);
+    public void redirect() {
+        logger.log(LoggerLevel.DEBUG, "-dentro redirect, searchKey vale:" + searchKey);
+        //redirect
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        try {
+            context.redirect(context.getRequestContextPath()
+                    + "/s/search.xhtml?query=" + searchKey
+                    + "&&faces-redirect=true");
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
 
+    public void doSearch() {
+        users = searchManager.searchUsers(searchKey);
+        events = searchManager.searchEvents(searchKey);
+
+        //TODO filtrare risultati per privacy
         if (searchForUsers || (!searchForEvents && !searchForUsers)) {
             for (UserModel u : users) {
-                results.add(new SearchResult(u.getName() + u.getSurname(), u.getEmail(), u.getAvatarPath()));
+                userResults.add(new SearchResult(u.getName() + u.getSurname(), u.getEmail(), u.getAvatarPath(), String.valueOf(u.getId())));
             }
         }
 
         if (searchForEvents || (!searchForEvents && !searchForUsers)) {
             for (Event ev : events) {
-                results.add(new SearchResult(ev.getTitle(), ev.getDescription(), ev.getImgPath()));
+                eventResults.add(new SearchResult(ev.getTitle(), ev.getDescription(), ev.getImgPath(), String.valueOf(ev.getId())));
             }
         }
+
+        logger.log(LoggerLevel.DEBUG, "{0} eventi trovati sono :{1}", new Object[]{eventResults.size(), eventResults});
+        logger.log(LoggerLevel.DEBUG, "{0} utenti trovati:{1}", new Object[]{userResults.size(), userResults});
 
     }
 

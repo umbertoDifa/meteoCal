@@ -77,22 +77,6 @@ public class EventsBacking implements Serializable {
      * METHODS
      *
      */
-    public void loadMore(EventType type) {
-        List<Event> result = eventManager.eventOnWall(type, numClickMoreOwned + 2, login.getCurrentUser());
-        numClickMoreOwned++;
-        switch (type) {
-            case OWNED:
-                ownedEvents = result; //oppure ownedEvents.addAll(result);
-            case JOINED:
-                joinedEvents = result;
-            case PUBLIC:
-                wallEvents = result;
-            case PARTECIPATING:
-                invitations = result;
-
-        }
-    }
-
     /**
      * Creates a new instance of EventsBacking
      */

@@ -365,21 +365,17 @@ public class ManageEventBacking implements Serializable {
     }
 
     public void save() {
-        System.out.println("-dentro save");
+        logger.log(LoggerLevel.DEBUG, "dentro save");
 
-        //spostati in checkEvent
-//        createOrLoadInstance();
-//        setUpInstance();
         saveIt();
         logger.log(LoggerLevel.DEBUG, "dopo saveit");
 
+        //redirect
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         try {
             context.redirect(context.getRequestContextPath()
                     + "/s/eventPage.xhtml?id=" + idEvent
                     + "&&faces-redirect=true");
-            //return "/s/eventPage.xhtml?id=" + idEvent + "&&faces-redirect=true";
-            //TODO gestire errori?
         } catch (IOException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
@@ -387,28 +383,25 @@ public class ManageEventBacking implements Serializable {
 
     //alter ego della save
     public void reschedule() {
-        System.out.println("-dentro reschedule");
+        logger.log(LoggerLevel.DEBUG, "dentro reschedule");
 
-        //spostati in checkEvent
-//        createOrLoadInstance();
-//        setUpInstance();
         //reschedule date
         eventToCreate.setStartDateTime(rescheduleDayStart);
         eventToCreate.setEndDateTime(rescheduleDayEnd);
+
         saveIt();
         logger.log(LoggerLevel.DEBUG, "dopo reschedule");
+
+        //redirect
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         try {
             context.redirect(context.getRequestContextPath()
                     + "/s/eventPage.xhtml?id=" + idEvent
                     + "&&faces-redirect=true");
-            //return "/s/eventPage.xhtml?id=" + idEvent + "&&faces-redirect=true";
-            //TODO gestire errori?
+
         } catch (IOException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
-//return "/s/eventPage.xhtml?id=" + idEvent + "&&faces-redirect=true";
-        //TODO gestire errori?
     }
 
     public String deleteEvent() {
@@ -567,33 +560,22 @@ public class ManageEventBacking implements Serializable {
     private void saveIt() {
         //passo all eventManager l'ownerId, l'evento riempito, il calendario
         //dove metterlo e la lista degli invitati
-        System.out.println("-dentro save it");
-        //TODO check se questa funziona e comunque va spostata nel checkEvent
-        if (eventToCreate.getEndDateTime().compareTo(
-                eventToCreate.getStartDateTime()) >= 0) {
-            logger.log(LoggerLevel.DEBUG, "dentro primo if saveit");
-            if (isSaved()) {
-                logger.log(LoggerLevel.DEBUG, "dentro secondo if saveit");
-                eventManager.updateEvent(eventToCreate, calendar, guests);
-            } else {
-                logger.log(LoggerLevel.DEBUG, "dentro secondo else saveit");
-                if (eventManager.scheduleNewEvent(eventToCreate, calendar,
-                        guests)) {
-                    logger.log(LoggerLevel.DEBUG, "dentro terzo if saveit");
-                    setSaved(true);
-                    idEvent = eventToCreate.getId().toString();
-                    //showMessage(null, "L'evento è stato salvato", "");
-                } else {
-                    showMessage(login.getCurrentUser().getEmail(),
-                            "Evento non salvato",
-                            "Titolo vuoto");
-                }
-            }
+        logger.log(LoggerLevel.DEBUG, "dentro save it");
+
+        if (isSaved()) {
+            eventManager.updateEvent(eventToCreate, calendar, guests);
         } else {
-            logger.log(LoggerLevel.DEBUG, "dentro primo else saveit");
-            showMessage(login.getCurrentUser().getEmail(), "evento non salvato",
-                    "date non corrette");
+            if (eventManager.scheduleNewEvent(eventToCreate, calendar,
+                    guests)) {
+                setSaved(true);
+                idEvent = eventToCreate.getId().toString();
+                //showMessage(null, "L'evento è stato salvato", "");
+            } else {
+                showMessage(login.getCurrentUser().getEmail(),
+                        "Evento non salvato", "Errore durante il salvataggio");
+            }
         }
+
     }
 
     /**
@@ -604,45 +586,72 @@ public class ManageEventBacking implements Serializable {
 
         createOrLoadInstance();
         setUpInstance();
-        //TODO non è possibile creare eventi nel passato
 
-        //controllo se ci osno porblemi i,e, conflitti o tempo malo
-        List<ControlMessages> outcome = calendarManager.checkData(eventToCreate);
-
-        //se tutto ok 
-        if (outcome.contains(ControlMessages.NO_PROBLEM)) {
-            //salvo l'evento/update
-            save();
+        //se fine evento prima di inzio evento
+        if (eventToCreate.getEndDateTime().before(
+                eventToCreate.getStartDateTime())) {
+            //avvisa errore
+            showMessage(login.getCurrentUser().getEmail(), "Evento non salvato",
+                    "La fine dell'evento non può essere prima dell'inizio");
         } else {
-            //Listo gli errori
-            dialogueMessage = "";
-
-            for (ControlMessages mex : outcome) {
-                dialogueMessage += mex.getMessage() + "\n";
-            }
-
-            // cerco un free day           
-            int offset = calendarManager.findFreeSlots(eventToCreate);
-            logger.log(LoggerLevel.DEBUG, "Trovato free slot: {0}", offset);
-            if (offset != -1) {
-                //creo le possibili date di reschedule
-                rescheduleDayStart = eventToCreate.getStartDateTime();
-                rescheduleDayStart.add(Calendar.DATE, offset);
-                rescheduleDayEnd = eventToCreate.getEndDateTime();
-                rescheduleDayEnd.add(Calendar.DATE, offset);
-
-                dialogueMessage += "\nDo you want to reschedule the event from the:\n"
-                        + TimeTool.dateToTextDay(rescheduleDayStart.getTime(),
-                                "dd-MM-YYYY hh:mm\n") + "to the:\n"
-                        + TimeTool.dateToTextDay(rescheduleDayEnd.getTime(),
-                                "dd-MM-YYYY hh:mm\n");
+            //se inizio evento nel passato
+            if (eventToCreate.getStartDateTime().before(Calendar.getInstance())) {
+                //avvisa errore
+                showMessage(login.getCurrentUser().getEmail(),
+                        "Evento non salvato",
+                        "Non si può creare un evento nel passato");
             } else {
-                dialogueMessage += "\nIt wasn't possible to find a sunny day for a reschedule.";
+                //se titolo null
+                if (eventToCreate.getTitle().isEmpty()) {
+                    showMessage(login.getCurrentUser().getEmail(),
+                            "Evento non salvato",
+                            "Il titolo non può essere vuoto");
+                } else {
+
+                    //controllo se ci osno porblemi i,e, conflitti o tempo malo
+                    List<ControlMessages> outcome = calendarManager.checkData(
+                            eventToCreate);
+
+                    //se tutto ok 
+                    if (outcome.contains(ControlMessages.NO_PROBLEM)) {
+                        //salvo l'evento/update
+                        save();
+                    } else {
+                        //Listo gli errori
+                        dialogueMessage = "";
+
+                        for (ControlMessages mex : outcome) {
+                            dialogueMessage += mex.getMessage() + "\n";
+                        }
+
+                        // cerco un free day           
+                        int offset = calendarManager.findFreeSlots(eventToCreate);
+                        logger.log(LoggerLevel.DEBUG, "Trovato free slot: {0}",
+                                offset);
+                        if (offset != -1) {
+                            //creo le possibili date di reschedule
+                            rescheduleDayStart = eventToCreate.getStartDateTime();
+                            rescheduleDayStart.add(Calendar.DATE, offset);
+                            rescheduleDayEnd = eventToCreate.getEndDateTime();
+                            rescheduleDayEnd.add(Calendar.DATE, offset);
+
+                            dialogueMessage += "\nDo you want to reschedule the event from the:\n"
+                                    + TimeTool.dateToTextDay(
+                                            rescheduleDayStart.getTime(),
+                                            "dd-MM-YYYY hh:mm\n") + "to the:\n"
+                                    + TimeTool.dateToTextDay(
+                                            rescheduleDayEnd.getTime(),
+                                            "dd-MM-YYYY hh:mm\n");
+                        } else {
+                            dialogueMessage += "\nIt wasn't possible to find a sunny day for a reschedule.";
+                        }
+                        //informo l'utente con una dialog box
+                        RequestContext context = RequestContext.getCurrentInstance();
+                        context.update("dialogMessage");
+                        context.execute("PF('conflictDialog').show();");
+                    }
+                }
             }
-            //informo l'utente con una dialog box
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.update("dialogMessage");
-            context.execute("PF('conflictDialog').show();");
         }
 
     }
