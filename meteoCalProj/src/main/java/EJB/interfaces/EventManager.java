@@ -21,7 +21,6 @@ public interface EventManager {
      * Create the new event, persist it, call create invitation del calendar
      * manager
      *
-     * @param user owner of the event
      * @param event Event to create
      * @param insertInCalendar calendar in which the event has to be inserted,
      * null if none
