@@ -154,7 +154,7 @@
                     <div id="locationField">
 
                         <input id="autocomplete"  placeholder="Enter your address"
-                               onFocus="geolocate()" type="text"/>
+                               onFocus="geolocate()" onblur="fillInAddress()" type="text"/>
                     </div>                                        
 
                     <h:outputLabel value="Outdoor" /><h:selectBooleanCheckbox value="#{eventToManage.outdoor}"/>
