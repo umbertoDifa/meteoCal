@@ -20,31 +20,81 @@ and open the template in the editor.
             search
         </ui:define>
         <ui:define name="content">
+
             <h1>Search</h1>
+            
             <h:form>
 
                 <p:inputText id="searchKey" value="#{search.searchKey}" pt:required="" />
-                
-                <p:commandButton id="search" value="Search" action="#{search.doSearch}" oncomplete="@(form)"/><br/>
 
-                
+                <p:commandButton id="search" value="Search" actionListener="#{search.doSearch}" update="@widgetVar(tabPanel)" /><br/>
+
+
                 <h:outputLabel>users:</h:outputLabel> 
                 <input type="radio" value="#{search.searchForEvents}"/>
 
                 <h:outputLabel>events:</h:outputLabel> 
                 <input type="radio" value="#{search.searchForUsers}"/><br />
 
-                
-                <p:panel rendered="#{not empty search.results}">
-                    <h1>Results:</h1>
-                    <p:dataScroller value="#{search.results}" var="r" chunkSize="10">
-                        <p:fieldset legend="#{r.title}" style="margin-bottom:20px">
-                            <p:outputLabel value="#{r.description}"/>
-                        </p:fieldset>
-                    </p:dataScroller>
-                </p:panel>
-
             </h:form>
+
+            <p:tabView widgetVar="tabPanel">
+                <p:tab title="Event">
+                    <h:form>
+                        <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="3">
+                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
+                                <h:panelGrid columns="2">
+                                    <p:graphicImage value="/resources/img/default.png"/> 
+
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:outputText value="Title:" />
+                                            <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+
+                                            <h:outputText value="Description:" />
+                                            <h:outputText value="#{ev.description}"/>
+
+                                        </h:panelGrid>
+                                    </p:outputPanel>
+
+                                </h:panelGrid>
+                            </p:fieldset>
+
+                            <f:facet name="loader">
+                                <p:commandButton type="button" value="More"/>
+                            </f:facet>
+                        </p:dataScroller>
+                    </h:form>
+                </p:tab>
+                <p:tab title="User">
+                    <h:form>
+                        <p:dataScroller value="#{search.userResults}" var="u" chunkSize="2">
+                            <p:fieldset legend="#{u.title}" style="margin-bottom:20px">
+                                <h:panelGrid columns="2">
+                                    <p:graphicImage value="/resources/img/default.png"/> 
+
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:outputText value="Nome:" />
+                                            <p:link outcome="/s/myCalendar.xhtml?id=#{u.id}" value="#{u.title}"/>
+
+                                            <h:outputText value="Description:" />
+                                            <h:outputText value="#{u.description}"/>
+
+                                        </h:panelGrid>
+                                    </p:outputPanel>
+
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <f:facet name="loader">
+                                <p:commandButton type="button" value="More"/>
+                            </f:facet>
+                        </p:dataScroller>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+
+
         </ui:define>
     </ui:composition>
 </html>
