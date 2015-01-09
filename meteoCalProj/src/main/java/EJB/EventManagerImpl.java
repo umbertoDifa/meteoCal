@@ -60,7 +60,6 @@ public class EventManagerImpl implements EventManager {
         //salvo evento nel db
         if (event.getTitle().isEmpty()) {
             return false;
-
         }
         database.persist(event);
 
@@ -99,10 +98,9 @@ public class EventManagerImpl implements EventManager {
             return true;
         }
         return true;
-        //TODO attualmente il metodo ritorna sempre true
     }
 
-    //NB non usare il database in questo metodo
+    //NB non usare il database in questo metodo perchè l'event potrebbe non essere nel db
     @Override
     public void updateEventLatLng(Event event) {
         GeoApiContext context = new GeoApiContext().setApiKey(

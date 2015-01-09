@@ -226,11 +226,15 @@
             </p:tabView>
 
             <h:messages />
-            <p:dialog header="Delete Options" id="conflictDialog" widgetVar="conflictDialog" minHeight="40" resizable="false">
-                <h:outputText  value="#{eventToManage.dialogueMessage}"></h:outputText>  
-                 <p:commandButton value="YES" onclick="PF('conflictDialog').hide();" />
-                <p:commandButton value="NO" onclick="PF('conflictDialog').hide()" type="button" />                                   
-                <p:commandButton value="Cancel" type="button" onclick="PF('conflictDialog').hide()" />
+            
+            <p:dialog header="Reschedule suggested" id="conflictDialog" widgetVar="conflictDialog" minHeight="40" width="300" resizable="false">
+                <h:outputText id="dialogMessage" value="#{eventToManage.dialogueMessage}" style="white-space: pre-wrap"></h:outputText><br/>
+                <h:form>
+                    <p:commandButton value="Yes" icon="ui-icon-check" oncomplete="PF('conflictDialog').hide()" actionListener="#{eventToManage.reschedule()}"/>
+                    <p:commandButton value="No" icon="ui-icon-close" oncomplete="PF('conflictDialog').hide()" actionListener="#{eventToManage.save()}"/>                                   
+                    <p:commandButton value="Cancel" type="button" onclick="PF('conflictDialog').hide()" />
+                </h:form>               
+
             </p:dialog>
         </ui:define>
 

@@ -5,6 +5,7 @@ import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.SearchManager;
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -28,6 +30,7 @@ import org.primefaces.context.RequestContext;
 import utility.ControlMessages;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
+import utility.TimeTool;
 
 /**
  *
@@ -44,7 +47,7 @@ public class ManageEventBacking implements Serializable {
     private Event eventToCreate;
 
     private String description;
-    
+
     @Inject
     private Place place;
 
@@ -52,12 +55,17 @@ public class ManageEventBacking implements Serializable {
     private String location;
     //boolean che indica se l'utente ha selezionato un lugo con l'aiuto di google
     private boolean hasLocation;
-    
+
     private boolean outdoor;
     private boolean publicAccess;
     private String title;
+
     private String startDate;
     private String endDate;
+
+    Calendar rescheduleDayStart;
+    Calendar rescheduleDayEnd;
+
     private String startTime;
     private String endTime;
     private String calendarName;
@@ -154,7 +162,7 @@ public class ManageEventBacking implements Serializable {
 
     public void setHasLocation(boolean hasLocation) {
         this.hasLocation = hasLocation;
-    }        
+    }
 
     public void setOutdoor(boolean isOutdoor) {
         this.outdoor = isOutdoor;
@@ -356,15 +364,50 @@ public class ManageEventBacking implements Serializable {
         return null;
     }
 
-    public String save() {
+    public void save() {
         System.out.println("-dentro save");
 
         //spostati in checkEvent
 //        createOrLoadInstance();
 //        setUpInstance();
         saveIt();
+        logger.log(LoggerLevel.DEBUG, "dopo saveit");
 
-        return "/s/eventPage.xhtml?id=" + idEvent + "&&faces-redirect=true";
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        try {
+            context.redirect(context.getRequestContextPath()
+                    + "/s/eventPage.xhtml?id=" + idEvent
+                    + "&&faces-redirect=true");
+            //return "/s/eventPage.xhtml?id=" + idEvent + "&&faces-redirect=true";
+            //TODO gestire errori?
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    //alter ego della save
+    public void reschedule() {
+        System.out.println("-dentro reschedule");
+
+        //spostati in checkEvent
+//        createOrLoadInstance();
+//        setUpInstance();
+        //reschedule date
+        eventToCreate.setStartDateTime(rescheduleDayStart);
+        eventToCreate.setEndDateTime(rescheduleDayEnd);
+        saveIt();
+        logger.log(LoggerLevel.DEBUG, "dopo reschedule");
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        try {
+            context.redirect(context.getRequestContextPath()
+                    + "/s/eventPage.xhtml?id=" + idEvent
+                    + "&&faces-redirect=true");
+            //return "/s/eventPage.xhtml?id=" + idEvent + "&&faces-redirect=true";
+            //TODO gestire errori?
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+//return "/s/eventPage.xhtml?id=" + idEvent + "&&faces-redirect=true";
         //TODO gestire errori?
     }
 
@@ -504,7 +547,7 @@ public class ManageEventBacking implements Serializable {
         eventToCreate.setDescription(description);
         eventToCreate.setTitle(title);
         location = place.toString();
-        
+
         System.out.println("Complete location is: " + location);
         eventToCreate.setLocation(location);
         eventToCreate.setHasLocation(hasLocation);
@@ -528,24 +571,35 @@ public class ManageEventBacking implements Serializable {
         //TODO check se questa funziona e comunque va spostata nel checkEvent
         if (eventToCreate.getEndDateTime().compareTo(
                 eventToCreate.getStartDateTime()) >= 0) {
+            logger.log(LoggerLevel.DEBUG, "dentro primo if saveit");
             if (isSaved()) {
-                //TODO check conflicts prima di update
+                logger.log(LoggerLevel.DEBUG, "dentro secondo if saveit");
                 eventManager.updateEvent(eventToCreate, calendar, guests);
             } else {
-                //TODO checkconflicts prima di salvare un nuovo evento                                                                              
+                logger.log(LoggerLevel.DEBUG, "dentro secondo else saveit");
                 if (eventManager.scheduleNewEvent(eventToCreate, calendar,
                         guests)) {
+                    logger.log(LoggerLevel.DEBUG, "dentro terzo if saveit");
                     setSaved(true);
                     idEvent = eventToCreate.getId().toString();
-                    showMessage(null, "L'evento è stato salvato", "");
+                    //showMessage(null, "L'evento è stato salvato", "");
+                } else {
+                    showMessage(login.getCurrentUser().getEmail(),
+                            "Evento non salvato",
+                            "Titolo vuoto");
                 }
             }
         } else {
+            logger.log(LoggerLevel.DEBUG, "dentro primo else saveit");
             showMessage(login.getCurrentUser().getEmail(), "evento non salvato",
                     "date non corrette");
         }
     }
 
+    /**
+     * controlla se ci sono conflitti o brutto tempo, se tutto ok salva l'evento
+     * altrimenti chiede se rischedulare suggerendo un giorno
+     */
     public void checkEvent() {
 
         createOrLoadInstance();
@@ -556,11 +610,12 @@ public class ManageEventBacking implements Serializable {
         List<ControlMessages> outcome = calendarManager.checkData(eventToCreate);
 
         //se tutto ok 
-        if (outcome.contains(ControlMessages.NO_PROBLEM) && false) {//TODO delete false
+        if (outcome.contains(ControlMessages.NO_PROBLEM)) {
             //salvo l'evento/update
             save();
         } else {
             //Listo gli errori
+            dialogueMessage = "";
 
             for (ControlMessages mex : outcome) {
                 dialogueMessage += mex.getMessage() + "\n";
@@ -568,17 +623,25 @@ public class ManageEventBacking implements Serializable {
 
             // cerco un free day           
             int offset = calendarManager.findFreeSlots(eventToCreate);
-            logger.log(LoggerLevel.DEBUG,"Trovato free slot: "+offset);
+            logger.log(LoggerLevel.DEBUG, "Trovato free slot: {0}", offset);
             if (offset != -1) {
-                Calendar rescheduleDay = eventToCreate.getStartDateTime();
-                rescheduleDay.add(Calendar.DATE, offset);
-                dialogueMessage += "Do you want to reschedule the event to the: "
-                        + rescheduleDay.getTime().toString();
+                //creo le possibili date di reschedule
+                rescheduleDayStart = eventToCreate.getStartDateTime();
+                rescheduleDayStart.add(Calendar.DATE, offset);
+                rescheduleDayEnd = eventToCreate.getEndDateTime();
+                rescheduleDayEnd.add(Calendar.DATE, offset);
+
+                dialogueMessage += "\nDo you want to reschedule the event from the:\n"
+                        + TimeTool.dateToTextDay(rescheduleDayStart.getTime(),
+                                "dd-MM-YYYY hh:mm\n") + "to the:\n"
+                        + TimeTool.dateToTextDay(rescheduleDayEnd.getTime(),
+                                "dd-MM-YYYY hh:mm\n");
             } else {
-                dialogueMessage += "It wasn't possible to find a sunny day for a reschedule.";
+                dialogueMessage += "\nIt wasn't possible to find a sunny day for a reschedule.";
             }
             //informo l'utente con una dialog box
             RequestContext context = RequestContext.getCurrentInstance();
+            context.update("dialogMessage");
             context.execute("PF('conflictDialog').show();");
         }
 
