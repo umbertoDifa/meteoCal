@@ -16,18 +16,24 @@ and open the template in the editor.
 
     <ui:composition template="/template.xhtml">
 
+
+        <f:metadata>
+            <f:viewParam name="query" value="#{search.searchKey}"/>
+            <f:viewAction action="#{search.doSearch}"/>
+        </f:metadata>
+
         <ui:define name="title">
             search
         </ui:define>
         <ui:define name="content">
 
             <h1>Search</h1>
-            
+
             <h:form>
 
                 <p:inputText id="searchKey" value="#{search.searchKey}" pt:required="" />
 
-                <p:commandButton id="search" value="Search" actionListener="#{search.doSearch}" update="@widgetVar(tabPanel)" /><br/>
+                <p:commandButton value="Search" ajax="false" action="#{search.redirect}" /><br/>
 
 
                 <h:outputLabel>users:</h:outputLabel> 
@@ -38,10 +44,10 @@ and open the template in the editor.
 
             </h:form>
 
-            <p:tabView widgetVar="tabPanel">
+            <p:tabView>
                 <p:tab title="Event">
                     <h:form>
-                        <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="3">
+                        <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="1">
                             <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default.png"/> 
@@ -93,7 +99,6 @@ and open the template in the editor.
                     </h:form>
                 </p:tab>
             </p:tabView>
-
 
         </ui:define>
     </ui:composition>
