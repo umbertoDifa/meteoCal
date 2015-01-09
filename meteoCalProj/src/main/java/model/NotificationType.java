@@ -53,17 +53,21 @@ public enum NotificationType {
     private String inviteeName;
     private String eventName;
     private String link;
+    
+    //template
+    private final String templateSubject;
+    private final String templateBodyMessage;
 
     private final String STATIC_LINK = "localhost:8080/meteoCalProj/s/eventPage.xhtml?id=";
 
-    Object[] subjParams;
-    Object[] bodyParams;
+    private Object[] subjParams;
+    private Object[] bodyParams;
 
     private Logger logger = LoggerProducer.debugLogger(NotificationType.class);
 
     private NotificationType(String subject, String body) {
-        this.subject = subject;
-        this.bodyMessage = body;
+        this.templateSubject = subject;
+        this.templateBodyMessage = body;
     }
 
     public NotificationType setEventOwner(String eventOwner) {
@@ -95,16 +99,14 @@ public enum NotificationType {
     }
 
     public NotificationType buildEmail() {
-        //link = "llink temporaneo";
-
         subjParams = new Object[]{eventName};
         bodyParams = new Object[]{inviteeName, eventName, eventOwner, link};
 
-        subject = MessageFormat.format(subject, subjParams);
-        bodyMessage = MessageFormat.format(bodyMessage, bodyParams);
+        subject = MessageFormat.format(templateSubject, subjParams);
+        bodyMessage = MessageFormat.format(templateBodyMessage, bodyParams);
         logger.log(LoggerLevel.DEBUG,
                 "Email formattata:\nsubject: " + subject + "\nbody: "
-                + bodyMessage);
+                        + bodyMessage);
         return this;
     }
 
