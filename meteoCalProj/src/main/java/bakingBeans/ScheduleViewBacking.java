@@ -37,6 +37,7 @@ import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 import utility.DeleteCalendarOption;
+import utility.GrowlMessage;
 
 @Named(value = "scheduleView")
 @ViewScoped
@@ -75,15 +76,19 @@ public class ScheduleViewBacking implements Serializable {
 
     private boolean readOnly;
 
-    private boolean messageToAppend = false;
-    private String message;
-    private String messageTitle;
+    private String labelPrivacy;
+
+    private CalendarModel calendarToCreate;
 
     /*
      *
      * SETTERS & GETTERS
      *
      */
+    public CalendarModel getCalendarToCreate() {
+        return calendarToCreate;
+    }
+
     public ScheduleModel getEventsToShow() {
         return eventsToShow;
     }
@@ -136,6 +141,10 @@ public class ScheduleViewBacking implements Serializable {
         this.readOnly = readOnly;
     }
 
+    public String getLabelPrivacy() {
+        return labelPrivacy;
+    }
+
     /*
      *
      * METHODS
@@ -148,6 +157,7 @@ public class ScheduleViewBacking implements Serializable {
      */
     public void init() {
         setUser();
+        calendarToCreate = new CalendarModel();
         eventsToShow = new DefaultScheduleModel();
 
         if (user != null) {
@@ -164,10 +174,11 @@ public class ScheduleViewBacking implements Serializable {
 
             if (calendars != null && !calendars.isEmpty()) {
                 calendarNames = calendarManager.getCalendarTitles(user);
-                updateEventsToShow(calendars.get(0));
+                updateEventsToShow(calendarManager.getDefaultCalendar(user));
                 System.out.println("-dentro init, calendar è" + calendars);
             }
         }
+        switchLabel();
     }
 
     /**
@@ -203,7 +214,7 @@ public class ScheduleViewBacking implements Serializable {
                 context.redirect(context.getRequestContextPath() + "/s/eventPage.xhtml?id=" + ((EventDetails) event.getData()).getId());
             }
         } catch (IOException ex) {
-            showMessage(null, "Redirect fallita", "");
+            showGrowl(GrowlMessage.ERROR_REDIRECT);
         }
     }
 
@@ -234,8 +245,7 @@ public class ScheduleViewBacking implements Serializable {
                 System.out.println("-userId castato to long:" + Long.valueOf(userId).longValue());
                 user = search.findUserById(Long.valueOf(userId).longValue());
                 if (user == null) {
-                    FacesContext.getCurrentInstance().addMessage(null,
-                            new FacesMessage("Nessun utente trovato"));
+                    showGrowl(GrowlMessage.ERROR_USER);
                     ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                     try {
                         context.redirect(context.getRequestContextPath() + "error.xhtml");
@@ -255,24 +265,20 @@ public class ScheduleViewBacking implements Serializable {
     public void canDeleteCalendar() {
         RequestContext context = RequestContext.getCurrentInstance();
         context.execute("PF('confirmationDialog').hide();");
-        System.out.println("DENTRO canDeleteCalendar");
         if (calendarManager.isDefault(calendarShown)) {
-            System.out.println(calendarShown.getTitle() + " è default");
-            showMessage(null, "Cannot Delete Default Calendar", "You cannot delete the default calendar. Please make default another calenar and then remove this one.", FacesMessage.SEVERITY_ERROR);
+            showGrowl(GrowlMessage.NOT_DELETE_DEFAULT);
         } else {
-            System.out.println(calendarShown.getTitle() + "non è default");
             context.execute("PF('delOpt').show();");
         }
     }
 
     public void deleteCalendar(String response) {
-        System.out.println("-DENTRO deleteCalendar");
         DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
         if (calendarManager.deleteCalendar(calendarShown, option)) {
-            showMessage(null, "Calendar Deleted", "Your calendar has been succesfully deleted");
+            showGrowl(GrowlMessage.CALENDAR_DELETED);
             init();
         } else {
-            showMessage(null, "Error", "An error has occured.", FacesMessage.SEVERITY_ERROR);
+            showGrowl(GrowlMessage.ERROR_DELETE);
 
         }
 
@@ -285,49 +291,53 @@ public class ScheduleViewBacking implements Serializable {
      */
     private void updateEventsToShow(CalendarModel cal) {
         eventsToShow.clear();
-        System.out.println("Dentro updateEvent e eventToShow dopo clear = " + eventsToShow.getEventCount());
         cal = calendarManager.getCalendarUpdated(cal);
-        for (Event ev : calendarManager.getEventsUpdated(cal)) {
-            System.out.println("Evento caricato è " + ev.getTitle());
-            calendarShown = cal;
-            calendarSelected = cal.getTitle();
-            // se l'evento è privato e non sei l'owner
-            if (ev instanceof PrivateEvent && readOnly) {
-                // creo una slot senza dettagli
-                System.out.println("-creata slot: inizia a " + ev.getStartDateTime().getTime() + " e finisce a "
-                        + ev.getEndDateTime().getTime());
-                DefaultScheduleEvent e = new DefaultScheduleEvent(
-                        "evento privato",
-                        ev.getStartDateTime().getTime(),
-                        ev.getEndDateTime().getTime(),
-                        new EventDetails(ev.getId(), (ev instanceof PublicEvent)));
-                eventsToShow.addEvent(e);
-            } else {
-                DefaultScheduleEvent e = new DefaultScheduleEvent(
-                        ev.getTitle(),
-                        ev.getStartDateTime().getTime(),
-                        ev.getEndDateTime().getTime(),
-                        new EventDetails(ev.getId(), (ev instanceof PublicEvent)));
-                e.setDescription(ev.getDescription());
-                eventsToShow.addEvent(e);
-            }
+        calendarShown = cal;
+        if (calendarManager.getEventsUpdated(cal) != null) {
+            for (Event ev : calendarManager.getEventsUpdated(cal)) {
+                calendarShown = cal;
+                calendarSelected = cal.getTitle();
+                // se l'evento è privato e non sei l'owner
+                if (ev instanceof PrivateEvent && readOnly) {
+                    // creo una slot senza dettagli
+                    DefaultScheduleEvent e = new DefaultScheduleEvent(
+                            "evento privato",
+                            ev.getStartDateTime().getTime(),
+                            ev.getEndDateTime().getTime(),
+                            new EventDetails(ev.getId(), (ev instanceof PublicEvent)));
+                    eventsToShow.addEvent(e);
+                } else {
+                    DefaultScheduleEvent e = new DefaultScheduleEvent(
+                            ev.getTitle(),
+                            ev.getStartDateTime().getTime(),
+                            ev.getEndDateTime().getTime(),
+                            new EventDetails(ev.getId(), (ev instanceof PublicEvent)));
+                    e.setDescription(ev.getDescription());
+                    eventsToShow.addEvent(e);
+                }
 
+            }
         }
 
     }
 
-    private void showMessage(String recipient, String msg, String advice) {
+    private void showGrowl(GrowlMessage growl) {
         FacesContext ctx = FacesContext.getCurrentInstance();
-        ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_INFO, msg, advice));
+        ctx.addMessage(null, new FacesMessage(growl.getSeverity(), growl.getTitle(), growl.getMessage()));
         RequestContext.getCurrentInstance().update("growl");
     }
 
-    private void showMessage(String recipient, String msg, String advice, FacesMessage.Severity severity) {
+    private void showMsg(GrowlMessage growl) {
         FacesContext ctx = FacesContext.getCurrentInstance();
-        ctx.addMessage(recipient, new FacesMessage(severity, msg, advice));
+        ctx.addMessage("msg", new FacesMessage(growl.getSeverity(), growl.getTitle(), growl.getMessage()));
         RequestContext.getCurrentInstance().update("growl");
     }
 
+//    private void showGrowl(String recipient, String msg, String advice, FacesMessage.Severity severity) {
+//        FacesContext ctx = FacesContext.getCurrentInstance();
+//        ctx.addMessage(recipient, new FacesMessage(severity, msg, advice));
+//        RequestContext.getCurrentInstance().update("growl");
+//    }
     private void refreshCalendar() {
         calendarShown = calendarManager.findCalendarByName(user, calendarShown.getTitle());
         updateEventsToShow(calendarShown);
@@ -363,11 +373,55 @@ public class ScheduleViewBacking implements Serializable {
 
     public void makeDefault() {
         if (calendarManager.makeDefault(calendarShown)) {
-            showMessage(null, "Defaul Calendar Changed", "Calendar " + calendarSelected + " has been set as Default.");
+            showGrowl(GrowlMessage.DEFAUL_CHANGED);
         } else {
-            showMessage(null, "Error", "An error has occured.", FacesMessage.SEVERITY_ERROR);
+            showGrowl(GrowlMessage.GENERIC_ERROR);
+        }
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.execute("PF('confirmChangeDef').hide();");
+    }
+
+    public void switchPrivacy() {
+        System.out.println("Privacy: " + calendarShown.isIsPublic());
+        calendarManager.toggleCalendarPrivacy(calendarShown);
+        calendarShown = calendarManager.getCalendarUpdated(calendarShown);
+        System.out.println("Privacy: " + calendarShown.isIsPublic());
+        switchLabel();
+
+        if (calendarShown.isIsPublic()) {
+            showGrowl(GrowlMessage.CALENDAR_SWITCHED_TO_PUBLIC);
+        } else {
+            showGrowl(GrowlMessage.CALENDAR_SWITCHED_TO_PRIVATE);
         }
     }
 
-    
+    public void switchLabel() {
+        if (calendarShown.isIsPublic()) {
+            labelPrivacy = "Change to Private";
+        } else {
+            labelPrivacy = "Change to Public";
+        }
+    }
+
+    public void addNewCalendar() {
+        System.out.println("dentro addNewCalendar, calendarToCreate: " + calendarToCreate.toString());
+
+        if (calendarToCreate.getTitle() != null && !calendarToCreate.getTitle().isEmpty()) {
+            calendarToCreate.setOwner(user);
+            if (calendarManager.addCalendarToUser(calendarToCreate)) {
+                showGrowl(GrowlMessage.CALENDAR_CREATED);
+                calendars = calendarManager.getCalendars(user);
+                init();
+
+            } else {
+                showGrowl(GrowlMessage.CALENDAR_EXISTS);
+            }
+        } else {
+
+        }
+        calendarToCreate = new CalendarModel();
+//        RequestContext context = RequestContext.getCurrentInstance();
+//        context.execute("PF('newCalendarDialog').hide();");
+    }
+
 }
