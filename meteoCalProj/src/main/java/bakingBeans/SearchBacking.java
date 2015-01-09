@@ -80,13 +80,13 @@ public class SearchBacking {
         List<UserModel> users = searchManager.searchUsers(searchKey);
         List<Event> events = searchManager.searchEvents(searchKey);
 
-        if (searchForUsers) {
+        if (searchForUsers || (!searchForEvents && !searchForUsers)) {
             for (UserModel u : users) {
                 results.add(new SearchResult(u.getName() + u.getSurname(), u.getEmail(), u.getAvatarPath()));
             }
         }
 
-        if (searchForEvents) {
+        if (searchForEvents || (!searchForEvents && !searchForUsers)) {
             for (Event ev : events) {
                 results.add(new SearchResult(ev.getTitle(), ev.getDescription(), ev.getImgPath()));
             }

@@ -23,21 +23,23 @@ and open the template in the editor.
             <h1>Search</h1>
             <h:form>
 
-                <h:outputLabel>Search:</h:outputLabel> 
-                <p:inputText id="searchKey" value="#{search.searchKey}" pt:required="" /><br/>
+                <p:inputText id="searchKey" value="#{search.searchKey}" pt:required="" />
+                
+                <p:commandButton id="search" value="Search" action="#{search.doSearch}" oncomplete="@(form)"/><br/>
 
+                
                 <h:outputLabel>users:</h:outputLabel> 
-                <input type="radio" value="#{search.searchForEvents}"/><br />
+                <input type="radio" value="#{search.searchForEvents}"/>
 
                 <h:outputLabel>events:</h:outputLabel> 
                 <input type="radio" value="#{search.searchForUsers}"/><br />
 
-                <p:commandButton id="search" value="Search" action="#{search.doSearch}" oncomplete="@(form)"/>
-
+                
                 <p:panel rendered="#{not empty search.results}">
                     <h1>Results:</h1>
                     <p:dataScroller value="#{search.results}" var="r" chunkSize="10">
                         <p:fieldset legend="#{r.title}" style="margin-bottom:20px">
+                            <p:outputLabel value="#{r.description}"/>
                         </p:fieldset>
                     </p:dataScroller>
                 </p:panel>

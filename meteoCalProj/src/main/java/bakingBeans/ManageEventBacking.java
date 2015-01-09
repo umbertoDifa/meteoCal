@@ -38,58 +38,59 @@ public class ManageEventBacking implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    String idEvent;
+    private String idEvent;
 
-    Event eventToCreate;
+    private Event eventToCreate;
 
-    String description;
+    private String description;
+    
     @Inject
     private Place place;
 
     //luogo dell'evento
-    String location;
+    private String location;
     //boolean che indica se l'utente ha selezionato un lugo con l'aiuto di google
     private boolean hasLocation;
     
-    boolean outdoor;
-    boolean publicAccess;
-    String title;
-    String startDate;
-    String endDate;
-    String startTime;
-    String endTime;
-    String calendarName;
-    String newGuestEmail;
-    List<UserModel> resultUsers;
-    boolean displayResultUsers;
+    private boolean outdoor;
+    private boolean publicAccess;
+    private String title;
+    private String startDate;
+    private String endDate;
+    private String startTime;
+    private String endTime;
+    private String calendarName;
+    private String newGuestEmail;
+    private List<UserModel> resultUsers;
+    private boolean displayResultUsers;
     private List<UserModel> noAnswerInvitations = new ArrayList<>();
     private List<UserModel> acceptedInvitations = new ArrayList<>();
     private List<UserModel> declinedInvitations = new ArrayList<>();
     private List<UserModel> publicJoinUsers = new ArrayList<>();
 
-    boolean saved;
+    private boolean saved;
     private String dialogueMessage;
 
-    CalendarModel calendar;
+    private CalendarModel calendar;
 
-    List<UserModel> guests = new ArrayList<>();
+    private List<UserModel> guests = new ArrayList<>();
 
-    LoginBacking login;
+    private LoginBacking login;
 
-    java.util.Calendar startDateTime;
-    java.util.Calendar endDateTime;
-
-    @Inject
-    CalendarManager calendarManager;
+    private java.util.Calendar startDateTime;
+    private java.util.Calendar endDateTime;
 
     @Inject
-    EventManager eventManager;
+    private CalendarManager calendarManager;
 
     @Inject
-    InvitationManager invitationManager;
+    private EventManager eventManager;
 
     @Inject
-    SearchManager searchManager;
+    private InvitationManager invitationManager;
+
+    @Inject
+    private SearchManager searchManager;
 
     private Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
 
@@ -373,6 +374,7 @@ public class ManageEventBacking implements Serializable {
             return "/s/myCalendar.xhtml";
         } else {
             System.out.println("-evento non cancellato");
+            showMessage("", "evento non cancellato", "");
             return "";
         }
     }
