@@ -82,7 +82,8 @@ public class CalendarManagerImpl implements CalendarManager {
 
         //se non è buono ritorno false
         if (forecast.getMessage() != WeatherMessages.BAD_WEATHER) {
-            logger.log(LoggerLevel.DEBUG, "Good weather(or no weather) found in CheckWeather");
+            logger.log(LoggerLevel.DEBUG,
+                    "Good weather(or no weather) found in CheckWeather");
             return true;
         }
         logger.log(LoggerLevel.DEBUG, "Bad weather foudn in checkWeather");
@@ -102,13 +103,13 @@ public class CalendarManagerImpl implements CalendarManager {
 
         if (event != null) {
             try {
-                logger.log(LoggerLevel.DEBUG,
-                        "Parametri query conflict:\nuser: "
-                        + event.getOwner().getEmail() + "\nfine evento: "
-                        + event.getEndDateTime().getTime().toString()
-                        + "\ninizio evento: "
-                        + event.getStartDateTime().getTime().toString()
-                        + "\nid evento: " + event.getId());
+//                logger.log(LoggerLevel.DEBUG,
+//                        "Parametri query conflict:\nuser: "
+//                        + event.getOwner().getEmail() + "\nfine evento: "
+//                        + event.getEndDateTime().getTime().toString()
+//                        + "\ninizio evento: "
+//                        + event.getStartDateTime().getTime().toString()
+//                        + "\nid evento: " + event.getId());
 
                 //questa la uso anche quando un evento non è stato persistito ma lo sto appena
                 //creando e voglio controllare i conflitti
@@ -138,10 +139,20 @@ public class CalendarManagerImpl implements CalendarManager {
 
                 return true;
             } catch (NoResultException e) {
+                if (event.getId() == -1) {
+                    event.setId(null);
+                }
+                logger.log(LoggerLevel.DEBUG, "id event ora:" + event.getId());
+
                 //se non trova risultati allora non ci sono conflitti
                 logger.log(LoggerLevel.DEBUG, "Conflict NOT found");
                 return false;
             } catch (NonUniqueResultException e) {
+                if (event.getId() == -1) {
+                    event.setId(null);
+                }
+                logger.log(LoggerLevel.DEBUG, "id event ora:" + event.getId());
+
                 //se trova molti risultati allora ci sono conflitti
                 logger.log(LoggerLevel.DEBUG, "Conflict found");
                 return true;
@@ -173,8 +184,17 @@ public class CalendarManagerImpl implements CalendarManager {
 
         //set temp event with event data (kind of clone)
         tempEvent.setId(event.getId());
+        tempEvent.setHasLocation(event.hasLocation());
         tempEvent.setLatitude(event.getLatitude());
         tempEvent.setLongitude(event.getLongitude());
+        
+        logger.log(LoggerLevel.DEBUG,
+                "Parametri tempEvent:\nuser: "
+                + tempEvent.getOwner().getEmail() + "\nfine evento: "
+                + tempEvent.getEndDateTime().getTime().toString()
+                + "\ninizio evento: "
+                + tempEvent.getStartDateTime().getTime().toString()
+                + "\nid evento: " + tempEvent.getId());
 
         for (int i = 1; i < searchRange; i++) {
 
@@ -186,12 +206,7 @@ public class CalendarManagerImpl implements CalendarManager {
             //setto nuova data fine           
             tempEvent.getEndDateTime().add(Calendar.DAY_OF_MONTH, 1);
 
-            if (!isInConflict(tempEvent) && isGoodWeather(tempEvent)) {
-                logger.log(LoggerLevel.DEBUG,
-                        "comunque data inizio e fine evento:"
-                        + event.getStartDateTime().getTime().toString()
-                        + "\nfine: "
-                        + event.getEndDateTime().getTime().toString());
+            if (!isInConflict(tempEvent) && isGoodWeather(tempEvent)) {                
                 return i;
             }
         }
@@ -242,7 +257,8 @@ public class CalendarManagerImpl implements CalendarManager {
     public boolean addCalendarToUser(CalendarModel calendar) {
         try {
             database.persist(calendar);
-            logger.log(Level.INFO, "{0} created for user {1}", new Object[]{calendar.getTitle(), calendar.getOwner().getEmail()});
+            logger.log(Level.INFO, "{0} created for user {1}", new Object[]{
+                calendar.getTitle(), calendar.getOwner().getEmail()});
             return true;
         } catch (EntityExistsException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);

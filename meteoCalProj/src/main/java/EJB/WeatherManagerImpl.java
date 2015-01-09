@@ -99,7 +99,7 @@ public class WeatherManagerImpl implements WeatherManager {
     public WeatherForecast getWeather(Event event) {
         weatherForecast = new WeatherForecast();
         this.event = event;
-        
+
         //valido e aggiorno l'evento
         if (validate(event)) {
             Calendar day = event.getStartDateTime();
@@ -455,9 +455,12 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private boolean validate(Event event) {
-        if (event != null && event.hasLocation()) {
+        if (event != null && event.hasLocation() && event.isIsOutdoor()) {
             return true;
         }
+        logger.log(LoggerLevel.DEBUG,
+                "l'event è null, o non ha location o è indoor->non scarico weather:\nhaslocation= "
+                + event.hasLocation() + "\nisOutodoor: " + event.isIsOutdoor());
         return false;
     }
 
@@ -485,55 +488,49 @@ public class WeatherManagerImpl implements WeatherManager {
             database.flush();
             logger.log(LoggerLevel.DEBUG, "appena flushato il nuovo tempo");
 
-            //controllo se l'evento è outdoor
-            if (event.isIsOutdoor()) {
-                //controllo se sono tre giorni prima ed è previsto badWeather
-                //nel caso avviso l'owner che può richedulare
-                if (isBadWeatherNDaysBefore(event, newForecast, 3)) {
-                    logger.log(LoggerLevel.DEBUG,
-                            "Bad weather in three days detected");
+            //controllo se sono tre giorni prima ed è previsto badWeather
+            //nel caso avviso l'owner che può richedulare
+            if (isBadWeatherNDaysBefore(event, newForecast, 3)) {
+                logger.log(LoggerLevel.DEBUG,
+                        "Bad weather in three days detected");
 
-                    //get the owner
-                    List<UserModel> ownerList = new ArrayList<>();
-                    ownerList.add(event.getOwner());
+                //get the owner
+                List<UserModel> ownerList = new ArrayList<>();
+                ownerList.add(event.getOwner());
 
-                    //notify The Owner
-                    notificationManager.createNotifications(ownerList, event,
-                            NotificationType.BAD_WEATHER_IN_THREE_DAYS, true);
-                }
+                //notify The Owner
+                notificationManager.createNotifications(ownerList, event,
+                        NotificationType.BAD_WEATHER_IN_THREE_DAYS, true);
+            }
 
-                //controllo se domani è il giorno dell'evento outdoor
-                //perchè in quel caso se è brutto tempo li informo
-                if (isBadWeatherNDaysBefore(event, newForecast, 1)) {
-                    logger.log(LoggerLevel.DEBUG,
-                            "Bad weather tomorrow detected");
+            //controllo se domani è il giorno dell'evento outdoor
+            //perchè in quel caso se è brutto tempo li informo
+            if (isBadWeatherNDaysBefore(event, newForecast, 1)) {
+                logger.log(LoggerLevel.DEBUG,
+                        "Bad weather tomorrow detected");
 
-                    List<UserModel> participants = eventManager.getInviteesFiltered(
-                            event, InvitationAnswer.YES);
+                List<UserModel> participants = eventManager.getInviteesFiltered(
+                        event, InvitationAnswer.YES);
 
-                    notificationManager.createNotifications(participants, event,
-                            NotificationType.BAD_WEATHER_TOMORROW, true);
+                notificationManager.createNotifications(participants, event,
+                        NotificationType.BAD_WEATHER_TOMORROW, true);
 
-                } else if (weatherChanged) {
-                    //comuque se il tempo cambia li informo
-                    logger.log(LoggerLevel.DEBUG,
-                            "Weather changed detected");
+            } else if (weatherChanged) {
+                //comuque se il tempo cambia li informo
+                logger.log(LoggerLevel.DEBUG,
+                        "Weather changed detected");
 
-                    List<UserModel> participants = eventManager.getInviteesFiltered(
-                            event, InvitationAnswer.YES);
+                List<UserModel> participants = eventManager.getInviteesFiltered(
+                        event, InvitationAnswer.YES);
 
-                    notificationManager.createNotifications(participants, event,
-                            NotificationType.WEATHER_CHANGED, true);
-                } else {
-                    logger.log(LoggerLevel.DEBUG,
-                            "No bad weather and non changed in forecast detected");
-                }
+                notificationManager.createNotifications(participants, event,
+                        NotificationType.WEATHER_CHANGED, true);
             } else {
                 logger.log(LoggerLevel.DEBUG,
-                        "Weather data updated, no notification sent becasue event is indoor");
+                        "No bad weather and non changed in forecast detected");
             }
-            //altrimenti non faccio nulla
 
+            //altrimenti non faccio nulla
         } else {
             logger.log(LoggerLevel.DEBUG, "Nussun nuovo dato disponibile");
         }

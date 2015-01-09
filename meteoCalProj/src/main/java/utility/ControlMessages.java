@@ -19,11 +19,11 @@ public enum ControlMessages {
     ERROR_ADDING_EVENT_TO_CAL(5, "The event cannot be added to the calendar"),
     NO_USER_WITH_CALENDAR(6,
             "The user doesn't own calendar with the requested name"),
-    BAD_WEATHER_FORECAST(7, "The weather for the event day is bad"),
+    BAD_WEATHER_FORECAST(7, "The weather for the event day is bad."),
     CALENDAR_CONFLICTS(8,
-            "There are events already scheduled for that day and that hour in some of your calendars"),
+            "There are events already scheduled for that day and that hour in some of your calendars."),
     NO_PROBLEM(9,
-            "The weather is ok and there are no conflicts for the selected timeslots"),
+            "The weather is ok and there are no conflicts for the selected timeslots."),
     MULTIPLE_USERS_FOUND(10,"There are multiple user correspoding to an ID");
 
     //static?
