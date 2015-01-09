@@ -121,10 +121,10 @@
 
                 <p:panelGrid columns="2">
                     <h:outputLabel value="Add into:"/>
-                    <p:selectOneMenu value="#{eventToManage.calendarName}">
-                        <f:selectItems value="#{calendar.calendarNames}" />
+                    <h:selectOneMenu value="#{eventToManage.calendarName}"   >
+                        <f:selectItems value="#{calendar.calendarNames}"/>
                         <f:selectItem value="#{null}" itemLabel="Nessun Calendario" />
-                    </p:selectOneMenu>
+                    </h:selectOneMenu>
 
                     <h:outputLabel value="Starting date:" />
                     <h:inputText id="startingDate" value="#{eventToManage.startDate}">
