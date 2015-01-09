@@ -3,7 +3,8 @@
   <persistence-unit name="meteoCalDB" transaction-type="JTA">
     <jta-data-source>meteoCalPool</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
-    <properties> 
+    <properties>
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
 </persistence>

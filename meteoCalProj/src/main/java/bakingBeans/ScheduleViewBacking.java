@@ -189,7 +189,7 @@ public class ScheduleViewBacking implements Serializable {
         manageEvent.setStartTime(timeFormat.format(event.getStartDate()));
         manageEvent.setEndDate(dateFormat.format(event.getEndDate()));
         manageEvent.setEndTime(timeFormat.format(event.getEndDate()));
-        manageEvent.save();
+        manageEvent.save(); //TODO bisogna chiamare check o levare
 
         refreshCalendar();
     }
