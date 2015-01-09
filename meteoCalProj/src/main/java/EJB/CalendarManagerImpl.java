@@ -50,7 +50,6 @@ public class CalendarManagerImpl implements CalendarManager {
         logger.log(LoggerLevel.DEBUG, "Evento ad ora: " + event.getTitle());
 
         boolean weatherIsOk = isGoodWeather(event);
-        logger.log(LoggerLevel.DEBUG, "Evento ad ora: " + event.getTitle());
         boolean haveConflicts = isInConflict(event);
 
         //se tutto ok
@@ -83,7 +82,7 @@ public class CalendarManagerImpl implements CalendarManager {
 
         //se non è buono ritorno false
         if (forecast.getMessage() != WeatherMessages.BAD_WEATHER) {
-            logger.log(LoggerLevel.DEBUG, "Good weather found in CheckWeather");
+            logger.log(LoggerLevel.DEBUG, "Good weather(or no weather) found in CheckWeather");
             return true;
         }
         logger.log(LoggerLevel.DEBUG, "Bad weather foudn in checkWeather");
@@ -103,6 +102,24 @@ public class CalendarManagerImpl implements CalendarManager {
 
         if (event != null) {
             try {
+                logger.log(LoggerLevel.DEBUG,
+                        "Parametri query conflict:\nuser: "
+                        + event.getOwner().getEmail() + "\nfine evento: "
+                        + event.getEndDateTime().getTime().toString()
+                        + "\ninizio evento: "
+                        + event.getStartDateTime().getTime().toString()
+                        + "\nid evento: " + event.getId());
+
+                //questa la uso anche quando un evento non è stato persistito ma lo sto appena
+                //creando e voglio controllare i conflitti
+                //quindi non ha un id
+                //quindi ne imposto uno irreale per far funzionare la query che altrimenti
+                //ha l'id a null
+                if (event.getId() == null) {
+                    event.setId(Long.parseLong("-1"));
+                }
+                logger.log(LoggerLevel.DEBUG, "id event ora:" + event.getId());
+
                 Event firstConflict = (Event) database.createNamedQuery(
                         "isConflicting").setParameter(
                                 "user", event.getOwner()).setParameter("end",
@@ -110,6 +127,11 @@ public class CalendarManagerImpl implements CalendarManager {
                                 "start", event.getStartDateTime()).setParameter(
                                 "id",
                                 event.getId()).getSingleResult();
+                //reimposto l'id dell'evento a null se lo era
+                if (event.getId() == -1) {
+                    event.setId(null);
+                }
+                logger.log(LoggerLevel.DEBUG, "id event ora:" + event.getId());
 
                 //se non alza eccezioni è perchè ha trovato esattamente un conflitto
                 logger.log(LoggerLevel.DEBUG, "Conflict found");
@@ -140,6 +162,8 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public int findFreeSlots(Event event) {
+        logger.log(LoggerLevel.DEBUG, "In find free slots");
+
         int searchRange = 15;
 
         Event tempEvent = new PrivateEvent(event.getTitle(),
@@ -154,13 +178,20 @@ public class CalendarManagerImpl implements CalendarManager {
 
         for (int i = 1; i < searchRange; i++) {
 
+            //ogni volta io aggiungo un giorno quindi la add prende come argomento
+            //1 e non i 
             //setto nuova data inizio
-            tempEvent.getStartDateTime().add(Calendar.DAY_OF_MONTH, i);
+            tempEvent.getStartDateTime().add(Calendar.DAY_OF_MONTH, 1);
 
             //setto nuova data fine           
-            tempEvent.getEndDateTime().add(Calendar.DAY_OF_MONTH, i);
+            tempEvent.getEndDateTime().add(Calendar.DAY_OF_MONTH, 1);
 
             if (!isInConflict(tempEvent) && isGoodWeather(tempEvent)) {
+                logger.log(LoggerLevel.DEBUG,
+                        "comunque data inizio e fine evento:"
+                        + event.getStartDateTime().getTime().toString()
+                        + "\nfine: "
+                        + event.getEndDateTime().getTime().toString());
                 return i;
             }
         }
@@ -188,16 +219,20 @@ public class CalendarManagerImpl implements CalendarManager {
 
     @Override
     public CalendarModel getCalendarUpdated(CalendarModel calendar) {
-        calendar = (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id",
-                calendar.getOwner()).setParameter("title", calendar.getTitle()).getSingleResult();
+        calendar = (CalendarModel) database.createNamedQuery(
+                "findCalbyUserAndTitle").setParameter("id",
+                        calendar.getOwner()).setParameter("title",
+                        calendar.getTitle()).getSingleResult();
         database.refresh(calendar);
         return calendar;
     }
 
     @Override
     public List<Event> getEventsUpdated(CalendarModel calendar) {
-        calendar = (CalendarModel) database.createNamedQuery("findCalbyUserAndTitle").setParameter("id",
-                calendar.getOwner()).setParameter("title", calendar.getTitle()).getSingleResult();
+        calendar = (CalendarModel) database.createNamedQuery(
+                "findCalbyUserAndTitle").setParameter("id",
+                        calendar.getOwner()).setParameter("title",
+                        calendar.getTitle()).getSingleResult();
         database.refresh(calendar);
         return calendar.getEventsInCalendar();
 
@@ -250,8 +285,8 @@ public class CalendarManagerImpl implements CalendarManager {
                         logger.log(Level.INFO,
                                 "Evento {0} aggiunto al calendario {1} di {2}",
                                 new Object[]{event.getTitle(),
-                                    calendar.getTitle(),
-                                    calendar.getOwner().getEmail()});
+                                             calendar.getTitle(),
+                                             calendar.getOwner().getEmail()});
                         database.flush();
                         database.refresh(calendar);
                         logger.log(LoggerLevel.DEBUG,
@@ -360,8 +395,10 @@ public class CalendarManagerImpl implements CalendarManager {
                         CalendarModel defaultCalendar = (CalendarModel) database.createNamedQuery(
                                 "findDefaultCalendar").setParameter("user",
                                         calendar.getOwner()).getSingleResult();
-                        for (int i = 0; i < calendar.getEventsInCalendar().size(); i++) {
-                            defaultCalendar.addEventInCalendar(calendar.getEventsInCalendar().get(i));
+                        for (int i = 0; i
+                                < calendar.getEventsInCalendar().size(); i++) {
+                            defaultCalendar.addEventInCalendar(
+                                    calendar.getEventsInCalendar().get(i));
                         }
                         calendar.getEventsInCalendar().clear();
                     case DELETE_CALENDAR_ONLY:

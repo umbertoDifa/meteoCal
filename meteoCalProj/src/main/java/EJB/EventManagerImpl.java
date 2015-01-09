@@ -127,6 +127,10 @@ public class EventManagerImpl implements EventManager {
             } catch (Exception ex) {
                 logger.log(Level.WARNING, ex.getMessage(), ex);
             }
+        } else {
+            logger.log(LoggerLevel.DEBUG,
+                    "Location null o non imposatata da google, skipping latLong");
+
         }
 
     }

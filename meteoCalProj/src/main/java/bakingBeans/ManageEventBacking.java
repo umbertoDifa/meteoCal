@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.inject.Named;
@@ -549,6 +550,7 @@ public class ManageEventBacking implements Serializable {
 
         createOrLoadInstance();
         setUpInstance();
+        //TODO non è possibile creare eventi nel passato
 
         //controllo se ci osno porblemi i,e, conflitti o tempo malo
         List<ControlMessages> outcome = calendarManager.checkData(eventToCreate);
@@ -566,6 +568,7 @@ public class ManageEventBacking implements Serializable {
 
             // cerco un free day           
             int offset = calendarManager.findFreeSlots(eventToCreate);
+            logger.log(LoggerLevel.DEBUG,"Trovato free slot: "+offset);
             if (offset != -1) {
                 Calendar rescheduleDay = eventToCreate.getStartDateTime();
                 rescheduleDay.add(Calendar.DATE, offset);
