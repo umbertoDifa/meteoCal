@@ -31,7 +31,6 @@ public class NotificationManagerImpl implements NotificationManager {
         for (UserModel user : users) {
             createNotification(user, event, type);
         }
-
         if (sendEmail) {
             for (UserModel user : users) {
                 type.setInviteeName(user.getName()).buildEmail();
