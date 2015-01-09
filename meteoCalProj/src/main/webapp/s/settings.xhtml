@@ -55,23 +55,22 @@ and open the template in the editor.
             </h:form>
             <hr/>
             <h2> Export Calendar: </h2>
-            <h:form>
+            <h:form id="download">
                 <p:selectOneMenu value="#{settings.calendarToExport}">
                     <c:forEach items="#{calendar.calendarNames}" var="cal">
                         <f:selectItem itemValue="#{cal}" itemLabel="#{cal}" />
                     </c:forEach>
                 </p:selectOneMenu>
-            </h:form>
-            <h:form id="download">
-                <p:commandButton value="Download" icon="ui-icon-arrowthickstop-1-s">
+            
+                <p:commandButton value="Download" actionListener="#{settings.exportCalendar()}" icon="ui-icon-arrowthickstop-1-s">
                 </p:commandButton>
+                
             </h:form>
 
 
             <h2> Import Calendar: </h2>
-            <h:form>
-                <p:fileUpload value="#{settings.calendarToImport}" mode="simple" allowTypes=".csv" />
-                <p:commandButton id="import" value="Import" action="#{settings.importCalendar}"/>
+            <h:form id="formImport">
+                <p:fileUpload  fileUploadListener="#{settings.importCalendar}" allowTypes="/(\.|\/)(ics)$/" />
             </h:form>
             <hr/>
             <h2> Delete Account</h2>

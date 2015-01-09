@@ -33,6 +33,7 @@ import net.fortuna.ical4j.model.ValidationException;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.*;
 import org.apache.commons.io.FileUtils;
+import org.primefaces.model.UploadedFile;
 
 import utility.LoggerLevel;
 import utility.LoggerProducer;
@@ -51,7 +52,7 @@ public class SettingManagerImpl implements SettingManager {
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
-    private final String COMMON_PATH = "." + File.separator + "src"
+    public final static String COMMON_PATH = "." + File.separator + "src"
             + File.separator + "main" + File.separator
             + "webapp" + File.separator + "resources" + File.separator + "ics"
             + File.separator;
@@ -83,29 +84,18 @@ public class SettingManagerImpl implements SettingManager {
      * personale dell'utente
      *
      * @param calendar Calendario da esportare
+     * @param destionationPath
      * @return true se tutto ok, false altrimenti
      */
     @Override
-    public boolean exportCalendar(CalendarModel calendar) {
-        String calFile;
-
-        try {
-            calFile = createExportPath(calendar);
-            logger.log(LoggerLevel.DEBUG, "Salvo calendario al path: {0}",
-                    calFile);
-
-        } catch (SecurityException ex) {
-            logger.log(Level.SEVERE,
-                    "Non è stato possibile creare il path per la cartella di export");
-            return false;
-        }
+    public boolean exportCalendar(CalendarModel calendar, String destionationPath) {      
 
         net.fortuna.ical4j.model.Calendar iCal = createIcal();
 
         addIcalEvents(calendar, iCal);
 
         try {
-            saveExportingCalendar(calFile, iCal);
+            saveExportingCalendar(destionationPath, iCal);
         } catch (IOException | ValidationException ex) {
             logger.log(Level.SEVERE,
                     "Non è stato possibile salvare il calendario.\n"
@@ -116,27 +106,6 @@ public class SettingManagerImpl implements SettingManager {
         logger.log(LoggerLevel.DEBUG, "Calendario esportato con successo:\n{0}",
                 iCal.toString());
         return true;
-    }
-
-    private String createExportPath(CalendarModel calendar) {
-        String calFile;
-        //creo il percorso della cartella        
-
-        boolean result = new File(
-                COMMON_PATH + "export" + File.separator
-                + calendar.getOwner().getId()).mkdirs();
-
-        if (result) {
-            logger.log(LoggerLevel.DEBUG,
-                    "Cartella di export creata per l''utente {0}",
-                    calendar.getOwner().getId());
-        }
-        //creo la stringa con l'indirizzo in cui creare il file
-        calFile = COMMON_PATH + "export" + File.separator
-                + calendar.getOwner().getId() + File.separator
-                + TimeTool.dateToTextDay(Calendar.getInstance().getTime(),
-                        "yyyy-MM-dd-hh-mm-ss") + ".ics";
-        return calFile;
     }
 
     private net.fortuna.ical4j.model.Calendar createIcal() {
@@ -246,19 +215,20 @@ public class SettingManagerImpl implements SettingManager {
      * gli eventi importati per lo user
      *
      * @param user User che sta importando
-     * @param calendarName Nome del file .ics da importare
+     * @param filePath Nome del file .ics da importare
      * @return La lista delle coppie di eventi non importati (nome,owner), null
      * se c'è stato un errore
      */
     @Override
-    public List<Pair<String, String>> importCalendar(UserModel user, String calendarName) {
+    public List<Pair<String, String>> importCalendar(UserModel user, UploadedFile uploadedFile) {
         //NB works only with our exported calendars
-
+        
+//TODO addattare per l'uloadedFIle
+        
         //creating and checking input file
-        calendarName = COMMON_PATH + "import" + File.separator + calendarName;
         FileInputStream fin;
         try {
-            fin = new FileInputStream(calendarName);
+            fin = new FileInputStream(filePath);
         } catch (FileNotFoundException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
             return null;

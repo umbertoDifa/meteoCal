@@ -5,20 +5,32 @@
  */
 package bakingBeans;
 
+import EJB.SettingManagerImpl;
 import EJB.interfaces.CalendarManager;
+import EJB.interfaces.SettingManager;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import javax.enterprise.context.Dependent;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import model.CalendarModel;
 import model.UserModel;
-import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
+import utility.LoggerLevel;
+import utility.LoggerProducer;
+import utility.TimeTool;
 
 /**
  *
@@ -40,9 +52,14 @@ public class SettingsBacking {
     private List<String> calendarTitles;
 
     @Inject
-    CalendarManager calendarManager;
+    private CalendarManager calendarManager;
 
-    LoginBacking login;
+    @Inject
+    private SettingManager settingManager;
+
+    private LoginBacking login;
+
+    private Logger logger = LoggerProducer.debugLogger(SettingsBacking.class);
 
     /**
      * Creates a new instance of SettingsBacking
@@ -133,15 +150,54 @@ public class SettingsBacking {
         init();
     }
 
-    public void importCalendar() {
-        //TODO
+    public void importCalendar(FileUploadEvent event) {
+        FacesMessage msg = new FacesMessage("Success! ", event.getFile().getFileName() + " is uploaded.");
+        
+        settingManager.importCalendar(user, event.getFile());
+        //TODO gestire le liste di ritorno
+    }
+
+    private void copyFile(String fileName, InputStream in) {
+        try {
+
+            // write the inputStream to a FileOutputStream
+            new File(SettingManagerImpl.COMMON_PATH + "import").mkdirs();
+            File importFile = new File(SettingManagerImpl.COMMON_PATH + "import" + File.separator + fileName);
+            logger.log(LoggerLevel.DEBUG, "path: " + importFile.getAbsolutePath());
+            OutputStream out = new FileOutputStream(importFile);
+
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            while ((read = in.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+
+            in.close();
+            out.flush();
+            out.close();
+
+            System.out.println("New file created!");
+
+            settingManager.importCalendar(login.getCurrentUser(), importFile.getAbsolutePath());
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void exportCalendar() {
         CalendarModel c = findCalendarByName(calendars, calendarToExport);
-        System.out.println("-dentro exportCal");
+        InputStream stream;
         if (c != null) {
-            //calendarManager.exportCalendar(c);
+            new File(SettingManagerImpl.COMMON_PATH + "export" + File.separator + login.getCurrentUser().getId()).mkdirs();
+            File exportFile = new File(SettingManagerImpl.COMMON_PATH + "export" + File.separator + login.getCurrentUser().getId() + File.separator
+                    + TimeTool.dateToTextDay(Calendar.getInstance().getTime(),
+                            "yyyy-MM-dd-hh-mm-ss") + ".ics");
+            if (settingManager.exportCalendar(c, exportFile.getAbsolutePath())) {
+                stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getR getResourceAsStream(exportFile.getAbsolutePath());
+
+            }
             //let the user download it
 
         } else {
