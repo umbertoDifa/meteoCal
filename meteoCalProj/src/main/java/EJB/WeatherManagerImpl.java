@@ -31,12 +31,11 @@ import weatherLib.DailyForecastData;
 import weatherLib.ForecastWeatherData;
 import weatherLib.OpenWeatherMap;
 
-//TODO se c'è tempo, si potrebbe dirgli di usare 5 se current non c'è e usare 16 se 5 non c'è
 @Stateless
 public class WeatherManagerImpl implements WeatherManager {
 
     //tentativi di ottenere le previsioni prima di ritornare unavailable
-    private final int MAX_TRIES = 10;
+    private final int MAX_TRIES = 3;
 
     //creo oggetto openWeatherMap per fare le richieste con la mia API key
     private OpenWeatherMap openWeatherMap;
