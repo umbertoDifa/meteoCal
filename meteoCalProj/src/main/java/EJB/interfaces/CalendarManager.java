@@ -22,7 +22,7 @@ public interface CalendarManager {
 
     public List<ControlMessages> checkData(Event event);
 
-    public boolean addCalendarToUser(UserModel user, CalendarModel cal); 
+    public boolean addCalendarToUser(CalendarModel cal); 
 
     /**
      * Dato un evento ed un calendario, inserisce l'evento nel calendario

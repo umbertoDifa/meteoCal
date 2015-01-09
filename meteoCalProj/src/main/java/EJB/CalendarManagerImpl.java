@@ -239,16 +239,10 @@ public class CalendarManagerImpl implements CalendarManager {
     }
 
     @Override
-    //TODO qui user non serve perchè deduco l'id dal calendar
-    //TODO per ora nessuno usa questa funzione!
-    public boolean addCalendarToUser(UserModel user, CalendarModel cal) {
-        user = database.find(UserModel.class, user.getId());
-        cal.setOwner(user);
-        cal.setTitle("Pubblic_Cal");
+    public boolean addCalendarToUser(CalendarModel calendar) {
         try {
-            database.persist(cal);
-            logger.log(Level.INFO, "Pulic_Cal created for user: {0}",
-                    user.getEmail());
+            database.persist(calendar);
+            logger.log(Level.INFO, "{0} created for user {1}", new Object[]{calendar.getTitle(), calendar.getOwner().getEmail()});
             return true;
         } catch (EntityExistsException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
