@@ -63,8 +63,8 @@ public class ManageEventBacking implements Serializable {
     private String startDate;
     private String endDate;
 
-    Calendar rescheduleDayStart;
-    Calendar rescheduleDayEnd;
+    private Calendar rescheduleDayStart;
+    private Calendar rescheduleDayEnd;
 
     private String startTime;
     private String endTime;
@@ -78,7 +78,12 @@ public class ManageEventBacking implements Serializable {
     private List<UserModel> publicJoinUsers = new ArrayList<>();
 
     private boolean saved;
+
+    //variabili dialogue box
     private String dialogueMessage;
+    private String saveButton;
+    private String rescheduleButton;
+    private boolean showRescheduleButton;
 
     private CalendarModel calendar;
 
@@ -136,12 +141,36 @@ public class ManageEventBacking implements Serializable {
         return dialogueMessage;
     }
 
+    public String getSaveButton() {
+        return saveButton;
+    }
+
+    public void setSaveButton(String saveButton) {
+        this.saveButton = saveButton;
+    }
+
+    public String getRescheduleButton() {
+        return rescheduleButton;
+    }
+
+    public void setRescheduleButton(String rescheduleButton) {
+        this.rescheduleButton = rescheduleButton;
+    }
+
     public void setDialogueMessage(String dialogueMessage) {
         this.dialogueMessage = dialogueMessage;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isShowRescheduleButton() {
+        return showRescheduleButton;
+    }
+
+    public void setShowRescheduleButton(boolean showRescheduleButton) {
+        this.showRescheduleButton = showRescheduleButton;
     }
 
     public void setStartDate(String date) {
@@ -583,7 +612,7 @@ public class ManageEventBacking implements Serializable {
      * altrimenti chiede se rischedulare suggerendo un giorno
      */
     public void checkEvent() {
-
+        //TODO se l'evento è indoor non checko il weather
         createOrLoadInstance();
         setUpInstance();
 
@@ -642,13 +671,27 @@ public class ManageEventBacking implements Serializable {
                                     + TimeTool.dateToTextDay(
                                             rescheduleDayEnd.getTime(),
                                             "dd-MM-YYYY hh:mm\n");
+                            rescheduleButton = "Accept reschedule";
+                            saveButton = "Ignore and Save";
+                            showRescheduleButton = true;
+
                         } else {
+                            saveButton = "Ignore and Save";
+                            showRescheduleButton = false;
                             dialogueMessage += "\nIt wasn't possible to find a sunny day for a reschedule.";
                         }
                         //informo l'utente con una dialog box
                         RequestContext context = RequestContext.getCurrentInstance();
+                        //update pulsanti
+                        context.update("buttonsForm:rescheduleButton");
+                        context.update("buttonsForm:saveButton");
+                        
+                        //update messaggio
                         context.update("dialogMessage");
+                        
+                        //esegui dialog
                         context.execute("PF('conflictDialog').show();");
+
                     }
                 }
             }

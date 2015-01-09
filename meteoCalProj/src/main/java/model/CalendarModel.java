@@ -54,6 +54,7 @@ public class CalendarModel implements Serializable {
      * CONSTRUCTURS
      */
     public CalendarModel() {
+        eventsInCalendar = new ArrayList<>();
     }
 
     public CalendarModel(String title, UserModel owner, boolean isPublic, boolean isDefault) {
@@ -61,6 +62,7 @@ public class CalendarModel implements Serializable {
         this.owner = owner;
         this.isPublic = isPublic;
         this.isDefault = isDefault;
+        eventsInCalendar = new ArrayList<>();
     }
 
     /*

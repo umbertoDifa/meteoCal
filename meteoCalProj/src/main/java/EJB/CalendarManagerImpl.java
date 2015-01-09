@@ -256,9 +256,13 @@ public class CalendarManagerImpl implements CalendarManager {
     @Override
     public boolean addCalendarToUser(CalendarModel calendar) {
         try {
+            boolean makeDefault = calendar.isIsDefault();
+            calendar.setIsDefault(false);
             database.persist(calendar);
             logger.log(Level.INFO, "{0} created for user {1}", new Object[]{
                 calendar.getTitle(), calendar.getOwner().getEmail()});
+            if (makeDefault)
+                makeDefault(calendar);
             return true;
         } catch (EntityExistsException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -373,11 +377,13 @@ public class CalendarManagerImpl implements CalendarManager {
         calendar = (CalendarModel) database.createNamedQuery(
                 "findCalbyUserAndTitle").setParameter("id", calendar.getOwner()).setParameter(
                         "title", calendar.getTitle()).getSingleResult();
+        database.refresh(calendar);
         if (calendar.isIsPublic()) {
             calendar.setIsPublic(false);
         } else {
-            calendar.setIsPublic(false);
+            calendar.setIsPublic(true);
         }
+        database.flush();
     }
 
     @Override
@@ -449,6 +455,19 @@ public class CalendarManagerImpl implements CalendarManager {
 
         } catch (IllegalArgumentException e) {
             return false;
+        }
+    }
+    
+    @Override
+    public CalendarModel getDefaultCalendar (UserModel user) {
+        try {
+            CalendarModel calendar =  (CalendarModel) database.createNamedQuery(
+                    "findDefaultCalendar").setParameter("user",
+                            user).getSingleResult();
+            database.refresh(calendar);
+            return calendar;
+        } catch (IllegalArgumentException e) {
+            return null;
         }
     }
 }
