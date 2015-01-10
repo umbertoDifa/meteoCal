@@ -7,7 +7,7 @@
 }
 #locationField, #controls {
     position: relative;
-    width: 480px;
+/*    width: 480px;*/
 }
 .label {
     text-align: right;

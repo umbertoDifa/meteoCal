@@ -30,9 +30,8 @@ and open the template in the editor.
                 <p:toolbar style="margin-bottom: 12px">
 
                     <f:facet name="left">
-                        <h:panelGrid columns="2">
+                        <h:panelGrid>
                             <h:form>
-                                <p:outputLabel for="console" value="Calendar:"/>
                                 <p:selectOneMenu id="console" widgetVar="console" value="#{scheduleView.calendarSelected}" style="width:125px">
                                     <c:forEach items="#{scheduleView.calendarNames}" var="c">
                                         <p:ajax listener="#{scheduleView.onCalendarChange}" update="@(form)" />
@@ -44,8 +43,7 @@ and open the template in the editor.
                     </f:facet>
                     <f:facet name="right">
                         <h:form id="publicSwitchForm">
-                            <h:panelGrid columns="2">
-                                <p:outputLabel for="publicSwitch" value="Privacy:"/>
+                            <h:panelGrid >
                                 <p:commandButton id="publicSwitch" widgetVar="publicSwitch" value="#{scheduleView.labelPrivacy}" actionListener="#{scheduleView.switchPrivacy()}" update="@this"  />
                             </h:panelGrid>
                         </h:form>
