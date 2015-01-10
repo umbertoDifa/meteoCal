@@ -147,7 +147,7 @@ public class SearchBacking {
                     }
                 }
                 if (add == true) {
-                    userResults.add(new SearchResult(u.getName() + u.getSurname(), u.getEmail(), u.getAvatarPath(), String.valueOf(u.getId())));
+                    userResults.add(new SearchResult(u.getName() + u.getSurname(), u.getEmail(), String.valueOf(u.getId())));
                 }
             }
         }
@@ -155,7 +155,7 @@ public class SearchBacking {
         if (searchForEvents || (!searchForEvents && !searchForUsers)) {
             for (Event ev : events) {
                 if ((ev instanceof PublicEvent) || (ev.getInvitee().contains(login.getCurrentUser()))) {
-                    eventResults.add(new SearchResult(ev.getTitle(), ev.getDescription(), ev.getImgPath(), String.valueOf(ev.getId())));
+                    eventResults.add(new SearchResult(ev.getTitle(), ev.getDescription(), String.valueOf(ev.getId())));
                 }
             }
         }
