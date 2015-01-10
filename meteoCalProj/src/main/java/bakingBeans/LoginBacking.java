@@ -96,7 +96,7 @@ public class LoginBacking implements Serializable {
         
     }
     
-    public int notificationsNumber () {
-        return 0;
+    public String notificationsNumber () {
+        return "0";
     }
 }
