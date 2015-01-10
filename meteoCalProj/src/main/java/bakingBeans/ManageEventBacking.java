@@ -620,6 +620,7 @@ public class ManageEventBacking implements Serializable {
      */
     public void checkEvent() {
         //TODO se l'evento è indoor non checko il weather
+        logger.log(LoggerLevel.DEBUG,"-dentro checkEvent");
         createOrLoadInstance();
         setUpInstance();
 

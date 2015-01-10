@@ -131,29 +131,38 @@ and open the template in the editor.
                     <p:dialog rendered="#{!scheduleView.readOnly}" widgetVar="eventDialog" header="Event Details" resizable="false" >
                         <h:panelGrid id="eventDetails" columns="2">
                             <h:outputLabel for="title" value="Title:" />
-                            <p:inputText id="title" value="#{scheduleView.event.title}" required="true" />
+                            <p:inputText id="title" value="#{eventToManage.title}" required="true" />
 
                             <h:outputLabel for="from" value="From:" />
-                            <p:inputMask id="from" value="#{scheduleView.event.startDate}" mask="99/99/9999">
+                            <p:inputMask id="from" value="#{eventToManage.startDate}" mask="99/99/9999">
                                 <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+2"/>
                             </p:inputMask>
 
                             <h:outputLabel for="to" value="To:" />
-                            <p:inputMask id="to" value="#{scheduleView.event.endDate}" mask="99/99/9999">
+                            <p:inputMask id="to" value="#{eventToManage.endDate}" mask="99/99/9999">
                                 <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+2"/>
                             </p:inputMask>
+                        </h:panelGrid>
+                        <f:facet name="footer">
+                            <p:commandButton type="reset" value="Reset" />
+                            <p:commandButton id="addButton" value="Save" actionListener="#{eventToManage.checkEvent()}" oncomplete="PF('schedule').update();PF('eventDialog').hide();" />
+                        </f:facet>
 
-                            <h:outputLabel for="allDay" value="All Day:" />
-                            <h:selectBooleanCheckbox id="allDay" value="#{scheduleView.event.allDay}" />
-                            </h:panelGrid>
-                            <f:facet name="footer">
-                                <p:commandButton type="reset" value="Reset" />
-                                <p:commandButton id="addButton" value="Save" actionListener="#{scheduleView.updateEvent}" oncomplete="PF('schedule').update();PF('eventDialog').hide();" />
-                            </f:facet>
-                        
                     </p:dialog>
                 </h:form>
+                <h:form>
 
+                    <p:dialog header="Reschedule suggested" id="conflictDialog" widgetVar="conflictDialog" minHeight="40" width="300" resizable="false">
+                        <h:outputText id="dialogMessage" value="#{eventToManage.dialogueMessage}" style="white-space: pre-wrap"></h:outputText><br/>
+                        <f:facet name="footer">
+                            <h:form id="buttonsForm">
+                                <p:commandButton widgetVar="rescheduleButton" id="rescheduleButton" value="#{eventToManage.rescheduleButton}" rendered="#{eventToManage.showRescheduleButton}"  oncomplete="PF('conflictDialog').hide()" actionListener="#{eventToManage.reschedule()}"/>
+                                <p:commandButton widgetVar="saveButton" id="saveButton" value="#{eventToManage.saveButton}"  oncomplete="PF('conflictDialog').hide()" actionListener="#{eventToManage.save()}"/>                                   
+                                <p:commandButton value="Cancel" type="button" onclick="PF('conflictDialog').hide()" />
+                            </h:form>               
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
 
 
             </h:panelGrid>
