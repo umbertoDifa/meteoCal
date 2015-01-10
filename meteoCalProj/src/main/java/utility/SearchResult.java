@@ -16,10 +16,9 @@ public class SearchResult {
     private String imgPath;
     private String id;
 
-    public SearchResult(String title, String email, String avatarPath, String id) {
+    public SearchResult(String title, String email, String id) {
         this.title = title;
         this.description = email;
-        this.imgPath = avatarPath;
         this.id = id;
     }
 
@@ -37,14 +36,6 @@ public class SearchResult {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getImgPath() {
-        return imgPath;
-    }
-
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
     }
 
     public String getId() {

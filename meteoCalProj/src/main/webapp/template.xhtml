@@ -6,18 +6,16 @@
       xmlns:p="http://primefaces.org/ui">
 
     <f:view contentType="text/html">
-        <h:head>
+        <h:head >
             <f:facet name="first">
                 <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
                 <title><ui:insert name="title" /></title>
             </f:facet>
             <ui:insert name="secondaryHead"/>
-            
-            <f:viewAction action="#{login.updateNotification()}" />
 
         </h:head>
 
-        <h:body>
+        <h:body onload="#{login.updateNotification()}" >
 
             <h:outputStylesheet library="css" name="normalization.css"/>
 

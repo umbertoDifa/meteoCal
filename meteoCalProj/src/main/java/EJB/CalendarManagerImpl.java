@@ -337,8 +337,7 @@ public class CalendarManagerImpl implements CalendarManager {
             calendar.setOwner(user);
 
             //il titolo è default + timestamp
-            calendar.setTitle("Default (" + Calendar.getInstance().toString()
-                    + ")");
+            calendar.setTitle("Default");
 
             logger.log(Level.INFO, "Default calendar for user "
                     + "{0} created",

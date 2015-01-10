@@ -6,6 +6,7 @@ package bakingBeans;
  * and open the template in the editor.
  */
 import EJB.interfaces.LoginManager;
+import EJB.interfaces.NotificationManager;
 import model.UserModel;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -38,10 +39,13 @@ public class LoginBacking implements Serializable {
 
     @Inject
     private LoginManager userManager;
+    
+    @Inject
+    private NotificationManager notificationManager;
 
     private UserModel currentUser;
     
-    private int notificationNumber;
+    private int notificationNumber = 0;
 
     public String login() {
 
@@ -91,12 +95,18 @@ public class LoginBacking implements Serializable {
     public String getSurname(){
         return currentUser.getSurname();
     }
+
+    public String getNotificationNumber() {
+        return String.valueOf(notificationNumber);
+    }
+    
+    
+    
+    
     
     public void updateNotification() {
-        
+        System.out.println ("---- DENTRO UPDATE NOTIFICATION ----");
+        notificationNumber = notificationManager.getUnreadNotificationNumber(currentUser);
     }
     
-    public String notificationsNumber () {
-        return "0";
-    }
 }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml"
+       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+       xmlns:h="http://xmlns.jcp.org/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+       xmlns:p="http://primefaces.org/ui"
+       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:composition template="/template.xhtml">
+
+        <ui:define name="title">notifications</ui:define>
+
+        <ui:define name="content">   
+            <h1>Notifications</h1>
+            
+            <p:tabView>
+                <p:tab title="Invitations">
+                    <h:form>
+                        <p:dataScroller value="#{notification.invitations}" var="in" chunkSize="10">
+                            <p:fieldset legend="#{in.title}" style="margin-bottom:20px" >
+                                <h:panelGrid columns="2" bgcolor="" >
+                                    
+
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5" >
+                                            
+                                            <h:outputText value="#{in.message}" />
+                                            <br />
+                                            <h:link value="Go to the event" outcome="/s/eventPage.xhtml?id=#{in.relatedEvent.id}" />
+                                            
+                                        </h:panelGrid>
+                                    </p:outputPanel>
+
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <f:facet name="loader">
+                                <p:commandButton type="button" value="More"/>
+                            </f:facet>
+                        </p:dataScroller>
+                    </h:form>
+                </p:tab>
+                <p:tab title="Events Changes">
+                    <h:form>
+                        <p:dataScroller value="#{notification.eventChanges}" var="en" chunkSize="10">
+                            <p:fieldset legend="#{en.title}" style="margin-bottom:20px">
+                                <h:panelGrid columns="2" >
+                                    
+
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5" >
+                                            
+                                            <h:outputText value="#{en.title}" />
+                                            <br />
+                                            <h:link value="Go to the event" outcome="/s/eventPage.xhtml?id=#{en.message}" />
+                                            
+                                        </h:panelGrid>
+                                    </p:outputPanel>
+
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <f:facet name="loader">
+                                <p:commandButton type="button" value="More"/>
+                            </f:facet>
+                        </p:dataScroller>
+                    </h:form>
+                </p:tab>
+                    
+            </p:tabView>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -13,6 +13,7 @@ import model.NotificationType;
 import utility.EmailSender;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
+import utility.NotificationCategories;
 
 @Stateless
 public class NotificationManagerImpl implements NotificationManager {
@@ -55,10 +56,38 @@ public class NotificationManagerImpl implements NotificationManager {
 
     }
     
-    private int getNotificationNumber (UserModel user) {
+    @Override
+    public int getUnreadNotificationNumber (UserModel user) {
+        return ((Number)database.createNamedQuery("countUnreadNotifications").setParameter("user", user).getSingleResult()).intValue();
+    }
+    
+    @Override
+    public List<Notification> getNotificationFiltred (UserModel user, NotificationCategories type) {
         user = database.find(UserModel.class, user.getId());
         database.refresh(user);
-        return user.getNotifications().size();
+        switch (type) {
+                case INVITATIONS : {
+                   return database.createNamedQuery("findInvitationNotifications").setParameter("user", user).getResultList();
+                }
+                case EVENTS_CHANGES : {
+                    return database.createNamedQuery("findEventNotifications").setParameter("user", user).getResultList();
+                }
+                
+                default: {
+                    return null;
+                }
+        }
+
     }
+    
+    @Override
+    public void markAllAsRead(List<Notification> notifications) {
+        for (Notification n: notifications) {
+            n = database.find(Notification.class, n.getId());
+            n.setRead(true);
+            database.flush();
+        }
+    }
+
 
 }

@@ -7,8 +7,10 @@ package EJB.interfaces;
 
 import java.util.List;
 import model.Event;
+import model.Notification;
 import model.NotificationType;
 import model.UserModel;
+import utility.NotificationCategories;
 
 /**
  *
@@ -26,5 +28,11 @@ public interface NotificationManager {
      * 
      */
     public void createNotifications(List<UserModel> users, Event event, NotificationType type, boolean sendEmail);
+    
+    public int getUnreadNotificationNumber (UserModel user);
+    
+    public List<Notification> getNotificationFiltred (UserModel user, NotificationCategories type);
+    
+    public void markAllAsRead(List<Notification> notifications);
 }
 

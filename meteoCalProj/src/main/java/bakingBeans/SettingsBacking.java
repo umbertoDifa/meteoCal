@@ -9,38 +9,41 @@ import EJB.SettingManagerImpl;
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.SettingManager;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
-import javax.enterprise.context.Dependent;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import model.CalendarModel;
 import model.UserModel;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
-import utility.TimeTool;
 
 /**
  *
  * @author Francesco
  */
 @Named(value = "settings")
-@Dependent
-public class SettingsBacking {
+@ViewScoped
+public class SettingsBacking implements Serializable {
 
     private UserModel user;
+
+    private StreamedContent streamedContent;
+    private boolean disableDownloadButton = true;
 
     private String email;
     private String name;
@@ -67,7 +70,8 @@ public class SettingsBacking {
     public SettingsBacking() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         //mi salvo il login per ottenere l'info di chi è loggato
-        login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(facesContext, "#{login}", LoginBacking.class);
+        login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(
+                facesContext, "#{login}", LoginBacking.class);
 
     }
 
@@ -90,6 +94,22 @@ public class SettingsBacking {
         this.name = name;
     }
 
+    public boolean isDisableDownloadButton() {
+        return disableDownloadButton;
+    }
+
+    public void setDisableDownloadButton(boolean showDownloadButton) {
+        this.disableDownloadButton = showDownloadButton;
+    }
+
+    public StreamedContent getStreamedContent() {
+        return streamedContent;
+    }
+
+    public void setStreamedContent(StreamedContent streamedContent) {
+        this.streamedContent = streamedContent;
+    }
+
     public void setSurname(String surname) {
         this.surname = surname;
     }
@@ -99,6 +119,8 @@ public class SettingsBacking {
     }
 
     public void setCalendarToExport(String calendarToExport) {
+        logger.log(LoggerLevel.DEBUG, "DENTRO il setCalendarTOExport vale: "
+                + calendarToExport);
         this.calendarToExport = calendarToExport;
     }
 
@@ -151,59 +173,81 @@ public class SettingsBacking {
     }
 
     public void importCalendar(FileUploadEvent event) {
-        FacesMessage msg = new FacesMessage("Success! ", event.getFile().getFileName() + " is uploaded.");
-        
         settingManager.importCalendar(user, event.getFile());
         //TODO gestire le liste di ritorno
-    }
 
-    private void copyFile(String fileName, InputStream in) {
-        try {
-
-            // write the inputStream to a FileOutputStream
-            new File(SettingManagerImpl.COMMON_PATH + "import").mkdirs();
-            File importFile = new File(SettingManagerImpl.COMMON_PATH + "import" + File.separator + fileName);
-            logger.log(LoggerLevel.DEBUG, "path: " + importFile.getAbsolutePath());
-            OutputStream out = new FileOutputStream(importFile);
-
-            int read = 0;
-            byte[] bytes = new byte[1024];
-
-            while ((read = in.read(bytes)) != -1) {
-                out.write(bytes, 0, read);
-            }
-
-            in.close();
-            out.flush();
-            out.close();
-
-            System.out.println("New file created!");
-
-            //settingManager.importCalendar(login.getCurrentUser(), importFile.getAbsolutePath());
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
+        FacesMessage msg = new FacesMessage("Success! ",
+                event.getFile().getFileName() + " is uploaded.");
     }
 
     public void exportCalendar() {
-        CalendarModel c = findCalendarByName(calendars, calendarToExport);
-        InputStream stream;
-        if (c != null) {
-            new File(SettingManagerImpl.COMMON_PATH + "export" + File.separator + login.getCurrentUser().getId()).mkdirs();
-            File exportFile = new File(SettingManagerImpl.COMMON_PATH + "export" + File.separator + login.getCurrentUser().getId() + File.separator
-                    + TimeTool.dateToTextDay(Calendar.getInstance().getTime(),
-                            "yyyy-MM-dd-hh-mm-ss") + ".ics");
-            if (settingManager.exportCalendar(c, exportFile.getAbsolutePath())) {
-              //  stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getR getResourceAsStream(exportFile.getAbsolutePath());
+        //disabilito pulasante download se era attivo
+        RequestContext context = RequestContext.getCurrentInstance();
+        setDisableDownloadButton(true);
+        context.update("downloadForm:downloadButton");
 
+        CalendarModel calToExp = findCalendarByName(calendars, calendarToExport);
+        InputStream stream;
+        if (calToExp != null) {
+            new File(SettingManagerImpl.COMMON_PATH + "export" + File.separator
+                    + login.getCurrentUser().getId()).mkdirs();
+
+            if (settingManager.exportCalendar(calToExp)) {
+                String path = getGlassfishDomainPath();
+
+                logger.log(LoggerLevel.DEBUG, "PATH: " + path);
+
+                try {
+                    stream = new FileInputStream(new File(path + "config"
+                            + File.separator + "export" + File.separator
+                            + login.getCurrentUser().getId() + File.separator
+                            + "exportCal.ics"));
+
+                    //create file to be streamed
+                    streamedContent = new DefaultStreamedContent(stream,
+                            "text/calendar", "downloaded_calendar.ics");
+
+                    //abilito il pulsante download
+                    setDisableDownloadButton(
+                            false);
+                    context = RequestContext.getCurrentInstance();
+
+                    context.update("downloadForm:donwloadButton");
+
+                    logger.log(LoggerLevel.DEBUG,
+                            "Calendario pronto per essere scaricato!");
+                } catch (FileNotFoundException ex) {
+                    logger.log(LoggerLevel.DEBUG,
+                            "Cal to export not found for stream");
+                }
+
+            } else {
+                //msg nessun cal trovato
+                logger.log(LoggerLevel.DEBUG,
+                        "Non è stato possibile creare il calenario to export");
+                //TODO showmessage
             }
-            //let the user download it
 
         } else {
             //msg nessun cal trovato
+            logger.log(LoggerLevel.DEBUG, "Nessun calendario trovato");
+            //TODO showmessage
         }
 
+    }
+
+    private String getGlassfishDomainPath() {
+        //let the user download it
+
+        File docroot1 = new File("../");
+        try {
+            docroot1 = docroot1.getCanonicalFile();
+        } catch (IOException e) {
+            docroot1 = docroot1.getAbsoluteFile();
+        }
+        String path = docroot1.getPath() + File.separator;
+        //path prima di config
+        return path;
     }
 
     private CalendarModel findCalendarByName(List<CalendarModel> calendars, String name) {
