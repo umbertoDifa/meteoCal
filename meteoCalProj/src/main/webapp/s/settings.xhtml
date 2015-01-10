@@ -55,16 +55,20 @@ and open the template in the editor.
             </h:form>
             <hr/>
             <h2> Export Calendar: </h2>
-            <h:form id="download">
-                <p:selectOneMenu value="#{settings.calendarToExport}">
+            <h:form id="chooseDownload">
+                <p:selectOneMenu value="#{settings.calendarToExport}" >
+                    <f:selectItem itemValue="null" itemLabel="nessun calendario"/>
                     <c:forEach items="#{calendar.calendarNames}" var="cal">
                         <f:selectItem itemValue="#{cal}" itemLabel="#{cal}" />
                     </c:forEach>
                 </p:selectOneMenu>
-            
-                <p:commandButton value="Download" actionListener="#{settings.exportCalendar()}" icon="ui-icon-arrowthickstop-1-s">
+                <p:commandButton action="#{settings.exportCalendar()}" value="choose"/>
+            </h:form>
+
+            <h:form id="downloadForm">
+                <p:commandButton ajax="false" id="downloadButton" disabled="#{settings.disableDownloadButton}" value="Download" icon="ui-icon-arrowthickstop-1-s">
+                    <p:fileDownload value="#{settings.streamedContent}" />
                 </p:commandButton>
-                
             </h:form>
 
 

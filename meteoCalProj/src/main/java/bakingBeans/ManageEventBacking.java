@@ -53,7 +53,7 @@ public class ManageEventBacking implements Serializable {
 
     //luogo dell'evento
     private String location;
-    //boolean che indica se l'utente ha selezionato un lugo con l'aiuto di google
+    //boolean che indica se l'utente ha selezionato un luogo con l'aiuto di google
     private boolean hasLocation;
 
     private boolean outdoor;
@@ -368,6 +368,9 @@ public class ManageEventBacking implements Serializable {
                 //inizializzare calendarName
                 calendarName = searchCalendarByEvent();
 
+                //initialize hasLocation
+                hasLocation = eventToCreate.hasLocation();
+
             } else {
                 showMessage(null, "Nessun evento trovato", "");
             }
@@ -568,7 +571,11 @@ public class ManageEventBacking implements Serializable {
         //riempio un entità di Event con i vari attributi
         eventToCreate.setDescription(description);
         eventToCreate.setTitle(title);
-        location = place.toString();
+
+        if (place != null) {
+            logger.log(LoggerLevel.DEBUG, "place non è null!!");
+            location = place.toString();
+        }
 
         System.out.println("Complete location is: " + location);
         eventToCreate.setLocation(location);
@@ -685,10 +692,10 @@ public class ManageEventBacking implements Serializable {
                         //update pulsanti
                         context.update("buttonsForm:rescheduleButton");
                         context.update("buttonsForm:saveButton");
-                        
+
                         //update messaggio
                         context.update("dialogMessage");
-                        
+
                         //esegui dialog
                         context.execute("PF('conflictDialog').show();");
 

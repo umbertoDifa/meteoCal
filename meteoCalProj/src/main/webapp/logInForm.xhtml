@@ -13,9 +13,11 @@
                 <p:button icon="ui-icon-home" value="meteoCal" outcome="/s/myCalendar.xhtml" />
             </f:facet>
             <f:facet name="right">
+
                 <h:form id="notifications" rendered="#{login.loggedIn}" >
                     <p:button icon="ui-icon-mail-closed" value="#{login.notificationNumber}"  outcome="/s/notifications.xhtml" />
                 </h:form>
+
                 
                 <h:form id="loginForm"> 
                     <p:focus context="loginForm"/>

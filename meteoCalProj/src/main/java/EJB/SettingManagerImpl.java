@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +39,7 @@ import org.primefaces.model.UploadedFile;
 
 import utility.LoggerLevel;
 import utility.LoggerProducer;
+import utility.TimeTool;
 import wrappingObjects.Pair;
 
 @Stateless
@@ -83,18 +86,31 @@ public class SettingManagerImpl implements SettingManager {
      * personale dell'utente
      *
      * @param calendar Calendario da esportare
-     * @param destionationPath
      * @return true se tutto ok, false altrimenti
      */
     @Override
-    public boolean exportCalendar(CalendarModel calendar, String destionationPath) {      
+    public boolean exportCalendar(CalendarModel calendar) {
+
+        String calFile;
+
+        try {
+            calFile = createExportPath(calendar);
+            logger.log(LoggerLevel.DEBUG, "Salvo calendario al path: {0}",
+                    calFile);
+
+        } catch (SecurityException ex) {
+            logger.log(Level.SEVERE,
+                    "Non è stato possibile creare il path per la cartella di export",
+                    ex);
+            return false;
+        }
 
         net.fortuna.ical4j.model.Calendar iCal = createIcal();
 
         addIcalEvents(calendar, iCal);
 
         try {
-            saveExportingCalendar(destionationPath, iCal);
+            saveExportingCalendar(calFile, iCal);
         } catch (IOException | ValidationException ex) {
             logger.log(Level.SEVERE,
                     "Non è stato possibile salvare il calendario.\n"
@@ -105,6 +121,26 @@ public class SettingManagerImpl implements SettingManager {
         logger.log(LoggerLevel.DEBUG, "Calendario esportato con successo:\n{0}",
                 iCal.toString());
         return true;
+    }
+
+    private String createExportPath(CalendarModel calendar) {
+        String calFile;
+        //creo il percorso della cartella        
+
+        boolean result = new File(
+                "." + File.separator + "export" + File.separator
+                + calendar.getOwner().getId()).mkdirs();
+
+        if (result) {
+            logger.log(LoggerLevel.DEBUG,
+                    "Cartella di export creata per l''utente {0}",
+                    calendar.getOwner().getId());
+        }
+        //creo la stringa con l'indirizzo in cui creare il file
+        calFile = "." + File.separator + "export" + File.separator
+                + calendar.getOwner().getId() + File.separator
+                + "exportCal.ics";
+        return calFile;
     }
 
     private net.fortuna.ical4j.model.Calendar createIcal() {
@@ -214,47 +250,103 @@ public class SettingManagerImpl implements SettingManager {
      * gli eventi importati per lo user
      *
      * @param user User che sta importando
-     * @param filePath Nome del file .ics da importare
+     * @param uploadedFile
      * @return La lista delle coppie di eventi non importati (nome,owner), null
      * se c'è stato un errore
      */
     @Override
+    //NB works only with our exported calendars
     public List<Pair<String, String>> importCalendar(UserModel user, UploadedFile uploadedFile) {
-        //NB works only with our exported calendars
-        
-//TODO addattare per l'uloadedFIle
-//        
-//        //creating and checking input file
-//        FileInputStream fin;
-////        try {
-////            fin = new FileInputStream(filePath);
-////        } catch (FileNotFoundException ex) {
-////            logger.log(Level.SEVERE, ex.getMessage(), ex);
-////            return null;
-////        }
-//
-//        user = (UserModel) database.find(UserModel.class, user.getId());
-//        if (user != null) {
-//            try {
-////                return importIcal(fin, user);
-//            } catch (IOException | ParserException ex) {
-//                logger.log(Level.SEVERE,
-//                        "Non è stato possible creare il calendario, problemi con il builder. "
-//                        + ex.getMessage(), ex);
-//                return null;
-//            }
-//        } else {
-//            logger.log(Level.SEVERE, "L'utente passato non esiste nel db");
-            return null;
- //       }
+        File importFile = copyUploadedFile(user, uploadedFile);
 
+        //create fileInputStream to create the Ical
+        FileInputStream fin;
+        try {
+            fin = new FileInputStream(importFile);
+            user = (UserModel) database.find(UserModel.class, user.getId());
+            if (user != null) {
+                try {
+                    return importIcal(fin, user);
+                } catch (IOException | ParserException ex) {
+                    logger.log(Level.SEVERE,
+                            "Non è stato possible creare il calendario, problemi con il builder. "
+                            + ex.getMessage(), ex);
+                    return null;
+                }
+            } else {
+                logger.log(Level.SEVERE, "L'utente passato non esiste nel db");
+                return null;
+            }
+        } catch (FileNotFoundException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            return null;
+        }
+
+    }
+
+    private File copyUploadedFile(UserModel user, UploadedFile uploadedFile) {
+
+        //create path to save imported file
+        String fileName = COMMON_PATH + "import" + File.separator + user.getId()
+                + TimeTool.dateToTextDay(Calendar.getInstance().getTime(),
+                        "yyyy-MM-dd-hh-mm-ss") + ".ics";
+        logger.log(LoggerLevel.DEBUG, "File copiato in: " + fileName);
+        //create folders to that path 
+        new File(COMMON_PATH + "import" + File.separator + user.getId()).mkdirs();
+        //create the file
+        File importFile = new File(fileName);
+
+        //create input stream from uploaded file
+        InputStream in;
+        try {
+            in = uploadedFile.getInputstream();
+            //create output stream to the fileName decided
+            OutputStream out;
+            out = new FileOutputStream(importFile);
+
+            //copy input to output stream
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            try {
+                while ((read = in.read(bytes)) != -1) {
+                    out.write(bytes, 0, read);
+                }
+                in.close();
+                out.flush();
+                out.close();
+            } catch (IOException ex) {
+                logger.log(Level.SEVERE, ex.getMessage(), ex);
+            }
+
+        } catch (FileNotFoundException ex) {
+            logger.log(Level.SEVERE,
+                    "Non è stato possible trovare il file in cui salvare l'uploaded file "
+                    + ex.getMessage(), ex);
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE,
+                    "Couldn't get input stream from uploaded file. "
+                    + ex.getMessage(), ex);
+        }
+        logger.log(LoggerLevel.DEBUG, "New file created! at: " + fileName);
+        return importFile;
     }
 
     private List<Pair<String, String>> importIcal(FileInputStream fin, UserModel user)
             throws ParserException, IOException {
         //create a new meteocal calendar to host the imported events
-        CalendarModel calendarForImport = calendarManager.createDefaultCalendar(
-                user);
+        String calendarNameToSave = "ImportedCalendar"
+                + Calendar.getInstance().getTime().toString();
+        CalendarModel calendarForImport = new CalendarModel(calendarNameToSave,
+                user,
+                false, false);
+        calendarManager.addCalendarToUser(calendarForImport);
+
+        //a questo punto il calendarToImport è già persistito nel db 
+        //per cui lo recupero        
+        calendarForImport = (CalendarModel) database.createNamedQuery(
+                "findCalbyUserAndTitle").setParameter("id",
+                        user).setParameter("title", calendarNameToSave).getSingleResult();
 
         CalendarBuilder builder = new CalendarBuilder();
 
@@ -309,10 +401,10 @@ public class SettingManagerImpl implements SettingManager {
 
         }//for
 
-        //TODO vedere se questa persist funziona davvero, in particolare
+        //TODO vedere se questa funziona davvero, in particolare
         //il campo inCalendars
-        //persisti il nuovo calendario con gli eventi imoprtati nel db
-        database.persist(calendarForImport);
+        //aggiorna il nuovo calendario con gli eventi imoprtati nel db
+        database.flush();
         logger.log(LoggerLevel.DEBUG,
                 "Calendario importato per l''utente {0}",
                 user.getEmail());
@@ -339,7 +431,8 @@ public class SettingManagerImpl implements SettingManager {
                     unimportedEvents.add(new Pair<>(eventName,
                             eventOwner));
                 } else {
-                    logger.log(LoggerLevel.DEBUG, "Trovato evento");
+                    logger.log(LoggerLevel.DEBUG, "Trovato evento con nome:"
+                            + event.getTitle() + "e id:" + event.getId());
 
                     //check if the event is not in any other calendar
                     if (eventManager.isInAnyCalendar(event, user)) {

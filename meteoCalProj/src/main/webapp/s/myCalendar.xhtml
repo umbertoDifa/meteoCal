@@ -30,12 +30,11 @@ and open the template in the editor.
                 <p:toolbar style="margin-bottom: 12px">
 
                     <f:facet name="left">
-                        <h:panelGrid columns="2">
+                        <h:panelGrid>
                             <h:form>
-                                <p:outputLabel for="console" value="Calendar:"/>
                                 <p:selectOneMenu id="console" widgetVar="console" value="#{scheduleView.calendarSelected}" style="width:125px">
                                     <c:forEach items="#{scheduleView.calendarNames}" var="c">
-                                        <p:ajax listener="#{scheduleView.onCalendarChange}" update=":scheduleForm:schedule, :publicSwitchForm:publicSwitch" />
+                                        <p:ajax listener="#{scheduleView.onCalendarChange}" update="@(form)" />
                                         <f:selectItem itemLabel="#{c}" itemValue="#{c}" />
                                     </c:forEach>
                                 </p:selectOneMenu>
@@ -44,8 +43,7 @@ and open the template in the editor.
                     </f:facet>
                     <f:facet name="right">
                         <h:form id="publicSwitchForm">
-                            <h:panelGrid columns="2">
-                                <p:outputLabel for="publicSwitch" value="Privacy:"/>
+                            <h:panelGrid >
                                 <p:commandButton id="publicSwitch" widgetVar="publicSwitch" value="#{scheduleView.labelPrivacy}" actionListener="#{scheduleView.switchPrivacy()}" update="@this"  />
                             </h:panelGrid>
                         </h:form>
@@ -55,7 +53,7 @@ and open the template in the editor.
                                 <p:commandButton id="addCalendar" widgetVar="addCalendar" value="addCalendar" onclick="PF('newCalendarDialog').show()" icon="ui-icon-plusthick" />
                             </h:panelGrid>
 
-                            <p:dialog widgetVar="newCalendarDialog" style="white-space: nowrap;" header="Create new calendar" >
+                            <p:dialog widgetVar="newCalendarDialog" header="Create new calendar"  resizable="false" >
                                 <h:outputText value="Title :" />
                                 <p:inputText placeholder="Insert title here" value="#{scheduleView.calendarToCreate.title}" required="true" requiredMessage="An unique title is required"/>
                                 <br />
@@ -69,24 +67,25 @@ and open the template in the editor.
                                 <p:selectBooleanCheckbox id="default" widgetVar="default" value="#{scheduleView.calendarToCreate.isDefault}" />
                                 <br />
                                 <br />
-                                <p:commandButton value="Create" icon="ui-icon-check" update="@(form)" actionListener="#{scheduleView.addNewCalendar()}" onclick="PF('newCalendarDialog').hide();"/>
-                                    
-                                <p:commandButton type="button" value="Cancel" icon="ui-icon-close" onclick="newCalendarDialog.hide()"/>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Create" icon="ui-icon-check" update="@(form)" actionListener="#{scheduleView.addNewCalendar()}" onclick="PF('newCalendarDialog').hide();"/>
+                                    <p:commandButton type="button" value="Cancel" icon="ui-icon-close" onclick="newCalendarDialog.hide()"/>
+                                </f:facet>
                             </p:dialog>
                         </h:form>
 
                         <h:form id="changeDefault">
                             <h:panelGrid columns="2" rendered="#{!scheduleView.readOnly}">
-                                <p:commandButton value="Make Default" onclick="PF('confirmChangeDef').show()" type="button" icon="ui-icon-heart" disabled="#{scheduleView.calendarShown.isDefault}"/>
+                                <p:commandButton widgetVar="changeDefaultButton" value="Make Default" onclick="PF('confirmChangeDef').show()" type="button" icon="ui-icon-heart" disabled="#{scheduleView.calendarShown.isDefault}"/>
                             </h:panelGrid>
 
-                            <p:confirmDialog message="Do you really want to set the Current Calendar as Default?" global="true" widgetVar="confirmChangeDef" header="Change Default Calendar" severity="alert">
-                                <p:commandButton type="button" value="Yes" icon="ui-icon-check" update=":growl">
-                                    <f:ajax event="click" listener="#{scheduleView.makeDefault()}" /> 
-                                </p:commandButton>   
-
-                                <p:commandButton value="No" icon="ui-icon-close" onclick="PF('confirmChangeDef').hide()"/>
-                            </p:confirmDialog>
+                            <p:dialog widgetVar="confirmChangeDef" header="Change Default Calendar"  resizable="false" >
+                                <h:outputText value="Do you really want to set the Current Calendar as Default?"/><br/>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Yes" icon="ui-icon-check" actionListener="#{scheduleView.makeDefault}" update="@form" oncomplete="PF('confirmChangeDef').hide();" />
+                                    <p:commandButton type="button" value="No" icon="ui-icon-close" onclick="PF('confirmChangeDef').hide()"/>
+                                </f:facet>
+                            </p:dialog> 
                         </h:form>
 
                         <h:form id="deleteForm">
@@ -94,24 +93,27 @@ and open the template in the editor.
                                 <p:commandButton value="Delete Calendar" onclick="PF('confirmationDialog').show()" icon="ui-icon-trash" type="button"/>
                             </h:panelGrid>
 
-                            <p:confirmDialog message="Are you sure?" global="true" widgetVar="confirmationDialog" header="Initiating delete process" severity="alert">
-                                <p:commandButton type="button" value="Yes" icon="ui-icon-check" update=":growl">
-                                    <f:ajax event="click" listener="#{scheduleView.canDeleteCalendar()}" />  
-                                </p:commandButton> 
-                                <p:commandButton type="button" value="No" icon="ui-icon-close" onclick="PF('confirmationDialog').hide()"/>
-                            </p:confirmDialog>
+                            <p:dialog widgetVar="confirmationDialog" header="Initiating delete process"  resizable="false" >
+                                <h:outputText value="Are you sure?"/><br/>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Yes" icon="ui-icon-check" update=":growl" actionListener="#{scheduleView.canDeleteCalendar()}" oncomplete="PF('confirmationDialog').hide()" />
+                                    <p:commandButton type="button" value="No" icon="ui-icon-close" onclick="PF('confirmationDialog').hide()"/>
+                                </f:facet>
+                            </p:dialog>
 
 
-                            <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" minHeight="40" resizable="false">
+                            <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" resizable="false" >
                                 <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
                                 <h:form>
-                                    <p:commandButton value="Move" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
+                                    <f:facet name="footer">
+                                        <p:commandButton value="Move" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
 
-                                    <p:commandButton value="Detach" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
+                                        <p:commandButton value="Detach" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
 
-                                    <p:commandButton value="Delete" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_ALL')}" />
+                                        <p:commandButton value="Delete" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_ALL')}" />
 
-                                    <p:commandButton value="Cancel" type="button" onclick="PF('delOpt').hide()" />
+                                        <p:commandButton value="Cancel" type="button" onclick="PF('delOpt').hide()" />
+                                    </f:facet>
                                 </h:form>
                             </p:dialog>
 
@@ -126,7 +128,7 @@ and open the template in the editor.
                         <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" />
 
                     </p:schedule>
-                    <p:dialog rendered="#{!scheduleView.readOnly}" widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
+                    <p:dialog rendered="#{!scheduleView.readOnly}" widgetVar="eventDialog" header="Event Details" resizable="false" >
                         <h:panelGrid id="eventDetails" columns="2">
                             <h:outputLabel for="title" value="Title:" />
                             <p:inputText id="title" value="#{scheduleView.event.title}" required="true" />
@@ -143,11 +145,12 @@ and open the template in the editor.
 
                             <h:outputLabel for="allDay" value="All Day:" />
                             <h:selectBooleanCheckbox id="allDay" value="#{scheduleView.event.allDay}" />
-
-                            <p:commandButton type="reset" value="Reset" />
-                            <p:commandButton id="addButton" value="Save" actionListener="#{scheduleView.updateEvent}" oncomplete="PF('schedule').update();PF('eventDialog').hide();" />
-
-                        </h:panelGrid>
+                            </h:panelGrid>
+                            <f:facet name="footer">
+                                <p:commandButton type="reset" value="Reset" />
+                                <p:commandButton id="addButton" value="Save" actionListener="#{scheduleView.updateEvent}" oncomplete="PF('schedule').update();PF('eventDialog').hide();" />
+                            </f:facet>
+                        
                     </p:dialog>
                 </h:form>
 

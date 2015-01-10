@@ -53,14 +53,14 @@ public class ScheduleViewBacking implements Serializable {
     private EventManager eventManager;
 
     @Inject
-    private ManageEventBacking manageEvent;
+    private ManageEventBacking manageEventBacking;
 
     @Inject
     private SearchManager search;
 
     private ScheduleModel eventsToShow;
 
-    private ScheduleEvent event = new DefaultScheduleEvent();
+    private ScheduleEvent eventToManage = new DefaultScheduleEvent();
 
     private List<CalendarModel> calendars;
 
@@ -110,11 +110,11 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     public ScheduleEvent getEvent() {
-        return event;
+        return eventToManage;
     }
 
     public void setEvent(ScheduleEvent event) {
-        this.event = event;
+        this.eventToManage = event;
     }
 
     public CalendarModel getCalendarShown() {
@@ -151,9 +151,9 @@ public class ScheduleViewBacking implements Serializable {
      *
      */
     /**
-     * set the user to the current or the one specified in the id loads the
-     * calendars set the calendar titles fill the schedule component with the
-     * event of the first calendar
+     * set the user to the current or the one specified in the id, loads the
+     * calendars, set the calendar titles, fill the schedule component with the
+     * event of the default calendar
      */
     public void init() {
         setUser();
@@ -182,44 +182,55 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     /**
-     * salva l'evento con i parametri impostati dalla pagina myCalendar e faccio
-     * un refresh del calendario che la pagina visualizza
+     * salva l'evento eventToManage con i parametri impostati dalla pagina 
+     * myCalendar e faccio un refresh del calendario che la pagina visualizza
      *
      * @param actionEvent
      */
     public void updateEvent(ActionEvent actionEvent) {
 
-        manageEvent.setTitle(event.getTitle());
-        manageEvent.setCalendarName(calendarSelected);
-        if (event.getData() != null && ((EventDetails) event.getData()).getId() != null) {
-            manageEvent.setIdEvent(Objects.toString(((EventDetails) event.getData()).getId()));
+        manageEventBacking.setTitle(eventToManage.getTitle());
+        manageEventBacking.setCalendarName(calendarSelected);
+        if (eventToManage.getData() != null && ((EventDetails) eventToManage.getData()).getId() != null) {
+            manageEventBacking.setIdEvent(Objects.toString(((EventDetails) eventToManage.getData()).getId()));
         }
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-        manageEvent.setStartDate(dateFormat.format(event.getStartDate()));
-        manageEvent.setStartTime(timeFormat.format(event.getStartDate()));
-        manageEvent.setEndDate(dateFormat.format(event.getEndDate()));
-        manageEvent.setEndTime(timeFormat.format(event.getEndDate()));
-        manageEvent.save(); //TODO bisogna chiamare check o levare
+        manageEventBacking.setStartDate(dateFormat.format(eventToManage.getStartDate()));
+        manageEventBacking.setStartTime(timeFormat.format(eventToManage.getStartDate()));
+        manageEventBacking.setEndDate(dateFormat.format(eventToManage.getEndDate()));
+        manageEventBacking.setEndTime(timeFormat.format(eventToManage.getEndDate()));
+        manageEventBacking.save(); //TODO bisogna chiamare check o levare
 
         refreshCalendar();
     }
 
+    /**
+     * chiamato quando un evento viene selezionato dal componente schedule
+     * reindirizza alla pagina dell evento se l utente è il proprietario
+     * dell evento o se l evento è pubblico
+     * @param selectEvent 
+     */
     public void onEventSelect(SelectEvent selectEvent) {
-        event = (ScheduleEvent) selectEvent.getObject();
+        eventToManage = (ScheduleEvent) selectEvent.getObject();
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         try {
             // se l evento è public o sei l owner
-            if ((event.getData() != null && ((EventDetails) event.getData()).isPub()) || !readOnly) {
-                context.redirect(context.getRequestContextPath() + "/s/eventPage.xhtml?id=" + ((EventDetails) event.getData()).getId());
+            if ((eventToManage.getData() != null && ((EventDetails) eventToManage.getData()).isPub()) || !readOnly) {
+                context.redirect(context.getRequestContextPath() + "/s/eventPage.xhtml?id=" + ((EventDetails) eventToManage.getData()).getId());
             }
         } catch (IOException ex) {
             showGrowl(GrowlMessage.ERROR_REDIRECT);
         }
     }
 
+    /**
+     * chiamato quando un utente seleziona una data, uno slot libero
+     * dal componente schedule. inizializza eventToManage
+     * @param selectEvent 
+     */
     public void onDateSelect(SelectEvent selectEvent) {
-        event = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
+        eventToManage = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
     }
 
     /**
@@ -237,12 +248,15 @@ public class ScheduleViewBacking implements Serializable {
 
     }
 
+    /**
+     * se il parametro userId è impostato imposto la pagina calendar
+     * in modalità visitatore e carico gli eventi dell utente che corrisponde
+     * allo userId. Altrimenti lo imposto come calendario dell utente loggato
+     */
     public void setUser() {
         if (userId != null) {
             if (!Objects.equals(Long.valueOf(userId).longValue(), login.getCurrentUser().getId())) {
                 readOnly = true;
-                System.out.println("-userId:" + userId);
-                System.out.println("-userId castato to long:" + Long.valueOf(userId).longValue());
                 user = search.findUserById(Long.valueOf(userId).longValue());
                 if (user == null) {
                     showGrowl(GrowlMessage.ERROR_USER);
@@ -338,6 +352,11 @@ public class ScheduleViewBacking implements Serializable {
 //        ctx.addMessage(recipient, new FacesMessage(severity, msg, advice));
 //        RequestContext.getCurrentInstance().update("growl");
 //    }
+    
+    /**
+     * faccio un refresh del calendario e degli eventi visualizzati nello
+     * schedule
+     */
     private void refreshCalendar() {
         calendarShown = calendarManager.findCalendarByName(user, calendarShown.getTitle());
         updateEventsToShow(calendarShown);
@@ -371,16 +390,24 @@ public class ScheduleViewBacking implements Serializable {
 
     }
 
+    /**
+     * imposta il calendario visualizzato correntemente come calendario
+     * di default
+     */
     public void makeDefault() {
         if (calendarManager.makeDefault(calendarShown)) {
+            calendarShown = calendarManager.getCalendarUpdated(calendarShown);
             showGrowl(GrowlMessage.DEFAUL_CHANGED);
         } else {
             showGrowl(GrowlMessage.GENERIC_ERROR);
         }
         RequestContext context = RequestContext.getCurrentInstance();
-        context.execute("PF('confirmChangeDef').hide();");
+        //context.execute("PF('confirmChangeDef').hide();");
     }
 
+    /**
+     * cambia privacy al calendario visualizzato correntemente
+     */
     public void switchPrivacy() {
         System.out.println("Privacy: " + calendarShown.isIsPublic());
         calendarManager.toggleCalendarPrivacy(calendarShown);
@@ -395,7 +422,10 @@ public class ScheduleViewBacking implements Serializable {
         }
     }
 
-    public void switchLabel() {
+    /**
+     * cambia l etichetta del pulsante per cambiare la privacy del calendario
+     */
+    private void switchLabel() {
         if (calendarShown.isIsPublic()) {
             labelPrivacy = "Change to Private";
         } else {
@@ -403,6 +433,10 @@ public class ScheduleViewBacking implements Serializable {
         }
     }
 
+    /**
+     * aggiunge un nuovo calendario con i parametri impostati dal
+     * newCalendarDialog
+     */
     public void addNewCalendar() {
         System.out.println("dentro addNewCalendar, calendarToCreate: " + calendarToCreate.toString());
 

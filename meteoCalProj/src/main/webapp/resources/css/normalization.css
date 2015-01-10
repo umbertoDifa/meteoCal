@@ -9,7 +9,7 @@ and open the template in the editor.
 */
 
 .ui-widget{
-    font-family:Arial,sans-serif;font-size: 92% !important;
+    font-family:Arial,sans-serif;font-size: 13px !important;
 }
 
 /*.ui-widget-content {
@@ -30,4 +30,21 @@ and open the template in the editor.
     border:none; 
     padding:0!important;
     cursor: pointer;
+}
+
+.ui-dialog {
+    white-space: nowrap;
+    width: 200px;
+}
+
+.ui-dialog-footer, .ui-panelgrid-footer {
+    text-align: center !important;
+}
+
+.ui-toolbar form {
+    display: inline-block;
+}
+
+#header, #sidebar, .noBorder tr td, .noBorder tr {
+    border: none !important;
 }
