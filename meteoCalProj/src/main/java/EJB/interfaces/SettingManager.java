@@ -17,7 +17,5 @@ public interface SettingManager {
     public List<Pair<String, String>> importCalendar(UserModel user, UploadedFile uploadedFile);
     
     public void deleteExportFolder(UserModel user);
-    
-    public void setAvatar(String path, UserModel user);
-
+ 
 }

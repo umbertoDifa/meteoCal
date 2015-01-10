@@ -5,17 +5,11 @@
  */
 package model;
 
-import com.google.maps.model.LatLng;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -28,12 +22,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
+import javax.persistence.PreRemove;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 
@@ -54,8 +48,8 @@ import javax.persistence.Temporal;
                 + "(e.endDateTime >= :end   AND  (e.startDateTime <= :start  OR   e.endDateTime>=:start) "
                 + "OR (e.startDateTime >= :start AND e.startDateTime <= :end))")
 })
-@NamedNativeQuery(name = "isInAnyCalendar",
-                  query = "SELECT COUNT(*) FROM EVENT_IN_CALENDAR WHERE evetsInCalendar_ID=? AND OWNER_ID=?")
+@NamedQuery(name = "isInAnyCalendar",
+                  query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE e.id=:event AND e.owner=:user")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE")
 public abstract class Event implements Serializable {
@@ -84,8 +78,6 @@ public abstract class Event implements Serializable {
 
     private boolean isOutdoor;
 
-    private String imgPath;
-
     @ManyToOne
     private UserModel owner;
 
@@ -105,6 +97,11 @@ public abstract class Event implements Serializable {
     //vars to store position coordinates if any
     private double latitude;
     private double longitude;
+    
+    @OneToMany(mappedBy = "relatedEvent")
+    private List<Notification> notifications;
+    
+
 
     /*
      *
@@ -137,13 +134,7 @@ public abstract class Event implements Serializable {
      *
      * SETTERS & GETTERS
      */
-    public String getImgPath() {
-        return imgPath;
-    }
 
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
-    }
 
     public boolean hasLocation() {
         return hasLocation;
@@ -271,13 +262,9 @@ public abstract class Event implements Serializable {
 
     @Override
     public String toString() {
-        return "Event{" + "id=" + id + "\ntitle=" + title + "\nstartDateTime="
-                + startDateTime + "\nendDateTime=" + endDateTime + "\nlocation="
-                + location + "\ndescription=" + description + "\nisOutdoor="
-                + isOutdoor + "\nimgPath=" + imgPath + "\nowner=" + owner
-                + "\ninvitations=" + invitations + "\ninCalendars="
-                + inCalendars + '}';
+        return "Event{" + "id=" + id + ", title=" + title + ", startDateTime=" + startDateTime + ", endDateTime=" + endDateTime + ", description=" + description + ", owner=" + owner + '}';
     }
+
 
     public String getFormattedStartDate() {
         String formattedDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm").format(
@@ -299,4 +286,11 @@ public abstract class Event implements Serializable {
         return invitee;
     }
 
+    @PreRemove
+    private void detachNotifications() {
+        System.out.println("++++++++++dentro detach+++++++++++++");
+        for (Notification n: this.notifications) {
+            n.setRelatedEvent(null);
+        }
+    }
 }

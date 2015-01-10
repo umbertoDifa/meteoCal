@@ -134,13 +134,13 @@ public class SearchBacking {
         //TODO filtrare risultati per privacy
         if (searchForUsers || (!searchForEvents && !searchForUsers)) {
             for (UserModel u : users) {
-                userResults.add(new SearchResult(u.getName() + u.getSurname(), u.getEmail(), u.getAvatarPath(), String.valueOf(u.getId())));
+                userResults.add(new SearchResult(u.getName() + u.getSurname(), u.getEmail(), String.valueOf(u.getId())));
             }
         }
 
         if (searchForEvents || (!searchForEvents && !searchForUsers)) {
             for (Event ev : events) {
-                eventResults.add(new SearchResult(ev.getTitle(), ev.getDescription(), ev.getImgPath(), String.valueOf(ev.getId())));
+                eventResults.add(new SearchResult(ev.getTitle(), ev.getDescription(), String.valueOf(ev.getId())));
             }
         }
 

@@ -37,7 +37,6 @@ import org.primefaces.model.UploadedFile;
 
 import utility.LoggerLevel;
 import utility.LoggerProducer;
-import utility.TimeTool;
 import wrappingObjects.Pair;
 
 @Stateless
@@ -224,30 +223,30 @@ public class SettingManagerImpl implements SettingManager {
         //NB works only with our exported calendars
         
 //TODO addattare per l'uloadedFIle
-        
-        //creating and checking input file
-        FileInputStream fin;
-        try {
-            fin = new FileInputStream(filePath);
-        } catch (FileNotFoundException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+//        
+//        //creating and checking input file
+//        FileInputStream fin;
+////        try {
+////            fin = new FileInputStream(filePath);
+////        } catch (FileNotFoundException ex) {
+////            logger.log(Level.SEVERE, ex.getMessage(), ex);
+////            return null;
+////        }
+//
+//        user = (UserModel) database.find(UserModel.class, user.getId());
+//        if (user != null) {
+//            try {
+////                return importIcal(fin, user);
+//            } catch (IOException | ParserException ex) {
+//                logger.log(Level.SEVERE,
+//                        "Non è stato possible creare il calendario, problemi con il builder. "
+//                        + ex.getMessage(), ex);
+//                return null;
+//            }
+//        } else {
+//            logger.log(Level.SEVERE, "L'utente passato non esiste nel db");
             return null;
-        }
-
-        user = (UserModel) database.find(UserModel.class, user.getId());
-        if (user != null) {
-            try {
-                return importIcal(fin, user);
-            } catch (IOException | ParserException ex) {
-                logger.log(Level.SEVERE,
-                        "Non è stato possible creare il calendario, problemi con il builder. "
-                        + ex.getMessage(), ex);
-                return null;
-            }
-        } else {
-            logger.log(Level.SEVERE, "L'utente passato non esiste nel db");
-            return null;
-        }
+ //       }
 
     }
 
@@ -386,10 +385,4 @@ public class SettingManagerImpl implements SettingManager {
         }
     }
 
-    @Override
-    public void setAvatar(String path, UserModel user) {
-        user = database.find(UserModel.class ,user.getId());
-        user.setAvatarPath(path);
-        database.flush();
-    }
 }

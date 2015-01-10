@@ -229,12 +229,6 @@ public class EventManagerImpl implements EventManager {
             oldEvent.setEndDateTime(event.getEndDateTime());
             changed = true;
         }
-        //aggiorno imgPath
-        if (oldEvent.getImgPath() == null ? (event.getImgPath()) != null : !oldEvent.getImgPath().equals(
-                event.getImgPath())) {
-            oldEvent.setImgPath(event.getImgPath());
-            changed = true;
-        }
         //aggiorno location
         if (oldEvent.getLocation() == null ? (event.getLocation()) != null : !oldEvent.getLocation().equals(
                 event.getLocation())) {
@@ -423,6 +417,11 @@ public class EventManagerImpl implements EventManager {
     public boolean deleteEvent(Event event) {
         try {
             event = database.find(Event.class, event.getId());
+            if (event instanceof PublicEvent) {
+                PublicEvent publicEvent= (PublicEvent)event;
+                notificationManager.createNotifications(publicEvent.getGuests(), event, NotificationType.EVENT_CANCELLED, false);
+            }
+            notificationManager.createNotifications(event.getInvitee(), event, NotificationType.EVENT_CANCELLED, false);
             database.remove(event);
             return true;
         } catch (IllegalArgumentException e) {
@@ -508,11 +507,5 @@ public class EventManagerImpl implements EventManager {
         return i != 0;
     }
 
-    @Override
-    public void setEventPicture(String path, Event event) {
-        event = database.find(Event.class, event.getId());
-        event.setImgPath(path);
-        database.flush();
-    }
 
 }

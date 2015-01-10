@@ -49,8 +49,6 @@ public interface EventManager {
 
     public boolean changeEventPrivacy(Event event, boolean spreadInvitations);
     
-    public void setEventPicture(String path, Event event);
-    
     public void updateEventLatLng(Event event) ;
 
 }

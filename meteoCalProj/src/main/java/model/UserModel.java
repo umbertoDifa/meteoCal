@@ -62,8 +62,6 @@ public class UserModel implements Serializable {
     @Column(nullable = false)
     private String password;
 
-    private String avatarPath;
-
     @Column(columnDefinition = "ENUM('M','F')")
     private char gender;
 
@@ -113,9 +111,6 @@ public class UserModel implements Serializable {
         return password;
     }
 
-    public String getAvatarPath() {
-        return avatarPath;
-    }
 
     public char getGender() {
         return gender;
@@ -190,9 +185,6 @@ public class UserModel implements Serializable {
         this.password = password;
     }
 
-    public void setAvatarPath(String avatarPath) {
-        this.avatarPath = avatarPath;
-    }
 
     public void setGender(char gender) {
         this.gender = gender;
