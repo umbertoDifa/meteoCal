@@ -101,7 +101,7 @@ public class SettingManagerImplTest {
                 Event.class), Matchers.any(InvitationAnswer.class))).thenReturn(
                         attendees);
 
-        settingManager.exportCalendar(cal);
+      //  settingManager.exportCalendar(cal);
 
         //verifico che quel metodo venga chiamato una sola volta
         verify(eventManager, times(1)).getInviteesFiltered(
@@ -145,7 +145,7 @@ public class SettingManagerImplTest {
 //                Event.class), Matchers.any(UserModel.class))).thenReturn(
 //                        Boolean.FALSE);
 
-        settingManager.importCalendar(userImporting, calendarName);
+ //       settingManager.importCalendar(userImporting, calendarName);
 
     }
 

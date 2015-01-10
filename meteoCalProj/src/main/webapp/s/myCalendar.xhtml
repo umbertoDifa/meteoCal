@@ -42,13 +42,13 @@ and open the template in the editor.
                         </h:panelGrid>
                     </f:facet>
                     <f:facet name="right">
-                        <h:form id="publicSwitchForm">
+                        <h:form id="publicSwitchForm" rendered="#{!scheduleView.readOnly}">
                             <h:panelGrid >
                                 <p:commandButton id="publicSwitch" widgetVar="publicSwitch" value="#{scheduleView.labelPrivacy}" actionListener="#{scheduleView.switchPrivacy()}" update="@this"  />
                             </h:panelGrid>
                         </h:form>
 
-                        <h:form id="addCalendar">
+                        <h:form id="addCalendar" rendered="#{!scheduleView.readOnly}">
                             <h:panelGrid columns="2">
                                 <p:commandButton id="addCalendar" widgetVar="addCalendar" value="addCalendar" onclick="PF('newCalendarDialog').show()" icon="ui-icon-plusthick" />
                             </h:panelGrid>
@@ -74,8 +74,8 @@ and open the template in the editor.
                             </p:dialog>
                         </h:form>
 
-                        <h:form id="changeDefault">
-                            <h:panelGrid columns="2" rendered="#{!scheduleView.readOnly}">
+                        <h:form id="changeDefault" rendered="#{!scheduleView.readOnly}">
+                            <h:panelGrid columns="2" >
                                 <p:commandButton widgetVar="changeDefaultButton" value="Make Default" onclick="PF('confirmChangeDef').show()" type="button" icon="ui-icon-heart" disabled="#{scheduleView.calendarShown.isDefault}"/>
                             </h:panelGrid>
 
@@ -88,8 +88,8 @@ and open the template in the editor.
                             </p:dialog> 
                         </h:form>
 
-                        <h:form id="deleteForm">
-                            <h:panelGrid columns="2" rendered="#{!scheduleView.readOnly}">
+                        <h:form id="deleteForm" rendered="#{!scheduleView.readOnly}">
+                            <h:panelGrid columns="2" >
                                 <p:commandButton value="Delete Calendar" onclick="PF('confirmationDialog').show()" icon="ui-icon-trash" type="button"/>
                             </h:panelGrid>
 

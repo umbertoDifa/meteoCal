@@ -24,7 +24,7 @@ and open the template in the editor.
         <ui:define name="content">
 
             <h1><h:outputText value="#{viewEvent.eventToShow.title}" /></h1>
-            <p:panelGrid columns="2">
+            <p:panelGrid columns="2" class="noBorder">
                 <h:outputLabel value="Title:" /><h:outputText value="#{viewEvent.eventToShow.title}"/>
                 <h:outputLabel value="Starts at:" /><h:outputText value="#{viewEvent.eventToShow.formattedStartDate}"/>
                 <h:outputLabel value="Ends at:" /><h:outputText value="#{viewEvent.eventToShow.formattedEndDate}"/>

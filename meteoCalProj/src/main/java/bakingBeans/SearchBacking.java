@@ -16,7 +16,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import model.CalendarModel;
 import model.Event;
+import model.PublicEvent;
 import model.UserModel;
 import utility.LoggerLevel;
 import utility.SearchResult;
@@ -40,6 +42,9 @@ public class SearchBacking {
 
     @Inject
     Logger logger;
+
+    @Inject
+    LoginBacking login;
 
     private List<UserModel> users;
     private List<Event> events;
@@ -134,13 +139,24 @@ public class SearchBacking {
         //TODO filtrare risultati per privacy
         if (searchForUsers || (!searchForEvents && !searchForUsers)) {
             for (UserModel u : users) {
-                userResults.add(new SearchResult(u.getName() + u.getSurname(), u.getEmail(), u.getAvatarPath(), String.valueOf(u.getId())));
+                boolean add = false;
+                List<CalendarModel> list = u.getOwnedCalendars();
+                for (CalendarModel c : list) {
+                    if (c.isIsPublic()) {
+                        add = true;
+                    }
+                }
+                if (add == true) {
+                    userResults.add(new SearchResult(u.getName() + u.getSurname(), u.getEmail(), u.getAvatarPath(), String.valueOf(u.getId())));
+                }
             }
         }
 
         if (searchForEvents || (!searchForEvents && !searchForUsers)) {
             for (Event ev : events) {
-                eventResults.add(new SearchResult(ev.getTitle(), ev.getDescription(), ev.getImgPath(), String.valueOf(ev.getId())));
+                if ((ev instanceof PublicEvent) || (ev.getInvitee().contains(login.getCurrentUser()))) {
+                    eventResults.add(new SearchResult(ev.getTitle(), ev.getDescription(), ev.getImgPath(), String.valueOf(ev.getId())));
+                }
             }
         }
 

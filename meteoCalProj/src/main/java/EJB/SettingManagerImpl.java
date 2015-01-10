@@ -228,7 +228,7 @@ public class SettingManagerImpl implements SettingManager {
         //creating and checking input file
         FileInputStream fin;
         try {
-            fin = new FileInputStream(filePath);
+            fin = new FileInputStream("");
         } catch (FileNotFoundException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
             return null;
