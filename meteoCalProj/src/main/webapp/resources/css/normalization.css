@@ -31,3 +31,12 @@ and open the template in the editor.
     padding:0!important;
     cursor: pointer;
 }
+
+.ui-dialog {
+    white-space: nowrap;
+    width: 200px;
+}
+
+.ui-dialog-footer {
+    text-align: center !important;
+}
