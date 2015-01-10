@@ -54,5 +54,11 @@ public class NotificationManagerImpl implements NotificationManager {
         database.persist(notification);
 
     }
+    
+    private int getNotificationNumber (UserModel user) {
+        user = database.find(UserModel.class, user.getId());
+        database.refresh(user);
+        return user.getNotifications().size();
+    }
 
 }

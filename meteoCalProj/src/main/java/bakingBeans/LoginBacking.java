@@ -40,6 +40,8 @@ public class LoginBacking implements Serializable {
     private LoginManager userManager;
 
     private UserModel currentUser;
+    
+    private int notificationNumber;
 
     public String login() {
 
@@ -88,5 +90,13 @@ public class LoginBacking implements Serializable {
     
     public String getSurname(){
         return currentUser.getSurname();
+    }
+    
+    public void updateNotification() {
+        
+    }
+    
+    public int notificationsNumber () {
+        return 0;
     }
 }
