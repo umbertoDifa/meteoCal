@@ -179,6 +179,11 @@ public class SettingsBacking implements Serializable {
         //else
         // showMessage("password not updated");
     }
+    
+    public void deleteAccount() {
+        //TODO
+        //settingManager.deleteAccount(login.getCurrentUser());
+    }
 
     public void importCalendar(FileUploadEvent event) {
         settingManager.importCalendar(user, event.getFile());
