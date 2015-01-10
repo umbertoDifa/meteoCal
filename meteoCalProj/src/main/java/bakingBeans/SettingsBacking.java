@@ -23,7 +23,6 @@ import javax.enterprise.context.Dependent;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import model.CalendarModel;
 import model.UserModel;
 import org.primefaces.event.FileUploadEvent;
@@ -179,7 +178,7 @@ public class SettingsBacking {
 
             System.out.println("New file created!");
 
-            settingManager.importCalendar(login.getCurrentUser(), importFile.getAbsolutePath());
+//            settingManager.importCalendar(login.getCurrentUser(), importFile.getAbsolutePath());
 
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -195,7 +194,7 @@ public class SettingsBacking {
                     + TimeTool.dateToTextDay(Calendar.getInstance().getTime(),
                             "yyyy-MM-dd-hh-mm-ss") + ".ics");
             if (settingManager.exportCalendar(c, exportFile.getAbsolutePath())) {
-                stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getR getResourceAsStream(exportFile.getAbsolutePath());
+             //   stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getR getResourceAsStream(exportFile.getAbsolutePath());
 
             }
             //let the user download it
