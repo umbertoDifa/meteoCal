@@ -164,12 +164,20 @@ public class SettingsBacking implements Serializable {
         return result;
     }
 
-    public void save() {
+    public void saveCredentials() {
         //TODO
+        // if(settingManager.changeCredentials(login.getCurrentUser(), name, surname, email))
+        // showMessage("credential updated");
+        //else
+        // showMessage("credential not updated");
     }
 
-    public void clear() {
-        init();
+    public void savePassword() {
+        //TODO
+        // if(settingManager.changePassword(login.getCurrentUser(), password))
+        // showMessage("password updated");
+        //else
+        // showMessage("password not updated");
     }
 
     public void importCalendar(FileUploadEvent event) {

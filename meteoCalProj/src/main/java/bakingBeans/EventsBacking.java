@@ -92,6 +92,7 @@ public class EventsBacking implements Serializable {
     public void init() {
         System.out.println("-dentro la init");
         //riempio le tab
+        //TODO MAGIC NUMBER
         ownedEvents = eventManager.eventOnWall(EventType.OWNED, 20, login.getCurrentUser());
         joinedEvents = eventManager.eventOnWall(EventType.JOINED, 20, login.getCurrentUser());
         invitations = eventManager.eventOnWall(EventType.INVITED, 20, login.getCurrentUser());

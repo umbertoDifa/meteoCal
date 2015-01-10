@@ -36,7 +36,12 @@ and open the template in the editor.
                 <p:inputText id="email" value="#{settings.email}" pt:required="">
                     <f:passThroughAttribute name="type" value="email" />
                 </p:inputText>
+                <br/>
+                <p:commandButton id="save" value="Save" action="#{settings.saveCredentials}"/>
 
+                <p:commandButton id="cancel" type="reset" value="Reset" />
+            </h:form>
+            <h:form>
                 <h2> Change Password: </h2>
                 <h:panelGrid columns="2">
                     <h:outputLabel>Old Password:</h:outputLabel> 
@@ -49,9 +54,9 @@ and open the template in the editor.
                     <p:password id="newPassword2" />
                 </h:panelGrid>
                 <br/>
-                <p:commandButton id="save" value="Save" action="#{settings.save}"/>
+                <p:commandButton id="save" value="Save" action="#{settings.savePassword}"/>
 
-                <p:commandButton id="cancel" value="Cancel" action="#{settings.clear}"/>
+                <p:commandButton id="cancel" type="reset" value="Reset" />
             </h:form>
             <hr/>
             <h2> Export Calendar: </h2>
