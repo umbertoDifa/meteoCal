@@ -12,7 +12,7 @@ import wrappingObjects.Pair;
  */
 public interface SettingManager {
 
-    public boolean exportCalendar(CalendarModel calendar, String destionationPath);
+    public boolean exportCalendar(CalendarModel calendar);
 
     public List<Pair<String, String>> importCalendar(UserModel user, UploadedFile uploadedFile);
     
