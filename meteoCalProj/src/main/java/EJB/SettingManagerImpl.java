@@ -480,18 +480,77 @@ public class SettingManagerImpl implements SettingManager {
     }
 
     @Override
-    public void deleteAccount(UserModel userToDelete) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean deleteAccount(UserModel userToDelete) {
+        if (userToDelete != null) {
+            userToDelete = database.find(UserModel.class, userToDelete.getId());
+            if (userToDelete != null) {
+                database.remove(userToDelete); //TODO come siamo messi a cascade?
+                return true;
+            } else {
+                logger.log(LoggerLevel.WARNING,
+                        "L'utente da cancellare non esiste nel db");
+                return false;
+            }
+        } else {
+            logger.log(LoggerLevel.WARNING, "L'utente da cancellare è null");
+            return false;
+        }
     }
 
     @Override
-    public void changePassword(UserModel user, String oldPassword, String newPassword) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean changePassword(UserModel user, String oldPassword, String newPassword) {
+        if (user != null) {
+            user = database.find(UserModel.class, user.getId());
+            if (user != null) {
+                if (user.getPassword().equals(oldPassword)) {
+                    user.setPassword(newPassword);
+                    database.flush();
+                    return true;
+                } else {
+                    logger.log(LoggerLevel.WARNING,
+                            "La vecchia password è sbagliata");
+                    return false;
+                }
+            } else {
+                logger.log(LoggerLevel.WARNING,
+                        "L'utente per cambiare la pw non esiste nel db");
+                return false;
+            }
+        } else {
+            logger.log(LoggerLevel.WARNING, "L'utente per cambiare la pw è null");
+            return false;
+        }
     }
 
     @Override
-    public void changeCredentials(UserModel user, String name, String surname, String email) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean changeCredentials(UserModel user, String name, String surname, String email) {
+        if (user != null) {
+            user = database.find(UserModel.class, user.getId());
+            if (user != null) {
+                //cambio i dati se necessario
+                if (!user.getEmail().equals(email)) {
+                    user.setEmail(email);
+                }
+                if (!user.getName().equals(name)) {
+                    user.setName(name);
+                }
+                if (!user.getSurname().equals(surname)) {
+                    user.setSurname(surname);
+                }
+
+                //aggiorno il db
+                database.flush();
+
+                return true;
+            } else {
+                logger.log(LoggerLevel.WARNING,
+                        "L'utente da modificare non esiste nel db");
+                return false;
+            }
+        } else {
+            logger.log(LoggerLevel.WARNING, "L'utente da modificare è null");
+            return false;
+        }
     }
 
 }

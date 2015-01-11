@@ -18,10 +18,30 @@ public interface SettingManager {
 
     public void deleteExportFolder(UserModel user);
 
-    public void deleteAccount(UserModel userToDelete);
+    /**
+     * Cancella un account se lo userToDelete viene trovato ed e not null
+     * @param userToDelete user da eliminare 
+     * @return true se lo user è eliminato, false se non è stato possibile eliminarlo
+     */
+    public boolean deleteAccount(UserModel userToDelete);
 
-    public void changePassword(UserModel user, String oldPassword, String newPassword);
+    /**
+     * 
+     * @param user
+     * @param oldPassword
+     * @param newPassword
+     * @return true se la password è stata cambiata, false altrimenti
+     */
+    public boolean changePassword(UserModel user, String oldPassword, String newPassword);
 
-    public void changeCredentials(UserModel user, String name, String surname, String email);
+    /**
+     * 
+     * @param user
+     * @param name
+     * @param surname
+     * @param email
+     * @return true se campi cambiati con successo, false altrimenti
+     */
+    public boolean changeCredentials(UserModel user, String name, String surname, String email);
 
 }
