@@ -232,11 +232,20 @@ public class EventManagerImpl implements EventManager {
         //aggiorno location
         if (oldEvent.getLocation() == null ? (event.getLocation()) != null : !oldEvent.getLocation().equals(
                 event.getLocation())) {
-            oldEvent.setLocation(event.getLocation());
-            this.updateEventLatLng(event);
-            changed = true;
-        }
+            logger.log(LoggerLevel.DEBUG, "trovata modifica location!");
+            logger.log(LoggerLevel.DEBUG, "vecchia location: "
+                    + oldEvent.getLocation() + " nuova: " + event.getLocation());
+            logger.log(LoggerLevel.DEBUG, "vecchia has location: "
+                    + oldEvent.hasLocation() + "nuova: " + event.hasLocation());
+            if (!event.getLocation().isEmpty()) {
+                oldEvent.setLocation(event.getLocation());
+                oldEvent.setHasLocation(event.hasLocation());
+                this.updateEventLatLng(oldEvent);
+                weatherManager.updateWeather(oldEvent);
 
+                changed = true;
+            }
+        }
         //aggiorno titolo
         if (oldEvent.getTitle() == null ? (event.getTitle()) != null : !oldEvent.getTitle().equals(
                 event.getTitle())) {
@@ -246,6 +255,10 @@ public class EventManagerImpl implements EventManager {
         //aggiorno outdoor
         if (oldEvent.isIsOutdoor() != event.isIsOutdoor()) {
             oldEvent.setIsOutdoor(event.isIsOutdoor());
+            //se ora è diventato outdoor
+            if (event.isIsOutdoor()) {
+                weatherManager.updateWeather(oldEvent);
+            }
             changed = true;
         }
 
@@ -443,16 +456,26 @@ public class EventManagerImpl implements EventManager {
      */
     @Override
     public List<UserModel> getInviteesFiltered(Event event, InvitationAnswer answer) {
-        event = database.find(Event.class, event.getId());
-        List<Invitation> invitations = event.getInvitations();
-        List<UserModel> users = new ArrayList<>();
-
-        for (Invitation invitation : invitations) {
-            if (invitation.getAnswer().equals(answer)) {
-                users.add(invitation.getInvitee());
+        if (event != null) {
+            if(event.getId() == null){
+                logger.log(LoggerLevel.DEBUG,"id eveento null");
             }
+            logger.log(LoggerLevel.DEBUG,"id evento :"+event.getId());
+            logger.log(LoggerLevel.DEBUG,"database :"+database.toString());
+            event = database.find(Event.class, event.getId());
+            List<Invitation> invitations = event.getInvitations();
+            List<UserModel> users = new ArrayList<>();
+
+            for (Invitation invitation : invitations) {
+                if (invitation.getAnswer().equals(answer)) {
+                    users.add(invitation.getInvitee());
+                }
+            }
+            return users;
+        } else {
+            return null;
         }
-        return users;
+
     }
 
     @Override

@@ -5,6 +5,7 @@ import EJB.interfaces.WeatherManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -28,7 +29,7 @@ import utility.DeleteCalendarOption;
 @Stateless
 public class CalendarManagerImpl implements CalendarManager {
 
-    Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
+    private Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
 
     @Inject
     private WeatherManager weatherManager;
@@ -187,7 +188,7 @@ public class CalendarManagerImpl implements CalendarManager {
         tempEvent.setHasLocation(event.hasLocation());
         tempEvent.setLatitude(event.getLatitude());
         tempEvent.setLongitude(event.getLongitude());
-        
+
         logger.log(LoggerLevel.DEBUG,
                 "Parametri tempEvent:\nuser: "
                 + tempEvent.getOwner().getEmail() + "\nfine evento: "
@@ -206,7 +207,7 @@ public class CalendarManagerImpl implements CalendarManager {
             //setto nuova data fine           
             tempEvent.getEndDateTime().add(Calendar.DAY_OF_MONTH, 1);
 
-            if (!isInConflict(tempEvent) && isGoodWeather(tempEvent)) {                
+            if (!isInConflict(tempEvent) && isGoodWeather(tempEvent)) {
                 return i;
             }
         }
@@ -261,8 +262,9 @@ public class CalendarManagerImpl implements CalendarManager {
             database.persist(calendar);
             logger.log(Level.INFO, "{0} created for user {1}", new Object[]{
                 calendar.getTitle(), calendar.getOwner().getEmail()});
-            if (makeDefault)
+            if (makeDefault) {
                 makeDefault(calendar);
+            }
             return true;
         } catch (EntityExistsException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -416,11 +418,24 @@ public class CalendarManagerImpl implements CalendarManager {
                                     calendar.getEventsInCalendar().get(i));
                         }
                         calendar.getEventsInCalendar().clear();
+                        break;
                     case DELETE_CALENDAR_ONLY:
                         calendar.getEventsInCalendar().clear();
+                        break;
                     case DELETE_ALL:
-                    //non faccio nulla, perchè il CASCADE è già come opzione default del DB.
-
+                        Event event;
+                        //per ogni evento
+                        for (int i = 0; i
+                                < calendar.getEventsInCalendar().size(); i++) {
+                            event = calendar.getEventsInCalendar().get(i);
+                            //se l'owner dell'evento è diverso da quello del calendario
+                            if (!Objects.equals(event.getOwner().getId(),
+                                    calendar.getOwner().getId())) {
+                                //rimuovo l'evento dal calendario così quando alla fine faccio la remove
+                                //la cascade non mi rimuove un evento di cui non sono il proprietario
+                                calendar.getEventsInCalendar().remove(event);
+                            }
+                        }
                 }
 
                 database.flush();
@@ -456,11 +471,11 @@ public class CalendarManagerImpl implements CalendarManager {
             return false;
         }
     }
-    
+
     @Override
-    public CalendarModel getDefaultCalendar (UserModel user) {
+    public CalendarModel getDefaultCalendar(UserModel user) {
         try {
-            CalendarModel calendar =  (CalendarModel) database.createNamedQuery(
+            CalendarModel calendar = (CalendarModel) database.createNamedQuery(
                     "findDefaultCalendar").setParameter("user",
                             user).getSingleResult();
             database.refresh(calendar);

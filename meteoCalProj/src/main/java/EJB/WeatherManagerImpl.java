@@ -35,7 +35,7 @@ import weatherLib.OpenWeatherMap;
 public class WeatherManagerImpl implements WeatherManager {
 
     //tentativi di ottenere le previsioni prima di ritornare unavailable
-    private final int MAX_TRIES = 3;
+    private final int MAX_TRIES = 10;
 
     //creo oggetto openWeatherMap per fare le richieste con la mia API key
     private OpenWeatherMap openWeatherMap;
@@ -72,10 +72,6 @@ public class WeatherManagerImpl implements WeatherManager {
 
     private Logger logger = LoggerProducer.debugLogger(WeatherManagerImpl.class);
 
-//    @PostConstruct
-//    private void init() {
-//        openWeatherMap = new OpenWeatherMap("6f165fcce7eddd2405ef5c0596000ff7");
-//    }
     /**
      * Constructor
      *
@@ -469,71 +465,86 @@ public class WeatherManagerImpl implements WeatherManager {
      * @param event
      */
     @Override
-    public
-            void updateWeather(Event event) {
+    public void updateWeather(Event event) {
         //scarico il tempo
         WeatherForecast newForecast = this.getWeather(event);
 
-        //se ho ottenuto qualche dato
-        if (newForecast.getMessage()
-                != WeatherMessages.NOT_AVAILABLE) {
-            //salvo il vecchio tempo
-            WeatherForecast oldForecast = event.getWeather();
-            boolean weatherChanged = !oldForecast.getMain().equals(
-                    newForecast.getMain());
-
-            //aggiorno il db            
-            oldForecast.update(newForecast);
+        //se non esisteva una previsione
+        if (event.getWeather() == null || event.getWeather().getMain() == null) {
+            event.setWeather(newForecast);
+            //se è la prima volta
+            //aggiungo weather
+            database.persist(newForecast);
+            event = database.find(Event.class, event.getId());
+            event.setWeather(newForecast);
             database.flush();
-            logger.log(LoggerLevel.DEBUG, "appena flushato il nuovo tempo");
-
-            //controllo se sono tre giorni prima ed è previsto badWeather
-            //nel caso avviso l'owner che può richedulare
-            if (isBadWeatherNDaysBefore(event, newForecast, 3)) {
-                logger.log(LoggerLevel.DEBUG,
-                        "Bad weather in three days detected");
-
-                //get the owner
-                List<UserModel> ownerList = new ArrayList<>();
-                ownerList.add(event.getOwner());
-
-                //notify The Owner
-                notificationManager.createNotifications(ownerList, event,
-                        NotificationType.BAD_WEATHER_IN_THREE_DAYS, true);
-            }
-
-            //controllo se domani è il giorno dell'evento outdoor
-            //perchè in quel caso se è brutto tempo li informo
-            if (isBadWeatherNDaysBefore(event, newForecast, 1)) {
-                logger.log(LoggerLevel.DEBUG,
-                        "Bad weather tomorrow detected");
-
-                List<UserModel> participants = eventManager.getInviteesFiltered(
-                        event, InvitationAnswer.YES);
-
-                notificationManager.createNotifications(participants, event,
-                        NotificationType.BAD_WEATHER_TOMORROW, true);
-
-            } else if (weatherChanged) {
-                //comuque se il tempo cambia li informo
-                logger.log(LoggerLevel.DEBUG,
-                        "Weather changed detected");
-
-                List<UserModel> participants = eventManager.getInviteesFiltered(
-                        event, InvitationAnswer.YES);
-
-                notificationManager.createNotifications(participants, event,
-                        NotificationType.WEATHER_CHANGED, true);
-            } else {
-                logger.log(LoggerLevel.DEBUG,
-                        "No bad weather and non changed in forecast detected");
-            }
-
-            //altrimenti non faccio nulla
         } else {
-            logger.log(LoggerLevel.DEBUG, "Nussun nuovo dato disponibile");
-        }
+            event = database.find(Event.class, event.getId());
 
+            //se ho ottenuto qualche dato
+            if (newForecast.getMessage()
+                    != WeatherMessages.NOT_AVAILABLE) {
+                //salvo il vecchio tempo
+                WeatherForecast oldForecast = event.getWeather();
+                boolean weatherChanged = !oldForecast.getMain().equals(
+                        newForecast.getMain());
+
+                //aggiorno il db            
+                oldForecast.update(newForecast);
+                database.flush();
+                logger.log(LoggerLevel.DEBUG, "appena flushato il nuovo tempo");
+
+                //controllo se sono tre giorni prima ed è previsto badWeather
+                //nel caso avviso l'owner che può richedulare
+                if (isBadWeatherNDaysBefore(event, newForecast, 3)) {
+                    logger.log(LoggerLevel.DEBUG,
+                            "Bad weather in three days detected");
+
+                    //get the owner
+                    List<UserModel> ownerList = new ArrayList<>();
+                    ownerList.add(event.getOwner());
+
+                    //notify The Owner
+                    notificationManager.createNotifications(ownerList, event,
+                            NotificationType.BAD_WEATHER_IN_THREE_DAYS, true);
+                }
+
+                //controllo se domani è il giorno dell'evento outdoor
+                //perchè in quel caso se è brutto tempo li informo
+                if (isBadWeatherNDaysBefore(event, newForecast, 1)) {
+                    logger.log(LoggerLevel.DEBUG,
+                            "Bad weather tomorrow detected");
+                    logger.log(LoggerLevel.DEBUG, "id evento :" + event.getId());
+                    logger.log(LoggerLevel.DEBUG, "event manager is: "
+                            + eventManager.toString());
+                    List<UserModel> participants = eventManager.getInviteesFiltered(
+                            event, InvitationAnswer.YES);
+
+                    notificationManager.createNotifications(participants, event,
+                            NotificationType.BAD_WEATHER_TOMORROW, true);
+
+                } else if (weatherChanged) {
+                    //comuque se il tempo cambia li informo
+                    logger.log(LoggerLevel.DEBUG,
+                            "Weather changed detected");
+                    logger.log(LoggerLevel.DEBUG, "id evento :" + event.getId());
+                    logger.log(LoggerLevel.DEBUG, "event manager is: "
+                            + eventManager.toString());
+                    List<UserModel> participants = eventManager.getInviteesFiltered(
+                            event, InvitationAnswer.YES);
+
+                    notificationManager.createNotifications(participants, event,
+                            NotificationType.WEATHER_CHANGED, true);
+                } else {
+                    logger.log(LoggerLevel.DEBUG,
+                            "No bad weather and non changed in forecast detected");
+                }
+
+                //altrimenti non faccio nulla
+            } else {
+                logger.log(LoggerLevel.DEBUG, "Nussun nuovo dato disponibile");
+            }
+        }
     }
 
     private boolean isBadWeatherNDaysBefore(Event event, WeatherForecast forecast, int daysBefore) {

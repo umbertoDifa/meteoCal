@@ -403,5 +403,5 @@ public class ViewEventPageBacking implements Serializable {
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, null);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
-
+    
 }
