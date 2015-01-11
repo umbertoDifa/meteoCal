@@ -298,7 +298,7 @@ public class ScheduleViewBacking implements Serializable {
                 if (ev instanceof PrivateEvent && readOnly) {
                     // creo una slot senza dettagli
                     DefaultScheduleEvent e = new DefaultScheduleEvent(
-                            "evento privato",
+                            "Busy Slot",
                             ev.getStartDateTime().getTime(),
                             ev.getEndDateTime().getTime(),
                             new EventDetails(ev.getId(), (ev instanceof PublicEvent)));

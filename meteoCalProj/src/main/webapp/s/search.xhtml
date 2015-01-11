@@ -47,7 +47,7 @@ and open the template in the editor.
             <p:tabView>
                 <p:tab title="Event">
                     <h:form>
-                        <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="1">
+                        <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="10">
                             <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default.png"/> 
@@ -74,7 +74,7 @@ and open the template in the editor.
                 </p:tab>
                 <p:tab title="User">
                     <h:form>
-                        <p:dataScroller value="#{search.userResults}" var="u" chunkSize="2">
+                        <p:dataScroller value="#{search.userResults}" var="u" chunkSize="10">
                             <p:fieldset legend="#{u.title}" style="margin-bottom:20px">
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default.png"/> 
