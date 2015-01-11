@@ -10,7 +10,7 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import java.util.ArrayList;
-import java.util.List; 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -418,10 +418,12 @@ public class EventManagerImpl implements EventManager {
         try {
             event = database.find(Event.class, event.getId());
             if (event instanceof PublicEvent) {
-                PublicEvent publicEvent= (PublicEvent)event;
-                notificationManager.createNotifications(publicEvent.getGuests(), event, NotificationType.EVENT_CANCELLED, false);
+                PublicEvent publicEvent = (PublicEvent) event;
+                notificationManager.createNotifications(publicEvent.getGuests(),
+                        event, NotificationType.EVENT_CANCELLED, false);
             }
-            notificationManager.createNotifications(event.getInvitee(), event, NotificationType.EVENT_CANCELLED, false);
+            notificationManager.createNotifications(event.getInvitee(), event,
+                    NotificationType.EVENT_CANCELLED, false);
             database.remove(event);
             return true;
         } catch (IllegalArgumentException e) {
@@ -502,10 +504,10 @@ public class EventManagerImpl implements EventManager {
     @Override
     public boolean isInAnyCalendar(Event event, UserModel user
     ) {
-        int i = (int) database.createNamedQuery("isInAnyCalendar").setParameter(
-                1, event.getId()).setParameter(2, user.getId()).getSingleResult();
+        Long i = (Long) database.createNamedQuery("isInAnyCalendar").setParameter(
+                "event", event.getId()).setParameter("user", user).getSingleResult();
+        logger.log(LoggerLevel.DEBUG, "Evento già in " + i + " calendari!");
         return i != 0;
     }
-
 
 }

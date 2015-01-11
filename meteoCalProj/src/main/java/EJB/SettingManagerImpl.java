@@ -458,6 +458,7 @@ public class SettingManagerImpl implements SettingManager {
     }
 
     @Override
+    //TODO not used anymore
     public void deleteExportFolder(UserModel user) {
 
         //creo il path
@@ -476,6 +477,21 @@ public class SettingManagerImpl implements SettingManager {
                 logger.log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
+    }
+
+    @Override
+    public void deleteAccount(UserModel userToDelete) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void changePassword(UserModel user, String oldPassword, String newPassword) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void changeCredentials(UserModel user, String name, String surname, String email) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
