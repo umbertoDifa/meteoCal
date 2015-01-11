@@ -8,12 +8,14 @@ package bakingBeans;
 import EJB.interfaces.LoginManager;
 import EJB.interfaces.NotificationManager;
 import EJB.interfaces.SearchManager;
+import java.io.IOException;
 import model.UserModel;
 import javax.inject.Named;
 import java.io.Serializable;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import wrappingObjects.UserAndMessage;
@@ -40,15 +42,15 @@ public class LoginBacking implements Serializable {
 
     @Inject
     private LoginManager userManager;
-    
+
     @Inject
     private SearchManager searchManager;
-    
+
     @Inject
     private NotificationManager notificationManager;
 
     private UserModel currentUser;
-    
+
     private int notificationNumber = 0;
 
     public String login() {
@@ -64,7 +66,7 @@ public class LoginBacking implements Serializable {
             RequestContext.getCurrentInstance().update("growl");
             return "/";
         }
-        
+
     }
 
     public String logout() {
@@ -77,6 +79,18 @@ public class LoginBacking implements Serializable {
 
     }
 
+    public void forceLogout() {
+        logout();
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+
+        try {
+            context.redirect(context.getRequestContextPath()
+                    + "/signUp.xhtml?faces-redirect=true");
+        } catch (IOException ex) {
+
+        }
+    }
+
     public boolean isLoggedIn() {
         return currentUser != null;
 
@@ -87,32 +101,29 @@ public class LoginBacking implements Serializable {
         return currentUser;
     }
 
-    
-    public String getEmail(){
+    public String getEmail() {
         return currentUser.getEmail();
     }
-    
-    public String getName(){
+
+    public String getName() {
         return currentUser.getName();
     }
-    
-    public String getSurname(){
+
+    public String getSurname() {
         return currentUser.getSurname();
     }
 
     public String getNotificationNumber() {
         return String.valueOf(notificationNumber);
     }
-    
-    
+
     public void refreshCurrentUser() {
         currentUser = searchManager.findUserById(currentUser.getId());
     }
-    
-    
+
     public void updateNotification() {
-        System.out.println ("---- DENTRO UPDATE NOTIFICATION ----");
+        System.out.println("---- DENTRO UPDATE NOTIFICATION ----");
         notificationNumber = notificationManager.getUnreadNotificationNumber(currentUser);
     }
-    
+
 }

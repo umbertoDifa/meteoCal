@@ -194,12 +194,13 @@
                             <c:forEach items="#{eventToManage.guests}" var="g" >
                                 <h:outputText value="#{g.email}"/><br/>
                             </c:forEach>
-                        </p:fieldset>
+                        </p:fieldset><br/>
 
 
-                        <h:inputText id="email" value="#{eventToManage.newGuestEmail}"/>
+                        <h:inputText id="email" value="#{eventToManage.newGuestEmail}" required="true" validatorMessage="insert minimum 2 character" requiredMessage="Insert a search key">
+                            <f:validateLength minimum="2" />
+                        </h:inputText>
                         <p:commandButton value="search" update="@form" actionListener="#{eventToManage.showResultUsers}" /><br/><br/>
-                        <h:message for="email" />
 
                         <p:panel rendered="#{eventToManage.displayResultUsers}" >
                             <h:outputText value="Results:  (click to invite!)" /><br/><br/>
@@ -207,7 +208,7 @@
                                 <p:commandButton class="linkStyle" update="@form" value="#{u.email}" actionListener="#{eventToManage.invite(u.email)}" /><br/>
                             </c:forEach>
 
-                        </p:panel>
+                        </p:panel><br/>
                     </h:form>
 
                     <p:tabView>
@@ -221,12 +222,12 @@
                                 <p:outputLabel value="#{noUser.email}"/><br/>
                             </c:forEach>
                         </p:tab>
-                        <p:tab title="(#{eventToManage.noAnswerInvitations.size()})No Asnwer">
+                        <p:tab title="(#{eventToManage.noAnswerInvitations.size()}) No Asnwer">
                             <c:forEach items="#{eventToManage.noAnswerInvitations}" var="bhoUser">
                                 <p:outputLabel value="#{bhoUser.email}"/><br/>
                             </c:forEach>
                         </p:tab>
-                        <p:tab title="(#{eventToManage.publicJoinUsers.size()})Public Join" rendered="#{eventToManage.publicAccess}">
+                        <p:tab title="(#{eventToManage.publicJoinUsers.size()}) Public Join" rendered="#{eventToManage.publicAccess}">
                             <c:forEach items="#{eventToManage.publicJoinUsers}" var="publicUser">
                                 <p:outputLabel value="#{publicUser.email}"/><br/>
                             </c:forEach>

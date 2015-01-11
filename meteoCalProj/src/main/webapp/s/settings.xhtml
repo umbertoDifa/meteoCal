@@ -71,9 +71,13 @@ and open the template in the editor.
             </h:form>
 
             <h:form id="downloadForm">
-                <p:commandButton ajax="false" id="downloadButton" disabled="#{settings.disableDownloadButton}" value="Download" icon="ui-icon-arrowthickstop-1-s">
+                <p:commandButton ajax="false" id="downloadButton" onclick="PrimeFaces.monitorDownload(showStatus, hideStatus)" disabled="#{settings.disableDownloadButton}" value="Download" icon="ui-icon-arrowthickstop-1-s">
                     <p:fileDownload value="#{settings.streamedContent}" />
                 </p:commandButton>
+                <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false"
+                          closable="false">
+                    <p:graphicImage value="/design/ajaxloadingbar.gif" />
+                </p:dialog>
             </h:form>
 
 
@@ -88,5 +92,14 @@ and open the template in the editor.
                 click on "Delete my Account"</p>
             <p:commandButton id="delete" value="Delete my Account" action="#{settings.deleteAccount}"/>
         </ui:define>
+
+        <script type="text/javascript">
+            function showStatus() {
+                PF('statusDialog').show();
+            }
+            function hideStatus() {
+                PF('statusDialog').hide();
+            }
+        </script>
     </ui:composition>
 </html>

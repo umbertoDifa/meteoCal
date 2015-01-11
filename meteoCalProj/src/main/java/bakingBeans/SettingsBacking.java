@@ -64,7 +64,7 @@ public class SettingsBacking implements Serializable {
 
     @Inject
     private SettingManager settingManager;
-    
+
     @Inject
     private CredentialsBacking credentials;
 
@@ -111,6 +111,10 @@ public class SettingsBacking implements Serializable {
     }
 
     public StreamedContent getStreamedContent() {
+        //disabilito pulasante download se era attivo
+        RequestContext context = RequestContext.getCurrentInstance();
+        setDisableDownloadButton(true);
+        context.update("downloadForm:downloadButton");
         return streamedContent;
     }
 
@@ -213,17 +217,23 @@ public class SettingsBacking implements Serializable {
             } else {
                 showWarnMessage(null, "password not updated", "");
             }
-        }else{
+        } else {
             showWarnMessage(null, "password wrong", "check the fields!");
         }
     }
 
     public void deleteAccount() {
-        //TODO
-        //settingManager.deleteAccount(login.getCurrentUser());
+        
+        if (settingManager.deleteAccount(login.getCurrentUser())) {
+            login.forceLogout();
+        } else {
+            showWarnMessage(null, "Error", "impossible to delete account");
+            
+        }
+        
     }
 
-   public void importCalendar(FileUploadEvent event) {
+    public void importCalendar(FileUploadEvent event) {
         List<Pair<String, String>> unimportedEvents = settingManager.importCalendar(
                 user, event.getFile());
         //se non ci sono stati errori
@@ -306,7 +316,7 @@ public class SettingsBacking implements Serializable {
         }
 
     }
-    
+
     private String getGlassfishDomainPath() {
         //let the user download it
 
@@ -330,7 +340,6 @@ public class SettingsBacking implements Serializable {
         return null;
     }
 
-    
     private void showInfoMessage(String recipient, String msg, String advice) {
         FacesContext ctx = FacesContext.getCurrentInstance();
         ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -344,7 +353,4 @@ public class SettingsBacking implements Serializable {
                 msg, advice));
         RequestContext.getCurrentInstance().update("growl");
     }
-}    
-
-
-
+}

@@ -89,6 +89,7 @@ public class ManageEventBacking implements Serializable {
 
     private List<UserModel> guests = new ArrayList<>();
 
+    @Inject
     private LoginBacking login;
 
     private java.util.Calendar startDateTime;
@@ -111,12 +112,6 @@ public class ManageEventBacking implements Serializable {
     private UserModel newGuest;
 
     public ManageEventBacking() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        //mi salvo il login per ottenere l'info di chi è loggato
-        //e crea o modifica l evento
-        login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(
-                facesContext, "#{login}", LoginBacking.class);
-
         //initialize event parameters;
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");

@@ -31,28 +31,28 @@ and open the template in the editor.
                 <h:outputLabel value="Location:" /><h:outputText value="#{viewEvent.eventToShow.location}"/>
                 <h:outputLabel value="Description:" /><h:outputText value="#{viewEvent.eventToShow.description}"/>
                 <h:outputLabel value="isOutdoor:" /><h:outputText value="#{viewEvent.eventToShow.isOutdoor}"/>
-               
+                
                 <h:outputLabel value="Weather:" /><h:outputText value="#{viewEvent.eventToShow.weather.description}"/>
                 <h:outputLabel value="Owner:" /><h:outputText value="#{viewEvent.eventToShow.owner.name}"/>
                 <h:outputLabel value="Public:" /><h:outputText value="#{viewEvent.publicAccess}"/>
             </p:panelGrid>
             <p:tabView rendered="#{viewEvent.showInvitees}">
-                <p:tab title="Partecipants:">
+                <p:tab title="(#{viewEvent.acceptedInvitations.size()}) Partecipants">
                     <c:forEach items="#{viewEvent.acceptedInvitations}" var="yesUser">
                         <p:outputLabel value="#{yesUser.email}"/><br/>
                     </c:forEach>
                 </p:tab>
-                <p:tab title="Declined:">
+                <p:tab title="(#{viewEvent.declinedInvitations.size()}) Declined">
                     <c:forEach items="#{viewEvent.declinedInvitations}" var="noUser">
                         <p:outputLabel value="#{noUser.email}"/><br/>
                     </c:forEach>
                 </p:tab>
-                <p:tab title="No Asnwer">
+                <p:tab title="(#{viewEvent.noAnswerInvitations.size()}) No Asnwer">
                     <c:forEach items="#{viewEvent.noAnswerInvitations}" var="bhoUser">
                         <p:outputLabel value="#{bhoUser.email}"/><br/>
                     </c:forEach>
                 </p:tab>
-                <p:tab title="Public Join" rendered="#{viewEvent.publicAccess}">
+                <p:tab title="(#{viewEvent.publicJoinUsers.size()}) Public Join" rendered="#{viewEvent.publicAccess}">
                     <c:forEach items="#{viewEvent.publicJoinUsers}" var="publicUser">
                         <p:outputLabel value="#{publicUser.email}"/><br/>
                     </c:forEach>

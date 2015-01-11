@@ -156,14 +156,18 @@ public class ScheduleViewBacking implements Serializable {
      * event of the default calendar
      */
     public void init() {
+        // imposto se guardi il tuo calendario o il calendario di un altro utente
+        // specificato nell id dell url
         setUser();
         calendarToCreate = new CalendarModel();
+        // inizializzo la lista degli eventi che saranno visibili nello schedule
         eventsToShow = new DefaultScheduleModel();
 
         if (user != null) {
+            // salvo i calendari dell utente
             calendars = calendarManager.getCalendars(user);
 
-            // tolgo i calendari privati
+            // tolgo i calendari privati se visitatore
             if (readOnly) {
                 for (int i = 0; i < calendars.size(); i++) {
                     if (!calendars.get(i).isIsPublic()) {
@@ -173,36 +177,16 @@ public class ScheduleViewBacking implements Serializable {
             }
 
             if (calendars != null && !calendars.isEmpty()) {
+                //riempio la tendina
                 calendarNames = calendarManager.getCalendarTitles(user);
+                //riempio la lista di eventi visibili nello schedule
                 updateEventsToShow(calendarManager.getDefaultCalendar(user));
-                System.out.println("-dentro init, calendar è" + calendars);
+                calendarSelected = calendarManager.getDefaultCalendar(user).getTitle();
+                calendarShown = calendarManager.getDefaultCalendar(user);
             }
         }
+        //inizializzo etichetta pulsante cambio privacy
         switchLabel();
-    }
-
-    /**
-     * salva l'evento eventToManage con i parametri impostati dalla pagina 
-     * myCalendar e faccio un refresh del calendario che la pagina visualizza
-     *
-     * @param actionEvent
-     */
-    public void updateEvent(ActionEvent actionEvent) {
-
-        manageEventBacking.setTitle(eventToManage.getTitle());
-        manageEventBacking.setCalendarName(calendarSelected);
-        if (eventToManage.getData() != null && ((EventDetails) eventToManage.getData()).getId() != null) {
-            manageEventBacking.setIdEvent(Objects.toString(((EventDetails) eventToManage.getData()).getId()));
-        }
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-        manageEventBacking.setStartDate(dateFormat.format(eventToManage.getStartDate()));
-        manageEventBacking.setStartTime(timeFormat.format(eventToManage.getStartDate()));
-        manageEventBacking.setEndDate(dateFormat.format(eventToManage.getEndDate()));
-        manageEventBacking.setEndTime(timeFormat.format(eventToManage.getEndDate()));
-        manageEventBacking.save(); //TODO bisogna chiamare check o levare
-
-        refreshCalendar();
     }
 
     /**
@@ -222,15 +206,6 @@ public class ScheduleViewBacking implements Serializable {
         } catch (IOException ex) {
             showGrowl(GrowlMessage.ERROR_REDIRECT);
         }
-    }
-
-    /**
-     * chiamato quando un utente seleziona una data, uno slot libero
-     * dal componente schedule. inizializza eventToManage
-     * @param selectEvent 
-     */
-    public void onDateSelect(SelectEvent selectEvent) {
-        eventToManage = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
     }
 
     /**
@@ -276,6 +251,10 @@ public class ScheduleViewBacking implements Serializable {
         }
     }
 
+    /**
+     * verifica se è possibile cancellare il calendario
+     * visualizzato correntemente
+     */
     public void canDeleteCalendar() {
         RequestContext context = RequestContext.getCurrentInstance();
         context.execute("PF('confirmationDialog').hide();");
@@ -286,6 +265,10 @@ public class ScheduleViewBacking implements Serializable {
         }
     }
 
+    /**
+     * cancella il calendario correntemente visualizzato
+     * @param response 
+     */
     public void deleteCalendar(String response) {
         DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
         if (calendarManager.deleteCalendar(calendarShown, option)) {
@@ -335,30 +318,22 @@ public class ScheduleViewBacking implements Serializable {
 
     }
 
+    /**
+     * mostra un messaggio nel growl
+     * @param growl 
+     */
     private void showGrowl(GrowlMessage growl) {
         FacesContext ctx = FacesContext.getCurrentInstance();
         ctx.addMessage(null, new FacesMessage(growl.getSeverity(), growl.getTitle(), growl.getMessage()));
         RequestContext.getCurrentInstance().update("growl");
     }
-
-    private void showMsg(GrowlMessage growl) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ctx.addMessage("msg", new FacesMessage(growl.getSeverity(), growl.getTitle(), growl.getMessage()));
-        RequestContext.getCurrentInstance().update("growl");
-    }
-
-//    private void showGrowl(String recipient, String msg, String advice, FacesMessage.Severity severity) {
-//        FacesContext ctx = FacesContext.getCurrentInstance();
-//        ctx.addMessage(recipient, new FacesMessage(severity, msg, advice));
-//        RequestContext.getCurrentInstance().update("growl");
-//    }
     
     /**
      * faccio un refresh del calendario e degli eventi visualizzati nello
      * schedule
      */
     private void refreshCalendar() {
-        calendarShown = calendarManager.findCalendarByName(user, calendarShown.getTitle());
+        calendars = calendarManager.getCalendars(user);
         updateEventsToShow(calendarShown);
     }
 
@@ -396,13 +371,12 @@ public class ScheduleViewBacking implements Serializable {
      */
     public void makeDefault() {
         if (calendarManager.makeDefault(calendarShown)) {
-            calendarShown = calendarManager.getCalendarUpdated(calendarShown);
+            refreshCalendar();
             showGrowl(GrowlMessage.DEFAUL_CHANGED);
         } else {
             showGrowl(GrowlMessage.GENERIC_ERROR);
         }
-        RequestContext context = RequestContext.getCurrentInstance();
-        //context.execute("PF('confirmChangeDef').hide();");
+        
     }
 
     /**
@@ -454,8 +428,6 @@ public class ScheduleViewBacking implements Serializable {
 
         }
         calendarToCreate = new CalendarModel();
-//        RequestContext context = RequestContext.getCurrentInstance();
-//        context.execute("PF('newCalendarDialog').hide();");
     }
 
 }
