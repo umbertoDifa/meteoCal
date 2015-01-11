@@ -206,7 +206,8 @@ public class ViewEventPageBacking implements Serializable {
 
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
             try {
-                context.redirect(context.getRequestContextPath() + "/error.xhtml");
+                context.redirect(context.getRequestContextPath()
+                        + "/error.xhtml");
             } catch (IOException ex) {
 
             }
@@ -215,10 +216,11 @@ public class ViewEventPageBacking implements Serializable {
 
     public void doPartecipate() {
         if (hasInvitation) {
-            invitationManager.setAnswer(getOwnedInvitation(), InvitationAnswer.YES);
+            invitationManager.setAnswer(getOwnedInvitation(),
+                    InvitationAnswer.YES);
             hasAnswered = true;
             partecipate = true;
-            answerMessage = "parteciperai";
+            answerMessage = "You will participate";
             if (!acceptedInvitations.contains(login.getCurrentUser())) {
                 acceptedInvitations.add(login.getCurrentUser());
             }
@@ -231,28 +233,32 @@ public class ViewEventPageBacking implements Serializable {
             if (publicJoinUsers.contains(login.getCurrentUser())) {
                 publicJoinUsers.remove(login.getCurrentUser());
             }
-            addMessage("Hai risposto all'evento");
+            addMessage("You have answered to the event");
             System.out.println("-doPartecipate");
         } else {
             if (publicAccess) {
                 eventManager.addPublicJoin(eventToShow, login.getCurrentUser());
-                addMessage("Hai fatto public join");
+                publicJoin = true;
+                hasAnswered = true;
+                answerMessage = "You will participate";
+                addMessage("You have joined the event");
                 if (!publicJoinUsers.contains(login.getCurrentUser())) {
                     publicJoinUsers.add(login.getCurrentUser());
                 }
 
             } else {
-                addMessage("non puoi partecipare");
+                addMessage("You cannot participate");
             }
         }
     }
 
     public void doDecline() {
         if (hasInvitation) {
-            invitationManager.setAnswer(getOwnedInvitation(), InvitationAnswer.NO);
+            invitationManager.setAnswer(getOwnedInvitation(),
+                    InvitationAnswer.NO);
             hasAnswered = true;
             partecipate = false;
-            answerMessage = "non parteciperai";
+            answerMessage = "You won't participate";
 
             if (acceptedInvitations.contains(login.getCurrentUser())) {
                 acceptedInvitations.remove(login.getCurrentUser());
@@ -267,7 +273,21 @@ public class ViewEventPageBacking implements Serializable {
                 publicJoinUsers.remove(login.getCurrentUser());
             }
         } else {
-            addMessage("non puoi partecipare");
+            if (publicAccess) {
+                eventManager.removePublicJoin(eventToShow,
+                        login.getCurrentUser());
+                publicJoin = false;
+                hasAnswered = true;
+                answerMessage = "You won't participate";
+
+                addMessage("You won't join the event");
+                if (publicJoinUsers.contains(login.getCurrentUser())) {
+                    publicJoinUsers.remove(login.getCurrentUser());
+                }
+
+            } else {
+                addMessage("You cannot decline");
+            }
         }
     }
 
@@ -289,7 +309,9 @@ public class ViewEventPageBacking implements Serializable {
             allowedToModify = true;
         }
         //se non è il creatore dell evento e o l'evento è pubblico o ha un invito
-        if (!login.getCurrentUser().equals(eventToShow.getOwner()) && ((eventToShow instanceof PublicEvent) || (getInvitees().contains(login.getCurrentUser())))) {
+        if (!login.getCurrentUser().equals(eventToShow.getOwner())
+                && ((eventToShow instanceof PublicEvent)
+                || (getInvitees().contains(login.getCurrentUser())))) {
             //allora può partecipare
             allowedToPartecipate = true;
 
@@ -301,16 +323,21 @@ public class ViewEventPageBacking implements Serializable {
                 //salvo la sua risposta in answer
                 InvitationAnswer answer = getAnswer();
                 if (answer != null) {
-                    //salvo che ha risposto
-                    hasAnswered = true;
+
                     //e il messaggio da visualizzare sul bottone
                     if (answer.equals(InvitationAnswer.YES)) {
-                        answerMessage = "parteciperai";
+                        answerMessage = "You will participate";
                         partecipate = true;
+                        //salvo che ha risposto
+                        hasAnswered = true;
                     } else if (answer.equals(InvitationAnswer.NO)) {
-                        answerMessage = "non parteciperai";
+                        answerMessage = "You won't participate";
+                        //salvo che ha risposto
+                        hasAnswered = true;
                     } else if (answer.equals(InvitationAnswer.NA)) {
-                        answerMessage = "rispondi";
+                        answerMessage = "Answer";
+                        //salvo che non ha risposto
+                        hasAnswered = false;
                     }
                 }
                 //se non ha un invito ma può partecipare
@@ -318,10 +345,12 @@ public class ViewEventPageBacking implements Serializable {
                 //se ha fatto public join
                 if (publicJoinUsers.contains(login.getCurrentUser())) {
                     //imposto il msg da visualizzare sul bottone
-                    answerMessage = "parteciperai";
+                    answerMessage = "You will paritcipate";
                     publicJoin = true;
+                    hasAnswered = true;
                 } else {
-                    answerMessage = "non parteciperai";
+                     publicJoin = false;
+                    answerMessage = "You won't participate";
                 }
             }
 
@@ -400,8 +429,9 @@ public class ViewEventPageBacking implements Serializable {
     }
 
     public void addMessage(String summary) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, null);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+                summary, null);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
-    
+
 }

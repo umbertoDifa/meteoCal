@@ -63,18 +63,18 @@ and open the template in the editor.
 
             <h:form id="formPartecipate">
 
-                <p:commandButton value="Partecipate" update="formPartecipate" rendered="#{!viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.allowedToModify}" 
+                <p:commandButton value="Partecipate" update="@form" rendered="#{!viewEvent.publicJoin and !viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.allowedToModify}" 
                                  action="#{viewEvent.doPartecipate()}"/><br/>
 
                 <p:splitButton id="button1" value="#{viewEvent.answerMessage}" rendered="#{viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.allowedToModify}">
-                    <p:menuitem value="Partecipate" update="button1" actionListener="#{viewEvent.doDecline()}" rendered="#{viewEvent.publicJoin}" />
-                    <p:menuitem value="Decline" update="button1" actionListener="#{viewEvent.doPartecipate()}" rendered="#{!viewEvent.publicJoin}" />
+                    <p:menuitem value="Decline" update="@form" actionListener="#{viewEvent.doDecline()}" rendered="#{viewEvent.publicJoin}" />
+                    <p:menuitem value="Participate" update="@form" actionListener="#{viewEvent.doPartecipate()}" rendered="#{!viewEvent.publicJoin}" />
                 </p:splitButton>
 
 
                 <p:splitButton id="button2" value="#{viewEvent.answerMessage}" rendered="#{!viewEvent.publicAccess and !viewEvent.allowedToModify}">
-                    <p:menuitem value="Partecipate" update="button2" actionListener="#{viewEvent.doPartecipate()}" rendered="#{!viewEvent.hasAnswered or !viewEvent.partecipate}" />
-                    <p:menuitem value="Decline" update="button2" actionListener="#{viewEvent.doDecline()}" rendered="#{!viewEvent.hasAnswered or viewEvent.partecipate}" />
+                    <p:menuitem value="Partecipate" update="@form" actionListener="#{viewEvent.doPartecipate()}" rendered="#{!viewEvent.hasAnswered or !viewEvent.partecipate}" />
+                    <p:menuitem value="Decline" update="@form" actionListener="#{viewEvent.doDecline()}" rendered="#{!viewEvent.hasAnswered or viewEvent.partecipate}" />
                 </p:splitButton>
 
             </h:form>
