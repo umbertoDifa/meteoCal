@@ -457,11 +457,6 @@ public class EventManagerImpl implements EventManager {
     @Override
     public List<UserModel> getInviteesFiltered(Event event, InvitationAnswer answer) {
         if (event != null) {
-            if(event.getId() == null){
-                logger.log(LoggerLevel.DEBUG,"id eveento null");
-            }
-            logger.log(LoggerLevel.DEBUG,"id evento :"+event.getId());
-            logger.log(LoggerLevel.DEBUG,"database :"+database.toString());
             event = database.find(Event.class, event.getId());
             List<Invitation> invitations = event.getInvitations();
             List<UserModel> users = new ArrayList<>();
@@ -473,6 +468,7 @@ public class EventManagerImpl implements EventManager {
             }
             return users;
         } else {
+            logger.log(LoggerLevel.DEBUG,"L'event è null in getInviteesFiltered");
             return null;
         }
 

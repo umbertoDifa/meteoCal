@@ -467,13 +467,19 @@ public class SettingManagerImpl implements SettingManager {
     }
 
     private boolean hasPermission(UserModel user, Event event) {
-        //se l'evento non è pubblico o è privato e sei l owner o hai un invito
-        if (!(event instanceof PublicEvent) && !((event instanceof PrivateEvent)
-                && (event.getOwner().equals(user)
-                || (event.getInvitee().contains(user))))) {
-            return false;
-        } else {
+        //se l'evento è privato e sei l owner o hai un invito
+        if ((event instanceof PrivateEvent) && (event.getOwner().equals(user)
+                || (event.getInvitee().contains(user)))) {
+            return true;            
+        } else if (event instanceof PublicEvent) {
+            //se l'evento è pubblico e non sei nei public join
+            if (!((PublicEvent) event).getGuests().contains(user)) {
+                //ti aggiungo
+                eventManager.addPublicJoin(event, user);
+            }
             return true;
+        } else {
+            return false;
         }
 
     }

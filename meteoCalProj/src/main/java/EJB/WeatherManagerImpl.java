@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import model.Event;
+import model.Invitation;
 import model.InvitationAnswer;
 import model.NotificationType;
 import model.UserModel;
@@ -68,8 +69,6 @@ public class WeatherManagerImpl implements WeatherManager {
     @Inject
     private NotificationManager notificationManager;
 
-    private EventManager eventManager;
-
     private Logger logger = LoggerProducer.debugLogger(WeatherManagerImpl.class);
 
     /**
@@ -79,7 +78,6 @@ public class WeatherManagerImpl implements WeatherManager {
     public WeatherManagerImpl() {
         this.openWeatherMap = new OpenWeatherMap(
                 "6f165fcce7eddd2405ef5c0596000ff7");
-        this.eventManager = new EventManagerImpl();
 
     }
 
@@ -87,7 +85,6 @@ public class WeatherManagerImpl implements WeatherManager {
         this();
         this.database = database;
         this.notificationManager = notificationManager;
-        this.eventManager = eventManager;
     }
 
     @Override
@@ -514,10 +511,8 @@ public class WeatherManagerImpl implements WeatherManager {
                 if (isBadWeatherNDaysBefore(event, newForecast, 1)) {
                     logger.log(LoggerLevel.DEBUG,
                             "Bad weather tomorrow detected");
-                    logger.log(LoggerLevel.DEBUG, "id evento :" + event.getId());
-                    logger.log(LoggerLevel.DEBUG, "event manager is: "
-                            + eventManager.toString());
-                    List<UserModel> participants = eventManager.getInviteesFiltered(
+
+                    List<UserModel> participants = this.getInviteesFiltered(
                             event, InvitationAnswer.YES);
 
                     notificationManager.createNotifications(participants, event,
@@ -527,10 +522,8 @@ public class WeatherManagerImpl implements WeatherManager {
                     //comuque se il tempo cambia li informo
                     logger.log(LoggerLevel.DEBUG,
                             "Weather changed detected");
-                    logger.log(LoggerLevel.DEBUG, "id evento :" + event.getId());
-                    logger.log(LoggerLevel.DEBUG, "event manager is: "
-                            + eventManager.toString());
-                    List<UserModel> participants = eventManager.getInviteesFiltered(
+
+                    List<UserModel> participants = this.getInviteesFiltered(
                             event, InvitationAnswer.YES);
 
                     notificationManager.createNotifications(participants, event,
@@ -545,6 +538,29 @@ public class WeatherManagerImpl implements WeatherManager {
                 logger.log(LoggerLevel.DEBUG, "Nussun nuovo dato disponibile");
             }
         }
+    }
+
+    //NB questa funzione esiste anche in eventManager ma per questioni di dipendenza
+    //va duplicata
+    private List<UserModel> getInviteesFiltered(Event event, InvitationAnswer answer) {
+        if (event != null) {
+            event = database.find(Event.class, event.getId());
+            List<Invitation> invitations = event.getInvitations();
+            List<UserModel> users = new ArrayList<>();
+
+            for (Invitation invitation : invitations) {
+                if (invitation.getAnswer().equals(answer)) {
+                    users.add(invitation.getInvitee());
+                }
+            }
+            return users;
+        } else {
+            logger.log(LoggerLevel.DEBUG,
+                    "L'event è null in getInviteesFiltered");
+
+            return null;
+        }
+
     }
 
     private boolean isBadWeatherNDaysBefore(Event event, WeatherForecast forecast, int daysBefore) {
