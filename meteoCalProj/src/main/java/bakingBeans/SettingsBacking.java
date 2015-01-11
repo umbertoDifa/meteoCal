@@ -29,6 +29,7 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import utility.GrowlMessage;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
 
@@ -51,6 +52,9 @@ public class SettingsBacking implements Serializable {
     private List<CalendarModel> calendars;
     private String calendarToExport;
     private StreamedContent calendarToExportFile;
+    private String oldPassword;
+    private String newPassword1;
+    private String newPassword2;
 
     private List<String> calendarTitles;
 
@@ -59,6 +63,9 @@ public class SettingsBacking implements Serializable {
 
     @Inject
     private SettingManager settingManager;
+    
+    @Inject
+    private CredentialsBacking credentials;
 
     private LoginBacking login;
 
@@ -152,6 +159,30 @@ public class SettingsBacking implements Serializable {
         this.calendarToExportFile = calendarToExportFile;
     }
 
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+
+    public String getNewPassword1() {
+        return newPassword1;
+    }
+
+    public void setNewPassword1(String newPassword1) {
+        this.newPassword1 = newPassword1;
+    }
+
+    public String getNewPassword2() {
+        return newPassword2;
+    }
+
+    public void setNewPassword2(String newPassword2) {
+        this.newPassword2 = newPassword2;
+    }
+
     private List<String> titlesCalendar(List<model.CalendarModel> c) {
         List<String> result = new ArrayList<>();
         if (c != null) {
@@ -166,20 +197,28 @@ public class SettingsBacking implements Serializable {
 
     public void saveCredentials() {
         //TODO
-        // if(settingManager.changeCredentials(login.getCurrentUser(), name, surname, email))
-        // showMessage("credential updated");
-        //else
-        // showMessage("credential not updated");
+        if (settingManager.changeCredentials(login.getCurrentUser(), name, surname, email)) {
+            showMessage(null, "credential updated", "");
+            login.refreshCurrentUser();
+        } else {
+            showMessage(null, "credential not updated", "");
+        }
     }
 
     public void savePassword() {
         //TODO
-        // if(settingManager.changePassword(login.getCurrentUser(), password))
-        // showMessage("password updated");
-        //else
-        // showMessage("password not updated");
+        if (newPassword1.equals(newPassword2)) {
+            if (settingManager.changePassword(login.getCurrentUser(), oldPassword, newPassword1)) {
+                showMessage(null, "password updated", "");
+                login.refreshCurrentUser();
+            } else {
+                showMessage(null, "password not updated", "");
+            }
+        }else{
+            showMessage(null, "password wrong", "check the fields!");
+        }
     }
-    
+
     public void deleteAccount() {
         //TODO
         //settingManager.deleteAccount(login.getCurrentUser());
@@ -272,4 +311,10 @@ public class SettingsBacking implements Serializable {
         return null;
     }
 
+    private void showMessage(String recipient, String msg, String advice) {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                msg, advice));
+        RequestContext.getCurrentInstance().update("growl");
+    }
 }

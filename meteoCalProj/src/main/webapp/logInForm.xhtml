@@ -15,19 +15,18 @@
             <f:facet name="right">
 
                 <h:form id="notifications" rendered="#{login.loggedIn}" >
-                    <p:button icon="ui-icon-mail-closed" value="#{login.notificationNumber}"  outcome="/s/notifications.xhtml" />
-                </h:form>
-
-                
-                <h:form id="loginForm"> 
-                    <p:focus context="loginForm"/>
                     <!--if the user is not logged in show outputLabel "non loggato"-->
                     <h:outputLabel for="email" rendered="#{!login.loggedIn}" class="ui-messages-error">
                         Non sei loggato</h:outputLabel>
 
                     <!--if the user is logged in show outputLabel "loggato"-->
                     <h:outputLabel for="email" rendered="#{login.loggedIn}">
-                        Ciao #{login.currentUser.name}</h:outputLabel>
+                        Ciao #{login.currentUser.name}!</h:outputLabel>
+                    <p:button icon="ui-icon-mail-closed" value="#{login.notificationNumber}"  outcome="/s/notifications.xhtml" />
+                </h:form>
+
+                <h:form id="loginForm"> 
+                    <p:focus context="loginForm"/>
 
                     <!--if the user is not logged show login panel-->
                     <h:panelGroup  layout="block" rendered="#{!login.loggedIn}"> 

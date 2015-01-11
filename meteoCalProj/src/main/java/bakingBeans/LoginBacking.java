@@ -7,6 +7,7 @@ package bakingBeans;
  */
 import EJB.interfaces.LoginManager;
 import EJB.interfaces.NotificationManager;
+import EJB.interfaces.SearchManager;
 import model.UserModel;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -39,6 +40,9 @@ public class LoginBacking implements Serializable {
 
     @Inject
     private LoginManager userManager;
+    
+    @Inject
+    private SearchManager searchManager;
     
     @Inject
     private NotificationManager notificationManager;
@@ -101,7 +105,9 @@ public class LoginBacking implements Serializable {
     }
     
     
-    
+    public void refreshCurrentUser() {
+        currentUser = searchManager.findUserById(currentUser.getId());
+    }
     
     
     public void updateNotification() {
