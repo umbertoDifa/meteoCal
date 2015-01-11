@@ -31,6 +31,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
+import wrappingObjects.Pair;
 
 /**
  *
@@ -119,8 +120,6 @@ public class SettingsBacking implements Serializable {
     }
 
     public void setCalendarToExport(String calendarToExport) {
-        logger.log(LoggerLevel.DEBUG, "DENTRO il setCalendarTOExport vale: "
-                + calendarToExport);
         this.calendarToExport = calendarToExport;
     }
 
@@ -179,18 +178,34 @@ public class SettingsBacking implements Serializable {
         //else
         // showMessage("password not updated");
     }
-    
+
     public void deleteAccount() {
         //TODO
         //settingManager.deleteAccount(login.getCurrentUser());
     }
 
     public void importCalendar(FileUploadEvent event) {
-        settingManager.importCalendar(user, event.getFile());
-        //TODO gestire le liste di ritorno
+        List<Pair<String, String>> unimportedEvents = settingManager.importCalendar(
+                user, event.getFile());
+        //se non ci sono stati errori
+        if (unimportedEvents != null) {
+            //se tutti gli eventi sono stati importati
+            if (unimportedEvents.isEmpty()) {
+                showInfoMessage(login.getCurrentUser().getEmail(), "Success!",
+                        "Calendar imported");
+            } else {
+                //se ci sono eventi già in altri calendari
+                showInfoMessage(login.getCurrentUser().getEmail(), "Success!",
+                        "Calendar imported");
+                showWarnMessage(login.getCurrentUser().getEmail(),
+                        "Events already in calendars",
+                        "Pay attention, some events were already in your calendars or do not exist anymore");
+            }
+        } else {
+            showWarnMessage(login.getCurrentUser().getEmail(), "Error",
+                    "Impossible to import the calendar");
+        }
 
-        FacesMessage msg = new FacesMessage("Success! ",
-                event.getFile().getFileName() + " is uploaded.");
     }
 
     public void exportCalendar() {
@@ -229,6 +244,8 @@ public class SettingsBacking implements Serializable {
 
                     logger.log(LoggerLevel.DEBUG,
                             "Calendario pronto per essere scaricato!");
+                    showInfoMessage(login.getCurrentUser().getEmail(), "Ready!",
+                            "Calendar ready to be downloaded");
                 } catch (FileNotFoundException ex) {
                     logger.log(LoggerLevel.DEBUG,
                             "Cal to export not found for stream");
@@ -238,13 +255,15 @@ public class SettingsBacking implements Serializable {
                 //msg nessun cal trovato
                 logger.log(LoggerLevel.DEBUG,
                         "Non è stato possibile creare il calenario to export");
-                //TODO showmessage
+                showWarnMessage(login.getCurrentUser().getEmail(), "Error",
+                        "It was not possible to export the selected calendar");
             }
 
         } else {
             //msg nessun cal trovato
             logger.log(LoggerLevel.DEBUG, "Nessun calendario trovato");
-            //TODO showmessage
+            showWarnMessage(login.getCurrentUser().getEmail(), "Error",
+                    "Calendar not found");
         }
 
     }
@@ -270,6 +289,20 @@ public class SettingsBacking implements Serializable {
             }
         }
         return null;
+    }
+
+    private void showInfoMessage(String recipient, String msg, String advice) {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                msg, advice));
+        RequestContext.getCurrentInstance().update("growl");
+    }
+
+    private void showWarnMessage(String recipient, String msg, String advice) {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        ctx.addMessage(recipient, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                msg, advice));
+        RequestContext.getCurrentInstance().update("growl");
     }
 
 }
