@@ -100,24 +100,26 @@ and open the template in the editor.
                                     <p:commandButton type="button" value="No" icon="ui-icon-close" onclick="PF('confirmationDialog').hide()"/>
                                 </f:facet>
                             </p:dialog>
-
-
-                            <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" resizable="false" >
-                                <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
-                                <h:form>
-                                    <f:facet name="footer">
-                                        <p:commandButton value="Move" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
-
-                                        <p:commandButton value="Detach" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
-
-                                        <p:commandButton value="Delete" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_ALL')}" />
-
-                                        <p:commandButton value="Cancel" type="button" onclick="PF('delOpt').hide()" />
-                                    </f:facet>
-                                </h:form>
-                            </p:dialog>
-
                         </h:form>
+
+                        <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" resizable="false" >
+                            <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
+                            <f:facet name="footer">
+                                <h:form>
+
+                                    <p:commandButton value="Move" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
+
+                                    <p:commandButton value="Detach" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
+
+                                    <p:commandButton value="Delete" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_ALL')}" />
+
+                                    <p:commandButton value="Cancel" type="button" onclick="PF('delOpt').hide()" />
+
+                                </h:form>
+                            </f:facet>
+                        </p:dialog>
+
+
 
                     </f:facet>
                 </p:toolbar>
