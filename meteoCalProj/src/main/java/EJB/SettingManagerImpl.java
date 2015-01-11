@@ -401,9 +401,6 @@ public class SettingManagerImpl implements SettingManager {
 
         }//for
 
-        //TODO vedere se questa funziona davvero, in particolare
-        //il campo inCalendars
-        //aggiorna il nuovo calendario con gli eventi imoprtati nel db
         database.flush();
         logger.log(LoggerLevel.DEBUG,
                 "Calendario importato per l''utente {0}",

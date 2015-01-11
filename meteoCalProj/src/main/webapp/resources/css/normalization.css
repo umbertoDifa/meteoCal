@@ -12,9 +12,9 @@ and open the template in the editor.
     font-family:Arial,sans-serif;font-size: 13px !important;
 }
 
-/*.ui-widget-content {
-    border: 0;
-}*/
+#header .ui-layout-unit-content {
+    overflow: hidden !important;
+}
 
 #header{
     position: fixed !important;

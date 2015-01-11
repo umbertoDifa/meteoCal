@@ -189,8 +189,8 @@
 
                 <p:panel id="inviteDiv">
                     <h2>Guests:</h2>
-                    <h:form id="inviteForm" >
-                        <p:fieldset legend="To invite" >
+                    <h:form id="inviteForm">
+                        <p:fieldset legend="To invite" rendered="#{not empty eventToManage.guests}" >
                             <c:forEach items="#{eventToManage.guests}" var="g" >
                                 <h:outputText value="#{g.email}"/><br/>
                             </c:forEach>
@@ -198,11 +198,11 @@
 
 
                         <h:inputText id="email" value="#{eventToManage.newGuestEmail}"/>
-                        <p:commandButton value="search" update="@form" actionListener="#{eventToManage.showResultUsers}" /><br/>
+                        <p:commandButton value="search" update="@form" actionListener="#{eventToManage.showResultUsers}" /><br/><br/>
                         <h:message for="email" />
 
                         <p:panel rendered="#{eventToManage.displayResultUsers}" >
-
+                            <h:outputText value="Results:  (click to invite!)" /><br/><br/>
                             <c:forEach items="#{eventToManage.resultUsers}" var="u">
                                 <p:commandButton class="linkStyle" update="@form" value="#{u.email}" actionListener="#{eventToManage.invite(u.email)}" /><br/>
                             </c:forEach>
@@ -211,22 +211,22 @@
                     </h:form>
 
                     <p:tabView>
-                        <p:tab title="Partecipants">
+                        <p:tab title="(#{eventToManage.acceptedInvitations.size()}) Partecipants">
                             <c:forEach items="#{eventToManage.acceptedInvitations}" var="yesUser">
                                 <p:outputLabel value="#{yesUser.email}"/><br/>
                             </c:forEach>
                         </p:tab>
-                        <p:tab title="Declined">
+                        <p:tab title="(#{eventToManage.declinedInvitations.size()}) Declined">
                             <c:forEach items="#{eventToManage.declinedInvitations}" var="noUser">
                                 <p:outputLabel value="#{noUser.email}"/><br/>
                             </c:forEach>
                         </p:tab>
-                        <p:tab title="No Asnwer">
+                        <p:tab title="(#{eventToManage.noAnswerInvitations.size()})No Asnwer">
                             <c:forEach items="#{eventToManage.noAnswerInvitations}" var="bhoUser">
                                 <p:outputLabel value="#{bhoUser.email}"/><br/>
                             </c:forEach>
                         </p:tab>
-                        <p:tab title="Public Join" rendered="#{eventToManage.publicAccess}">
+                        <p:tab title="(#{eventToManage.publicJoinUsers.size()})Public Join" rendered="#{eventToManage.publicAccess}">
                             <c:forEach items="#{eventToManage.publicJoinUsers}" var="publicUser">
                                 <p:outputLabel value="#{publicUser.email}"/><br/>
                             </c:forEach>

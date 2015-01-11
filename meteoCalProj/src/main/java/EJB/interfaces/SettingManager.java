@@ -13,7 +13,15 @@ import wrappingObjects.Pair;
 public interface SettingManager {
 
     public boolean exportCalendar(CalendarModel calendar);
-
+    /**
+     * Importa un calendario Costruito con MeteoCal, creando un calendario con
+     * gli eventi importati per lo user
+     *
+     * @param user User che sta importando
+     * @param uploadedFile
+     * @return La lista delle coppie di eventi non importati (nome,owner), null
+     * se c'è stato un errore
+     */
     public List<Pair<String, String>> importCalendar(UserModel user, UploadedFile uploadedFile);
 
     public void deleteExportFolder(UserModel user);

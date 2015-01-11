@@ -437,12 +437,12 @@ public class ManageEventBacking implements Serializable {
     }
 
     public String deleteEvent() {
-        System.out.println("-dentro delete, eventToCreate vale:" + eventToCreate);
+        logger.log(LoggerLevel.DEBUG,"-dentro delete, eventToCreate vale:" + eventToCreate);
         if (eventManager.deleteEvent(eventToCreate)) {
-            System.out.println("-evento cancellato");
+            logger.log(LoggerLevel.DEBUG,"-evento cancellato");
             return "/s/myCalendar.xhtml";
         } else {
-            System.out.println("-evento non cancellato");
+            logger.log(LoggerLevel.DEBUG,"-evento non cancellato");
             showMessage("", "evento non cancellato", "");
             return "";
         }
@@ -451,11 +451,11 @@ public class ManageEventBacking implements Serializable {
     public void invite(String emailToInvite) {
         if (emailToInvite != null) {
             UserModel userToInvite = findGuest(resultUsers, emailToInvite);
-            System.out.println("--resultUsers è " + resultUsers);
-            System.out.println("--emailToInvite è " + emailToInvite);
+            logger.log(LoggerLevel.DEBUG,"--resultUsers è " + resultUsers);
+            logger.log(LoggerLevel.DEBUG,"--emailToInvite è " + emailToInvite);
 
             if (userToInvite != null) {
-                System.out.println("--userToInvite è" + userToInvite);
+                logger.log(LoggerLevel.DEBUG,"--userToInvite è" + userToInvite);
                 if (!guests.contains(userToInvite)) {
                     if (!userToInvite.equals(login.getCurrentUser())) {
                         guests.add(userToInvite);
@@ -472,13 +472,13 @@ public class ManageEventBacking implements Serializable {
             }
             displayResultUsers = false;
         } else {
-            System.out.println("--emailToInvite è null");
+            logger.log(LoggerLevel.DEBUG,"--emailToInvite è null");
             showMessage("inviteForm:email", "Specificare un utente", "");
         }
     }
 
     public void showResultUsers() {
-        System.out.println("-newGuestEmail" + newGuestEmail);
+        logger.log(LoggerLevel.DEBUG,"-newGuestEmail" + newGuestEmail);
         if (saved) {
             resultUsers = searchManager.searchUserForInvitation(newGuestEmail,
                     eventToCreate);
@@ -489,8 +489,8 @@ public class ManageEventBacking implements Serializable {
                 resultUsers.remove(guest);
             }
         }
-        System.out.println("-newGuestEmail" + newGuestEmail);
-        System.out.println("-resultUsers" + resultUsers);
+        logger.log(LoggerLevel.DEBUG,"-newGuestEmail" + newGuestEmail);
+        logger.log(LoggerLevel.DEBUG,"-resultUsers" + resultUsers);
         if (resultUsers != null && resultUsers.size() > 0) {
             displayResultUsers = true;
         } else {
@@ -507,7 +507,7 @@ public class ManageEventBacking implements Serializable {
     private void createOrLoadInstance() {
         //se sto modificando un evento esistente
         if (isSaved()) {
-            System.out.println(
+            logger.log(LoggerLevel.DEBUG,
                     "-dentro createOrL, dentro isSaved, idEvent vale:" + idEvent);
             if (idEvent != null) {
                 Event eventFound = eventManager.findEventbyId(Long.parseLong(
@@ -525,11 +525,11 @@ public class ManageEventBacking implements Serializable {
                     eventToCreate.setId(eventFound.getId());
                 }
             } else {
-                System.out.println("idEvent è null");
+                logger.log(LoggerLevel.DEBUG,"idEvent è null");
                 showMessage(null, "Nessun evento trovato", "");
             }
         } else {
-            System.out.println("-dentro createOrL, dentro else di isSaved");
+            logger.log(LoggerLevel.DEBUG,"-dentro createOrL, dentro else di isSaved");
             //se l'utente ha impostato a public l evento
             if (publicAccess) {
                 //istanzio un PublicEvent
@@ -577,7 +577,7 @@ public class ManageEventBacking implements Serializable {
             location = place.toString();
         }
 
-        System.out.println("Complete location is: " + location);
+        logger.log(LoggerLevel.DEBUG,"Complete location is: " + location);
         eventToCreate.setLocation(location);
         eventToCreate.setHasLocation(hasLocation);
         eventToCreate.setIsOutdoor(outdoor);
@@ -605,9 +605,9 @@ public class ManageEventBacking implements Serializable {
                     guests)) {
                 setSaved(true);
                 idEvent = eventToCreate.getId().toString();
-                //showMessage(null, "L'evento è stato salvato", "");
+                showMessage(null, "L'evento è stato salvato", "");
             } else {
-                showMessage(login.getCurrentUser().getEmail(),
+                showMessage(null,
                         "Evento non salvato", "Errore durante il salvataggio");
             }
         }

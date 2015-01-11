@@ -37,7 +37,7 @@ and open the template in the editor.
                     <f:passThroughAttribute name="type" value="email" />
                 </p:inputText>
                 <br/>
-                <p:commandButton id="save" value="Save" action="#{settings.saveCredentials}"/>
+                <p:commandButton id="save" value="Save" actionListener="#{settings.saveCredentials}" update="@(form)"/>
 
                 <p:commandButton id="cancel" type="reset" value="Reset" />
             </h:form>
@@ -45,16 +45,16 @@ and open the template in the editor.
                 <h2> Change Password: </h2>
                 <h:panelGrid columns="2">
                     <h:outputLabel>Old Password:</h:outputLabel> 
-                    <p:password id="oldPassword" />
+                    <p:password id="oldPassword" value="#{settings.oldPassword}" required="true" requiredMessage="insert the old password"/>
 
                     <h:outputLabel>New Password:</h:outputLabel> 
-                    <p:password id="newPassword1" />
+                    <p:password id="newPassword1" value="#{settings.newPassword1}" required="true" requiredMessage="insert the new password"/>
 
                     <h:outputLabel>Repeat Password:</h:outputLabel> 
-                    <p:password id="newPassword2" />
+                    <p:password id="newPassword2" value="#{settings.newPassword2}" required="true" requiredMessage="repeat the new password" />
                 </h:panelGrid>
                 <br/>
-                <p:commandButton id="save" value="Save" action="#{settings.savePassword}"/>
+                <p:commandButton id="save" value="Save" actionListener="#{settings.savePassword}"/>
 
                 <p:commandButton id="cancel" type="reset" value="Reset" />
             </h:form>
