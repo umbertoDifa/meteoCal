@@ -25,17 +25,18 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public void createNotifications(List<UserModel> users, Event event, NotificationType type, boolean sendEmail) {
         logger.log(LoggerLevel.DEBUG, "Setting up the notification...");
+        if (users != null && !users.isEmpty()) {
+            type.setEventName(event.getTitle()).setEventOwner(
+                    event.getOwner().getEmail()).setLink(event.getId());
 
-        type.setEventName(event.getTitle()).setEventOwner(
-                event.getOwner().getEmail()).setLink(event.getId());
-
-        for (UserModel user : users) {
-            createNotification(user, event, type);
-        }
-        if (sendEmail) {
             for (UserModel user : users) {
-                type.setInviteeName(user.getName()).buildEmail();
-                sendEmail(user, type);
+                createNotification(user, event, type);
+            }
+            if (sendEmail) {
+                for (UserModel user : users) {
+                    type.setInviteeName(user.getName()).buildEmail();
+                    sendEmail(user, type);
+                }
             }
         }
 
@@ -55,39 +56,41 @@ public class NotificationManagerImpl implements NotificationManager {
         database.persist(notification);
 
     }
-    
+
     @Override
-    public int getUnreadNotificationNumber (UserModel user) {
-        return ((Number)database.createNamedQuery("countUnreadNotifications").setParameter("user", user).getSingleResult()).intValue();
+    public int getUnreadNotificationNumber(UserModel user) {
+        return ((Number) database.createNamedQuery("countUnreadNotifications").setParameter(
+                "user", user).getSingleResult()).intValue();
     }
-    
+
     @Override
-    public List<Notification> getNotificationFiltred (UserModel user, NotificationCategories type) {
+    public List<Notification> getNotificationFiltred(UserModel user, NotificationCategories type) {
         user = database.find(UserModel.class, user.getId());
         database.refresh(user);
         switch (type) {
-                case INVITATIONS : {
-                   return database.createNamedQuery("findInvitationNotifications").setParameter("user", user).getResultList();
-                }
-                case EVENTS_CHANGES : {
-                    return database.createNamedQuery("findEventNotifications").setParameter("user", user).getResultList();
-                }
-                
-                default: {
-                    return null;
-                }
+            case INVITATIONS: {
+                return database.createNamedQuery("findInvitationNotifications").setParameter(
+                        "user", user).getResultList();
+            }
+            case EVENTS_CHANGES: {
+                return database.createNamedQuery("findEventNotifications").setParameter(
+                        "user", user).getResultList();
+            }
+
+            default: {
+                return null;
+            }
         }
 
     }
-    
+
     @Override
     public void markAllAsRead(List<Notification> notifications) {
-        for (Notification n: notifications) {
+        for (Notification n : notifications) {
             n = database.find(Notification.class, n.getId());
             n.setRead(true);
             database.flush();
         }
     }
-
 
 }

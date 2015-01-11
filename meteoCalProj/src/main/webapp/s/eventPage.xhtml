@@ -32,7 +32,9 @@ and open the template in the editor.
                 <h:outputLabel value="Description:" /><h:outputText value="#{viewEvent.eventToShow.description}"/>
                 <h:outputLabel value="isOutdoor:" /><h:outputText value="#{viewEvent.eventToShow.isOutdoor}"/>
                
-                <h:outputLabel value="Weather:" /><h:outputText value="#{viewEvent.eventToShow.weather.description}"/>
+                <c:if test="#{viewEvent.eventToShow.isOutdoor and viewEvent.eventToShow.hasLocation()}">
+                <h:outputLabel value="Weather:" /> <h:outputText value="#{viewEvent.eventToShow.weather.message.message } #{viewEvent.eventToShow.weather.description}"/>
+                </c:if>
                 <h:outputLabel value="Owner:" /><h:outputText value="#{viewEvent.eventToShow.owner.name}"/>
                 <h:outputLabel value="Public:" /><h:outputText value="#{viewEvent.publicAccess}"/>
             </p:panelGrid>

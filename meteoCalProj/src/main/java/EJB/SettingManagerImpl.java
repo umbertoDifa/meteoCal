@@ -24,6 +24,8 @@ import javax.persistence.PersistenceContext;
 import model.CalendarModel;
 import model.Event;
 import model.InvitationAnswer;
+import model.PrivateEvent;
+import model.PublicEvent;
 import model.UserModel;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
@@ -432,6 +434,7 @@ public class SettingManagerImpl implements SettingManager {
                             + event.getTitle() + "e id:" + event.getId());
 
                     //check if the event is not in any other calendar
+                    //TODO check that I have permission to add the event to my calendar
                     if (eventManager.isInAnyCalendar(event, user)) {
                         logger.log(LoggerLevel.DEBUG,
                                 "Evento già in calendario");
@@ -440,8 +443,17 @@ public class SettingManagerImpl implements SettingManager {
                         unimportedEvents.add(new Pair<>(eventName,
                                 eventOwner));
                     } else {
-                        //add the event in the calendar
-                        calendarForImport.addEventInCalendar(event);
+                        if (hasPermission(user, event)) {
+                            //add the event in the calendar
+                            calendarForImport.addEventInCalendar(event);
+                        } else {
+                            logger.log(LoggerLevel.DEBUG,
+                                    "Non hai i permessi per aggiungere l'evento in calsendario");
+
+                            //if so do not import and add to the list of unimported event
+                            unimportedEvents.add(new Pair<>(eventName,
+                                    eventOwner));
+                        }
                     }
 
                 }
@@ -452,6 +464,18 @@ public class SettingManagerImpl implements SettingManager {
                         eventOwner));
             }
         }
+    }
+
+    private boolean hasPermission(UserModel user, Event event) {
+        //se l'evento non è pubblico o è privato e sei l owner o hai un invito
+        if (!(event instanceof PublicEvent) && !((event instanceof PrivateEvent)
+                && (event.getOwner().equals(user)
+                || (event.getInvitee().contains(user))))) {
+            return false;
+        } else {
+            return true;
+        }
+
     }
 
     @Override

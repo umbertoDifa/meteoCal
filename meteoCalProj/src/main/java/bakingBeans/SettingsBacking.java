@@ -238,7 +238,7 @@ public class SettingsBacking implements Serializable {
                         "Calendar imported");
                 showWarnMessage(login.getCurrentUser().getEmail(),
                         "Events already in calendars",
-                        "Pay attention, some events were already in your calendars or do not exist anymore");
+                        "Pay attention, some events were already in your calendars or you do not have permission to add them or do not exist anymore");
             }
         } else {
             showWarnMessage(login.getCurrentUser().getEmail(), "Error",
