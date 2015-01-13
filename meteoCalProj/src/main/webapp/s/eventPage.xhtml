@@ -39,8 +39,9 @@ and open the template in the editor.
                         <i class="fa fa-user"></i> Owner:
                         <h:outputText value="#{viewEvent.eventToShow.owner.name}"/>
                         <i class="fa fa-globe"></i> Privacy:
-                        <h:outputText value="#{viewEvent.publicAccess}"/>
-
+                        <h:outputText rendered="#{viewEvent.publicAccess}" value="public"/>
+                        <h:outputText rendered="#{!viewEvent.publicAccess}" value="private"/>
+                        
                         <c:if test="#{viewEvent.eventToShow.isOutdoor and viewEvent.eventToShow.hasLocation()}">
                             <h:outputLabel value="Weather:" /> <h:outputText value="#{viewEvent.eventToShow.weather.message.message } #{viewEvent.eventToShow.weather.description}"/>
                         </c:if>

@@ -45,6 +45,6 @@ and open the template in the editor.
     display: inline-block;
 }
 
-#header, #sidebar, .noBorder tr td, .noBorder tr {
+#header, .sidebar, .noBorder tr td, .noBorder tr {
     border: none !important;
 }

@@ -23,120 +23,115 @@ and open the template in the editor.
 
         <ui:define name="content">
 
+            <p:toolbar style="margin-bottom: 12px">
 
-            <h:panelGrid columnClasses="value">
-
-
-                <p:toolbar style="margin-bottom: 12px">
-
-                    <f:facet name="left">
-                        <h:panelGrid>
-                            <h:form>
-                                <p:selectOneMenu id="console" widgetVar="console" value="#{scheduleView.calendarSelected}" style="width:125px">
-                                    <c:forEach items="#{scheduleView.calendarNames}" var="c">
-                                        <p:ajax listener="#{scheduleView.onCalendarChange}" update="@(form)" />
-                                        <f:selectItem itemLabel="#{c}" itemValue="#{c}" />
-                                    </c:forEach>
-                                </p:selectOneMenu>
-                            </h:form>
+                <f:facet name="left">
+                    <h:panelGrid>
+                        <h:form>
+                            <p:selectOneMenu id="console" widgetVar="console" value="#{scheduleView.calendarSelected}" style="width:125px">
+                                <c:forEach items="#{scheduleView.calendarNames}" var="c">
+                                    <p:ajax listener="#{scheduleView.onCalendarChange}" update="@(form)" />
+                                    <f:selectItem itemLabel="#{c}" itemValue="#{c}" />
+                                </c:forEach>
+                            </p:selectOneMenu>
+                        </h:form>
+                    </h:panelGrid>
+                </f:facet>
+                <f:facet name="right">
+                    <h:form id="publicSwitchForm" rendered="#{!scheduleView.readOnly}">
+                        <h:panelGrid >
+                            <p:commandButton id="publicSwitch" widgetVar="publicSwitch" value="#{scheduleView.labelPrivacy}" actionListener="#{scheduleView.switchPrivacy()}" update="@this"  />
                         </h:panelGrid>
-                    </f:facet>
-                    <f:facet name="right">
-                        <h:form id="publicSwitchForm" rendered="#{!scheduleView.readOnly}">
-                            <h:panelGrid >
-                                <p:commandButton id="publicSwitch" widgetVar="publicSwitch" value="#{scheduleView.labelPrivacy}" actionListener="#{scheduleView.switchPrivacy()}" update="@this"  />
-                            </h:panelGrid>
-                        </h:form>
+                    </h:form>
 
-                        <h:form id="addCalendar" rendered="#{!scheduleView.readOnly}">
-                            <h:panelGrid columns="2">
-                                <p:commandButton id="addCalendar" widgetVar="addCalendar" value="addCalendar" onclick="PF('newCalendarDialog').show()" icon="ui-icon-plusthick" />
-                            </h:panelGrid>
+                    <h:form id="addCalendar" rendered="#{!scheduleView.readOnly}">
+                        <h:panelGrid columns="2">
+                            <p:commandButton id="addCalendar" widgetVar="addCalendar" value="addCalendar" onclick="PF('newCalendarDialog').show()" icon="ui-icon-plusthick" />
+                        </h:panelGrid>
 
-                            <p:dialog widgetVar="newCalendarDialog" header="Create new calendar"  resizable="false" >
-                                <h:outputText value="Title :" />
-                                <p:inputText placeholder="Insert title here" value="#{scheduleView.calendarToCreate.title}" required="true" requiredMessage="An unique title is required"/>
-                                <br />
-                                <p:outputLabel for="privacy" value="Privacy: " />
-                                <p:selectOneRadio id="privacy" value="#{scheduleView.calendarToCreate.isPublic}">
-                                    <f:selectItem itemLabel="Private" itemValue="false" />
-                                    <f:selectItem itemLabel="Public" itemValue="true" />
-                                </p:selectOneRadio>
-                                <br />
-                                <p:outputLabel for="default" value="Default? " />
-                                <p:selectBooleanCheckbox id="default" widgetVar="default" value="#{scheduleView.calendarToCreate.isDefault}" />
-                                <br />
-                                <br />
-                                <f:facet name="footer">
-                                    <p:commandButton value="Create" icon="ui-icon-check" update="@(form)" actionListener="#{scheduleView.addNewCalendar()}" onclick="PF('newCalendarDialog').hide();"/>
-                                    <p:commandButton type="button" value="Cancel" icon="ui-icon-close" onclick="newCalendarDialog.hide()"/>
-                                </f:facet>
-                            </p:dialog>
-                        </h:form>
-
-                        <h:form id="changeDefault" rendered="#{!scheduleView.readOnly}">
-                            <h:panelGrid columns="2" >
-                                <p:commandButton widgetVar="changeDefaultButton" value="Make Default" onclick="PF('confirmChangeDef').show()" type="button" icon="ui-icon-heart" disabled="#{scheduleView.calendarShown.isDefault}"/>
-                            </h:panelGrid>
-
-                            <p:dialog widgetVar="confirmChangeDef" header="Change Default Calendar"  resizable="false" >
-                                <h:outputText value="Do you really want to set the Current Calendar as Default?"/><br/>
-                                <f:facet name="footer">
-                                    <p:commandButton value="Yes" icon="ui-icon-check" actionListener="#{scheduleView.makeDefault}" update="@form" oncomplete="PF('confirmChangeDef').hide();" />
-                                    <p:commandButton type="button" value="No" icon="ui-icon-close" onclick="PF('confirmChangeDef').hide()"/>
-                                </f:facet>
-                            </p:dialog> 
-                        </h:form>
-
-                        <h:form id="deleteForm" rendered="#{!scheduleView.readOnly}">
-                            <h:panelGrid columns="2" >
-                                <p:commandButton value="Delete Calendar" onclick="PF('confirmationDialog').show()" icon="ui-icon-trash" type="button"/>
-                            </h:panelGrid>
-
-                            <p:dialog widgetVar="confirmationDialog" header="Initiating delete process"  resizable="false" >
-                                <h:outputText value="Are you sure?"/><br/>
-                                <f:facet name="footer">
-                                    <p:commandButton value="Yes" icon="ui-icon-check" update=":growl" actionListener="#{scheduleView.canDeleteCalendar()}" oncomplete="PF('confirmationDialog').hide()" />
-                                    <p:commandButton type="button" value="No" icon="ui-icon-close" onclick="PF('confirmationDialog').hide()"/>
-                                </f:facet>
-                            </p:dialog>
-                        </h:form>
-
-                        <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" resizable="false" >
-                            <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
+                        <p:dialog widgetVar="newCalendarDialog" header="Create new calendar"  resizable="false" >
+                            <h:outputText value="Title :" />
+                            <p:inputText placeholder="Insert title here" value="#{scheduleView.calendarToCreate.title}" required="true" requiredMessage="An unique title is required"/>
+                            <br />
+                            <p:outputLabel for="privacy" value="Privacy: " />
+                            <p:selectOneRadio id="privacy" value="#{scheduleView.calendarToCreate.isPublic}">
+                                <f:selectItem itemLabel="Private" itemValue="false" />
+                                <f:selectItem itemLabel="Public" itemValue="true" />
+                            </p:selectOneRadio>
+                            <br />
+                            <p:outputLabel for="default" value="Default? " />
+                            <p:selectBooleanCheckbox id="default" widgetVar="default" value="#{scheduleView.calendarToCreate.isDefault}" />
+                            <br />
+                            <br />
                             <f:facet name="footer">
-                                <h:form>
-
-                                    <p:commandButton value="Move" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
-
-                                    <p:commandButton value="Detach" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
-
-                                    <p:commandButton value="Delete" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_ALL')}" />
-
-                                    <p:commandButton value="Cancel" type="button" onclick="PF('delOpt').hide()" />
-
-                                </h:form>
+                                <p:commandButton value="Create" icon="ui-icon-check" update="@(form)" actionListener="#{scheduleView.addNewCalendar()}" onclick="PF('newCalendarDialog').hide();"/>
+                                <p:commandButton type="button" value="Cancel" icon="ui-icon-close" onclick="newCalendarDialog.hide()"/>
                             </f:facet>
                         </p:dialog>
+                    </h:form>
+
+                    <h:form id="changeDefault" rendered="#{!scheduleView.readOnly}">
+                        <h:panelGrid columns="2" >
+                            <p:commandButton widgetVar="changeDefaultButton" value="Make Default" onclick="PF('confirmChangeDef').show()" type="button" icon="ui-icon-heart" disabled="#{scheduleView.calendarShown.isDefault}"/>
+                        </h:panelGrid>
+
+                        <p:dialog widgetVar="confirmChangeDef" header="Change Default Calendar"  resizable="false" >
+                            <h:outputText value="Do you really want to set the Current Calendar as Default?"/><br/>
+                            <f:facet name="footer">
+                                <p:commandButton value="Yes" icon="ui-icon-check" actionListener="#{scheduleView.makeDefault}" update="@form" oncomplete="PF('confirmChangeDef').hide();" />
+                                <p:commandButton type="button" value="No" icon="ui-icon-close" onclick="PF('confirmChangeDef').hide()"/>
+                            </f:facet>
+                        </p:dialog> 
+                    </h:form>
+
+                    <h:form id="deleteForm" rendered="#{!scheduleView.readOnly}">
+                        <h:panelGrid columns="2" >
+                            <p:commandButton value="Delete Calendar" onclick="PF('confirmationDialog').show()" icon="ui-icon-trash" type="button"/>
+                        </h:panelGrid>
+
+                        <p:dialog widgetVar="confirmationDialog" header="Initiating delete process"  resizable="false" >
+                            <h:outputText value="Are you sure?"/><br/>
+                            <f:facet name="footer">
+                                <p:commandButton value="Yes" icon="ui-icon-check" update=":growl" actionListener="#{scheduleView.canDeleteCalendar()}" oncomplete="PF('confirmationDialog').hide()" />
+                                <p:commandButton type="button" value="No" icon="ui-icon-close" onclick="PF('confirmationDialog').hide()"/>
+                            </f:facet>
+                        </p:dialog>
+                    </h:form>
+
+                    <p:dialog header="Delete Options" id="delOpt" widgetVar="delOpt" resizable="false" >
+                        <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
+                        <f:facet name="footer">
+                            <h:form>
+
+                                <p:commandButton value="Move" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('MOVE_EVENTS_AND_DELETE')}" />
+
+                                <p:commandButton value="Detach" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_CALENDAR_ONLY')}" />
+
+                                <p:commandButton value="Delete" update="@(form)" oncomplete="PF('delOpt').hide();PF('growl').update;" actionListener="#{scheduleView.deleteCalendar('DELETE_ALL')}" />
+
+                                <p:commandButton value="Cancel" type="button" onclick="PF('delOpt').hide()" />
+
+                            </h:form>
+                        </f:facet>
+                    </p:dialog>
 
 
 
-                    </f:facet>
-                </p:toolbar>
-                <h:form id="scheduleForm">
-                    <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" widgetVar="schedule" draggable="false" resizable="false" timeZone="GMT+2">
+                </f:facet>
+            </p:toolbar>
+            <h:form id="scheduleForm">
+                <h:panelGrid columnClasses="value">
+                    <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" tooltip="true" widgetVar="schedule" draggable="false" resizable="false" timeZone="GMT+2">
 
                         <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" />
 
                     </p:schedule>
-                </h:form>
-
-
-            </h:panelGrid>
-
+                </h:panelGrid>
+            </h:form>
             <style type="text/css">
                 .value {
                     width: 1000px;
+                    height: 570px;
                 }
             </style>
         </ui:define>

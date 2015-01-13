@@ -24,7 +24,7 @@
             <p:messages for="msg" severity="info, warn, error, fatal" showDetail="true"  />
 
 
-            <p:layout fullPage="true">
+            <p:layout>
                 
                 <p:layoutUnit id="header" position="north" >
 
@@ -32,14 +32,15 @@
 
                 </p:layoutUnit>
 
-                <p:layoutUnit id="sidebar" position="west" size="188" >
+                <p:layoutUnit class="sidebar" position="west" size="188" >
                     <ui:include src="/landmarks.xhtml"/>
                 </p:layoutUnit>
 
-                <p:layoutUnit  position="center" collapsible="false">
+                <p:layoutUnit  position="center" id="centerLayout">
                     <ui:insert name="content"/>
-                    
                 </p:layoutUnit>
+                
+                <p:layoutUnit class="sidebar" position="east" size="188"></p:layoutUnit>
                 
             </p:layout>
 
