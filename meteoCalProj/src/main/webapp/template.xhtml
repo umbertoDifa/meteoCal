@@ -16,7 +16,8 @@
         </h:head>
 
         <h:body onload="#{login.updateNotification()}" >
-
+            
+            <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" />
             <h:outputStylesheet library="css" name="normalization.css"/>
 
             <p:growl severity="info, warn, error, fatal" autoUpdate="true" id="growl" showDetail="true" widgetVar="growl"/>
@@ -27,7 +28,7 @@
                 
                 <p:layoutUnit id="header" position="north" >
 
-                    <ui:include src="/logInForm.xhtml"/>
+                    <ui:include src="/toolbar.xhtml"/>
 
                 </p:layoutUnit>
 
