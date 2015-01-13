@@ -16,6 +16,11 @@ and open the template in the editor.
     overflow: hidden !important;
 }
 
+.scheduleConteiner {
+    width: 1000px !important;
+    height: 570px !important;
+}
+
 #header{
     position: fixed !important;
     z-index: 1 !important;

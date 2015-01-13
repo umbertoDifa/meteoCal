@@ -120,7 +120,7 @@ and open the template in the editor.
                 </f:facet>
             </p:toolbar>
             <h:form id="scheduleForm">
-                <h:panelGrid columnClasses="value">
+                <h:panelGrid columnClasses="scheduleConteiner">
                     <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" tooltip="true" widgetVar="schedule" draggable="false" resizable="false" timeZone="GMT+2">
 
                         <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" />
@@ -128,12 +128,6 @@ and open the template in the editor.
                     </p:schedule>
                 </h:panelGrid>
             </h:form>
-            <style type="text/css">
-                .value {
-                    width: 1000px;
-                    height: 570px;
-                }
-            </style>
         </ui:define>
 
     </ui:composition>

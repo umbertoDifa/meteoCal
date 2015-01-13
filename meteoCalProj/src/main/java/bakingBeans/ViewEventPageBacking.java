@@ -196,18 +196,23 @@ public class ViewEventPageBacking implements Serializable {
      *
      */
     public void findEventById() {
-
-        eventToShow = eventManager.findEventbyId(eventId);
+        boolean redirectToErrorPage = false;
+        if (eventId != null) {
+            eventToShow = eventManager.findEventbyId(eventId);
+        } else {
+            redirectToErrorPage = true;
+        }
         if (eventToShow != null) {
-            System.out.println("-eventToShow è:" + eventToShow.getTitle());
             setParameters();
         } else {
-            System.out.println("-eventToSHow è null");
-
+            redirectToErrorPage = true;
+        }
+        if(redirectToErrorPage == true) {
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
             try {
                 context.redirect(context.getRequestContextPath()
                         + "/error.xhtml");
+                addMessage("No event found");
             } catch (IOException ex) {
 
             }
@@ -234,7 +239,7 @@ public class ViewEventPageBacking implements Serializable {
                 publicJoinUsers.remove(login.getCurrentUser());
             }
             addMessage("You have answered to the event");
-            System.out.println("-doPartecipate");
+
         } else {
             if (publicAccess) {
                 eventManager.addPublicJoin(eventToShow, login.getCurrentUser());
@@ -349,7 +354,7 @@ public class ViewEventPageBacking implements Serializable {
                     publicJoin = true;
                     hasAnswered = true;
                 } else {
-                     publicJoin = false;
+                    publicJoin = false;
                     answerMessage = "You won't participate";
                 }
             }

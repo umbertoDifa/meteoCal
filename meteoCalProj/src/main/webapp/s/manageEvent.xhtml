@@ -100,9 +100,9 @@
 // [END region_geolocation]
 
             </script>
-            
+
         </ui:define>
-        
+
         <f:metadata>
             <f:viewParam name="idEvent" value="#{eventToManage.idEvent}"/>
             <f:viewAction action="#{eventToManage.setEditModality}"/>
@@ -114,127 +114,129 @@
         </ui:define>
         <ui:define name="content">
             <h1>            
-                <h:outputLabel rendered="#{!eventToManage.saved}" value="new event"/>
-                <h:outputLabel rendered="#{eventToManage.saved}" value="update event"/>
+                <h:outputLabel rendered="#{!eventToManage.saved}" value="Create a new event"/>
+                <h:outputLabel rendered="#{eventToManage.saved}" value="Update event #{eventToManage.title}"/>
             </h1>
-            <p:panelGrid columns="2" layout="grid">
-                <p:panel>
-                    <h:form id="newEventForm">
+            <div class="ui-grid ui-grid-responsive">
+                <div class="ui-grid-row">
+                    <p:panel>
+                        <h:form id="newEventForm">
 
-                        <p:panelGrid class="noBorder" columns="2">
+                            <p:panelGrid class="noBorder" columns="2">
 
-                            <h:outputLabel value="Title:" />
-                            <h:inputText pt:placeholder="Title" value="#{eventToManage.title}" />
+                                <h:outputLabel value="Title:" />
+                                <h:inputText pt:placeholder="Title" value="#{eventToManage.title}" />
 
-                            <h:outputLabel value="Add into:"/>
-                            <h:selectOneMenu value="#{eventToManage.calendarName}"   >
-                                <f:selectItems value="#{calendar.calendarNames}"/>
-                                <f:selectItem value="#{null}" itemLabel="Nessun Calendario" />
-                            </h:selectOneMenu>
+                                <h:outputLabel value="Add into:"/>
+                                <h:selectOneMenu value="#{eventToManage.calendarName}"   >
+                                    <f:selectItems value="#{calendar.calendarNames}"/>
+                                    <f:selectItem value="#{null}" itemLabel="Nessun Calendario" />
+                                </h:selectOneMenu>
 
-                            <h:outputLabel value="Starting date:" />
-                            <h:inputText id="startingDate" value="#{eventToManage.startDate}">
-                                <f:passThroughAttribute name="type" value="date" />
+                                <h:outputLabel value="Starting date:" />
+                                <h:inputText id="startingDate" value="#{eventToManage.startDate}">
+                                    <f:passThroughAttribute name="type" value="date" />
+                                </h:inputText>
+
+                                <h:outputLabel value="Until:" />
+                                <h:inputText value="#{eventToManage.endDate}">
+
+                                    <f:passThroughAttribute name="type" value="date" />
+                                </h:inputText>
+
+                                <h:outputLabel value="From:" />
+                                <h:inputText value="#{eventToManage.startTime}">
+                                    <f:passThroughAttribute name="type" value="time" />
+                                </h:inputText>
+
+                                <h:outputLabel value="To:" />
+                                <h:inputText value="#{eventToManage.endTime}">
+                                    <f:passThroughAttribute name="type" value="time" />
+                                </h:inputText>
+
+                                <h:outputLabel value="Public:" />
+                                <h:selectBooleanCheckbox value="#{eventToManage.publicAccess}"/>
+
+                                <h:outputLabel value="Enter Location:"/>
+                                <div id="locationField">
+                                    <input id="autocomplete"  placeholder="Enter your address" value="#{eventToManage.location}" 
+                                           onFocus="geolocate()" onblur="fillInAddress()" type="text"/>
+                                </div>                                        
+
+                                <h:outputLabel value="Outdoor" /><h:selectBooleanCheckbox value="#{eventToManage.outdoor}"/>
+
+
+
+                            </p:panelGrid>
+
+                            <h:inputHidden class="field" id="street_number" value="#{place.streetNumber}" ></h:inputHidden>
+                            <h:inputHidden class="field" id="route" value="#{place.route}"  ></h:inputHidden>
+                            <h:inputHidden class="field" id="locality" value="#{place.locality}"   ></h:inputHidden>
+                            <h:inputHidden class="field" id="administrative_area_level_1" value="#{place.administrativeArea}" ></h:inputHidden>
+                            <h:inputHidden class="field" id="postal_code" value="#{place.postalCode}" ></h:inputHidden>
+                            <h:inputHidden class="field" id="country" value="#{place.country}" ></h:inputHidden>
+                            <h:inputHidden class="field" id="autocompleteUsed" value="#{eventToManage.hasLocation}" ></h:inputHidden>
+
+                            <h:inputTextarea value="#{eventToManage.description}" style="resize: none; width: 100%;" /><br />
+                            <p:commandButton id="save" value="Save" action="#{eventToManage.checkEvent()}"/>
+                            <p:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/calendar.xhtml"/> 
+
+                        </h:form>
+                        <h:form>
+                            <p:commandButton id="delete" value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.deleteEvent}"/>
+                        </h:form>
+                        <p:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.idEvent}"/>
+                    </p:panel>
+
+                    <p:panel id="inviteDiv">
+                        <h2>Guests:</h2>
+                        <h:form id="inviteForm">
+                            <p:fieldset legend="To invite" rendered="#{not empty eventToManage.guests}" >
+                                <c:forEach items="#{eventToManage.guests}" var="g" >
+                                    <h:outputText value="#{g.email}"/><br/>
+                                </c:forEach>
+                            </p:fieldset><br/>
+
+
+                            <h:inputText id="email" value="#{eventToManage.newGuestEmail}" required="true" validatorMessage="insert minimum 2 character" requiredMessage="Insert a search key">
+                                <f:validateLength minimum="2" />
                             </h:inputText>
+                            <p:commandButton value="search" update="@form" actionListener="#{eventToManage.showResultUsers}" /><br/><br/>
 
-                            <h:outputLabel value="Until:" />
-                            <h:inputText value="#{eventToManage.endDate}">
+                            <p:panel rendered="#{eventToManage.displayResultUsers}" >
+                                <h:outputText value="Results:  (click to invite!)" /><br/><br/>
+                                <c:forEach items="#{eventToManage.resultUsers}" var="u">
+                                    <p:commandButton class="linkStyle" update="@form" value="#{u.email}" actionListener="#{eventToManage.invite(u.email)}" /><br/>
+                                </c:forEach>
 
-                                <f:passThroughAttribute name="type" value="date" />
-                            </h:inputText>
+                            </p:panel><br/>
+                        </h:form>
 
-                            <h:outputLabel value="From:" />
-                            <h:inputText value="#{eventToManage.startTime}">
-                                <f:passThroughAttribute name="type" value="time" />
-                            </h:inputText>
-
-                            <h:outputLabel value="To:" />
-                            <h:inputText value="#{eventToManage.endTime}">
-                                <f:passThroughAttribute name="type" value="time" />
-                            </h:inputText>
-
-                            <h:outputLabel value="Public:" />
-                            <h:selectBooleanCheckbox value="#{eventToManage.publicAccess}"/>
-
-                            <h:outputLabel value="Enter Location:"/>
-                            <div id="locationField">
-                                <input id="autocomplete"  placeholder="Enter your address" value="#{eventToManage.location}" 
-                                       onFocus="geolocate()" onblur="fillInAddress()" type="text"/>
-                            </div>                                        
-
-                            <h:outputLabel value="Outdoor" /><h:selectBooleanCheckbox value="#{eventToManage.outdoor}"/>
-
-
-
-                        </p:panelGrid>
-
-                        <h:inputHidden class="field" id="street_number" value="#{place.streetNumber}" ></h:inputHidden>
-                        <h:inputHidden class="field" id="route" value="#{place.route}"  ></h:inputHidden>
-                        <h:inputHidden class="field" id="locality" value="#{place.locality}"   ></h:inputHidden>
-                        <h:inputHidden class="field" id="administrative_area_level_1" value="#{place.administrativeArea}" ></h:inputHidden>
-                        <h:inputHidden class="field" id="postal_code" value="#{place.postalCode}" ></h:inputHidden>
-                        <h:inputHidden class="field" id="country" value="#{place.country}" ></h:inputHidden>
-                        <h:inputHidden class="field" id="autocompleteUsed" value="#{eventToManage.hasLocation}" ></h:inputHidden>
-
-                        <h:inputTextarea value="#{eventToManage.description}" style="resize: none; width: 100%;" /><br />
-                        <p:commandButton id="save" value="Save" action="#{eventToManage.checkEvent()}"/>
-                        <p:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/calendar.xhtml"/> 
-
-                    </h:form>
-                    <h:form>
-                        <p:commandButton id="delete" value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.deleteEvent}"/>
-                    </h:form>
-                    <p:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.idEvent}"/>
-                </p:panel>
-
-                <p:panel id="inviteDiv">
-                    <h2>Guests:</h2>
-                    <h:form id="inviteForm">
-                        <p:fieldset legend="To invite" rendered="#{not empty eventToManage.guests}" >
-                            <c:forEach items="#{eventToManage.guests}" var="g" >
-                                <h:outputText value="#{g.email}"/><br/>
-                            </c:forEach>
-                        </p:fieldset><br/>
-
-
-                        <h:inputText id="email" value="#{eventToManage.newGuestEmail}" required="true" validatorMessage="insert minimum 2 character" requiredMessage="Insert a search key">
-                            <f:validateLength minimum="2" />
-                        </h:inputText>
-                        <p:commandButton value="search" update="@form" actionListener="#{eventToManage.showResultUsers}" /><br/><br/>
-
-                        <p:panel rendered="#{eventToManage.displayResultUsers}" >
-                            <h:outputText value="Results:  (click to invite!)" /><br/><br/>
-                            <c:forEach items="#{eventToManage.resultUsers}" var="u">
-                                <p:commandButton class="linkStyle" update="@form" value="#{u.email}" actionListener="#{eventToManage.invite(u.email)}" /><br/>
-                            </c:forEach>
-
-                        </p:panel><br/>
-                    </h:form>
-
-                    <p:tabView>
-                        <p:tab title="(#{eventToManage.acceptedInvitations.size()}) Partecipants">
-                            <c:forEach items="#{eventToManage.acceptedInvitations}" var="yesUser">
-                                <p:outputLabel value="#{yesUser.email}"/><br/>
-                            </c:forEach>
-                        </p:tab>
-                        <p:tab title="(#{eventToManage.declinedInvitations.size()}) Declined">
-                            <c:forEach items="#{eventToManage.declinedInvitations}" var="noUser">
-                                <p:outputLabel value="#{noUser.email}"/><br/>
-                            </c:forEach>
-                        </p:tab>
-                        <p:tab title="(#{eventToManage.noAnswerInvitations.size()}) No Asnwer">
-                            <c:forEach items="#{eventToManage.noAnswerInvitations}" var="bhoUser">
-                                <p:outputLabel value="#{bhoUser.email}"/><br/>
-                            </c:forEach>
-                        </p:tab>
-                        <p:tab title="(#{eventToManage.publicJoinUsers.size()}) Public Join" rendered="#{eventToManage.publicAccess}">
-                            <c:forEach items="#{eventToManage.publicJoinUsers}" var="publicUser">
-                                <p:outputLabel value="#{publicUser.email}"/><br/>
-                            </c:forEach>
-                        </p:tab>
-                    </p:tabView>
-                </p:panel>
-            </p:panelGrid>
+                        <p:tabView>
+                            <p:tab title="(#{eventToManage.acceptedInvitations.size()}) Partecipants">
+                                <c:forEach items="#{eventToManage.acceptedInvitations}" var="yesUser">
+                                    <p:outputLabel value="#{yesUser.email}"/><br/>
+                                </c:forEach>
+                            </p:tab>
+                            <p:tab title="(#{eventToManage.declinedInvitations.size()}) Declined">
+                                <c:forEach items="#{eventToManage.declinedInvitations}" var="noUser">
+                                    <p:outputLabel value="#{noUser.email}"/><br/>
+                                </c:forEach>
+                            </p:tab>
+                            <p:tab title="(#{eventToManage.noAnswerInvitations.size()}) No Asnwer">
+                                <c:forEach items="#{eventToManage.noAnswerInvitations}" var="bhoUser">
+                                    <p:outputLabel value="#{bhoUser.email}"/><br/>
+                                </c:forEach>
+                            </p:tab>
+                            <p:tab title="(#{eventToManage.publicJoinUsers.size()}) Public Join" rendered="#{eventToManage.publicAccess}">
+                                <c:forEach items="#{eventToManage.publicJoinUsers}" var="publicUser">
+                                    <p:outputLabel value="#{publicUser.email}"/><br/>
+                                </c:forEach>
+                            </p:tab>
+                        </p:tabView>
+                    </p:panel>
+                </div>
+            </div>
 
 
             <p:dialog header="Reschedule suggested" id="conflictDialog" widgetVar="conflictDialog" minHeight="40" width="300" resizable="false">
