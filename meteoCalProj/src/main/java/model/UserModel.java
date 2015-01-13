@@ -145,14 +145,6 @@ public class UserModel implements Serializable {
         this.publicJoins = publicJoins;
     }
 
-    public void addPublicJoin(PublicEvent event) {
-        this.publicJoins.add(event);
-    }
-
-    public void deletePublicJoin(PublicEvent event) {
-        this.publicJoins.remove(event);
-    }
-
     public List<Invitation> getInvitations() {
         return invitations;
     }

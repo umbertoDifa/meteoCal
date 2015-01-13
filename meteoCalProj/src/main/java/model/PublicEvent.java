@@ -5,6 +5,7 @@
  */
 package model;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -21,35 +22,33 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "PUBLIC_EVENT")
-
-@NamedQuery(name= "findNextPublicEvents", query= "SELECT e FROM PublicEvent e WHERE e.endDateTime>= CURRENT_TIMESTAMP AND e.owner <> :user")
+@NamedQuery(name = "findNextPublicEvents",
+            query = "SELECT e FROM PublicEvent e WHERE e.endDateTime>= CURRENT_TIMESTAMP AND e.owner <> :user")
 @DiscriminatorValue("PUBLIC")
 public class PublicEvent extends Event {
-    
+
     @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "PUBLIC_JOIN")
     private List<UserModel> guests;
-    
-    
 
     /**
-    *
-    *   CONSTRUCTORS
-    */
-
+     *
+     * CONSTRUCTORS
+     */
     public PublicEvent(String title, Calendar startDateTime, Calendar endDateTime, String location, String description, boolean isOutdoor, UserModel owner) {
-        super(title, startDateTime, endDateTime, location, description, isOutdoor, owner);
+        super(title, startDateTime, endDateTime, location, description,
+                isOutdoor, owner);
+        guests = new ArrayList<>();
     }
 
     public PublicEvent() {
+        guests = new ArrayList<>();
     }
 
-
     /**
-    *
-    *   SETTERS & GETTERS
-    */    
-
+     *
+     * SETTERS & GETTERS
+     */
     public List<UserModel> getGuests() {
         return guests;
     }
@@ -57,6 +56,12 @@ public class PublicEvent extends Event {
     public void setGuests(List<UserModel> guests) {
         this.guests = guests;
     }
-   
-    
+
+    public boolean addGuest(UserModel user) {
+        return this.guests.add(user);
+    }
+
+    public boolean removeGuest(UserModel user) {
+        return this.guests.remove(user);
+    }
 }

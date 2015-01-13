@@ -468,7 +468,8 @@ public class EventManagerImpl implements EventManager {
             }
             return users;
         } else {
-            logger.log(LoggerLevel.DEBUG,"L'event è null in getInviteesFiltered");
+            logger.log(LoggerLevel.DEBUG,
+                    "L'event è null in getInviteesFiltered");
             return null;
         }
 
@@ -493,9 +494,9 @@ public class EventManagerImpl implements EventManager {
 
         if (user != null && event != null) {
             if (event instanceof PublicEvent) {
-                user = database.find(UserModel.class, user.getId());
-                if (user != null) {
-                    user.addPublicJoin((PublicEvent) event);
+                event = database.find(Event.class, event.getId());
+                if (event != null) {
+                    ((PublicEvent) event).addGuest(user);
                     database.flush();
                     return true;
                 }
@@ -509,9 +510,9 @@ public class EventManagerImpl implements EventManager {
     public boolean removePublicJoin(Event event, UserModel user) {
         if (user != null && event != null) {
             if (event instanceof PublicEvent) {
-                user = database.find(UserModel.class, user.getId());
-                if (user != null) {
-                    user.deletePublicJoin((PublicEvent) event);
+                event = database.find(Event.class, event.getId());
+                if (event != null) {
+                    ((PublicEvent) event).removeGuest(user);
                     database.flush();
                     return true;
                 }
