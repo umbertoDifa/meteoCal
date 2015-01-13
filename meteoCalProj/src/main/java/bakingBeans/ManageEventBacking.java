@@ -435,7 +435,7 @@ public class ManageEventBacking implements Serializable {
         logger.log(LoggerLevel.DEBUG,"-dentro delete, eventToCreate vale:" + eventToCreate);
         if (eventManager.deleteEvent(eventToCreate)) {
             logger.log(LoggerLevel.DEBUG,"-evento cancellato");
-            return "/s/myCalendar.xhtml";
+            return "/s/calendar.xhtml";
         } else {
             logger.log(LoggerLevel.DEBUG,"-evento non cancellato");
             showMessage("", "evento non cancellato", "");

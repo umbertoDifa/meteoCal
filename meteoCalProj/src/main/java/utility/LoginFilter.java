@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author itcuties
  *
  */
-@WebFilter("/s/*")
+@WebFilter(filterName="loginFilter", urlPatterns ="/s/*")
 public class LoginFilter implements Filter {
 
     @Inject
@@ -31,12 +31,12 @@ public class LoginFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        System.out.println("-dentro LoginFilter");
+        System.out.println("-dentro login filter");
         if (login != null && login.isLoggedIn()) {
             chain.doFilter(request, response);
         } else {
             String contextPath = ((HttpServletRequest) request).getContextPath();
-            ((HttpServletResponse)response).sendError(HttpServletResponse.SC_FORBIDDEN, "La pagina non è disponibile, effettuare il log in");
+            ((HttpServletResponse)response).sendError(HttpServletResponse.SC_FORBIDDEN, "The page is not available, log in");
         }
 
     }
