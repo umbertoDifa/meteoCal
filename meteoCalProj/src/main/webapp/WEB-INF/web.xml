@@ -28,6 +28,11 @@
         <location>/error.xhtml</location>
     </error-page>
 
+    <filter-mapping>
+        <filter-name>loginFilter</filter-name>
+        <url-pattern />
+    </filter-mapping>
+
     <filter>
         <filter-name>EditPermissionFilter</filter-name>
         <filter-class>utility.EditPermissionFilter</filter-class>
