@@ -451,8 +451,9 @@ public class WeatherManagerImpl implements WeatherManager {
             return true;
         }
         logger.log(LoggerLevel.DEBUG,
-                "l'event è null, o non ha location o è indoor->non scarico weather:\nhaslocation= "
-                + event.hasLocation() + "\nisOutodoor: " + event.isIsOutdoor());
+                "l''event \u00e8 null, o non ha location o \u00e8 indoor -> non scarico weather:\nhaslocation= {0}\nisOutodoor: {1}",
+                new Object[]{event.hasLocation(),
+                             event.isIsOutdoor()});
         return false;
     }
 

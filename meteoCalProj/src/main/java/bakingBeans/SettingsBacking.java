@@ -131,8 +131,6 @@ public class SettingsBacking implements Serializable {
     }
 
     public void setCalendarToExport(String calendarToExport) {
-        logger.log(LoggerLevel.DEBUG, "DENTRO il setCalendarTOExport vale: "
-                + calendarToExport);
         this.calendarToExport = calendarToExport;
     }
 
@@ -201,36 +199,38 @@ public class SettingsBacking implements Serializable {
     }
 
     public void saveCredentials() {
-        if (settingManager.changeCredentials(login.getCurrentUser(), name, surname, email)) {
-            showInfoMessage(null, "credential updated", "");
+        if (settingManager.changeCredentials(login.getCurrentUser(), name,
+                surname, email)) {
+            showInfoMessage(null, "Credential updated", "");
             login.refreshCurrentUser();
         } else {
-            showWarnMessage(null, "credential not updated", "");
+            showWarnMessage(null, "Credential not updated", "");
         }
     }
 
     public void savePassword() {
         if (newPassword1.equals(newPassword2)) {
-            if (settingManager.changePassword(login.getCurrentUser(), oldPassword, newPassword1)) {
-                showInfoMessage(null, "password updated", "");
+            if (settingManager.changePassword(login.getCurrentUser(),
+                    oldPassword, newPassword1)) {
+                showInfoMessage(null, "Password updated", "");
                 login.refreshCurrentUser();
             } else {
-                showWarnMessage(null, "password not updated", "");
+                showWarnMessage(null, "Password not updated", "");
             }
         } else {
-            showWarnMessage(null, "password wrong", "check the fields!");
+            showWarnMessage(null, "Password wrong", "Check the fields!");
         }
     }
 
     public void deleteAccount() {
-        
+
         if (settingManager.deleteAccount(login.getCurrentUser())) {
             login.forceLogout();
         } else {
-            showWarnMessage(null, "Error", "impossible to delete account");
-            
+            showWarnMessage(null, "Error", "Impossible to delete account");
+
         }
-        
+
     }
 
     public void importCalendar(FileUploadEvent event) {
@@ -248,7 +248,7 @@ public class SettingsBacking implements Serializable {
                         "Calendar imported");
                 showWarnMessage(login.getCurrentUser().getEmail(),
                         "Events already in calendars",
-                        "Pay attention, some events were already in your calendars or do not exist anymore");
+                        "Pay attention, some events were already in your calendars or do not exist anymore or you do not have permission to add them");
             }
         } else {
             showWarnMessage(login.getCurrentUser().getEmail(), "Error",

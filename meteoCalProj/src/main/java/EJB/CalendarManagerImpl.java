@@ -85,6 +85,9 @@ public class CalendarManagerImpl implements CalendarManager {
         if (forecast.getMessage() != WeatherMessages.BAD_WEATHER) {
             logger.log(LoggerLevel.DEBUG,
                     "Good weather(or no weather) found in CheckWeather");
+            logger.log(LoggerLevel.DEBUG,
+                    "In particolare il tempo trovato è: "
+                    + forecast.getMessage().getMessage());
             return true;
         }
         logger.log(LoggerLevel.DEBUG, "Bad weather foudn in checkWeather");
@@ -100,24 +103,12 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public boolean isInConflict(Event event) {
-        //TODO controllare che questo metodo venga chiamato anche quando faccio l'update cambiando data/ora
-
         if (event != null) {
             try {
-//                logger.log(LoggerLevel.DEBUG,
-//                        "Parametri query conflict:\nuser: "
-//                        + event.getOwner().getEmail() + "\nfine evento: "
-//                        + event.getEndDateTime().getTime().toString()
-//                        + "\ninizio evento: "
-//                        + event.getStartDateTime().getTime().toString()
-//                        + "\nid evento: " + event.getId());
-
-                //questa la uso anche quando un evento non è stato persistito ma lo sto appena
-                //creando e voglio controllare i conflitti
-                //quindi non ha un id
-                //quindi ne imposto uno irreale per far funzionare la query che altrimenti
-                //ha l'id a null
+                //ha l'id a null quando faccio il check prima di inserirlo nel db
                 if (event.getId() == null) {
+                    //imposto l'id a -1 perchè sicuramente non esiste un evento con lo stesso
+                    //id
                     event.setId(Long.parseLong("-1"));
                 }
                 logger.log(LoggerLevel.DEBUG, "id event ora:" + event.getId());
@@ -129,17 +120,20 @@ public class CalendarManagerImpl implements CalendarManager {
                                 "start", event.getStartDateTime()).setParameter(
                                 "id",
                                 event.getId()).getSingleResult();
+
                 //reimposto l'id dell'evento a null se lo era
                 if (event.getId() == -1) {
                     event.setId(null);
                 }
-                logger.log(LoggerLevel.DEBUG, "id event ora:" + event.getId());
+
+                logger.log(LoggerLevel.DEBUG, "id event ora: {0}", event.getId());
 
                 //se non alza eccezioni è perchè ha trovato esattamente un conflitto
                 logger.log(LoggerLevel.DEBUG, "Conflict found");
 
                 return true;
             } catch (NoResultException e) {
+                //reimposto l'id dell'evento a null se lo era
                 if (event.getId() == -1) {
                     event.setId(null);
                 }
@@ -149,6 +143,8 @@ public class CalendarManagerImpl implements CalendarManager {
                 logger.log(LoggerLevel.DEBUG, "Conflict NOT found");
                 return false;
             } catch (NonUniqueResultException e) {
+                //reimposto l'id dell'evento a null se lo era
+
                 if (event.getId() == -1) {
                     event.setId(null);
                 }
@@ -189,16 +185,16 @@ public class CalendarManagerImpl implements CalendarManager {
         tempEvent.setLatitude(event.getLatitude());
         tempEvent.setLongitude(event.getLongitude());
 
-        logger.log(LoggerLevel.DEBUG,
+        
+
+        for (int i = 1; i < searchRange; i++) {
+            logger.log(LoggerLevel.DEBUG,
                 "Parametri tempEvent:\nuser: "
                 + tempEvent.getOwner().getEmail() + "\nfine evento: "
                 + tempEvent.getEndDateTime().getTime().toString()
                 + "\ninizio evento: "
                 + tempEvent.getStartDateTime().getTime().toString()
                 + "\nid evento: " + tempEvent.getId());
-
-        for (int i = 1; i < searchRange; i++) {
-
             //ogni volta io aggiungo un giorno quindi la add prende come argomento
             //1 e non i 
             //setto nuova data inizio
