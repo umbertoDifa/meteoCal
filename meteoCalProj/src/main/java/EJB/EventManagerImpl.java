@@ -68,7 +68,7 @@ public class EventManagerImpl implements EventManager {
         database.flush();
         logger.log(LoggerLevel.DEBUG, "Attualment lat e long:{0} e {1}",
                 new Object[]{event.getLatitude(),
-                    event.getLongitude()});
+                             event.getLongitude()});
 
         //aggiungo weather
         WeatherForecast forecast = weatherManager.getWeather(event);
@@ -117,10 +117,10 @@ public class EventManagerImpl implements EventManager {
                     event.setLatitude(results[0].geometry.location.lat);
                     event.setLongitude(results[0].geometry.location.lng);
 
-                logger.log(LoggerLevel.DEBUG, "Trovate lat e long: {0} ,{1}",
-                        new Object[]{event.getLatitude(),
-                            event.getLongitude()});
-
+                    logger.log(LoggerLevel.DEBUG, "Trovate lat e long: {0} ,{1}",
+                            new Object[]{event.getLatitude(),
+                                         event.getLongitude()});
+                }
             } catch (Exception ex) {
                 logger.log(Level.WARNING, ex.getMessage(), ex);
             }
@@ -133,7 +133,8 @@ public class EventManagerImpl implements EventManager {
     }
 
     @Override
-    public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees) {
+    public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees
+    ) {
         logger.log(LoggerLevel.DEBUG, "Appena entrato in UpdateEvent");
         //se l'update dei parametri generici va a buon fine
         if (updateEvent(event, inCalendar)) {
@@ -238,9 +239,11 @@ public class EventManagerImpl implements EventManager {
             if (!event.getLocation().isEmpty()) {
                 logger.log(LoggerLevel.DEBUG, "trovata modifica location!");
                 logger.log(LoggerLevel.DEBUG, "vecchia location: "
-                        + oldEvent.getLocation() + " nuova: " + event.getLocation());
+                        + oldEvent.getLocation() + " nuova: "
+                        + event.getLocation());
                 logger.log(LoggerLevel.DEBUG, "vecchia has location: "
-                        + oldEvent.hasLocation() + "nuova: " + event.hasLocation());
+                        + oldEvent.hasLocation() + "nuova: "
+                        + event.hasLocation());
                 oldEvent.setLocation(event.getLocation());
                 oldEvent.setHasLocation(event.hasLocation());
                 this.updateEventLatLng(oldEvent);

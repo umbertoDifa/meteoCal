@@ -24,7 +24,7 @@ public interface InvitationManager {
      */
     public void createInvitations(List<UserModel> userToInvite, Event event);
     
-    boolean setAnswer(Invitation invitation, InvitationAnswer answer);
+    public boolean setAnswer(UserModel answeringUser, Event event, InvitationAnswer answer);
     
 
 }

@@ -266,9 +266,6 @@ public class SettingsBacking implements Serializable {
         CalendarModel calToExp = findCalendarByName(calendars, calendarToExport);
         InputStream stream;
         if (calToExp != null) {
-            new File(SettingManagerImpl.COMMON_PATH + "export" + File.separator
-                    + login.getCurrentUser().getId()).mkdirs();
-
             if (settingManager.exportCalendar(calToExp)) {
                 String path = getGlassfishDomainPath();
 

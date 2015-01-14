@@ -24,8 +24,6 @@ public interface SettingManager {
      */
     public List<Pair<String, String>> importCalendar(UserModel user, UploadedFile uploadedFile);
 
-    public void deleteExportFolder(UserModel user);
-
     /**
      * Cancella un account se lo userToDelete viene trovato ed e not null
      * @param userToDelete user da eliminare 

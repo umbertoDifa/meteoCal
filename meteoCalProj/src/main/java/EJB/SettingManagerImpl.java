@@ -2,6 +2,7 @@ package EJB;
 
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
+import EJB.interfaces.InvitationManager;
 import EJB.interfaces.SettingManager;
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,13 +54,11 @@ public class SettingManagerImpl implements SettingManager {
     @Inject
     private CalendarManager calendarManager;
 
+    @Inject
+    private InvitationManager invitationManager;
+
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
-
-    public final static String COMMON_PATH = "." + File.separator + "src"
-            + File.separator + "main" + File.separator
-            + "webapp" + File.separator + "resources" + File.separator + "ics"
-            + File.separator;
 
     Logger logger = LoggerProducer.debugLogger(SettingManagerImpl.class);
 
@@ -289,12 +288,16 @@ public class SettingManagerImpl implements SettingManager {
     private File copyUploadedFile(UserModel user, UploadedFile uploadedFile) {
 
         //create path to save imported file
-        String fileName = COMMON_PATH + "import" + File.separator + user.getId()
-                + TimeTool.dateToTextDay(Calendar.getInstance().getTime(),
-                        "yyyy-MM-dd-hh-mm-ss") + ".ics";
+        String fileName = "." + File.separator + "import" + File.separator
+                + user.getId() + File.separator + "importedCalendar.ics";
+
+        //create the folders
+        boolean result = new File(
+                "." + File.separator + "import" + File.separator
+                + user.getId()).mkdirs();
+
         logger.log(LoggerLevel.DEBUG, "File copiato in: " + fileName);
-        //create folders to that path 
-        new File(COMMON_PATH + "import" + File.separator + user.getId()).mkdirs();
+
         //create the file
         File importFile = new File(fileName);
 
@@ -434,7 +437,6 @@ public class SettingManagerImpl implements SettingManager {
                             + event.getTitle() + "e id:" + event.getId());
 
                     //check if the event is not in any other calendar
-                    //TODO check that I have permission to add the event to my calendar
                     if (eventManager.isInAnyCalendar(event, user)) {
                         logger.log(LoggerLevel.DEBUG,
                                 "Evento già in calendario");
@@ -444,6 +446,19 @@ public class SettingManagerImpl implements SettingManager {
                                 eventOwner));
                     } else {
                         if (hasPermission(user, event)) {
+                            //se ha i permessi per importare
+                            //se è pubblico faccio la public join se manca
+                            if (event instanceof PublicEvent) {
+                                if (!((PublicEvent) event).getGuests().contains(
+                                        user)) {
+                                    //ti aggiungo
+                                    eventManager.addPublicJoin(event, user);
+                                }
+                            } else {
+                                // se è privato metto si all'inivito
+                                invitationManager.setAnswer(user, event,
+                                        InvitationAnswer.YES);
+                            }
                             //add the event in the calendar
                             calendarForImport.addEventInCalendar(event);
                         } else {
@@ -466,44 +481,25 @@ public class SettingManagerImpl implements SettingManager {
         }
     }
 
+    /**
+     *
+     * @param user
+     * @param event
+     * @return true se l'evento è pubblico o se è privato ma sono l'owner o un
+     * invitato, false altrimenti
+     */
     private boolean hasPermission(UserModel user, Event event) {
         //se l'evento è privato e sei l owner o hai un invito
         if ((event instanceof PrivateEvent) && (event.getOwner().equals(user)
                 || (event.getInvitee().contains(user)))) {
-            return true;            
+            return true;
         } else if (event instanceof PublicEvent) {
-            //se l'evento è pubblico e non sei nei public join
-            if (!((PublicEvent) event).getGuests().contains(user)) {
-                //ti aggiungo
-                eventManager.addPublicJoin(event, user);
-            }
+            //se l'evento è pubblico             
             return true;
         } else {
             return false;
         }
 
-    }
-
-    @Override
-    //TODO not used anymore
-    public void deleteExportFolder(UserModel user) {
-
-        //creo il path
-        String path = COMMON_PATH + "export" + File.separator
-                + user.getId();
-
-        //creo il file
-        File exportDir = new File(path);
-
-        //checko se esiste
-        if (exportDir.exists()) {
-            try {
-                //elimino
-                FileUtils.deleteDirectory(exportDir);
-            } catch (IOException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
-            }
-        }
     }
 
     @Override

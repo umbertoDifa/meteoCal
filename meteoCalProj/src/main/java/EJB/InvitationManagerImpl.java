@@ -23,15 +23,17 @@ public class InvitationManagerImpl implements InvitationManager {
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
-    
+
     @Inject
     Logger logger;
 
     @Override
     public void createInvitations(List<UserModel> usersToInvite, Event event) {
-        for (UserModel user : usersToInvite) 
-            if (!this.createInvitation(user, event)) 
+        for (UserModel user : usersToInvite) {
+            if (!this.createInvitation(user, event)) {
                 usersToInvite.remove(user);
+            }
+        }
 
         notificationManager.createNotifications(usersToInvite, event,
                 NotificationType.INVITATION, true);
@@ -42,27 +44,48 @@ public class InvitationManagerImpl implements InvitationManager {
         //lo cerco nello user (più lento probabilmente) perchè non è detto che quell'evento sia già stato persistito!
         user = database.find(UserModel.class, user.getId());
         event = database.find(Event.class, event.getId());
-            for (Invitation invitation : user.getInvitations()) {
-                if (invitation.getEvent().equals(event)) {
-                    return false;
-                }
+        for (Invitation invitation : user.getInvitations()) {
+            if (invitation.getEvent().equals(event)) {
+                return false;
             }
-       Invitation invitation = new Invitation(user, event);
-       database.persist(invitation);
-       return true;
+        }
+        Invitation invitation = new Invitation(user, event);
+        database.persist(invitation);
+        return true;
     }
 
     @Override
-    public boolean setAnswer(Invitation invitation, InvitationAnswer answer) {
-        try {
-            invitation = (Invitation) database.createNamedQuery("findInvitation").setParameter("event", invitation.getEvent()).setParameter("user", invitation.getInvitee()).getSingleResult();
-            invitation.setAnswer(answer);
-            database.persist(invitation);
-            return true;
-        } catch (IllegalArgumentException e) {
+    public boolean setAnswer(UserModel answeringUser, Event event, InvitationAnswer answer) {
+        Invitation invitation = getInvitationByUserAndEvent(answeringUser, event);
+        if (invitation != null) {
+            //se ho un invito per qeull'evento
+            try {
+                invitation = (Invitation) database.createNamedQuery(
+                        "findInvitation").setParameter(
+                                "event", invitation.getEvent()).setParameter(
+                                "user",
+                                invitation.getInvitee()).getSingleResult();
+                invitation.setAnswer(answer);
+                database.persist(invitation);
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
+        } else {
             return false;
         }
 
+    }
+
+    private Invitation getInvitationByUserAndEvent(UserModel user, Event event) {
+        List<Invitation> list = event.getInvitations();
+        if (list != null && list.size() > 0) {
+            for (Invitation i : list) {
+                if (i.getInvitee().equals(user));
+                return i;
+            }
+        }
+        return null;
     }
 
 }

@@ -209,7 +209,7 @@ public class ViewEventPageBacking implements Serializable {
         } else {
             redirectToErrorPage = true;
         }
-        if(redirectToErrorPage == true) {
+        if (redirectToErrorPage == true) {
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
             try {
                 context.redirect(context.getRequestContextPath()
@@ -223,7 +223,7 @@ public class ViewEventPageBacking implements Serializable {
 
     public void doPartecipate() {
         if (hasInvitation) {
-            invitationManager.setAnswer(getOwnedInvitation(),
+            invitationManager.setAnswer(login.getCurrentUser(), eventToShow,
                     InvitationAnswer.YES);
             hasAnswered = true;
             partecipate = true;
@@ -261,7 +261,7 @@ public class ViewEventPageBacking implements Serializable {
 
     public void doDecline() {
         if (hasInvitation) {
-            invitationManager.setAnswer(getOwnedInvitation(),
+            invitationManager.setAnswer(login.getCurrentUser(), eventToShow,
                     InvitationAnswer.NO);
             hasAnswered = true;
             partecipate = false;
@@ -374,21 +374,10 @@ public class ViewEventPageBacking implements Serializable {
         }
         return invitees;
     }
-    
-    public boolean isFuture(){
+
+    public boolean isFuture() {
         Calendar today = Calendar.getInstance();
         return TimeTool.isBefore(today, eventToShow.getEndDateTime());
-    }
-
-    private Invitation getOwnedInvitation() {
-        List<Invitation> list = eventToShow.getInvitations();
-        if (list != null && list.size() > 0) {
-            for (Invitation i : list) {
-                if (i.getInvitee().equals(login.getCurrentUser()));
-                return i;
-            }
-        }
-        return null;
     }
 
     /**

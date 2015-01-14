@@ -66,10 +66,7 @@ public class LoginManagerImpl implements LoginManager {
                 userAndMessage.setUser(results.get(0));
                 database.refresh(results.get(0));
                 userAndMessage.setControlMessage(
-                        ControlMessages.LOGIN_SUCCESSFUL);
-                
-                //cancello la cartella di export dell'utente ogni volta che questo fa il login
-                settingManager.deleteExportFolder(userAndMessage.getUser());
+                        ControlMessages.LOGIN_SUCCESSFUL);                
             } else {
                 //se password sbagliata, scrivo l'errore e ritorno null
                 userAndMessage.setUser(null);
