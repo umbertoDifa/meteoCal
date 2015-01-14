@@ -17,61 +17,63 @@ and open the template in the editor.
 
         <ui:define name="content">
 
-            <h:messages />
-
             <h1>Sign Up</h1>
-
-            <h:form id="signUpForm" rendered="#{!login.loggedIn}"> 
-
-                <p:focus context="signUpForm"/>
-                <h:panelGrid columns="2"> 
-
-                    <h:outputLabel for="email">Email*:</h:outputLabel> 
-
-                    <h:inputText id="email" value="#{user.email}" pt:required="">
-                        <f:passThroughAttribute name="type" value="email" />
-                    </h:inputText>
-                    
-
-                    <h:outputLabel for="email">Name*:</h:outputLabel> 
-
-                    <h:inputText id="name" value="#{user.name}" pt:required="" />
-
-
-                    <h:outputLabel for="email">Surname*:</h:outputLabel> 
-
-                    <h:inputText id="surname" value="#{user.surname}" pt:required=""/>
-
-                    <h:outputLabel for="password">Password*:</h:outputLabel> 
-
-                    <h:inputSecret id="password" value="#{user.password}" pt:required="" />
-
-                </h:panelGrid> 
-
-                <h:commandButton id="signUp" 
-
-                                 value="SignUp" 
-
-                                 action="#{signUp.signUp}" />
-
-                <h:message for="username" style="color:red" />
-                <h:message for="password" style="color:red" />
-            </h:form> 
 
             <h:outputText rendered="#{login.loggedIn}">You are registrated!</h:outputText>
 
-            <!--if the user is not logged in show button to log out-->
-            <h:commandButton id="logout" 
+            <h:form id="signUpForm"> 
+                <p:focus context="signUpForm"/>
 
-                             value="Logout" 
+                <!--if the user is not logged show login panel-->
+                <p:panelGrid  columns="3" rendered="#{!login.loggedIn}" style="margin:auto"> 
+                    
+                    <h:outputLabel for="email">Email*:</h:outputLabel> 
+                    <h:inputText id="email" value="#{user.email}" pt:required="">
+                        <f:passThroughAttribute name="type" value="email" />
+                    </h:inputText>
+                    <h:message for="email" style="color:red" />
 
-                             action="#{login.logout}" 
+                    <h:outputLabel for="name">Name*:</h:outputLabel> 
+                    <h:inputText id="name" value="#{user.name}" pt:required="" />
+                    <h:message for="name" style="color:red" />
 
-                             rendered="#{login.loggedIn}"/> 
+                    <h:outputLabel for="surname">Surname*:</h:outputLabel> 
+                    <h:inputText id="surname" value="#{user.surname}" pt:required=""/>
+                    <h:message for="surname" style="color:red" />
 
-            <h:link rendered="#{!login.loggedIn}" outcome="/logIn.xhtml">Log In</h:link>
-            
-            <h:message for="signUpForm" />
+                    <h:outputLabel for="password">Password*:</h:outputLabel> 
+                    <h:inputSecret id="password" value="#{user.password}" pt:required="" />
+                    <h:message for="password" style="color:red" />
+
+                    <f:facet name="footer">
+                        <p:commandButton id="signUp" 
+                                         value="Sign Up" 
+                                         action="#{signUp.signUp}" />
+
+                        <p:commandButton rendered="#{!login.loggedIn}" 
+                                         action="/logIn.xhtml" value="Log In" />
+                    </f:facet>
+                </p:panelGrid> 
+
+                <!--if the user is not logged in show button to submit credentials-->
+
+
+                <!--if the user is not logged in show button to log out-->
+                <p:commandButton id="logout" 
+
+                                 value="Logout" 
+
+                                 icon="ui-icon-extlink" 
+
+                                 action="#{login.logout}" 
+
+                                 rendered="#{login.loggedIn}"/> 
+
+                <!--                <p:message for="email" style="color:red" />
+                                <p:message for="password" style="color:red" />-->
+            </h:form>
+
+
         </ui:define>
 
     </ui:composition>

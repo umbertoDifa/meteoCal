@@ -74,7 +74,7 @@ public class CalendarBacking implements Serializable {
             return r;
         }
         return null;
-    }
+    } 
 
     @PostConstruct
     private void init() {
@@ -108,6 +108,5 @@ public class CalendarBacking implements Serializable {
     public void setExternalView() {
         external = true;
     }
-
 
 }

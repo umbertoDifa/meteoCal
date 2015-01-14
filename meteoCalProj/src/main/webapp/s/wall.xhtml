@@ -28,16 +28,18 @@ and open the template in the editor.
                                     <p:graphicImage value="/resources/img/default.png"/> 
 
                                     <p:outputPanel>
+                                        <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
                                         <h:panelGrid columns="2" cellpadding="5">
-                                            <h:outputText value="Title:" />
-                                            <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
-
-                                            <h:outputText value="Date:" />
+                                            <i class="fa fa-clock-o" /> Date:
                                             <h:outputText value="#{ev.formattedStartDate}"/>
 
-                                            <h:outputText value="By:" />
+                                            <i class="fa fa-map-marker" /> Location:
+                                            <h:outputText value="#{ev.location}"/>
+
+                                            <i class="fa fa-user"></i> By:
                                             <h:outputLabel value="#{ev.owner.email}"/>
                                         </h:panelGrid>
+
                                     </p:outputPanel>
 
                                 </h:panelGrid>
@@ -55,17 +57,20 @@ and open the template in the editor.
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default.png"/> 
 
-                                    <p:outputPanel>
-                                        <h:panelGrid columns="2" cellpadding="5">
-                                            <h:outputText value="Title:" />
-                                            <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
 
-                                            <h:outputText value="Date:" />
+                                    <p:outputPanel>
+                                        <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <i class="fa fa-clock-o" /> Date:
                                             <h:outputText value="#{ev.formattedStartDate}"/>
 
-                                            <h:outputText value="By:" />
+                                            <i class="fa fa-map-marker" /> Location:
+                                            <h:outputText value="#{ev.location}"/>
+
+                                            <i class="fa fa-user"></i> By:
                                             <h:outputLabel value="#{ev.owner.email}"/>
                                         </h:panelGrid>
+
                                     </p:outputPanel>
 
                                 </h:panelGrid>
@@ -83,17 +88,20 @@ and open the template in the editor.
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default.png"/> 
 
-                                    <p:outputPanel>
-                                        <h:panelGrid columns="2" cellpadding="5">
-                                            <h:outputText value="Title:" />
-                                            <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
 
-                                            <h:outputText value="Date:" />
+                                    <p:outputPanel>
+                                        <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <i class="fa fa-clock-o" /> Date:
                                             <h:outputText value="#{ev.formattedStartDate}"/>
 
-                                            <h:outputText value="By:" />
+                                            <i class="fa fa-map-marker" /> Location:
+                                            <h:outputText value="#{ev.location}"/>
+
+                                            <i class="fa fa-user"></i> By:
                                             <h:outputLabel value="#{ev.owner.email}"/>
                                         </h:panelGrid>
+
                                     </p:outputPanel>
 
                                 </h:panelGrid>
@@ -111,17 +119,20 @@ and open the template in the editor.
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default.png"/> 
 
-                                    <p:outputPanel>
-                                        <h:panelGrid columns="2" cellpadding="5">
-                                            <h:outputText value="Title:" />
-                                            <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
 
-                                            <h:outputText value="Date:" />
+                                    <p:outputPanel>
+                                        <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <i class="fa fa-clock-o" /> Date:
                                             <h:outputText value="#{ev.formattedStartDate}"/>
 
-                                            <h:outputText value="By:" />
+                                            <i class="fa fa-map-marker" /> Location:
+                                            <h:outputText value="#{ev.location}"/>
+
+                                            <i class="fa fa-user"></i> By:
                                             <h:outputLabel value="#{ev.owner.email}"/>
                                         </h:panelGrid>
+
                                     </p:outputPanel>
 
                                 </h:panelGrid>

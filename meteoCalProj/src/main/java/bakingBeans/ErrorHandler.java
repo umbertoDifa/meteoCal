@@ -7,6 +7,7 @@ package bakingBeans;
 
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 /**
@@ -32,7 +33,18 @@ public class ErrorHandler {
     public String getCode() {
         String val = String.valueOf((Integer) FacesContext.getCurrentInstance().
                 getExternalContext().getRequestMap().get("javax.servlet.error.status_code"));
-        return val;
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        String msg = "An error occurred during the request! ";
+        String msgDetail = getMessage();
+        if (msgDetail != null) {
+            msg.concat(getMessage());
+        }
+        ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, ""));
+
+        if (val != null) {
+            return val;
+        }else
+            return "";
     }
 
 }

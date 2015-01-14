@@ -53,14 +53,18 @@ and open the template in the editor.
                                     <p:graphicImage value="/resources/img/default.png"/> 
 
                                     <p:outputPanel>
+                                        <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
                                         <h:panelGrid columns="2" cellpadding="5">
-                                            <h:outputText value="Title:" />
-                                            <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+                                            <i class="fa fa-clock-o" /> Date:
+                                            <h:outputText value="#{ev.formattedStartDate}"/>
 
-                                            <h:outputText value="Description:" />
-                                            <h:outputText value="#{ev.description}"/>
+                                            <i class="fa fa-map-marker" /> Location:
+                                            <h:outputText value="#{ev.location}"/>
 
+                                            <i class="fa fa-user"></i> By:
+                                            <h:outputLabel value="#{ev.owner.email}"/>
                                         </h:panelGrid>
+
                                     </p:outputPanel>
 
                                 </h:panelGrid>
@@ -75,19 +79,20 @@ and open the template in the editor.
                 <p:tab title="User">
                     <h:form>
                         <p:dataScroller value="#{search.userResults}" var="u" chunkSize="10">
-                            <p:fieldset legend="#{u.title}" style="margin-bottom:20px">
+                            <p:fieldset legend="#{u.name}" style="margin-bottom:20px">
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default.png"/> 
 
+
                                     <p:outputPanel>
+                                        <p:link outcome="/s/calendar.xhtml?id=#{u.id}" value="#{u.name} #{u.surname}"/>
                                         <h:panelGrid columns="2" cellpadding="5">
-                                            <h:outputText value="Nome:" />
-                                            <p:link outcome="/s/calendar.xhtml?id=#{u.id}" value="#{u.title}"/>
-
-                                            <h:outputText value="Description:" />
-                                            <h:outputText value="#{u.description}"/>
-
+                                            
+                                            <i class="fa fa-envelope-o"/> Email:
+                                            <h:outputText value="#{u.email}"/>
+                                            
                                         </h:panelGrid>
+
                                     </p:outputPanel>
 
                                 </h:panelGrid>

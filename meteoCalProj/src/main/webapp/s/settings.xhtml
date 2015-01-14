@@ -27,15 +27,15 @@ and open the template in the editor.
 
                 <h:outputLabel>Name, Surname:</h:outputLabel> 
 
-                <p:inputText id="name" value="#{settings.name}" pt:required="" />
+                <h:inputText id="name" value="#{settings.name}" pt:required="" />
 
-                <p:inputText id="surname" value="#{settings.surname}" pt:required=""/><br/>
+                <h:inputText id="surname" value="#{settings.surname}" pt:required=""/><br/>
 
                 <h:outputLabel for="email">Email:</h:outputLabel> 
 
-                <p:inputText id="email" value="#{settings.email}" pt:required="">
+                <h:inputText id="email" value="#{settings.email}" pt:required="">
                     <f:passThroughAttribute name="type" value="email" />
-                </p:inputText>
+                </h:inputText>
                 <br/>
                 <p:commandButton id="save" value="Save" actionListener="#{settings.saveCredentials}" update="@(form)"/>
 
@@ -45,13 +45,13 @@ and open the template in the editor.
                 <h2> Change Password: </h2>
                 <h:panelGrid columns="2">
                     <h:outputLabel>Old Password:</h:outputLabel> 
-                    <p:password id="oldPassword" value="#{settings.oldPassword}" required="true" requiredMessage="insert the old password"/>
+                    <h:inputSecret id="oldPassword" value="#{settings.oldPassword}" required="true" requiredMessage="insert the old password"/>
 
                     <h:outputLabel>New Password:</h:outputLabel> 
-                    <p:password id="newPassword1" value="#{settings.newPassword1}" required="true" requiredMessage="insert the new password"/>
+                    <h:inputSecret id="newPassword1" value="#{settings.newPassword1}" required="true" requiredMessage="insert the new password"/>
 
                     <h:outputLabel>Repeat Password:</h:outputLabel> 
-                    <p:password id="newPassword2" value="#{settings.newPassword2}" required="true" requiredMessage="repeat the new password" />
+                    <h:inputSecret id="newPassword2" value="#{settings.newPassword2}" required="true" requiredMessage="repeat the new password" />
                 </h:panelGrid>
                 <br/>
                 <p:commandButton id="save" value="Save" actionListener="#{settings.savePassword}"/>
@@ -90,7 +90,7 @@ and open the template in the editor.
             <p>Please be aware that once the account has been deleted, it will not be possible to reactivate
                 it later or retrieve calendars and events you have created. If you still wish to delete your account,
                 click on "Delete my Account"</p>
-            <p:commandButton id="delete" value="Delete my Account" action="#{settings.deleteAccount}"/>
+            <p:commandButton icon="ui-icon-alert" id="delete" value="Delete my Account" action="#{settings.deleteAccount}"/>
         </ui:define>
 
         <script type="text/javascript">

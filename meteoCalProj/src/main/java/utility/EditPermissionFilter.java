@@ -56,18 +56,15 @@ public class EditPermissionFilter implements Filter {
                         // se l utente non è l owner
                         if (!login.getCurrentUser().equals(ev.getOwner())) {
                             // sollevo un errore 403
-                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Non hai i permessi per modificare questo evento");
+                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "You are not allowed to manage this event");
                             error = true;
                         }
                     } else {
                         System.out.println("-l'ev vale: " + ev);
                         // se non c è sollevo un errore 404
-                        ((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND, "Non è stato trovato alcun evento");
+                        ((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND, "No event found");
                         error = true;
                     }
-                } else {
-                    System.out.println("-nell else, l'eventId vale: " + eventId);
-
                 }
             }
         }

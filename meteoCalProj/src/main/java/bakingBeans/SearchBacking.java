@@ -32,8 +32,8 @@ import utility.SearchResult;
 public class SearchBacking {
 
     private String searchKey;
-    private List<SearchResult> eventResults = new ArrayList<>();
-    private List<SearchResult> userResults = new ArrayList<>();
+    private List<Event> eventResults = new ArrayList<>();
+    private List<UserModel> userResults = new ArrayList<>();
     private boolean searchForUsers;
     private boolean searchForEvents;
 
@@ -78,19 +78,19 @@ public class SearchBacking {
         this.searchForEvents = searchForEvents;
     }
 
-    public List<SearchResult> getEventResults() {
+    public List<Event> getEventResults() {
         return eventResults;
     }
 
-    public void setEventResults(List<SearchResult> eventResults) {
+    public void setEventResults(List<Event> eventResults) {
         this.eventResults = eventResults;
     }
 
-    public List<SearchResult> getUserResults() {
+    public List<UserModel> getUserResults() {
         return userResults;
     }
 
-    public void setUserResults(List<SearchResult> userResults) {
+    public void setUserResults(List<UserModel> userResults) {
         this.userResults = userResults;
     }
 
@@ -147,7 +147,7 @@ public class SearchBacking {
                     }
                 }
                 if (add == true) {
-                    userResults.add(new SearchResult(u.getName() + u.getSurname(), u.getEmail(), String.valueOf(u.getId())));
+                    userResults.add(u);
                 }
             }
         }
@@ -155,7 +155,7 @@ public class SearchBacking {
         if (searchForEvents || (!searchForEvents && !searchForUsers)) {
             for (Event ev : events) {
                 if ((ev instanceof PublicEvent) || (ev.getInvitee().contains(login.getCurrentUser()))) {
-                    eventResults.add(new SearchResult(ev.getTitle(), ev.getDescription(), String.valueOf(ev.getId())));
+                    eventResults.add(ev);
                 }
             }
         }

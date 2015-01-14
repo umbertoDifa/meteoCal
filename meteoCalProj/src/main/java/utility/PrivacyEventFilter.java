@@ -55,13 +55,13 @@ public class PrivacyEventFilter implements Filter {
                     if (ev != null) {
                         //se l'evento non è pubblico o è privato e sei l owner o hai un invito
                         if (!(ev instanceof PublicEvent) && !((ev instanceof PrivateEvent) && (ev.getOwner().equals(login.getCurrentUser()) || (ev.getInvitee().contains(login.getCurrentUser()))))) {
-                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Non hai i permessi per visualizzare l'evento");
-                            System.out.println("-Filtro: proibito");
+                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "You are not allowed to view this event");
                             error = true;
                         }
                     }
                 } else {
                     System.out.println("-Filtro privacy: eventId null");
+                    //TODO
                 }
             }
         }

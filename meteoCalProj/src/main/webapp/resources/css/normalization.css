@@ -16,6 +16,11 @@ and open the template in the editor.
     overflow: hidden !important;
 }
 
+.scheduleConteiner {
+    width: 1000px !important;
+    height: 570px !important;
+}
+
 #header{
     position: fixed !important;
     z-index: 1 !important;
@@ -45,6 +50,6 @@ and open the template in the editor.
     display: inline-block;
 }
 
-#header, #sidebar, .noBorder tr td, .noBorder tr {
+#header, .sidebar, .noBorder tr td, .noBorder tr {
     border: none !important;
 }
