@@ -129,7 +129,8 @@ public class CalendarManagerImpl implements CalendarManager {
                 logger.log(LoggerLevel.DEBUG, "id event ora: {0}", event.getId());
 
                 //se non alza eccezioni è perchè ha trovato esattamente un conflitto
-                logger.log(LoggerLevel.DEBUG, "Conflict found");
+                logger.log(LoggerLevel.DEBUG, "Conflict found with event: "
+                        + firstConflict.getTitle());
 
                 return true;
             } catch (NoResultException e) {
@@ -172,7 +173,7 @@ public class CalendarManagerImpl implements CalendarManager {
     public int findFreeSlots(Event event) {
         logger.log(LoggerLevel.DEBUG, "In find free slots");
 
-        int searchRange = 15;
+        int SEARCH_RANGE = 15;
 
         Event tempEvent = new PrivateEvent(event.getTitle(),
                 (Calendar) event.getStartDateTime().clone(),
@@ -185,16 +186,15 @@ public class CalendarManagerImpl implements CalendarManager {
         tempEvent.setLatitude(event.getLatitude());
         tempEvent.setLongitude(event.getLongitude());
 
-        
-
-        for (int i = 1; i < searchRange; i++) {
+        for (int i = 1; i < SEARCH_RANGE; i++) {
             logger.log(LoggerLevel.DEBUG,
-                "Parametri tempEvent:\nuser: "
-                + tempEvent.getOwner().getEmail() + "\nfine evento: "
-                + tempEvent.getEndDateTime().getTime().toString()
-                + "\ninizio evento: "
-                + tempEvent.getStartDateTime().getTime().toString()
-                + "\nid evento: " + tempEvent.getId());
+                    "Parametri tempEvent:\nuser: "
+                    + tempEvent.getOwner().getEmail() + "\nfine evento: "
+                    + tempEvent.getEndDateTime().getTime().toString()
+                    + "\ninizio evento: "
+                    + tempEvent.getStartDateTime().getTime().toString()
+                    + "\nid evento: " + tempEvent.getId());
+
             //ogni volta io aggiungo un giorno quindi la add prende come argomento
             //1 e non i 
             //setto nuova data inizio

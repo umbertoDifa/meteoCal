@@ -111,14 +111,16 @@ public class EventManagerImpl implements EventManager {
                 results = GeocodingApi.geocode(context,
                         event.getLocation()).await();
 
-                //e setto le coordinate nell'evento
-                event.setLatitude(results[0].geometry.location.lat);
-                event.setLongitude(results[0].geometry.location.lng);
+                //se ho un risultato
+                if (results.length > 0) {
+                    //e setto le coordinate nell'evento
+                    event.setLatitude(results[0].geometry.location.lat);
+                    event.setLongitude(results[0].geometry.location.lng);
 
-                logger.log(LoggerLevel.DEBUG, "Trovate lat e long: {0} ,{1}",
-                        new Object[]{event.getLatitude(),
-                                     event.getLongitude()});
-
+                    logger.log(LoggerLevel.DEBUG, "Trovate lat e long: {0} ,{1}",
+                            new Object[]{event.getLatitude(),
+                                         event.getLongitude()});
+                }
             } catch (Exception ex) {
                 logger.log(Level.WARNING, ex.getMessage(), ex);
             }
