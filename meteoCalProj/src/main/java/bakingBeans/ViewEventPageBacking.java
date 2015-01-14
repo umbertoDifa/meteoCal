@@ -10,6 +10,7 @@ import EJB.interfaces.InvitationManager;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
@@ -22,6 +23,7 @@ import model.Invitation;
 import model.InvitationAnswer;
 import model.PublicEvent;
 import model.UserModel;
+import utility.TimeTool;
 
 /**
  *
@@ -31,8 +33,8 @@ import model.UserModel;
 @ViewScoped
 public class ViewEventPageBacking implements Serializable {
 
-    Long eventId;
-    Event eventToShow;
+    private Long eventId;
+    private Event eventToShow;
     boolean allowedToPartecipate;
     boolean allowedToModify;
     boolean publicAccess;
@@ -371,6 +373,11 @@ public class ViewEventPageBacking implements Serializable {
             }
         }
         return invitees;
+    }
+    
+    public boolean isFuture(){
+        Calendar today = Calendar.getInstance();
+        return TimeTool.isBefore(today, eventToShow.getEndDateTime());
     }
 
     private Invitation getOwnedInvitation() {

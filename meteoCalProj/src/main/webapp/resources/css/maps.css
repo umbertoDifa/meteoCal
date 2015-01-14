@@ -5,9 +5,8 @@
     margin: 0px;
     padding: 0px
 }
-#locationField, #controls {
+.locationField, #controls {
     position: relative;
-/*    width: 480px;*/
 }
 .label {
     text-align: right;
@@ -33,7 +32,8 @@
 .wideField {
     width: 200px;
 }
-#locationField {
+.locationField {
     height: 20px;
     margin-bottom: 2px;
+    width: 178px;
 }

@@ -25,7 +25,7 @@ and open the template in the editor.
 
             <h1><h:outputText value="#{viewEvent.eventToShow.title}" /></h1>
 
-            <p:panelGrid columns="2" class="noBorder">
+            <p:panelGrid columns="3" class="noBorder">
                 <p:graphicImage value="/resources/img/default.png"/>
                 <p:panel>
                     <p:panelGrid columns="2" class="noBorder">
@@ -41,21 +41,36 @@ and open the template in the editor.
                         <i class="fa fa-globe"></i> Privacy:
                         <h:outputText rendered="#{viewEvent.publicAccess}" value="public"/>
                         <h:outputText rendered="#{!viewEvent.publicAccess}" value="private"/>
-                        
-                        <c:if test="#{viewEvent.eventToShow.isOutdoor and viewEvent.eventToShow.hasLocation()}">
-                            <h:outputLabel value="Weather:" /> <h:outputText value="#{viewEvent.eventToShow.weather.message.message } #{viewEvent.eventToShow.weather.description}"/>
-                        </c:if>
 
                     </p:panelGrid>
                     <br/>
                     <h:outputText value="The event is outdoor" rendered="#{viewEvent.eventToShow.isOutdoor}"/><br/>
                     <h:outputText value="The event is indoor" rendered="#{!viewEvent.eventToShow.isOutdoor}"/><br/>
                 </p:panel>
+                <p:fieldset  rendered="#{viewEvent.eventToShow.isOutdoor and viewEvent.eventToShow.hasLocation()}">
+                    <p:panelGrid columns="2">
+                        <p:graphicImage value="/resources/icons/#{viewEvent.eventToShow.weather.icon}.png" /><h3>Weather</h3>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2">
+
+                        <h:outputLabel value="Main:" /> <h:outputText value="#{viewEvent.eventToShow.weather.message.message }"/>
+                        <h:outputLabel value="Description: "/><h:outputText value="#{viewEvent.eventToShow.weather.description}" />
+                        <h:outputLabel value="Temperature: "/>
+                        
+                        <p:outputPanel>
+                            <h:outputText style="color: red;" value="#{viewEvent.eventToShow.weather.maxTemp}°C"/> / <h:outputText style="color: blue;" value="#{viewEvent.eventToShow.weather.minTemp}°C" />
+                        </p:outputPanel>
+                        
+                        <h:outputLabel value="Pressure: "/><h:outputText value="#{viewEvent.eventToShow.weather.pressure} hPa" />
+                    </p:panelGrid>
+                </p:fieldset>
             </p:panelGrid>
-            <h:outputLabel value="Description:" /><br />
-            <p:panel>
-                <h:outputText value="#{viewEvent.eventToShow.description}"/>
-            </p:panel>
+            <p:outputPanel rendered="#{not empty viewEvent.eventToShow.description}">
+                <i class="fa fa-quote-left"/><h:outputLabel value=" Description:" /><br />
+                <p:panel>
+                    <h:outputText value="#{viewEvent.eventToShow.description}"/>
+                </p:panel>
+            </p:outputPanel>
             <br />
 
             <p:tabView rendered="#{viewEvent.showInvitees}">
@@ -99,7 +114,7 @@ and open the template in the editor.
 
             </h:form>
 
-            <p:button value="modifica" rendered="#{viewEvent.allowedToModify}" 
+            <p:button icon="ui-icon-pencil" value="Edit" rendered="#{viewEvent.allowedToModify and viewEvent.future}" 
                       outcome="/s/manageEvent.xhtml?idEvent=#{viewEvent.eventId}" /><br/>
         </ui:define>
 
