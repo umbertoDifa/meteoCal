@@ -642,13 +642,14 @@ public class ManageEventBacking implements Serializable {
         }
         return false;
     }
-    
-    public void forceReschedule(){
+
+    public void forceReschedule() {
         logger.log(LoggerLevel.DEBUG, "dentro forceReschedule");
         createOrLoadInstance();
         setUpInstance();
 
         if (validateEventConstraint()) {
+        }
     }
 
     /**
