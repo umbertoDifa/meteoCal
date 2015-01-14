@@ -50,9 +50,6 @@ public class ScheduleViewBacking implements Serializable {
     private CalendarManager calendarManager;
 
     @Inject
-    private EventManager eventManager;
-
-    @Inject
     private ManageEventBacking manageEventBacking;
 
     @Inject
@@ -70,7 +67,7 @@ public class ScheduleViewBacking implements Serializable {
 
     private CalendarModel calendarShown;
 
-    private String userId;
+    private String id;
 
     private UserModel user;
 
@@ -125,12 +122,12 @@ public class ScheduleViewBacking implements Serializable {
         this.calendarShown = calendarShown;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getId() {
+        return id;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public boolean isReadOnly() {
@@ -191,9 +188,10 @@ public class ScheduleViewBacking implements Serializable {
 
     /**
      * chiamato quando un evento viene selezionato dal componente schedule
-     * reindirizza alla pagina dell evento se l utente è il proprietario
-     * dell evento o se l evento è pubblico
-     * @param selectEvent 
+     * reindirizza alla pagina dell evento se l utente è il proprietario dell
+     * evento o se l evento è pubblico
+     *
+     * @param selectEvent
      */
     public void onEventSelect(SelectEvent selectEvent) {
         eventToManage = (ScheduleEvent) selectEvent.getObject();
@@ -205,6 +203,20 @@ public class ScheduleViewBacking implements Serializable {
             }
         } catch (IOException ex) {
             showGrowl(GrowlMessage.ERROR_REDIRECT);
+        }
+    }
+
+    /**
+     * when a date is Selected it redirects to the creation of a new event
+     * @param selectEvent 
+     */
+    public void onDateSelect(SelectEvent selectEvent) {
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        try {
+            context.redirect(context.getRequestContextPath() + "/s/manageEvent.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(ScheduleViewBacking.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Redirect fallita");
         }
     }
 
@@ -224,20 +236,20 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     /**
-     * se il parametro userId è impostato imposto la pagina calendar
-     * in modalità visitatore e carico gli eventi dell utente che corrisponde
-     * allo userId. Altrimenti lo imposto come calendario dell utente loggato
+     * se il parametro userId è impostato imposto la pagina calendar in modalità
+     * visitatore e carico gli eventi dell utente che corrisponde allo userId.
+     * Altrimenti lo imposto come calendario dell utente loggato
      */
     public void setUser() {
-        if (userId != null) {
-            if (!Objects.equals(Long.valueOf(userId).longValue(), login.getCurrentUser().getId())) {
+        if (id != null) {
+            if (!Objects.equals(Long.valueOf(id).longValue(), login.getCurrentUser().getId())) {
                 readOnly = true;
-                user = search.findUserById(Long.valueOf(userId).longValue());
+                user = search.findUserById(Long.valueOf(id).longValue());
                 if (user == null) {
                     showGrowl(GrowlMessage.ERROR_USER);
                     ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                     try {
-                        context.redirect(context.getRequestContextPath() + "error.xhtml");
+                        context.redirect(context.getRequestContextPath() + "/error.xhtml");
                     } catch (IOException ex) {
                         Logger.getLogger(ScheduleViewBacking.class.getName()).log(Level.SEVERE, null, ex);
                         System.out.println("Redirect fallita");
@@ -252,8 +264,8 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     /**
-     * verifica se è possibile cancellare il calendario
-     * visualizzato correntemente
+     * verifica se è possibile cancellare il calendario visualizzato
+     * correntemente
      */
     public void canDeleteCalendar() {
         RequestContext context = RequestContext.getCurrentInstance();
@@ -267,7 +279,8 @@ public class ScheduleViewBacking implements Serializable {
 
     /**
      * cancella il calendario correntemente visualizzato
-     * @param response 
+     *
+     * @param response
      */
     public void deleteCalendar(String response) {
         DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
@@ -320,14 +333,15 @@ public class ScheduleViewBacking implements Serializable {
 
     /**
      * mostra un messaggio nel growl
-     * @param growl 
+     *
+     * @param growl
      */
     private void showGrowl(GrowlMessage growl) {
         FacesContext ctx = FacesContext.getCurrentInstance();
         ctx.addMessage(null, new FacesMessage(growl.getSeverity(), growl.getTitle(), growl.getMessage()));
         RequestContext.getCurrentInstance().update("growl");
     }
-    
+
     /**
      * faccio un refresh del calendario e degli eventi visualizzati nello
      * schedule
@@ -366,8 +380,8 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     /**
-     * imposta il calendario visualizzato correntemente come calendario
-     * di default
+     * imposta il calendario visualizzato correntemente come calendario di
+     * default
      */
     public void makeDefault() {
         if (calendarManager.makeDefault(calendarShown)) {
@@ -376,7 +390,7 @@ public class ScheduleViewBacking implements Serializable {
         } else {
             showGrowl(GrowlMessage.GENERIC_ERROR);
         }
-        
+
     }
 
     /**

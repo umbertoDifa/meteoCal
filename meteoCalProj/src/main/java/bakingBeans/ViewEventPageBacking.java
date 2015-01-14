@@ -5,6 +5,7 @@
  */
 package bakingBeans;
 
+import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import model.CalendarModel;
 import model.Event;
 import model.Invitation;
 import model.InvitationAnswer;
@@ -45,6 +47,7 @@ public class ViewEventPageBacking implements Serializable {
     private List<UserModel> publicJoinUsers = new ArrayList<>();
     private boolean showInvitees;
     private String answerMessage;
+    private String calendarName;
 
     @Inject
     EventManager eventManager;
@@ -58,6 +61,9 @@ public class ViewEventPageBacking implements Serializable {
     private boolean hasAnswered;
     private boolean publicJoin;
     private boolean partecipate;
+
+    @Inject
+    private CalendarManager calendarManager;
 
     /**
      * Creates a new instance of viewEventBacking
@@ -192,6 +198,14 @@ public class ViewEventPageBacking implements Serializable {
         this.partecipate = partecipate;
     }
 
+    public String getCalendarName() {
+        return calendarName;
+    }
+
+    public void setCalendarName(String calendarName) {
+        this.calendarName = calendarName;
+    }
+
     /*
      *
      * METHODS
@@ -219,6 +233,7 @@ public class ViewEventPageBacking implements Serializable {
 
             }
         }
+        calendarName = searchCalendarByEvent();
     }
 
     public void doPartecipate() {
@@ -435,4 +450,14 @@ public class ViewEventPageBacking implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
+    private String searchCalendarByEvent() {
+        List<CalendarModel> list = calendarManager.getCalendars(
+                login.getCurrentUser());
+        for (CalendarModel c : list) {
+            if (c.getEventsInCalendar().contains(eventToShow)) {
+                return c.getTitle();
+            }
+        }
+        return null;
+    }
 }

@@ -15,7 +15,7 @@ and open the template in the editor.
     <ui:composition template="/template.xhtml">
 
         <f:metadata>
-            <f:viewParam name="id" value="#{scheduleView.userId}"/>
+            <f:viewParam name="id" value="#{scheduleView.id}"/>
             <f:viewAction action="#{scheduleView.init}"/>
         </f:metadata>
 
@@ -121,9 +121,10 @@ and open the template in the editor.
             </p:toolbar>
             <h:form id="scheduleForm" >
                 <h:panelGrid columnClasses="scheduleConteiner">
-                    <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" tooltip="true" widgetVar="schedule" draggable="false" resizable="false" timeZone="GMT+2">
+                    <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" widgetVar="schedule" draggable="false" resizable="false" timeZone="GMT+2">
 
                         <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" />
+                        <p:ajax event="dateSelect" listener="#{scheduleView.onDateSelect}" />
 
                     </p:schedule>
                 </h:panelGrid>

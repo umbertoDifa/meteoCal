@@ -136,7 +136,7 @@ public class SearchBacking {
         users = searchManager.searchUsers(searchKey);
         events = searchManager.searchEvents(searchKey);
 
-        //TODO filtrare risultati per privacy
+
         if (searchForUsers || (!searchForEvents && !searchForUsers)) {
             for (UserModel u : users) {
                 boolean add = false;

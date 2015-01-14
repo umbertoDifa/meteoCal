@@ -155,7 +155,12 @@
                                         <f:passThroughAttribute name="type" value="time" />
                                     </h:inputText>
 
-                                    <i class="fa fa-globe"></i> Public:
+                                    <p:outputPanel>
+                                        <p:outputLabel id="toolTipTrack2">
+                                            <i class="fa fa-globe"></i> Public:<sup><i class="fa fa-info"/></sup> 
+                                        </p:outputLabel>
+                                        <p:tooltip for="toolTipTrack2" value="Every user can see the event when public!" />
+                                    </p:outputPanel>
                                     <h:selectBooleanCheckbox value="#{eventToManage.publicAccess}"/>
 
                                     <i class="fa fa-map-marker"></i> Location:
@@ -165,8 +170,13 @@
                                                onFocus="geolocate()" onblur="fillInAddress()" type="text"/>
                                     </p:outputPanel>
 
-
-                                    <h:outputLabel value="Outdoor:" /><h:selectBooleanCheckbox value="#{eventToManage.outdoor}"/>
+                                    <p:outputPanel>
+                                        <p:outputLabel id="toolTipTrack">
+                                            <i class="fa fa-umbrella"></i>Outdoor:<sup><i class="fa fa-info"/></sup> 
+                                        </p:outputLabel>
+                                        <p:tooltip for="toolTipTrack" value="We will check the weather for you!" />
+                                    </p:outputPanel>
+                                    <h:selectBooleanCheckbox value="#{eventToManage.outdoor}"/>
 
 
 
@@ -179,14 +189,14 @@
                                 <h:inputHidden class="field" id="postal_code" value="#{place.postalCode}" ></h:inputHidden>
                                 <h:inputHidden class="field" id="country" value="#{place.country}" ></h:inputHidden>
                                 <h:inputHidden class="field" id="autocompleteUsed" value="#{eventToManage.hasLocation}" ></h:inputHidden>
-                                
+
                                 <br/>
-                                
+
                                 <i class="fa fa-quote-left"/><h:outputLabel value=" Description:" /><br />
                                 <h:inputTextarea value="#{eventToManage.description}" style="resize: none; width: 100%;" /><br />
-                                
+
                                 <br/>
-                                
+
                                 <p:commandButton id="save" value="Save" action="#{eventToManage.checkEvent()}"/>
                                 <p:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/calendar.xhtml"/> 
                                 <p:commandButton id="delete" value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.deleteEvent}"/>
@@ -208,11 +218,11 @@
                                     </c:forEach>
                                 </p:fieldset><br/>
 
-
+                                <h:outputLabel value="Invite: "/>
                                 <h:inputText id="email" value="#{eventToManage.newGuestEmail}" required="true" validatorMessage="insert minimum 2 character" requiredMessage="Insert a search key">
                                     <f:validateLength minimum="2" />
                                 </h:inputText>
-                                <p:commandButton value="search" update="@form" actionListener="#{eventToManage.showResultUsers}" /><br/><br/>
+                                <p:commandButton value="Search" update="@form" actionListener="#{eventToManage.showResultUsers}" /><br/><br/>
 
                                 <p:panel rendered="#{eventToManage.displayResultUsers}" >
                                     <h:outputText value="Results:  (click to invite!)" /><br/><br/>
@@ -226,25 +236,26 @@
                             <p:tabView>
                                 <p:tab title="(#{eventToManage.acceptedInvitations.size()}) Partecipants">
                                     <c:forEach items="#{eventToManage.acceptedInvitations}" var="yesUser">
-                                        <p:outputLabel value="#{yesUser.email}"/><br/>
+                                        <p:link href="/s/calendar.xhtml?id=#{yesUser.id}" value="#{yesUser.name} #{yesUser.surname}"/><br/>
                                     </c:forEach>
                                 </p:tab>
                                 <p:tab title="(#{eventToManage.declinedInvitations.size()}) Declined">
                                     <c:forEach items="#{eventToManage.declinedInvitations}" var="noUser">
-                                        <p:outputLabel value="#{noUser.email}"/><br/>
+                                        <p:link href="/s/calendar.xhtml?id=#{noUser.id}" value="#{noUser.name} #{noUser.surname}"/><br/>
                                     </c:forEach>
                                 </p:tab>
                                 <p:tab title="(#{eventToManage.noAnswerInvitations.size()}) No Asnwer">
                                     <c:forEach items="#{eventToManage.noAnswerInvitations}" var="bhoUser">
-                                        <p:outputLabel value="#{bhoUser.email}"/><br/>
+                                        <p:link href="/s/calendar.xhtml?id=#{bhoUser.id}" value="#{bhoUser.name} #{bhoUser.surname}"/><br/>
                                     </c:forEach>
                                 </p:tab>
-                                <p:tab title="(#{eventToManage.publicJoinUsers.size()}) Public Join" rendered="#{eventToManage.publicAccess}">
+                                <p:tab title="(#{eventToManage.publicJoinUsers.size()}) Public Join" rendered="#{viewEvent.publicAccess}">
                                     <c:forEach items="#{eventToManage.publicJoinUsers}" var="publicUser">
-                                        <p:outputLabel value="#{publicUser.email}"/><br/>
+                                        <p:link href="/s/calendar.xhtml?id=#{publicUser.id}" value="#{publicUser.name} #{publicUser.surname}"/><br/>
                                     </c:forEach>
                                 </p:tab>
                             </p:tabView>
+
                         </p:panel>
                     </div>
                 </div>

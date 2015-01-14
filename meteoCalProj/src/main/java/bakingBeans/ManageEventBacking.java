@@ -766,6 +766,7 @@ public class ManageEventBacking implements Serializable {
         }
     }
 
+    //TODO spostare
     private String searchCalendarByEvent() {
         List<CalendarModel> list = calendarManager.getCalendars(
                 login.getCurrentUser());
