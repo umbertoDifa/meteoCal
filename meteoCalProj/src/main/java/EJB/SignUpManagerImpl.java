@@ -22,15 +22,15 @@ import model.UserModel;
 public class SignUpManagerImpl implements SignUpManager {
 
     @PersistenceContext(unitName = "meteoCalDB")
-    EntityManager database;
+    private EntityManager database;
 
     @Inject @Default
-    Logger logger;    
+    private Logger logger;    
     
     @Inject
-    CalendarManager calManager;
+    private CalendarManager calManager;
     
-    CalendarModel defaultCalendar;
+    private CalendarModel defaultCalendar;
 
     @Override
     public boolean addUser(UserModel newUser) { 

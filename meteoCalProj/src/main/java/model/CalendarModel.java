@@ -45,7 +45,7 @@ public class CalendarModel implements Serializable {
 
     private boolean isDefault;
 
-    @ManyToMany (cascade = CascadeType.REMOVE)
+    @ManyToMany //no cascade senno elimino gli eventi in un calendario che non sono miei
     @JoinTable(name = "EVENT_IN_CALENDAR")
     private List<Event> eventsInCalendar;
 

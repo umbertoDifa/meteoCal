@@ -201,6 +201,8 @@
                                 <p:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/calendar.xhtml"/> 
                                 <p:commandButton id="delete" value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.deleteEvent}"/>
                                 <p:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.id}"/>
+                                
+                                <p:commandButton value="Try Reschedule" actionListener="#{eventToManage.suggestReschedule()}" rendered="#{eventToManage.saved}"/>
                             </h:form>
                         </p:panel>
                     </div>
@@ -262,7 +264,7 @@
             </div>
 
 
-            <p:dialog header="Reschedule suggested" id="conflictDialog" widgetVar="conflictDialog" minHeight="40" width="300" resizable="false">
+            <p:dialog header="Reschedule suggested" id="conflictDialog" widgetVar="conflictDialog" minHeight="40" resizable="false">
                 <h:outputText id="dialogMessage" value="#{eventToManage.dialogueMessage}" style="white-space: pre-wrap"></h:outputText><br/>
                 <f:facet name="footer">
                     <h:form id="buttonsForm">

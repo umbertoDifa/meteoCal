@@ -38,8 +38,7 @@ and open the template in the editor.
 }
 
 .ui-dialog {
-    white-space: nowrap;
-    width: 200px;
+    white-space: nowrap;        
 }
 
 .ui-dialog-footer, .ui-panelgrid-footer {

@@ -109,6 +109,8 @@ public class CalendarManagerImpl implements CalendarManager {
                 if (event.getId() == null) {
                     //imposto l'id a -1 perchè sicuramente non esiste un evento con lo stesso
                     //id
+                    //TODO trovare un modo per fare qusta cosa senza crocifissione
+                    //ma con query
                     event.setId(Long.parseLong("-1"));
                 }
                 logger.log(LoggerLevel.DEBUG, "id event ora:" + event.getId());
