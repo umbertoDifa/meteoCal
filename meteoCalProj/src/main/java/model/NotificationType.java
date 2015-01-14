@@ -53,12 +53,13 @@ public enum NotificationType {
     private String inviteeName;
     private String eventName;
     private String link;
-    
+
     //template
     private final String templateSubject;
     private final String templateBodyMessage;
 
-    private final String STATIC_LINK = "localhost:8080/meteoCalProj/s/eventPage.xhtml?id=";
+    private final String EVENT_LINK = "localhost:8080/meteoCalProj/s/eventPage.xhtml?id=";
+    private final String RESCHEDULE_LINK = "localhost:8080/meteoCalProj/s/manageEvent.xhtml?id=";
 
     private Object[] subjParams;
     private Object[] bodyParams;
@@ -86,7 +87,14 @@ public enum NotificationType {
     }
 
     public NotificationType setLink(Long id) {
-        this.link = STATIC_LINK + id;
+        if (this == NotificationType.BAD_WEATHER_IN_THREE_DAYS) {
+            //se la notifica riguarda il brutto tempo in 3 gionri
+            //mando il link che propone la reschedule al volo
+             this.link = RESCHEDULE_LINK + id; //TODO aggiungi chiamata a bootone reschedule
+        } else {
+            //altrimenti il link dell'evento
+            this.link = EVENT_LINK + id;
+        }
         return this;
     }
 
@@ -106,7 +114,7 @@ public enum NotificationType {
         bodyMessage = MessageFormat.format(templateBodyMessage, bodyParams);
         logger.log(LoggerLevel.DEBUG,
                 "Email formattata:\nsubject: " + subject + "\nbody: "
-                        + bodyMessage);
+                + bodyMessage);
         return this;
     }
 

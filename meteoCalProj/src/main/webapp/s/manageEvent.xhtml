@@ -104,7 +104,7 @@
         </ui:define>
 
         <f:metadata>
-            <f:viewParam name="idEvent" value="#{eventToManage.idEvent}"/>
+            <f:viewParam name="id" value="#{eventToManage.id}"/>
             <f:viewAction action="#{eventToManage.setEditModality}"/>
         </f:metadata>
 
@@ -190,7 +190,7 @@
                                 <p:commandButton id="save" value="Save" action="#{eventToManage.checkEvent()}"/>
                                 <p:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/calendar.xhtml"/> 
                                 <p:commandButton id="delete" value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.deleteEvent}"/>
-                                <p:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.idEvent}"/>
+                                <p:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.id}"/>
                             </h:form>
                         </p:panel>
                     </div>

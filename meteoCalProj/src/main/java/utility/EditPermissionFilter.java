@@ -46,7 +46,7 @@ public class EditPermissionFilter implements Filter {
             // check whether a query string exists and check if it starts with the pattern
             if (uri != null && uri.endsWith(pattern)) {
                 // salvo il parametro idEvent
-                String eventId = ((HttpServletRequest) request).getParameter("idEvent");
+                String eventId = ((HttpServletRequest) request).getParameter("id");
                 // se c è
                 if (eventId != null) {
                     // cerco evento corrispondente

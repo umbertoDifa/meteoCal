@@ -42,7 +42,7 @@ public class ManageEventBacking implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String idEvent;
+    private String id;
 
     private Event eventToCreate;
 
@@ -232,10 +232,6 @@ public class ManageEventBacking implements Serializable {
         return calendarName;
     }
 
-    public String getIdEvent() {
-        return idEvent;
-    }
-
     public void setCalendarName(String nameCal) {
         this.calendarName = nameCal;
     }
@@ -292,8 +288,12 @@ public class ManageEventBacking implements Serializable {
         this.newGuestEmail = newGuestEmail;
     }
 
-    public void setIdEvent(String idEvent) {
-        this.idEvent = idEvent;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public List<UserModel> getNoAnswerInvitations() {
@@ -337,9 +337,9 @@ public class ManageEventBacking implements Serializable {
      * carica l'istanza dell evento che si vuole modificare
      */
     public void setEditModality() {
-        //carico istanza evento specificato in idEvent
-        if (idEvent != null) {
-            eventToCreate = eventManager.findEventbyId(Long.parseLong(idEvent));
+        //carico istanza evento specificato in id
+        if (id != null) {
+            eventToCreate = eventManager.findEventbyId(Long.parseLong(id));
             if (eventToCreate != null) {
                 //initialize event parameters
                 title = eventToCreate.getTitle();
@@ -401,7 +401,7 @@ public class ManageEventBacking implements Serializable {
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         try {
             context.redirect(context.getRequestContextPath()
-                    + "/s/eventPage.xhtml?id=" + idEvent
+                    + "/s/eventPage.xhtml?id=" + id
                     + "&&faces-redirect=true");
         } catch (IOException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -423,7 +423,7 @@ public class ManageEventBacking implements Serializable {
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         try {
             context.redirect(context.getRequestContextPath()
-                    + "/s/eventPage.xhtml?id=" + idEvent
+                    + "/s/eventPage.xhtml?id=" + id
                     + "&&faces-redirect=true");
 
         } catch (IOException ex) {
@@ -432,12 +432,13 @@ public class ManageEventBacking implements Serializable {
     }
 
     public String deleteEvent() {
-        logger.log(LoggerLevel.DEBUG,"-dentro delete, eventToCreate vale:" + eventToCreate);
+        logger.log(LoggerLevel.DEBUG, "-dentro delete, eventToCreate vale:"
+                + eventToCreate);
         if (eventManager.deleteEvent(eventToCreate)) {
-            logger.log(LoggerLevel.DEBUG,"-evento cancellato");
+            logger.log(LoggerLevel.DEBUG, "-evento cancellato");
             return "/s/calendar.xhtml";
         } else {
-            logger.log(LoggerLevel.DEBUG,"-evento non cancellato");
+            logger.log(LoggerLevel.DEBUG, "-evento non cancellato");
             showMessage("", "evento non cancellato", "");
             return "";
         }
@@ -446,11 +447,11 @@ public class ManageEventBacking implements Serializable {
     public void invite(String emailToInvite) {
         if (emailToInvite != null) {
             UserModel userToInvite = findGuest(resultUsers, emailToInvite);
-            logger.log(LoggerLevel.DEBUG,"--resultUsers è " + resultUsers);
-            logger.log(LoggerLevel.DEBUG,"--emailToInvite è " + emailToInvite);
+            logger.log(LoggerLevel.DEBUG, "--resultUsers è " + resultUsers);
+            logger.log(LoggerLevel.DEBUG, "--emailToInvite è " + emailToInvite);
 
             if (userToInvite != null) {
-                logger.log(LoggerLevel.DEBUG,"--userToInvite è" + userToInvite);
+                logger.log(LoggerLevel.DEBUG, "--userToInvite è" + userToInvite);
                 if (!guests.contains(userToInvite)) {
                     if (!userToInvite.equals(login.getCurrentUser())) {
                         guests.add(userToInvite);
@@ -467,13 +468,13 @@ public class ManageEventBacking implements Serializable {
             }
             displayResultUsers = false;
         } else {
-            logger.log(LoggerLevel.DEBUG,"--emailToInvite è null");
+            logger.log(LoggerLevel.DEBUG, "--emailToInvite è null");
             showMessage("inviteForm:email", "Specificare un utente", "");
         }
     }
 
     public void showResultUsers() {
-        logger.log(LoggerLevel.DEBUG,"-newGuestEmail" + newGuestEmail);
+        logger.log(LoggerLevel.DEBUG, "-newGuestEmail" + newGuestEmail);
         if (saved) {
             resultUsers = searchManager.searchUserForInvitation(newGuestEmail,
                     eventToCreate);
@@ -484,8 +485,8 @@ public class ManageEventBacking implements Serializable {
                 resultUsers.remove(guest);
             }
         }
-        logger.log(LoggerLevel.DEBUG,"-newGuestEmail" + newGuestEmail);
-        logger.log(LoggerLevel.DEBUG,"-resultUsers" + resultUsers);
+        logger.log(LoggerLevel.DEBUG, "-newGuestEmail" + newGuestEmail);
+        logger.log(LoggerLevel.DEBUG, "-resultUsers" + resultUsers);
         if (resultUsers != null && resultUsers.size() > 0) {
             displayResultUsers = true;
         } else {
@@ -496,17 +497,16 @@ public class ManageEventBacking implements Serializable {
     /**
      * se l'evento è già stato creato ne carica l'istanza solo se non è cambiata
      * la privacy. Se la privacy è stata cambiata creo un nuovo evento con la
-     * privacy giusta, il vecchio lo elimino e aggiorno l idEvent. Se l'evento
-     * invece è un nuovo evento lo istanzio, sempre in eventToCreate
+     * privacy giusta, il vecchio lo elimino e aggiorno l id. Se l'evento invece
+     * è un nuovo evento lo istanzio, sempre in eventToCreate
      */
     private void createOrLoadInstance() {
         //se sto modificando un evento esistente
         if (isSaved()) {
             logger.log(LoggerLevel.DEBUG,
-                    "-dentro createOrL, dentro isSaved, idEvent vale:" + idEvent);
-            if (idEvent != null) {
-                Event eventFound = eventManager.findEventbyId(Long.parseLong(
-                        idEvent));
+                    "-dentro createOrL, dentro isSaved, idEvent vale:" + id);
+            if (id != null) {
+                Event eventFound = eventManager.findEventbyId(Long.parseLong(id));
                 if (((eventFound instanceof PublicEvent) && (publicAccess))
                         || ((eventFound instanceof PrivateEvent)
                         && (!publicAccess))) {
@@ -520,11 +520,12 @@ public class ManageEventBacking implements Serializable {
                     eventToCreate.setId(eventFound.getId());
                 }
             } else {
-                logger.log(LoggerLevel.DEBUG,"idEvent è null");
+                logger.log(LoggerLevel.DEBUG, "idEvent è null");
                 showMessage(null, "Nessun evento trovato", "");
             }
         } else {
-            logger.log(LoggerLevel.DEBUG,"-dentro createOrL, dentro else di isSaved");
+            logger.log(LoggerLevel.DEBUG,
+                    "-dentro createOrL, dentro else di isSaved");
             //se l'utente ha impostato a public l evento
             if (publicAccess) {
                 //istanzio un PublicEvent
@@ -572,7 +573,7 @@ public class ManageEventBacking implements Serializable {
             location = place.toString();
         }
 
-        logger.log(LoggerLevel.DEBUG,"Complete location is: " + location);
+        logger.log(LoggerLevel.DEBUG, "Complete location is: " + location);
         eventToCreate.setLocation(location);
         eventToCreate.setHasLocation(hasLocation);
         eventToCreate.setIsOutdoor(outdoor);
@@ -599,7 +600,7 @@ public class ManageEventBacking implements Serializable {
             if (eventManager.scheduleNewEvent(eventToCreate, calendar,
                     guests)) {
                 setSaved(true);
-                idEvent = eventToCreate.getId().toString();
+                id = eventToCreate.getId().toString();
                 showMessage(null, "L'evento è stato salvato", "");
             } else {
                 showMessage(null,
@@ -610,96 +611,115 @@ public class ManageEventBacking implements Serializable {
     }
 
     /**
-     * controlla se ci sono conflitti o brutto tempo, se tutto ok salva l'evento
-     * altrimenti chiede se rischedulare suggerendo un giorno
+     * NB event must be already setted
+     *
+     * @return
      */
-    public void checkEvent() {
-        //TODO se l'evento è indoor non checko il weather
-        logger.log(LoggerLevel.DEBUG,"dentro checkEvent");
-        createOrLoadInstance();
-        setUpInstance();
-
+    private boolean validateEventConstraint() {
         //se fine evento prima di inzio evento
         if (eventToCreate.getEndDateTime().before(
                 eventToCreate.getStartDateTime())) {
             //avvisa errore
-            showMessage(login.getCurrentUser().getEmail(), "Evento non salvato",
-                    "La fine dell'evento non può essere prima dell'inizio");
+            showMessage(login.getCurrentUser().getEmail(), "Event not saved",
+                    "The event cannot end before it starts");
         } else {
             //se inizio evento nel passato
             if (eventToCreate.getStartDateTime().before(Calendar.getInstance())) {
                 //avvisa errore
                 showMessage(login.getCurrentUser().getEmail(),
-                        "Evento non salvato",
-                        "Non si può creare un evento nel passato");
+                        "Event not saved",
+                        "You cannot create an event in the past");
             } else {
                 //se titolo null
                 if (eventToCreate.getTitle().isEmpty()) {
                     showMessage(login.getCurrentUser().getEmail(),
-                            "Evento non salvato",
-                            "Il titolo non può essere vuoto");
+                            "Event not saved",
+                            "Title cannot be empty");
                 } else {
-
-                    //controllo se ci osno porblemi i,e, conflitti o tempo malo
-                    List<ControlMessages> outcome = calendarManager.checkData(
-                            eventToCreate);
-
-                    //se tutto ok 
-                    if (outcome.contains(ControlMessages.NO_PROBLEM)) {
-                        //salvo l'evento/update
-                        save();
-                    } else {
-                        //Listo gli errori
-                        dialogueMessage = "";
-
-                        for (ControlMessages mex : outcome) {
-                            dialogueMessage += mex.getMessage() + "\n";
-                        }
-
-                        // cerco un free day           
-                        int offset = calendarManager.findFreeSlots(eventToCreate);
-                        logger.log(LoggerLevel.DEBUG, "Trovato free slot: {0}",
-                                offset);
-                        if (offset != -1) {
-                            //creo le possibili date di reschedule
-                            rescheduleDayStart = eventToCreate.getStartDateTime();
-                            rescheduleDayStart.add(Calendar.DATE, offset);
-                            rescheduleDayEnd = eventToCreate.getEndDateTime();
-                            rescheduleDayEnd.add(Calendar.DATE, offset);
-
-                            dialogueMessage += "\nDo you want to reschedule the event from the:\n"
-                                    + TimeTool.dateToTextDay(
-                                            rescheduleDayStart.getTime(),
-                                            "dd-MM-YYYY hh:mm\n") + "to the:\n"
-                                    + TimeTool.dateToTextDay(
-                                            rescheduleDayEnd.getTime(),
-                                            "dd-MM-YYYY hh:mm\n");
-                            rescheduleButton = "Accept reschedule";
-                            saveButton = "Ignore and Save";
-                            showRescheduleButton = true;
-
-                        } else {
-                            saveButton = "Ignore and Save";
-                            showRescheduleButton = false;
-                            dialogueMessage += "\nIt wasn't possible to find a sunny day for a reschedule.";
-                        }
-                        //informo l'utente con una dialog box
-                        RequestContext context = RequestContext.getCurrentInstance();
-                        //update pulsanti
-                        context.update("buttonsForm:rescheduleButton");
-                        context.update("buttonsForm:saveButton");
-
-                        //update messaggio
-                        context.update("dialogMessage");
-
-                        //esegui dialog
-                        context.execute("PF('conflictDialog').show();");
-
-                    }
+                    return true;
                 }
             }
         }
+        return false;
+    }
+    
+    public void forceReschedule(){
+        logger.log(LoggerLevel.DEBUG, "dentro forceReschedule");
+        createOrLoadInstance();
+        setUpInstance();
 
+        if (validateEventConstraint()) {
+    }
+
+    /**
+     * controlla se ci sono conflitti o brutto tempo, se tutto ok salva l'evento
+     * altrimenti chiede se rischedulare suggerendo un giorno
+     */
+    public void checkEvent() {
+        logger.log(LoggerLevel.DEBUG, "dentro checkEvent");
+        createOrLoadInstance();
+        setUpInstance();
+
+        if (validateEventConstraint()) {
+
+            //controllo se ci osno porblemi i,e, conflitti o tempo malo
+            List<ControlMessages> outcome = calendarManager.checkData(
+                    eventToCreate);
+
+            //se tutto ok 
+            if (outcome.contains(ControlMessages.NO_PROBLEM)) {
+                //salvo l'evento/update
+                save();
+            } else {
+                //Listo gli errori
+                dialogueMessage = "";
+
+                for (ControlMessages mex : outcome) {
+                    dialogueMessage += mex.getMessage() + "\n";
+                }
+
+                // cerco un free day           
+                int offset = calendarManager.findFreeSlots(eventToCreate);
+                logger.log(LoggerLevel.DEBUG, "Trovato free slot: {0}",
+                        offset);
+                if (offset != -1) {
+                    //creo le possibili date di reschedule
+                    rescheduleDayStart = eventToCreate.getStartDateTime();
+                    rescheduleDayStart.add(Calendar.DATE, offset);
+                    rescheduleDayEnd = eventToCreate.getEndDateTime();
+                    rescheduleDayEnd.add(Calendar.DATE, offset);
+
+                    dialogueMessage += "\nDo you want to reschedule the event from the:\n"
+                            + TimeTool.dateToTextDay(
+                                    rescheduleDayStart.getTime(),
+                                    "dd-MM-YYYY hh:mm\n") + "to the:\n"
+                            + TimeTool.dateToTextDay(
+                                    rescheduleDayEnd.getTime(),
+                                    "dd-MM-YYYY hh:mm\n");
+                    rescheduleButton = "Accept reschedule";
+                    saveButton = "Ignore and Save";
+                    showRescheduleButton = true;
+
+                } else {
+                    saveButton = "Ignore and Save";
+                    showRescheduleButton = false;
+                    dialogueMessage += "\nIt wasn't possible to find a sunny day for a reschedule.";
+                }
+                //informo l'utente con una dialog box
+                RequestContext context = RequestContext.getCurrentInstance();
+                //update pulsanti
+                context.update("buttonsForm:rescheduleButton");
+                context.update("buttonsForm:saveButton");
+
+                //update messaggio
+                context.update("dialogMessage");
+
+                //esegui dialog
+                context.execute("PF('conflictDialog').show();");
+
+            }
+        }//end if
+        //se ci sono problemi non ti faccio comparire la dialog per salvare
     }
 
     private UserModel findGuest(List<UserModel> users, String email) {

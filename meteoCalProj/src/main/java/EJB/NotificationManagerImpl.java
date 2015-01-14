@@ -25,6 +25,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public void createNotifications(List<UserModel> users, Event event, NotificationType type, boolean sendEmail) {
         logger.log(LoggerLevel.DEBUG, "Setting up the notification...");
+        
         if (users != null && !users.isEmpty()) {
             type.setEventName(event.getTitle()).setEventOwner(
                     event.getOwner().getEmail()).setLink(event.getId());
