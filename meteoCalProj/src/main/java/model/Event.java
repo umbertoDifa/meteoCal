@@ -81,10 +81,10 @@ public abstract class Event implements Serializable {
     @ManyToOne
     private UserModel owner;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE) //TODO check sta remove
     private List<Invitation> invitations;
 
-    @ManyToMany(mappedBy = "eventsInCalendar", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "eventsInCalendar") //no cascade perche altrimenti elimino i calendari tutti dell'utente
     private List<model.CalendarModel> inCalendars;
 
     @OneToOne(cascade = {CascadeType.REMOVE})

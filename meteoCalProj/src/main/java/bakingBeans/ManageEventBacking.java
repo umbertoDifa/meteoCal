@@ -439,7 +439,7 @@ public class ManageEventBacking implements Serializable {
             return "/s/calendar.xhtml";
         } else {
             logger.log(LoggerLevel.DEBUG, "-evento non cancellato");
-            showMessage("", "evento non cancellato", "");
+            showMessage(null, "Event not cancelled", "");
             return "";
         }
     }
@@ -583,6 +583,9 @@ public class ManageEventBacking implements Serializable {
         eventManager.updateEventLatLng(eventToCreate);
         //setto calendar all'entità corrispondente al calendarName
         setInCalendar(calendarName);
+        
+        //reset dialogue message
+        dialogueMessage = "";
     }
 
     /**
@@ -643,12 +646,32 @@ public class ManageEventBacking implements Serializable {
         return false;
     }
 
-    public void forceReschedule() {
+    public void suggestReschedule() {
         logger.log(LoggerLevel.DEBUG, "dentro forceReschedule");
         createOrLoadInstance();
         setUpInstance();
-
         if (validateEventConstraint()) {
+            searchForReschedule();
+            updateAndShowSaveAndRescheduleDialogue();
+
+        }// end if
+        //non faccio nulla perchè l'utente ha sbagliato ad inserire dei dati
+    }
+
+    private void searchForReschedule() {
+        // cerco un free day
+        int offset = calendarManager.findFreeSlots(eventToCreate);
+        logger.log(LoggerLevel.DEBUG, "Trovato free slot: {0}",
+                offset);
+        if (offset != -1) {
+            //se trovo un giorno per reschedule
+            //setto le variabili nel caso accetti il reschedule
+            setRescheduleVars(offset);
+        } else {
+            //se non trovo un giorno avviso
+            saveButton = "Save Anyway";
+            showRescheduleButton = false;
+            dialogueMessage += "\nIt wasn't possible to find a free sunny day for a reschedule.";
         }
     }
 
@@ -662,7 +685,6 @@ public class ManageEventBacking implements Serializable {
         setUpInstance();
 
         if (validateEventConstraint()) {
-
             //controllo se ci osno porblemi i,e, conflitti o tempo malo
             List<ControlMessages> outcome = calendarManager.checkData(
                     eventToCreate);
@@ -674,53 +696,51 @@ public class ManageEventBacking implements Serializable {
             } else {
                 //Listo gli errori
                 dialogueMessage = "";
-
                 for (ControlMessages mex : outcome) {
                     dialogueMessage += mex.getMessage() + "\n";
                 }
 
-                // cerco un free day           
-                int offset = calendarManager.findFreeSlots(eventToCreate);
-                logger.log(LoggerLevel.DEBUG, "Trovato free slot: {0}",
-                        offset);
-                if (offset != -1) {
-                    //creo le possibili date di reschedule
-                    rescheduleDayStart = eventToCreate.getStartDateTime();
-                    rescheduleDayStart.add(Calendar.DATE, offset);
-                    rescheduleDayEnd = eventToCreate.getEndDateTime();
-                    rescheduleDayEnd.add(Calendar.DATE, offset);
-
-                    dialogueMessage += "\nDo you want to reschedule the event from the:\n"
-                            + TimeTool.dateToTextDay(
-                                    rescheduleDayStart.getTime(),
-                                    "dd-MM-YYYY hh:mm\n") + "to the:\n"
-                            + TimeTool.dateToTextDay(
-                                    rescheduleDayEnd.getTime(),
-                                    "dd-MM-YYYY hh:mm\n");
-                    rescheduleButton = "Accept reschedule";
-                    saveButton = "Ignore and Save";
-                    showRescheduleButton = true;
-
-                } else {
-                    saveButton = "Ignore and Save";
-                    showRescheduleButton = false;
-                    dialogueMessage += "\nIt wasn't possible to find a sunny day for a reschedule.";
-                }
-                //informo l'utente con una dialog box
-                RequestContext context = RequestContext.getCurrentInstance();
-                //update pulsanti
-                context.update("buttonsForm:rescheduleButton");
-                context.update("buttonsForm:saveButton");
-
-                //update messaggio
-                context.update("dialogMessage");
-
-                //esegui dialog
-                context.execute("PF('conflictDialog').show();");
+                searchForReschedule();
+                updateAndShowSaveAndRescheduleDialogue();
 
             }
         }//end if
         //se ci sono problemi non ti faccio comparire la dialog per salvare
+    }
+
+    private void updateAndShowSaveAndRescheduleDialogue() {
+        //informo l'utente con una dialog box
+        RequestContext context = RequestContext.getCurrentInstance();
+        
+        //update pulsanti
+        context.update("buttonsForm");
+        context.update("buttonsForm:rescheduleButton");
+        context.update("buttonsForm:saveButton");
+
+        //update messaggio
+        context.update("dialogMessage");
+
+        //esegui dialog
+        context.execute("PF('conflictDialog').show();");
+    }
+
+    private void setRescheduleVars(int offset) {
+        //creo le possibili date di reschedule
+        rescheduleDayStart = eventToCreate.getStartDateTime();
+        rescheduleDayStart.add(Calendar.DATE, offset);
+        rescheduleDayEnd = eventToCreate.getEndDateTime();
+        rescheduleDayEnd.add(Calendar.DATE, offset);
+
+        dialogueMessage += "\nDo you want to reschedule the event from the:\n"
+                + TimeTool.dateToTextDay(
+                        rescheduleDayStart.getTime(),
+                        "dd-MM-YYYY hh:mm\n") + "to the:\n"
+                + TimeTool.dateToTextDay(
+                        rescheduleDayEnd.getTime(),
+                        "dd-MM-YYYY hh:mm\n");
+        rescheduleButton = "Accept reschedule";
+        saveButton = "Ignore and Save";
+        showRescheduleButton = true;
     }
 
     private UserModel findGuest(List<UserModel> users, String email) {
