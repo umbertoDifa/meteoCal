@@ -467,8 +467,10 @@ public class ViewEventPageBacking implements Serializable {
         if (calendarName != null && calendarName != "") {
             // TODO scommentare
             // calendarManager.removeFromAllCalendar(eventToShow);
-            CalendarModel calendarWhereAdd = calendarManager.findCalendarByName(login.getCurrentUser(), calendarName);
-            calendarManager.addToCalendar(eventToShow, calendarWhereAdd);
+            CalendarModel calendarWhereAdd = calendarManager.findCalendarByName(
+                    login.getCurrentUser(), calendarName);
+            calendarManager.addToCalendar(eventToShow, calendarWhereAdd);//TODO questo metodo restituisce un 
+            //messaggio preciso in base a come va a finire il metodo,usare il messaggio (che puo essere di errore)per fare il display sul growl
             showGrowl(GrowlMessage.EVENT_ADDED, "");
         } else if (calendarName == null) {
             // calendarManager.removeFromAllCalendar(eventToShow);
@@ -480,7 +482,8 @@ public class ViewEventPageBacking implements Serializable {
 
     private void showGrowl(GrowlMessage growl, String msgToAppend) {
         FacesContext ctx = FacesContext.getCurrentInstance();
-        ctx.addMessage(null, new FacesMessage(growl.getSeverity(), growl.getTitle(), growl.getMessage() + msgToAppend));
+        ctx.addMessage(null, new FacesMessage(growl.getSeverity(),
+                growl.getTitle(), growl.getMessage() + msgToAppend));
         RequestContext.getCurrentInstance().update("growl");
     }
 
