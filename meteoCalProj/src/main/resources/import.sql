@@ -1,5 +1,7 @@
 #import.sql file
-SET foreign_key_checks = 0;
+-- disabilito i controlli sulle foreign key per cancellare senza problemi le tabelle
+-- e poi li riabilito
+SET foreign_key_checks = 0; 
 DELETE FROM USER;
 DELETE FROM EVENT_IN_CALENDAR;
 DELETE FROM INVITATION;
@@ -8,6 +10,8 @@ DELETE FROM PUBLIC_EVENT;
 DELETE FROM PRIVATE_EVENT;
 DELETE FROM CALENDAR;
 DELETE FROM EVENT;
+DELETE FROM PUBLIC_JOIN;
+DELETE FROM WEATHER_FORECAST;
 SET foreign_key_checks = 1;
 
 

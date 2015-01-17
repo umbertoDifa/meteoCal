@@ -16,15 +16,24 @@ import model.UserModel;
  * @author Umberto
  */
 public interface InvitationManager {
+
     /**
      * Create an invite for all the users in the list for the specified event
+     *
      * @param userToInvite users to invite
      * @param event event for which the invitation is created
-     * @return true if success
      */
     public void createInvitations(List<UserModel> userToInvite, Event event);
-    
+
     public boolean setAnswer(UserModel answeringUser, Event event, InvitationAnswer answer);
-    
+
+    /**
+     *
+     * @param user
+     * @param event
+     * @return return an invitaion for the user for that event if it exists,
+     * null if not
+     */
+    public Invitation getInvitationByUserAndEvent(UserModel user, Event event);
 
 }
