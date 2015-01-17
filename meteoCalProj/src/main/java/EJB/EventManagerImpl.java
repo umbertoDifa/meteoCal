@@ -195,6 +195,11 @@ public class EventManagerImpl implements EventManager {
                         inCalendar);
             }
 
+            //cambio la privacy
+            if (changeEventPrivacy(event, false)) {
+                logger.log(LoggerLevel.DEBUG, "Event privacy CHANGED!");
+            }
+
             //sincronizza il db nel dubbio
             database.flush();
             return true;
@@ -296,6 +301,7 @@ public class EventManagerImpl implements EventManager {
         //se passo da private a public
         if (oldEvent instanceof PrivateEvent && event instanceof PublicEvent) {
 
+            logger.log(LoggerLevel.DEBUG, "Da private a public");
             database.remove(oldEvent);//TODO qui le cascade?            
             database.persist(event);
 
@@ -316,8 +322,8 @@ public class EventManagerImpl implements EventManager {
         } else if (oldEvent instanceof PublicEvent
                 && event instanceof PrivateEvent) {
             //se passo da public a private
-
-            //semplicemente persisto in nuovo evento privato eliminando
+            logger.log(LoggerLevel.DEBUG, "Da public a private");
+            //semplicemente persisto un nuovo evento privato eliminando
             //il pubblico
             database.remove(oldEvent);//TODO qui le cascade?            
             database.persist(event);

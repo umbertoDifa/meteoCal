@@ -45,11 +45,10 @@ import javax.persistence.Temporal;
     //Da chiamare sempre limitando i risulati ad 1 solo!
     @NamedQuery(name = "isConflicting",
                 query = "SELECT e FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND e.id <> :id AND "
-                + "(e.endDateTime >= :end   AND  (e.startDateTime <= :start  OR   e.endDateTime>=:start) "
-                + "OR (e.startDateTime >= :start AND e.startDateTime <= :end))")
+                + "(e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start)")
 })
 @NamedQuery(name = "isInAnyCalendar",
-                  query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE e.id=:event AND e.owner=:user")
+            query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE e.id=:event AND e.owner=:user")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE")
 public abstract class Event implements Serializable {
@@ -87,7 +86,7 @@ public abstract class Event implements Serializable {
     @ManyToMany(mappedBy = "eventsInCalendar") //no cascade perche altrimenti elimino i calendari tutti dell'utente
     private List<model.CalendarModel> inCalendars;
 
-    @OneToOne(cascade = {CascadeType.REMOVE})
+    @OneToOne//no cascade
     @JoinColumn
     private WeatherForecast weather;
 
@@ -97,11 +96,9 @@ public abstract class Event implements Serializable {
     //vars to store position coordinates if any
     private double latitude;
     private double longitude;
-    
+
     @OneToMany(mappedBy = "relatedEvent")
     private List<Notification> notifications;
-    
-
 
     /*
      *
@@ -134,8 +131,6 @@ public abstract class Event implements Serializable {
      *
      * SETTERS & GETTERS
      */
-
-
     public boolean hasLocation() {
         return hasLocation;
     }
@@ -262,9 +257,10 @@ public abstract class Event implements Serializable {
 
     @Override
     public String toString() {
-        return "Event{" + "id=" + id + ", title=" + title + ", startDateTime=" + startDateTime + ", endDateTime=" + endDateTime + ", description=" + description + ", owner=" + owner + '}';
+        return "Event{" + "id=" + id + ", title=" + title + ", startDateTime="
+                + startDateTime + ", endDateTime=" + endDateTime
+                + ", description=" + description + ", owner=" + owner + '}';
     }
-
 
     public String getFormattedStartDate() {
         String formattedDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm").format(
@@ -289,7 +285,7 @@ public abstract class Event implements Serializable {
     @PreRemove
     private void detachNotifications() {
         System.out.println("++++++++++dentro detach+++++++++++++");
-        for (Notification n: this.notifications) {
+        for (Notification n : this.notifications) {
             n.setRelatedEvent(null);
         }
     }

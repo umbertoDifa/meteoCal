@@ -22,7 +22,7 @@ public interface CalendarManager {
 
     public List<ControlMessages> checkData(Event event);
 
-    public boolean addCalendarToUser(CalendarModel cal); 
+    public boolean addCalendarToUser(CalendarModel cal);
 
     /**
      * Dato un evento ed un calendario, inserisce l'evento nel calendario
@@ -33,10 +33,10 @@ public interface CalendarManager {
      */
     public ControlMessages addToCalendar(Event event, CalendarModel calendar);
 
-    public CalendarModel getCalendarUpdated (CalendarModel calendar);
-    
-    public List<Event> getEventsUpdated (CalendarModel calendar);
-    
+    public CalendarModel getCalendarUpdated(CalendarModel calendar);
+
+    public List<Event> getEventsUpdated(CalendarModel calendar);
+
     public CalendarModel createDefaultCalendar(UserModel user);
 
     public CalendarModel findCalendarByName(UserModel user, String name);
@@ -44,16 +44,16 @@ public interface CalendarManager {
     public List<String> getCalendarTitles(UserModel user);
 
     public boolean isInConflict(Event event);
-    
+
     public int findFreeSlots(Event event);
-    
-    public void toggleCalendarPrivacy (CalendarModel calendar);
-    
+
+    public void toggleCalendarPrivacy(CalendarModel calendar);
+
     public boolean deleteCalendar(CalendarModel calendar, DeleteCalendarOption opt);
-    
+
     public boolean isDefault(CalendarModel calendar);
-    
+
     public boolean makeDefault(CalendarModel calendar);
-    
-    public CalendarModel getDefaultCalendar (UserModel user);
+
+    public CalendarModel getDefaultCalendar(UserModel user);
 }

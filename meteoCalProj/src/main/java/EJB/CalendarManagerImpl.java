@@ -131,8 +131,8 @@ public class CalendarManagerImpl implements CalendarManager {
                 logger.log(LoggerLevel.DEBUG, "id event ora: {0}", event.getId());
 
                 //se non alza eccezioni è perchè ha trovato esattamente un conflitto
-                logger.log(LoggerLevel.DEBUG, "Conflict found with event: "
-                        + firstConflict.getTitle());
+                logger.log(LoggerLevel.DEBUG, "Conflict found with event: "+
+                        firstConflict.getTitle()+ "id: "+firstConflict.getId());
 
                 return true;
             } catch (NoResultException e) {
@@ -280,36 +280,34 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public ControlMessages addToCalendar(Event event, CalendarModel calendar) {
-        if (event != null) {
+        if (event != null && calendar != null) {
             event = database.find(Event.class, event.getId());
             if (event != null) {
-                for (CalendarModel cal : event.getOwner().getOwnedCalendars()) {
+                for (CalendarModel cal : calendar.getOwner().getOwnedCalendars()) {
                     cal.getEventsInCalendar().remove(event);
                 }
 
-                if (calendar != null) {
+                calendar = (CalendarModel) database.createNamedQuery(
+                        "findCalbyUserAndTitle").setParameter("id",
+                                calendar.getOwner()).setParameter(
+                                "title", calendar.getTitle()).getSingleResult();
 
-                    calendar = (CalendarModel) database.createNamedQuery(
-                            "findCalbyUserAndTitle").setParameter("id",
-                                    calendar.getOwner()).setParameter(
-                                    "title", calendar.getTitle()).getSingleResult();
+                if (calendar.addEventInCalendar(event)) {
 
-                    if (calendar.addEventInCalendar(event)) {
+                    logger.log(Level.INFO,
+                            "Evento {0} aggiunto al calendario {1} di {2}",
+                            new Object[]{event.getTitle(),
+                                         calendar.getTitle(),
+                                         calendar.getOwner().getEmail()});
+                    database.flush();
+                    database.refresh(calendar);
+                    logger.log(LoggerLevel.DEBUG,
+                            "Events in calendar now: {0}",
+                            calendar.getEventsInCalendar());
 
-                        logger.log(Level.INFO,
-                                "Evento {0} aggiunto al calendario {1} di {2}",
-                                new Object[]{event.getTitle(),
-                                             calendar.getTitle(),
-                                             calendar.getOwner().getEmail()});
-                        database.flush();
-                        database.refresh(calendar);
-                        logger.log(LoggerLevel.DEBUG,
-                                "Events in calendar now: {0}",
-                                calendar.getEventsInCalendar());
-
-                        return ControlMessages.EVENT_ADDED;
-                    }
+                    return ControlMessages.EVENT_ADDED;
                 }
+
                 logger.log(Level.WARNING, "Evento non aggiunto al calendario");
                 return ControlMessages.ERROR_ADDING_EVENT_TO_CAL;
             } else {
