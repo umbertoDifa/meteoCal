@@ -16,6 +16,10 @@ and open the template in the editor.
     overflow: hidden !important;
 }
 
+hr {
+    margin: 20px 0 20px 0;
+}
+
 .scheduleConteiner {
     width: 1000px !important;
     height: 700px !important;

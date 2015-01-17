@@ -83,58 +83,60 @@ and open the template in the editor.
             </p:outputPanel>
             <br />
 
-            <p:tabView rendered="#{viewEvent.showInvitees}">
-                <p:tab title="(#{viewEvent.acceptedInvitations.size()}) Partecipants">
-                    <c:forEach items="#{viewEvent.acceptedInvitations}" var="yesUser">
-                        <p:link href="/s/calendar.xhtml?id=#{yesUser.id}" value="#{yesUser.name} #{yesUser.surname}"/><br/>
-                    </c:forEach>
-                </p:tab>
-                <p:tab title="(#{viewEvent.declinedInvitations.size()}) Declined">
-                    <c:forEach items="#{viewEvent.declinedInvitations}" var="noUser">
-                        <p:link href="/s/calendar.xhtml?id=#{noUser.id}" value="#{noUser.name} #{noUser.surname}"/><br/>
-                    </c:forEach>
-                </p:tab>
-                <p:tab title="(#{viewEvent.noAnswerInvitations.size()}) No Asnwer">
-                    <c:forEach items="#{viewEvent.noAnswerInvitations}" var="bhoUser">
-                        <p:link href="/s/calendar.xhtml?id=#{bhoUser.id}" value="#{bhoUser.name} #{bhoUser.surname}"/><br/>
-                    </c:forEach>
-                </p:tab>
-                <p:tab title="(#{viewEvent.publicJoinUsers.size()}) Public Join" rendered="#{viewEvent.publicAccess}">
-                    <c:forEach items="#{viewEvent.publicJoinUsers}" var="publicUser">
-                        <p:link href="/s/calendar.xhtml?id=#{publicUser.id}" value="#{publicUser.name} #{publicUser.surname}"/><br/>
-                    </c:forEach>
-                </p:tab>
-            </p:tabView>
-
             <h:form id="formPartecipate">
+                <p:tabView rendered="#{viewEvent.showInvitees}">
+                    <p:tab title="(#{viewEvent.acceptedInvitations.size()}) Partecipants">
+                        <c:forEach items="#{viewEvent.acceptedInvitations}" var="yesUser">
+                            <p:link href="/s/calendar.xhtml?id=#{yesUser.id}" value="#{yesUser.name} #{yesUser.surname}"/><br/>
+                        </c:forEach>
+                    </p:tab>
+                    <p:tab title="(#{viewEvent.declinedInvitations.size()}) Declined">
+                        <c:forEach items="#{viewEvent.declinedInvitations}" var="noUser">
+                            <p:link href="/s/calendar.xhtml?id=#{noUser.id}" value="#{noUser.name} #{noUser.surname}"/><br/>
+                        </c:forEach>
+                    </p:tab>
+                    <p:tab title="(#{viewEvent.noAnswerInvitations.size()}) No Asnwer">
+                        <c:forEach items="#{viewEvent.noAnswerInvitations}" var="bhoUser">
+                            <p:link href="/s/calendar.xhtml?id=#{bhoUser.id}" value="#{bhoUser.name} #{bhoUser.surname}"/><br/>
+                        </c:forEach>
+                    </p:tab>
+                    <p:tab title="(#{viewEvent.publicJoinUsers.size()}) Public Join" rendered="#{viewEvent.publicAccess}">
+                        <c:forEach items="#{viewEvent.publicJoinUsers}" var="publicUser">
+                            <p:link href="/s/calendar.xhtml?id=#{publicUser.id}" value="#{publicUser.name} #{publicUser.surname}"/><br/>
+                        </c:forEach>
+                    </p:tab>
+                </p:tabView>
 
-                <p:commandButton value="Partecipate" update="@form" rendered="#{!viewEvent.publicJoin and !viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.eventMine}" 
+
+                <p:commandButton value="Partecipate" update="@(form)" rendered="#{!viewEvent.publicJoin and !viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.eventMine}" 
                                  action="#{viewEvent.doPartecipate()}"/><br/>
 
                 <p:splitButton id="button1" value="#{viewEvent.answerMessage}" rendered="#{viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.eventMine}">
-                    <p:menuitem value="Participate" update="@form" actionListener="#{viewEvent.doPartecipate()}" rendered="#{!viewEvent.publicJoin}" />
-                    <p:menuitem value="Decline" update="@form" actionListener="#{viewEvent.doDecline()}" rendered="#{viewEvent.publicJoin}" />
+                    <p:menuitem value="Participate" update="@(form)" actionListener="#{viewEvent.doPartecipate()}" rendered="#{!viewEvent.publicJoin}" />
+                    <p:menuitem value="Decline" update="@(form)" actionListener="#{viewEvent.doDecline()}" rendered="#{viewEvent.publicJoin}" />
                 </p:splitButton>
 
 
                 <p:splitButton id="button2" value="#{viewEvent.answerMessage}" rendered="#{!viewEvent.publicAccess and !viewEvent.eventMine and viewEvent.hasInvitation}">
-                    <p:menuitem value="Partecipate" update="@form" actionListener="#{viewEvent.doPartecipate()}" rendered="#{!viewEvent.hasAnswered or !viewEvent.partecipate}" />
-                    <p:menuitem value="Decline" update="@form" actionListener="#{viewEvent.doDecline()}" rendered="#{!viewEvent.hasAnswered or viewEvent.partecipate}" />
+                    <p:menuitem value="Partecipate" update="@(form)" actionListener="#{viewEvent.doPartecipate()}" rendered="#{!viewEvent.hasAnswered or !viewEvent.partecipate}" />
+                    <p:menuitem value="Decline" update="@(form)" actionListener="#{viewEvent.doDecline()}" rendered="#{!viewEvent.hasAnswered or viewEvent.partecipate}" />
                 </p:splitButton>
 
             </h:form>
 
-            <h:form rendered="#{!viewEvent.eventMine and ((viewEvent.publicAccess and viewEvent.publicJoin)||( !viewEvent.publicAccess and viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))}">
+
+            <h:form id="addCalendarForm" rendered="#{!viewEvent.eventMine and ((viewEvent.publicAccess and viewEvent.publicJoin)||( !viewEvent.publicAccess and viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))}">
 
                 <i class="fa fa-calendar"/> Add into:
                 <h:selectOneMenu value="#{viewEvent.calendarName}" style="width: 180px; text-overflow: ellipsis;"  >
                     <f:selectItems value="#{calendar.calendarNames}"/>
                     <f:selectItem value="#{null}" itemLabel="Nessun Calendario" />
                 </h:selectOneMenu>
-                
-                <p:commandButton id="save" value="Save" action="#{viewEvent.addToCalendar}"/>
+
+                <p:commandButton id="save" value="Save" action="#{viewEvent.addToCalendar}" update="@form"/>
 
             </h:form>
+
 
 
             <p:button icon="ui-icon-pencil" value="Edit" rendered="#{viewEvent.eventMine and viewEvent.future}" 

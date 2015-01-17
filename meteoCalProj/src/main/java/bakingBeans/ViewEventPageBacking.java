@@ -449,6 +449,8 @@ public class ViewEventPageBacking implements Serializable {
                     }
 
                 }
+            } else if (publicAccess) {
+                showInvitees = true;
             } else {
                 showInvitees = false;
             }
@@ -478,17 +480,22 @@ public class ViewEventPageBacking implements Serializable {
 
     public void addToCalendar() {
         if (calendarName != null && calendarName != "") {
+            // TODO scommentare
+            // calendarManager.removeFromAllCalendar(eventToShow);
             CalendarModel calendarWhereAdd = calendarManager.findCalendarByName(login.getCurrentUser(), calendarName);
             calendarManager.addToCalendar(eventToShow, calendarWhereAdd);
-            showGrowl(GrowlMessage.EVENT_ADDED);
+            showGrowl(GrowlMessage.EVENT_ADDED, "");
+        } else if (calendarName == null) {
+            // calendarManager.removeFromAllCalendar(eventToShow);
+            addMessage("The event has been removed from your Calendars");
         } else {
-            showGrowl(GrowlMessage.EVENT_NOT_ADDED_TO_CALENDAR);
+            showGrowl(GrowlMessage.EVENT_NOT_ADDED_TO_CALENDAR, calendarName);
         }
     }
 
-    private void showGrowl(GrowlMessage growl) {
+    private void showGrowl(GrowlMessage growl, String msgToAppend) {
         FacesContext ctx = FacesContext.getCurrentInstance();
-        ctx.addMessage(null, new FacesMessage(growl.getSeverity(), growl.getTitle(), growl.getMessage()));
+        ctx.addMessage(null, new FacesMessage(growl.getSeverity(), growl.getTitle(), growl.getMessage() + msgToAppend));
         RequestContext.getCurrentInstance().update("growl");
     }
 
