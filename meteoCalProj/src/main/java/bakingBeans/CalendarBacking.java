@@ -12,10 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import model.UserModel;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 /**
@@ -32,6 +30,7 @@ public class CalendarBacking implements Serializable {
     @Inject
     CalendarManager calendarManager;
 
+    @Inject
     private LoginBacking login;
 
     private List<model.CalendarModel> calendars;
@@ -79,11 +78,8 @@ public class CalendarBacking implements Serializable {
     @PostConstruct
     private void init() {
 
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        login = (LoginBacking) facesContext.getApplication().evaluateExpressionGet(facesContext, "#{login}", LoginBacking.class);
-        UserModel u = login.getCurrentUser();
-        if (u != null) {
-            calendars = calendarManager.getCalendars(u);
+        if (login.getCurrentUser() != null) {
+            calendars = calendarManager.getCalendars(login.getCurrentUser());
         }
     }
 
