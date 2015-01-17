@@ -25,22 +25,24 @@ and open the template in the editor.
 
                 <h2> Change Personal Info: </h2>
 
-                <h:outputLabel>Name, Surname:</h:outputLabel> 
+                <h:outputLabel>Name, Surname: </h:outputLabel> 
 
-                <h:inputText id="name" value="#{settings.name}" pt:required="" />
-
+                <h:inputText id="name" value="#{settings.name}" pt:required="" /> , 
                 <h:inputText id="surname" value="#{settings.surname}" pt:required=""/><br/>
-
-                <h:outputLabel for="email">Email:</h:outputLabel> 
+                
+                <br />
+                
+                <h:outputLabel for="email">Email: </h:outputLabel> 
 
                 <h:inputText id="email" value="#{settings.email}" pt:required="">
                     <f:passThroughAttribute name="type" value="email" />
                 </h:inputText>
-                <br/>
+                <br/><br />
                 <p:commandButton id="save" value="Save" actionListener="#{settings.saveCredentials}" update="@(form)"/>
 
                 <p:commandButton id="cancel" type="reset" value="Reset" />
             </h:form>
+            <hr/>
             <h:form>
                 <h2> Change Password: </h2>
                 <h:panelGrid columns="2">
@@ -74,13 +76,10 @@ and open the template in the editor.
                 <p:commandButton ajax="false" id="downloadButton" onclick="PrimeFaces.monitorDownload(showStatus, hideStatus)" disabled="#{settings.disableDownloadButton}" value="Download" icon="ui-icon-arrowthickstop-1-s">
                     <p:fileDownload value="#{settings.streamedContent}" />
                 </p:commandButton>
-                <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false"
-                          closable="false">
-                    <p:graphicImage value="/design/ajaxloadingbar.gif" />
-                </p:dialog>
             </h:form>
 
-
+            <hr/>
+            
             <h2> Import Calendar: </h2>
             <h:form id="formImport">
                 <p:fileUpload  fileUploadListener="#{settings.importCalendar}" allowTypes="/(\.|\/)(ics)$/" />

@@ -264,7 +264,7 @@
             </div>
 
 
-            <p:dialog header="Reschedule suggested" id="conflictDialog" widgetVar="conflictDialog" minHeight="40" resizable="false">
+            <p:dialog closeOnEscape="true" header="Reschedule suggested" id="conflictDialog" widgetVar="conflictDialog" minHeight="40" resizable="false">
                 <h:outputText id="dialogMessage" value="#{eventToManage.dialogueMessage}" style="white-space: pre-wrap"></h:outputText><br/>
                 <f:facet name="footer">
                     <h:form id="buttonsForm">
