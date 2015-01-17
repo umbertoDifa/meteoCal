@@ -131,8 +131,9 @@ public class CalendarManagerImpl implements CalendarManager {
                 logger.log(LoggerLevel.DEBUG, "id event ora: {0}", event.getId());
 
                 //se non alza eccezioni è perchè ha trovato esattamente un conflitto
-                logger.log(LoggerLevel.DEBUG, "Conflict found with event: "+
-                        firstConflict.getTitle()+ "id: "+firstConflict.getId());
+                logger.log(LoggerLevel.DEBUG, "Conflict found with event: "
+                        + firstConflict.getTitle() + "id: "
+                        + firstConflict.getId());
 
                 return true;
             } catch (NoResultException e) {
@@ -282,15 +283,17 @@ public class CalendarManagerImpl implements CalendarManager {
     public ControlMessages addToCalendar(Event event, CalendarModel calendar) {
         if (event != null && calendar != null) {
             event = database.find(Event.class, event.getId());
-            if (event != null) {
+            calendar = (CalendarModel) database.createNamedQuery(
+                    "findCalbyUserAndTitle").setParameter(
+                            "id", calendar.getOwner()).setParameter("title",
+                            calendar.getTitle()).getSingleResult();
+            if (event != null && calendar != null) {
                 for (CalendarModel cal : calendar.getOwner().getOwnedCalendars()) {
-                    cal.getEventsInCalendar().remove(event);
+                    if (cal.getEventsInCalendar().remove(event)) {
+                        logger.log(LoggerLevel.DEBUG,
+                                "Event removed from calendar: " + cal.getTitle());
+                    }
                 }
-
-                calendar = (CalendarModel) database.createNamedQuery(
-                        "findCalbyUserAndTitle").setParameter("id",
-                                calendar.getOwner()).setParameter(
-                                "title", calendar.getTitle()).getSingleResult();
 
                 if (calendar.addEventInCalendar(event)) {
 
@@ -315,6 +318,23 @@ public class CalendarManagerImpl implements CalendarManager {
             }
         } else {
             return ControlMessages.ERROR_ADDING_EVENT_TO_CAL;
+        }
+    }
+
+    public void removeFromAllCalendars(UserModel user, Event event) {
+        if (user != null && event != null) {
+            user = database.find(UserModel.class, user.getId());
+            event = database.find(Event.class, event.getId());
+            //TODO da finire
+           //Calendar calendar = findCalendarbyuserandevent;
+
+//            if (user != null && event != null) {
+//                for (CalendarModel cal : calendar.getOwner().getOwnedCalendars()) {
+//                    cal.getEventsInCalendar().remove(event);
+//                    logger.log(LoggerLevel.DEBUG,
+//                            "Event removed from calendar: " + cal.getTitle());
+//                }
+//            }
         }
     }
 
