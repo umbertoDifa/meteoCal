@@ -25,6 +25,8 @@ import model.Invitation;
 import model.InvitationAnswer;
 import model.PublicEvent;
 import model.UserModel;
+import org.primefaces.context.RequestContext;
+import utility.GrowlMessage;
 import utility.TimeTool;
 
 /**
@@ -37,16 +39,24 @@ public class ViewEventPageBacking implements Serializable {
 
     private Long eventId;
     private Event eventToShow;
+    // if the user can partecipate
     boolean allowedToPartecipate;
-    boolean allowedToModify;
+
+    // if the user owns the event
+    boolean eventMine;
+    // if the event is public
     boolean publicAccess;
+    // if the user has an invitation
     private boolean hasInvitation;
+
     private List<UserModel> noAnswerInvitations = new ArrayList<>();
     private List<UserModel> acceptedInvitations = new ArrayList<>();
     private List<UserModel> declinedInvitations = new ArrayList<>();
     private List<UserModel> publicJoinUsers = new ArrayList<>();
+
     private boolean showInvitees;
     private String answerMessage;
+    // the name of the calendar where the user keep the event
     private String calendarName;
 
     @Inject
@@ -58,8 +68,11 @@ public class ViewEventPageBacking implements Serializable {
     @Inject
     LoginBacking login;
 
+    // if the user has answer to the invitation or does a public join
     private boolean hasAnswered;
+    // if he will partecipate as public join guest
     private boolean publicJoin;
+    // if he will partecipate as invited guest
     private boolean partecipate;
 
     @Inject
@@ -101,13 +114,12 @@ public class ViewEventPageBacking implements Serializable {
         this.allowedToPartecipate = allowToPartecipate;
     }
 
-    public boolean isAllowedToModify() {
-        return allowedToModify;
+    public boolean isEventMine() {
+        return eventMine;
     }
 
-    //posso canc?
-    public void setAllowedToModify(boolean allowToModify) {
-        this.allowedToModify = allowToModify;
+    public void setEventMine(boolean eventMine) {
+        this.eventMine = eventMine;
     }
 
     public void setEventToShow(Event event) {
@@ -213,16 +225,19 @@ public class ViewEventPageBacking implements Serializable {
      */
     public void findEventById() {
         boolean redirectToErrorPage = false;
+        // se l id specificato non è nullo cerca l evento corrispondente
         if (eventId != null) {
             eventToShow = eventManager.findEventbyId(eventId);
         } else {
             redirectToErrorPage = true;
         }
+        // se l hai trovato setta i parametri
         if (eventToShow != null) {
             setParameters();
         } else {
             redirectToErrorPage = true;
         }
+        // seè andato storto qualcosa reindirizza
         if (redirectToErrorPage == true) {
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
             try {
@@ -299,7 +314,7 @@ public class ViewEventPageBacking implements Serializable {
                 eventManager.removePublicJoin(eventToShow,
                         login.getCurrentUser());
                 publicJoin = false;
-                hasAnswered = true;
+                hasAnswered = false;
                 answerMessage = "You won't participate";
 
                 addMessage("You won't join the event");
@@ -328,7 +343,7 @@ public class ViewEventPageBacking implements Serializable {
         //se è il creatore
         if (login.getCurrentUser().equals(eventToShow.getOwner())) {
             //salvo che può modificare
-            allowedToModify = true;
+            eventMine = true;
         }
         //se non è il creatore dell evento e o l'evento è pubblico o ha un invito
         if (!login.getCurrentUser().equals(eventToShow.getOwner())
@@ -460,4 +475,21 @@ public class ViewEventPageBacking implements Serializable {
         }
         return null;
     }
+
+    public void addToCalendar() {
+        if (calendarName != null && calendarName != "") {
+            CalendarModel calendarWhereAdd = calendarManager.findCalendarByName(login.getCurrentUser(), calendarName);
+            calendarManager.addToCalendar(eventToShow, calendarWhereAdd);
+            showGrowl(GrowlMessage.EVENT_ADDED);
+        } else {
+            showGrowl(GrowlMessage.EVENT_NOT_ADDED_TO_CALENDAR);
+        }
+    }
+
+    private void showGrowl(GrowlMessage growl) {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        ctx.addMessage(null, new FacesMessage(growl.getSeverity(), growl.getTitle(), growl.getMessage()));
+        RequestContext.getCurrentInstance().update("growl");
+    }
+
 }
