@@ -12,65 +12,66 @@ and open the template in the editor.
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
-
-    <ui:composition template="/template.xhtml">
-        <ui:define name="title">Log in</ui:define>
-
-        <ui:define name="content">
-
-            <h1>Log in</h1>
-
-            <h:form id="loginForm2"> 
-                <p:focus context="loginForm2"/>
-
-                <!--if the user is not logged in show outputLabel "non loggato"-->
-                <h:outputLabel for="email" rendered="#{!login.loggedIn}">
-                    You are not logged in</h:outputLabel>
-
-                <!--if the user is logged in show outputLabel "loggato"-->
-                <h:outputLabel for="email" rendered="#{login.loggedIn}">
-                    #{login.currentUser.name}, you are logged in</h:outputLabel>
-
-                <!--if the user is not logged show login panel-->
-                <p:panelGrid  columns="2" rendered="#{!login.loggedIn}" style="margin:auto"> 
-                    <h:outputLabel for="email">Email:</h:outputLabel> 
-
-                    <p:inputText id="email" value="#{credentials.email}">
-                        <f:passThroughAttribute name="type" value="email"/>
-                    </p:inputText>
-
-                    <h:outputLabel for="password">Password:</h:outputLabel> 
-
-                    <p:password id="password" value="#{credentials.password}" pt:required="" />
-                    <f:facet name="footer">
-                        <p:commandButton id="login" 
-
-                                         value="Login" 
-
-                                         icon="ui-icon-key"
-
-                                         action="#{login.login}" 
-
-                                         rendered="#{!login.loggedIn}"/>
-                    </f:facet>
-                </p:panelGrid> 
-
-                <!--if the user is not logged in show button to submit credentials-->
+    <h:head>
+        <title>Log in</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <f:metadata>
+            <f:viewAction action="#{login.redirect}"/>
+        </f:metadata>
 
 
-                <!--if the user is not logged in show button to log out-->
-                <p:commandButton id="logout" 
+        <h:outputStylesheet library="css" name="logIn.css"/>
+    </h:head>
+    <h:body>
 
-                                 value="Logout" 
+        <p:outputPanel id="conteiner">
+            <h1>MeteoCal</h1>
+            <h3>Sign in and get access to the best calendar ever</h3>
+            <p:outputPanel id="loginPanel">
 
-                                 icon="ui-icon-extlink" 
+                <video autoplay="true" loop="true" id="bgvid" >
+                    <!-- WCAG general accessibility recommendation is that media such as background video play through only once. Loop turned on for the purposes of illustration; if removed, the end of the video will fade in the same way created by pressing the "Pause" button  -->
 
-                                 action="#{login.logout}" 
+                    <source src="/meteoCalProj/resources/video/intro2.mp4" type="video/mp4"/>
+                </video>
 
-                                 rendered="#{login.loggedIn}"/> 
 
-            </h:form>
-            
-        </ui:define>
-    </ui:composition>
+                <h:form id="loginForm2"> 
+                    <p:focus context="loginForm2"/>
+
+                    <!--if the user is not logged show login panel-->
+                    <p:panelGrid columns="1" class="noBorder" style="margin:auto"> 
+
+                        <br/>
+                        <br/>
+
+
+                        <p:inputText id="email" value="#{credentials.email}">
+                            <f:passThroughAttribute name="type" value="email"/>
+                            <f:passThroughAttribute name="placeholder" value="Email Address"/>
+                        </p:inputText>
+
+                        <p:password id="password" value="#{credentials.password}" pt:required="" >
+                            <f:passThroughAttribute name="placeholder" value="Password"/>
+                        </p:password>
+
+                        <p:panelGrid columns="2">
+                            <p:commandButton id="login" 
+
+                                             value="Login" 
+
+                                             icon="ui-icon-key"
+
+                                             action="#{login.login}" />
+                            <p:link value="or Sign Up" outcome="/signUp.xhtml" />
+                        </p:panelGrid>
+
+                    </p:panelGrid> 
+
+                </h:form>
+            </p:outputPanel>
+        </p:outputPanel>
+    </h:body>
 </html>
+
+

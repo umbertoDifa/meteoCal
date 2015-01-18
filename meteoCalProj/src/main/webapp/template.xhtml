@@ -3,7 +3,7 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <f:view contentType="text/html">
         <h:head >
@@ -16,7 +16,7 @@
         </h:head>
 
         <h:body onload="#{login.updateNotification()}" >
-            
+
             <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" />
             <h:outputStylesheet library="css" name="normalization.css"/>
 
@@ -25,23 +25,25 @@
 
 
             <p:layout>
-                
+
                 <p:layoutUnit id="header" position="north" >
 
                     <ui:include src="/toolbar.xhtml"/>
 
                 </p:layoutUnit>
 
-                <p:layoutUnit class="sidebar" position="west" size="188" >
-                    <ui:include src="/landmarks.xhtml"/>
+                <p:layoutUnit class="sidebar" style="background: none !important;" position="west" size="188" >
+                    <c:if test="#{login.loggedIn}">
+                        <ui:include class="noBackground" src="/landmarks.xhtml"/>
+                    </c:if>
                 </p:layoutUnit>
 
                 <p:layoutUnit  position="center" id="centerLayout">
                     <ui:insert name="content"/>
                 </p:layoutUnit>
-                
-                <p:layoutUnit class="sidebar" position="east" size="88"></p:layoutUnit>
-                
+
+                <p:layoutUnit class="sidebar" position="east" size="188"></p:layoutUnit>
+
             </p:layout>
 
         </h:body>

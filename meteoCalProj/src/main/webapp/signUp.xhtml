@@ -8,73 +8,89 @@ and open the template in the editor.
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-      xmlns:p="http://primefaces.org/ui">
-
-    <ui:composition template="/template.xhtml">
-        <ui:define name="title">sign up</ui:define>
-
-        <ui:define name="content">
-
-            <h1>Sign Up</h1>
-
-            <h:outputText rendered="#{login.loggedIn}">You are registrated!</h:outputText>
-
-            <h:form id="signUpForm"> 
-                <p:focus context="signUpForm"/>
-
-                <!--if the user is not logged show login panel-->
-                <p:panelGrid  columns="3" rendered="#{!login.loggedIn}" style="margin:auto"> 
-                    
-                    <h:outputLabel for="email">Email*:</h:outputLabel> 
-                    <h:inputText id="email" value="#{user.email}" pt:required="">
-                        <f:passThroughAttribute name="type" value="email" />
-                    </h:inputText>
-                    <h:message for="email" style="color:red" />
-
-                    <h:outputLabel for="name">Name*:</h:outputLabel> 
-                    <h:inputText id="name" value="#{user.name}" pt:required="" />
-                    <h:message for="name" style="color:red" />
-
-                    <h:outputLabel for="surname">Surname*:</h:outputLabel> 
-                    <h:inputText id="surname" value="#{user.surname}" pt:required=""/>
-                    <h:message for="surname" style="color:red" />
-
-                    <h:outputLabel for="password">Password*:</h:outputLabel> 
-                    <h:inputSecret id="password" value="#{user.password}" pt:required="" />
-                    <h:message for="password" style="color:red" />
-
-                    <f:facet name="footer">
-                        <p:commandButton id="signUp" 
-                                         value="Sign Up" 
-                                         action="#{signUp.signUp}" />
-
-                        <p:commandButton rendered="#{!login.loggedIn}" 
-                                         action="/logIn.xhtml" value="Log In" />
-                    </f:facet>
-                </p:panelGrid> 
-
-                <!--if the user is not logged in show button to submit credentials-->
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>Log in</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 
-                <!--if the user is not logged in show button to log out-->
-                <p:commandButton id="logout" 
 
-                                 value="Logout" 
+        <h:outputStylesheet library="css" name="logIn.css"/>
+    </h:head>
+    <h:body>
 
-                                 icon="ui-icon-extlink" 
+        <p:outputPanel id="conteiner">
+            <h1>MeteoCal</h1>
+            <h3>More than just a calendar</h3>
+            <p:outputPanel id="loginPanel">
 
-                                 action="#{login.logout}" 
+                <video autoplay="true" loop="true" id="bgvid" >
+                    <!-- WCAG general accessibility recommendation is that media such as background video play through only once. Loop turned on for the purposes of illustration; if removed, the end of the video will fade in the same way created by pressing the "Pause" button  -->
 
-                                 rendered="#{login.loggedIn}"/> 
-
-                <!--                <p:message for="email" style="color:red" />
-                                <p:message for="password" style="color:red" />-->
-            </h:form>
+                    <source src="/meteoCalProj/resources/video/intro2.mp4" type="video/mp4"/>
+                </video>
 
 
-        </ui:define>
+                <h:form id="signUpForm"> 
+                    <p:focus context="signUpForm"/>
 
-    </ui:composition>
+                    <!--if the user is not logged show login panel-->
+                    <p:panelGrid class="noBorder" columns="1" rendered="#{!login.loggedIn}" style="margin:auto"> 
+
+                        <br/>
+                        <p:inputText id="email" value="#{user.email}" pt:required="">
+                            <f:passThroughAttribute name="type" value="email" />
+                            <f:passThroughAttribute name="placeholder" value="Email Address"/>
+                        </p:inputText>
+
+
+                        <p:inputText id="name" value="#{user.name}" pt:required="" >
+                            <f:passThroughAttribute name="placeholder" value="Name"/>
+                        </p:inputText>
+
+                        <p:inputText id="surname" value="#{user.surname}" pt:required="">
+                            <f:passThroughAttribute name="placeholder" value="Surname"/>
+                        </p:inputText>
+
+
+                        <p:password id="password" value="#{user.password}" pt:required="" >
+                            <f:passThroughAttribute name="placeholder" value="Password"/>
+                        </p:password>
+
+
+                        <p:panelGrid class="noBorder" columns="2">
+                            <p:commandButton id="signUp" 
+                                             value="Sign Up" 
+                                             action="#{signUp.signUp}" />
+
+                            <p:link outcome="/logIn.xhtml" value="or Log In" />
+                        </p:panelGrid>
+
+                    </p:panelGrid> 
+
+                    <!--if the user is not logged in show button to submit credentials-->
+
+
+                    <!--if the user is not logged in show button to log out-->
+                    <p:commandButton id="logout" 
+
+                                     value="Logout" 
+
+                                     icon="ui-icon-extlink" 
+
+                                     action="#{login.logout}" 
+
+                                     rendered="#{login.loggedIn}"/> 
+
+                    <!--                <p:message for="email" style="color:red" />
+                                    <p:message for="password" style="color:red" />-->
+                </h:form>
+            </p:outputPanel>
+        </p:outputPanel>
+    </h:body>
 </html>
+
+

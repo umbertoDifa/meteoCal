@@ -1,0 +1,77 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 18-gen-2015, 19.45.23
+    Author     : Francesco
+*/
+
+video { 
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1000;
+    background: url('/resources/img/default.png') no-repeat;
+    background-size: cover;
+    transition: 1s opacity;
+}
+
+.ui-layout-unit-content, .ui-widget-content, body {
+    background: none !important;
+    overflow: visible !important;
+
+}
+
+body {
+    height: 100vh;
+    font-family:Arial,sans-serif;
+    text-align: center;
+    color: white;
+    margin: 0;
+    position: relative;
+}
+
+a {
+    color: white !important;
+}
+
+.noBorder tr td, .noBorder tr {
+    border: none !important;
+}
+
+h1,h3 {
+    color: white;
+}
+
+h1 {
+    font-size: 84px;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    margin: 0;
+}
+
+#loginPanel {
+    background: rgba(0,0,0,.6) !important;
+    height: 255px !important;
+    width: 366px !important;
+    text-align: left;
+    margin: auto;
+}
+
+#conteiner{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 30%;
+    width: 50%;
+    margin: -15% 0 0 -25%;
+}
+

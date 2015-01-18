@@ -69,6 +69,19 @@ public class LoginBacking implements Serializable {
 
     }
 
+    public void redirect() {
+        if (isLoggedIn()) {
+            ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+
+            try {
+                context.redirect(context.getRequestContextPath()
+                        + "/s/calendar.xhtml?faces-redirect=true");
+            } catch (IOException ex) {
+
+            }
+        }
+    }
+
     public String logout() {
 
         FacesContext.getCurrentInstance().addMessage(null,

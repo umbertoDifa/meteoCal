@@ -38,6 +38,10 @@ and open the template in the editor.
                     </h:panelGrid>
                 </f:facet>
                 <f:facet name="right">
+                    <h:panelGrid columns="2" rendered="#{scheduleView.readOnly}">
+                        <p:graphicImage value="/resources/img/default-user-profile.jpg" width="27" />
+                        <p:outputLabel style="font-size: large;" value="Calendars of #{scheduleView.calendarShown.owner.name} #{scheduleView.calendarShown.owner.surname}"/>
+                    </h:panelGrid>
                     <h:form id="publicSwitchForm" rendered="#{!scheduleView.readOnly}">
                         <h:panelGrid >
                             <p:commandButton id="publicSwitch" widgetVar="publicSwitch" value="#{scheduleView.labelPrivacy}" actionListener="#{scheduleView.switchPrivacy()}" update="@this"  />
