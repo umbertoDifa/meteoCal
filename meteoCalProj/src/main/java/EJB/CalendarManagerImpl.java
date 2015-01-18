@@ -346,8 +346,7 @@ public class CalendarManagerImpl implements CalendarManager {
         if ((event instanceof PrivateEvent) && (event.getOwner().equals(user)
                 || (event.getInvitee().contains(user)))) {
             //e hai messo che parteciperai
-            if (invitationManager.getInvitationByUserAndEvent(user, event).getAnswer()
-                    == InvitationAnswer.YES) {
+            if (invitationManager.getInvitationByUserAndEvent(user, event) != null && invitationManager.getInvitationByUserAndEvent(user, event).getAnswer() == InvitationAnswer.YES ) {
                 return true;
             }
         } else if (event instanceof PublicEvent) {
