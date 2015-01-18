@@ -12,6 +12,8 @@ import javax.persistence.CascadeType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,6 +24,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import utility.Gender;
 
 /**
  *
@@ -62,8 +65,9 @@ public class UserModel implements Serializable {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('M','F')")
-    private char gender;
+    private Gender gender;
 
     @ManyToMany(mappedBy = "guests", cascade = CascadeType.REMOVE)
     private List<PublicEvent> publicJoins;
@@ -112,7 +116,7 @@ public class UserModel implements Serializable {
     }
 
 
-    public char getGender() {
+    public Gender getGender() {
         return gender;
     }
 
@@ -178,7 +182,7 @@ public class UserModel implements Serializable {
     }
 
 
-    public void setGender(char gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
