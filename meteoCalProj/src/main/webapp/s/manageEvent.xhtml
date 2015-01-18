@@ -216,7 +216,10 @@
                             <h:form id="inviteForm">
                                 <p:fieldset legend="Pending guests" rendered="#{not empty eventToManage.guests}" >
                                     <c:forEach items="#{eventToManage.guests}" var="g" >
-                                        <h:outputText value="#{g.email}"/><br/>
+                                        <p:commandButton id="toolTipTrack3" class="linkStyle" value="#{g.email}" actionListener="#{eventToManage.removeGuest(g)}" update="@form" />
+                                        <i class="fa fa-times removeUser"></i>
+<!--                                        <p:tooltip for="toolTipTrack3" value="click to remove" />-->
+                                        <br/>
                                     </c:forEach>
                                 </p:fieldset><br/>
 
