@@ -38,6 +38,7 @@ public class SignUpManagerImpl implements SignUpManager {
         //creo un calendario default
         defaultCalendar = calManager.createDefaultCalendar(newUser);
         
+        
         try {
             //cerco di persistere calendario e utente
             database.persist(defaultCalendar);
