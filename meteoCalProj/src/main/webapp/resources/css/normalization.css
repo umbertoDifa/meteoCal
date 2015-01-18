@@ -16,6 +16,14 @@ and open the template in the editor.
     overflow: hidden !important;
 }
 
+.removeUser {
+    display: none;
+}
+
+#toolTipTrack3:hover > .removeUser {
+    display: inline;
+}
+
 hr {
     margin: 20px 0 20px 0;
 }

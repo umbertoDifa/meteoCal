@@ -20,6 +20,37 @@ and open the template in the editor.
             <h1>Events</h1>
 
             <p:tabView>
+                <p:tab title="Wall">
+                    <h:form>
+                        <p:dataScroller value="#{events.wallEvents}" var="ev" chunkSize="3">
+                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
+                                <h:panelGrid columns="2">
+                                    <p:graphicImage value="/resources/img/default.png"/> 
+
+
+                                    <p:outputPanel>
+                                        <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <i class="fa fa-clock-o" /> Date:
+                                            <h:outputText value="#{ev.formattedStartDate}"/>
+
+                                            <i class="fa fa-map-marker" /> Location:
+                                            <h:outputText value="#{ev.location}"/>
+
+                                            <i class="fa fa-user"></i> By:
+                                            <h:outputLabel value="#{ev.owner.name} #{ev.owner.surname}"/>
+                                        </h:panelGrid>
+
+                                    </p:outputPanel>
+
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <f:facet name="loader">
+                                <p:commandButton type="button" value="More"/>
+                            </f:facet>
+                        </p:dataScroller>
+                    </h:form>
+                </p:tab>
                 <p:tab title="Owned">
                     <h:form>
                         <p:dataScroller value="#{events.ownedEvents}" var="ev" chunkSize="10">
@@ -81,37 +112,7 @@ and open the template in the editor.
                         </p:dataScroller>
                     </h:form>
                 </p:tab>
-                <p:tab title="Wall">
-                    <h:form>
-                        <p:dataScroller value="#{events.wallEvents}" var="ev" chunkSize="3">
-                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
-                                <h:panelGrid columns="2">
-                                    <p:graphicImage value="/resources/img/default.png"/> 
 
-
-                                    <p:outputPanel>
-                                        <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
-                                        <h:panelGrid columns="2" cellpadding="5">
-                                            <i class="fa fa-clock-o" /> Date:
-                                            <h:outputText value="#{ev.formattedStartDate}"/>
-
-                                            <i class="fa fa-map-marker" /> Location:
-                                            <h:outputText value="#{ev.location}"/>
-
-                                            <i class="fa fa-user"></i> By:
-                                            <h:outputLabel value="#{ev.owner.name} #{ev.owner.surname}"/>
-                                        </h:panelGrid>
-
-                                    </p:outputPanel>
-
-                                </h:panelGrid>
-                            </p:fieldset>
-                            <f:facet name="loader">
-                                <p:commandButton type="button" value="More"/>
-                            </f:facet>
-                        </p:dataScroller>
-                    </h:form>
-                </p:tab>
                 <p:tab title="Invitations">
                     <h:form>
                         <p:dataScroller value="#{events.invitations}" var="ev" chunkSize="10">
