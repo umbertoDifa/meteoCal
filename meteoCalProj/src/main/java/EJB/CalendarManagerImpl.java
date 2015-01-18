@@ -24,7 +24,6 @@ import model.PublicEvent;
 import model.UserModel;
 import utility.ControlMessages;
 import utility.LoggerLevel;
-import utility.LoggerProducer;
 import utility.WeatherMessages;
 import model.WeatherForecast;
 import utility.DeleteCalendarOption;
@@ -560,5 +559,16 @@ public class CalendarManagerImpl implements CalendarManager {
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+    
+    @Override
+    public CalendarModel getCalendarOfEvent (Event event, UserModel user) {
+        user = database.find(UserModel.class, user.getId());
+        database.refresh(user);
+        for (CalendarModel calendar :user.getOwnedCalendars()) {
+            if (calendar.hasEvent(event))
+                    return calendar;
+        }
+        return null;
     }
 }
