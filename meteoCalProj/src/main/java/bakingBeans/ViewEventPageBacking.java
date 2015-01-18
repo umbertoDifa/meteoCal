@@ -359,7 +359,8 @@ public class ViewEventPageBacking implements Serializable {
             //se ha un invito
             if (hasInvitation) {
                 //salvo la sua risposta in answer
-                InvitationAnswer answer = getAnswer();
+                InvitationAnswer answer = invitationManager.getInvitationByUserAndEvent(
+                        login.getCurrentUser(), eventToShow).getAnswer();
                 if (answer != null) {
 
                     //e il messaggio da visualizzare sul bottone
@@ -411,22 +412,6 @@ public class ViewEventPageBacking implements Serializable {
     public boolean isFuture() {
         Calendar today = Calendar.getInstance();
         return TimeTool.isBefore(today, eventToShow.getEndDateTime());
-    }
-
-    /**
-     *
-     * @return it returns the InvitationAnswer of the current user
-     */
-    private InvitationAnswer getAnswer() {
-        List<Invitation> list = eventToShow.getInvitations();
-        if (list != null && list.size() > 0) {
-            for (Invitation i : list) {
-                if (i.getInvitee().equals(login.getCurrentUser())) {
-                    return i.getAnswer();
-                }
-            }
-        }
-        return null;
     }
 
     //TODO da spostare
@@ -485,8 +470,10 @@ public class ViewEventPageBacking implements Serializable {
         if (calendarName != null && calendarName != "") {
             // TODO scommentare
             // calendarManager.removeFromAllCalendar(eventToShow);
-            CalendarModel calendarWhereAdd = calendarManager.findCalendarByName(login.getCurrentUser(), calendarName);
-            calendarManager.addToCalendar(eventToShow, calendarWhereAdd);
+            CalendarModel calendarWhereAdd = calendarManager.findCalendarByName(
+                    login.getCurrentUser(), calendarName);
+            calendarManager.addToCalendar(eventToShow, calendarWhereAdd);//TODO questo metodo restituisce un 
+            //messaggio preciso in base a come va a finire il metodo,usare il messaggio (che puo essere di errore)per fare il display sul growl
             showGrowl(GrowlMessage.EVENT_ADDED, "");
         } else if (calendarName == null) {
             // calendarManager.removeFromAllCalendar(eventToShow);
@@ -498,7 +485,8 @@ public class ViewEventPageBacking implements Serializable {
 
     private void showGrowl(GrowlMessage growl, String msgToAppend) {
         FacesContext ctx = FacesContext.getCurrentInstance();
-        ctx.addMessage(null, new FacesMessage(growl.getSeverity(), growl.getTitle(), growl.getMessage() + msgToAppend));
+        ctx.addMessage(null, new FacesMessage(growl.getSeverity(),
+                growl.getTitle(), growl.getMessage() + msgToAppend));
         RequestContext.getCurrentInstance().update("growl");
     }
 

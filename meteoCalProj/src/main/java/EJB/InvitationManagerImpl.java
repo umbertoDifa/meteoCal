@@ -19,13 +19,13 @@ import utility.LoggerLevel;
 public class InvitationManagerImpl implements InvitationManager {
 
     @Inject
-    NotificationManager notificationManager;
+    private NotificationManager notificationManager;
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
     @Inject
-    Logger logger;
+    private Logger logger;
 
     @Override
     public void createInvitations(List<UserModel> usersToInvite, Event event) {
@@ -77,12 +77,20 @@ public class InvitationManagerImpl implements InvitationManager {
 
     }
 
-    private Invitation getInvitationByUserAndEvent(UserModel user, Event event) {
-        List<Invitation> list = event.getInvitations();
-        if (list != null && list.size() > 0) {
-            for (Invitation i : list) {
-                if (i.getInvitee().equals(user));
-                return i;
+    
+    @Override
+    public Invitation getInvitationByUserAndEvent(UserModel user, Event event) {
+        if (user != null && event != null) {
+            user = database.find(UserModel.class, user.getId());
+            event = database.find(Event.class, event.getId());
+            if (user != null && event != null) {
+                List<Invitation> list = event.getInvitations();
+                if (list != null && list.size() > 0) {
+                    for (Invitation i : list) {
+                        if (i.getInvitee().equals(user));
+                        return i;
+                    }
+                }
             }
         }
         return null;

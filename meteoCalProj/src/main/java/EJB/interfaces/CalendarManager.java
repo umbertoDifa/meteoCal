@@ -56,4 +56,6 @@ public interface CalendarManager {
     public boolean makeDefault(CalendarModel calendar);
 
     public CalendarModel getDefaultCalendar(UserModel user);
+    
+    public CalendarModel getCalendarOfEvent (Event event, UserModel user);
 }

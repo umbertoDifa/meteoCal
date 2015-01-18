@@ -1,6 +1,7 @@
 package EJB;
 
 import EJB.interfaces.CalendarManager;
+import EJB.interfaces.InvitationManager;
 import EJB.interfaces.WeatherManager;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,11 +18,12 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import model.CalendarModel;
 import model.Event;
+import model.InvitationAnswer;
 import model.PrivateEvent;
+import model.PublicEvent;
 import model.UserModel;
 import utility.ControlMessages;
 import utility.LoggerLevel;
-import utility.LoggerProducer;
 import utility.WeatherMessages;
 import model.WeatherForecast;
 import utility.DeleteCalendarOption;
@@ -29,10 +31,14 @@ import utility.DeleteCalendarOption;
 @Stateless
 public class CalendarManagerImpl implements CalendarManager {
 
-    private Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
+    @Inject
+    private Logger logger;
 
     @Inject
     private WeatherManager weatherManager;
+
+    @Inject
+    private InvitationManager invitationManager;
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
@@ -281,32 +287,38 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public ControlMessages addToCalendar(Event event, CalendarModel calendar) {
-        if (event != null && calendar != null) {
+        if (event != null && calendar != null && hasPermissionToAdd(
+                calendar.getOwner(), event)) {
+            //recupera gli oggetti dal db
             event = database.find(Event.class, event.getId());
             calendar = (CalendarModel) database.createNamedQuery(
                     "findCalbyUserAndTitle").setParameter(
                             "id", calendar.getOwner()).setParameter("title",
                             calendar.getTitle()).getSingleResult();
+
             if (event != null && calendar != null) {
+                //elimna l'evento da qualsasi calendario dell'utenet
                 for (CalendarModel cal : calendar.getOwner().getOwnedCalendars()) {
-                    if (cal.getEventsInCalendar().remove(event)) {
+                    if (cal.getEventsInCalendar().contains(event)) {
+                        cal.getEventsInCalendar().remove(event);
                         logger.log(LoggerLevel.DEBUG,
-                                "Event removed from calendar: " + cal.getTitle());
+                                "Event removed from calendar: {0}",
+                                cal.getTitle());
                     }
                 }
 
+                //aggiungi l'evento al calendario dell'utente
                 if (calendar.addEventInCalendar(event)) {
-
                     logger.log(Level.INFO,
                             "Evento {0} aggiunto al calendario {1} di {2}",
                             new Object[]{event.getTitle(),
                                          calendar.getTitle(),
                                          calendar.getOwner().getEmail()});
-                    database.flush();
-                    database.refresh(calendar);
                     logger.log(LoggerLevel.DEBUG,
                             "Events in calendar now: {0}",
                             calendar.getEventsInCalendar());
+
+                    database.flush();
 
                     return ControlMessages.EVENT_ADDED;
                 }
@@ -321,12 +333,60 @@ public class CalendarManagerImpl implements CalendarManager {
         }
     }
 
+    /**
+     * un utente ha i permessi solo se come al solito è invitato o è pubblico o
+     * è l'owner e ha messo che parteciperà o accettato l'invito
+     *
+     * @param user
+     * @param event
+     * @return
+     */
+    private boolean hasPermissionToAdd(UserModel user, Event event) {
+        //se l'evento è privato e sei l owner o hai un invito
+        if ((event instanceof PrivateEvent) && (event.getOwner().equals(user)
+                || (event.getInvitee().contains(user)))) {
+            //e hai messo che parteciperai
+            if (invitationManager.getInvitationByUserAndEvent(user, event).getAnswer()
+                    == InvitationAnswer.YES) {
+                return true;
+            }
+        } else if (event instanceof PublicEvent) {
+            //se l'evento è pubblico  e hai messo che parteciperai
+            if (getPublicJoin(event).contains(user)) {
+                return true;
+            }
+        }
+        logger.log(LoggerLevel.DEBUG,
+                "User do not have permission to add event to his calendar");
+        return false;
+
+    }
+
+    /**
+     * Doppione di quella in eventManager per qeustioni di dependency
+     *
+     * @param event
+     * @return
+     */
+    private List<UserModel> getPublicJoin(Event event) {
+        try {
+            if (event instanceof PublicEvent) {
+                PublicEvent publicEvent = (PublicEvent) database.find(
+                        Event.class, event.getId());
+                return publicEvent.getGuests();
+            }
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
     public void removeFromAllCalendars(UserModel user, Event event) {
         if (user != null && event != null) {
             user = database.find(UserModel.class, user.getId());
             event = database.find(Event.class, event.getId());
             //TODO da finire
-           //Calendar calendar = findCalendarbyuserandevent;
+            //Calendar calendar = findCalendarbyuserandevent;
 
 //            if (user != null && event != null) {
 //                for (CalendarModel cal : calendar.getOwner().getOwnedCalendars()) {
@@ -499,5 +559,16 @@ public class CalendarManagerImpl implements CalendarManager {
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+    
+    @Override
+    public CalendarModel getCalendarOfEvent (Event event, UserModel user) {
+        user = database.find(UserModel.class, user.getId());
+        database.refresh(user);
+        for (CalendarModel calendar :user.getOwnedCalendars()) {
+            if (calendar.hasEvent(event))
+                    return calendar;
+        }
+        return null;
     }
 }
