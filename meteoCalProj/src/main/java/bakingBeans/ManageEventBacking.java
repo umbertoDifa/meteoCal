@@ -797,4 +797,8 @@ public class ManageEventBacking implements Serializable {
         }
         return null;
     }
+    
+    public void removeGuest(UserModel u) {
+        guests.remove(u);
+    }
 }

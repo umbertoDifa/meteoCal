@@ -45,7 +45,7 @@ and open the template in the editor.
             </h:form>
 
             <p:tabView>
-                <p:tab title="Event">
+                <p:tab title="(#{search.eventResults.size()}) Event">
                     <h:form>
                         <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="10">
                             <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
@@ -76,7 +76,7 @@ and open the template in the editor.
                         </p:dataScroller>
                     </h:form>
                 </p:tab>
-                <p:tab title="User">
+                <p:tab title="(#{search.userResults.size()}) User">
                     <h:form>
                         <p:dataScroller value="#{search.userResults}" var="u" chunkSize="10">
                             <p:fieldset legend="#{u.name}" style="margin-bottom:20px">

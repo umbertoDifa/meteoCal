@@ -329,6 +329,13 @@ public class ViewEventPageBacking implements Serializable {
     }
 
     private void setParameters() {
+
+        //se è il creatore
+        if (login.getCurrentUser().equals(eventToShow.getOwner())) {
+            //salvo che può modificare
+            eventMine = true;
+        }
+
         //salvo se è public
         publicAccess = eventToShow instanceof PublicEvent;
 
@@ -340,15 +347,9 @@ public class ViewEventPageBacking implements Serializable {
             setUpPublicJoin();
         }
 
-        //se è il creatore
-        if (login.getCurrentUser().equals(eventToShow.getOwner())) {
-            //salvo che può modificare
-            eventMine = true;
-        }
         //se non è il creatore dell evento e o l'evento è pubblico o ha un invito
-        if (!login.getCurrentUser().equals(eventToShow.getOwner())
-                && ((eventToShow instanceof PublicEvent)
-                || (getInvitees().contains(login.getCurrentUser())))) {
+        if (!eventMine && (publicAccess || 
+                (getInvitees().contains(login.getCurrentUser())))) {
             //allora può partecipare
             allowedToPartecipate = true;
 
@@ -369,6 +370,7 @@ public class ViewEventPageBacking implements Serializable {
                         hasAnswered = true;
                     } else if (answer.equals(InvitationAnswer.NO)) {
                         answerMessage = "You won't participate";
+                        partecipate = false;
                         //salvo che ha risposto
                         hasAnswered = true;
                     } else if (answer.equals(InvitationAnswer.NA)) {
@@ -388,6 +390,7 @@ public class ViewEventPageBacking implements Serializable {
                 } else {
                     publicJoin = false;
                     answerMessage = "You won't participate";
+                    hasAnswered = false;
                 }
             }
 

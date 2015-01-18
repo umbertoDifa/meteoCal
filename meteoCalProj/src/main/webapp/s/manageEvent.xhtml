@@ -216,7 +216,8 @@
                             <h:form id="inviteForm">
                                 <p:fieldset legend="Pending guests" rendered="#{not empty eventToManage.guests}" >
                                     <c:forEach items="#{eventToManage.guests}" var="g" >
-                                        <h:outputText value="#{g.email}"/><br/>
+                                        <p:commandButton value="#{g.email}" actionListener="#{eventToManage.removeGuest(g)}" update="@form" />
+                                        <br/>
                                     </c:forEach>
                                 </p:fieldset><br/>
 

@@ -13,6 +13,7 @@ and open the template in the editor.
       xmlns:p="http://primefaces.org/ui">
 
     <ui:composition template="/template.xhtml">
+        
 
         <f:metadata>
             <f:viewParam name="id" value="#{viewEvent.eventId}"/>
@@ -124,6 +125,8 @@ and open the template in the editor.
 
             </h:form>
 
+            <p:button icon="ui-icon-pencil" value="Edit" rendered="#{viewEvent.eventMine and viewEvent.future}" 
+                      outcome="/s/manageEvent.xhtml?id=#{viewEvent.eventId}" />
 
             <h:form id="addCalendarForm" rendered="#{!viewEvent.eventMine and ((viewEvent.publicAccess and viewEvent.publicJoin)||( !viewEvent.publicAccess and viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))}">
 
@@ -139,8 +142,6 @@ and open the template in the editor.
 
 
 
-            <p:button icon="ui-icon-pencil" value="Edit" rendered="#{viewEvent.eventMine and viewEvent.future}" 
-                      outcome="/s/manageEvent.xhtml?id=#{viewEvent.eventId}" />
 
         </ui:define>
 
