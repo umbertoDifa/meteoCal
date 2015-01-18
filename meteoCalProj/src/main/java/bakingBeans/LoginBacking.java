@@ -88,7 +88,7 @@ public class LoginBacking implements Serializable {
                 new FacesMessage("Goodbye, " + currentUser.getName()));
 
         currentUser = null;
-        return "/signUp.xhtml?faces-redirect=true";
+        return "/logIn.xhtml?faces-redirect=true";
 
     }
 
