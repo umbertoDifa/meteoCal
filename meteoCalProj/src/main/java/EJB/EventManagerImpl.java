@@ -4,7 +4,6 @@ import EJB.interfaces.CalendarManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.NotificationManager;
-import EJB.interfaces.SearchManager;
 import EJB.interfaces.WeatherManager;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -217,7 +216,10 @@ public class EventManagerImpl implements EventManager {
     private boolean updateEventData(Event event) {
         Event oldEvent = database.find(Event.class, event.getId());
         boolean changed = false;
-
+        //TODO non mando la notifica di evento cambiato
+        //se il cambio non interessa direttamente gli invitati
+        
+        
         //aggiorno la descrizione
         if (oldEvent.getDescription() == null ? (event.getDescription()) != null : !oldEvent.getDescription().equals(
                 event.getDescription())) {

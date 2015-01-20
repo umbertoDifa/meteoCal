@@ -49,15 +49,31 @@ public class PrivacyEventFilter implements Filter {
             // check whether a query string exists and check if it starts with the pattern
             if (uri != null && uri.endsWith(pattern)) {
                 //risalgo all'evento
-                String eventId = ((HttpServletRequest) request).getParameter("id");
+                String eventId = ((HttpServletRequest) request).getParameter(
+                        "id");
                 if (eventId != null) {
-                    Event ev = eventManager.findEventbyId(Long.parseLong(eventId));
-                    if (ev != null) {
-                        //se l'evento non è pubblico o è privato e sei l owner o hai un invito
-                        if (!(ev instanceof PublicEvent) && !((ev instanceof PrivateEvent) && (ev.getOwner().equals(login.getCurrentUser()) || (ev.getInvitee().contains(login.getCurrentUser()))))) {
-                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "You are not allowed to view this event");
-                            error = true;
+                    try {
+                        Event ev = eventManager.findEventbyId(Long.parseLong(
+                                eventId));
+                        if (ev != null) {
+                            //se l'evento non è pubblico o è privato e sei l owner o hai un invito
+                            if (!(ev instanceof PublicEvent)
+                                    && !((ev instanceof PrivateEvent)
+                                    && (ev.getOwner().equals(
+                                            login.getCurrentUser())
+                                    || (ev.getInvitee().contains(
+                                            login.getCurrentUser()))))) {
+                                ((HttpServletResponse) response).sendError(
+                                        HttpServletResponse.SC_FORBIDDEN,
+                                        "You are not allowed to view this event");
+                                error = true;
+                            }
                         }
+                    } catch (NumberFormatException ex) {
+                        ((HttpServletResponse) response).sendError(
+                                HttpServletResponse.SC_BAD_REQUEST,
+                                "The event doesn't exist.");
+                        error = true;
                     }
                 } else {
                     System.out.println("-Filtro privacy: eventId null");

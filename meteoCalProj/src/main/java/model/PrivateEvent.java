@@ -31,8 +31,6 @@ public class PrivateEvent extends Event{
 
     public PrivateEvent() {
     }
-
-
     
     
 }

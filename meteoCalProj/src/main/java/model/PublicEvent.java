@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 
 /**
@@ -63,5 +64,13 @@ public class PublicEvent extends Event {
 
     public boolean removeGuest(UserModel user) {
         return this.guests.remove(user);
+    }
+
+    @PreRemove
+    private void detachRelations() {
+        //stacco gli elmenti che non voglio cancellare in cascade
+        System.out.println("++++++++++dentro detach Public Event+++++++++++++");
+        super.detachNotifications();
+        this.guests.clear();        
     }
 }

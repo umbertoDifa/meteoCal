@@ -2,6 +2,7 @@ package EJB;
 
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.DeleteManager;
+import EJB.interfaces.InvitationManager;
 import EJB.interfaces.NotificationManager;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -11,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import model.CalendarModel;
 import model.Event;
+import model.InvitationAnswer;
 import model.NotificationType;
 import model.PublicEvent;
 import model.UserModel;
@@ -24,6 +26,9 @@ public class DeleteManagerImpl implements DeleteManager {
     private NotificationManager notificationManager;
 
     @Inject
+    private InvitationManager invitationManager;
+
+    @Inject
     private CalendarManager calendarManager;
 
     @PersistenceContext(unitName = "meteoCalDB")
@@ -35,31 +40,40 @@ public class DeleteManagerImpl implements DeleteManager {
 
     @Override
     public boolean deleteEvent(Event event) {
-        if (event != null) {
-            try {
-                event = database.find(Event.class, event.getId());
 
-                if (event instanceof PublicEvent) {
-                    PublicEvent publicEvent = (PublicEvent) event;
-                    notificationManager.createNotifications(
-                            publicEvent.getGuests(),
-                            event, NotificationType.EVENT_CANCELLED, true);
-                }
-                notificationManager.createNotifications(event.getInvitee(),
-                        event,
-                        NotificationType.EVENT_CANCELLED, true);
-                database.remove(event);
-                return true;
-            } catch (IllegalArgumentException e) {
-                logger.log(LoggerLevel.DEBUG, "Evento: {0} non trovato",
-                        event.getId());
-                return false;
+        if (event != null) {
+            logger.log(LoggerLevel.DEBUG, "Event {0} is going to be cancelled.",
+                    event.getTitle());
+            logger.log(LoggerLevel.DEBUG, "Event id is {0} ",
+                    event.getId());
+
+            event = database.find(Event.class, event.getId());
+
+            //se l'evento è pubblico avviso chi ha fatto la public join
+            if (event instanceof PublicEvent) {
+                PublicEvent publicEvent = (PublicEvent) event;
+                notificationManager.createNotifications(
+                        publicEvent.getGuests(),
+                        event, NotificationType.EVENT_CANCELLED, true);
             }
+                //se è pubblico o privato avviso quelli che hanno risposto si 
+            //all'invito
+            notificationManager.createNotifications(
+                    invitationManager.getInviteesFiltered(event,
+                            InvitationAnswer.YES), event,
+                    NotificationType.EVENT_CANCELLED, true);
+                                     
+            //cancello l'evento
+            database.remove(event);
+
+            return true;
+
         }
         return false;
     }
 
     @Override
+    //TODO check
     public boolean deleteCalendar(UserModel user, CalendarModel calendar, DeleteCalendarOption opt) {
         if (hasPermissionToDelete(user, calendar)) {
             try {

@@ -24,7 +24,7 @@ public class InvitationManagerImpl implements InvitationManager {
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
-        
+
     @Inject
     private Logger logger;
 
@@ -78,7 +78,6 @@ public class InvitationManagerImpl implements InvitationManager {
 
     }
 
-    
     @Override
     public Invitation getInvitationByUserAndEvent(UserModel user, Event event) {
         if (user != null && event != null) {
@@ -86,10 +85,11 @@ public class InvitationManagerImpl implements InvitationManager {
             event = database.find(Event.class, event.getId());
             if (user != null && event != null) {
                 List<Invitation> list = event.getInvitations();
-                if (list != null && list.size() > 0) {
+                if (list != null && !list.isEmpty()) {
                     for (Invitation i : list) {
-                        if (i.getInvitee().equals(user));
-                        return i;
+                        if (i.getInvitee().equals(user)) {
+                            return i;
+                        }
                     }
                 }
             }
@@ -97,7 +97,7 @@ public class InvitationManagerImpl implements InvitationManager {
         return null;
     }
 
-     /**
+    /**
      * Get all the invitees with a particular answer
      *
      * @param event event to serch invitees for

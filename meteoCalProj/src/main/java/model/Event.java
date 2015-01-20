@@ -45,7 +45,8 @@ import javax.persistence.Temporal;
     //Da chiamare sempre limitando i risulati ad 1 solo!
     @NamedQuery(name = "isConflicting",
                 query = "SELECT e FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND e.id <> :id AND "
-                + "(e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start)")
+                + "(e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start)"), //    @NamedQuery(name = "deleteEventFromAllCalendars",
+//                query = "DELETE FROM Event e WHERE e.id=:id AND e IN e.inCalendars")
 })
 @NamedQuery(name = "isInAnyCalendar",
             query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE e.id=:event AND e.owner=:user")
@@ -80,10 +81,10 @@ public abstract class Event implements Serializable {
     @ManyToOne
     private UserModel owner;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE) //TODO check sta remove
+    @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE)
     private List<Invitation> invitations;
 
-    @ManyToMany(mappedBy = "eventsInCalendar") //no cascade perche altrimenti elimino i calendari tutti dell'utente
+    @ManyToMany(mappedBy = "eventsInCalendar") //no cascade sennò cancello il calendario
     private List<model.CalendarModel> inCalendars;
 
     @OneToOne//no cascade
@@ -282,11 +283,22 @@ public abstract class Event implements Serializable {
         return invitee;
     }
 
-    @PreRemove
-    private void detachNotifications() {
-        System.out.println("++++++++++dentro detach+++++++++++++");
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    /**
+     * To be used only when a public event or a private event has to be
+     * cancelled
+     */
+    protected void detachNotifications() {
+        //stacco gli elmenti che non voglio cancellare in cascade
+        System.out.println("++++++++++dentro detach Event+++++++++++++");
         for (Notification n : this.notifications) {
             n.setRelatedEvent(null);
         }
+        this.inCalendars.clear();
+        this.owner = null;
+
     }
 }

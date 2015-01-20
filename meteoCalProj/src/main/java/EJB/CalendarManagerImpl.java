@@ -345,9 +345,12 @@ public class CalendarManagerImpl implements CalendarManager {
      * @return
      */
     private boolean hasPermissionToAdd(UserModel user, Event event) {
-        //se l'evento è privato e sei l owner o hai un invito
-        if ((event instanceof PrivateEvent) && (event.getOwner().equals(user)
-                || (event.getInvitee().contains(user)))) {
+        //se sei l'owner
+        if (event.getOwner().equals(user)) {
+            return true;
+        }
+        //se l'evento è privato e  hai un invito
+        if ((event instanceof PrivateEvent) && (event.getInvitee().contains(user))) {
             //e hai messo che parteciperai
             if (invitationManager.getInvitationByUserAndEvent(user, event)
                     != null && invitationManager.getInvitationByUserAndEvent(
@@ -366,7 +369,6 @@ public class CalendarManagerImpl implements CalendarManager {
 
     }
 
-   
     /**
      * Doppione di quella in eventManager per qeustioni di dependency
      *
@@ -394,7 +396,9 @@ public class CalendarManagerImpl implements CalendarManager {
             if (user != null && event != null) {
                 for (CalendarModel cal : user.getOwnedCalendars()) {
                     if (cal.getEventsInCalendar().remove(event)) {
-                        logger.log(LoggerLevel.DEBUG, "Event removed from calendar: {0}", cal.getTitle());
+                        logger.log(LoggerLevel.DEBUG,
+                                "Event removed from calendar: {0}",
+                                cal.getTitle());
                     }
                 }
             }
@@ -465,9 +469,6 @@ public class CalendarManagerImpl implements CalendarManager {
         }
         database.flush();
     }
-    
-    
-    
 
     @Override
     public boolean isDefault(CalendarModel calendar) {
@@ -480,8 +481,6 @@ public class CalendarManagerImpl implements CalendarManager {
             return false;
         }
     }
-
-    
 
     @Override
     public boolean makeDefault(CalendarModel calendar) {

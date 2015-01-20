@@ -4,7 +4,6 @@ import EJB.CalendarManagerImpl;
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.DeleteManager;
 import EJB.interfaces.EventManager;
-import EJB.interfaces.InvitationManager;
 import EJB.interfaces.SearchManager;
 import java.io.IOException;
 import java.io.Serializable;
@@ -104,7 +103,7 @@ public class ManageEventBacking implements Serializable {
 
     @Inject
     private DeleteManager deleteManager;
-    
+
     @Inject
     private SearchManager searchManager;
 
@@ -432,16 +431,23 @@ public class ManageEventBacking implements Serializable {
         }
     }
 
-    public String deleteEvent() {
+    public void deleteEvent() {
         logger.log(LoggerLevel.DEBUG, "-dentro delete, eventToCreate vale:"
                 + eventToCreate);
         if (deleteManager.deleteEvent(eventToCreate)) {
             logger.log(LoggerLevel.DEBUG, "-evento cancellato");
-            return "/s/calendar.xhtml";
+            //redirect
+            ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+            try {
+                context.redirect(context.getRequestContextPath()
+                        + "/s/calendar.xhtml");
+
+            } catch (IOException ex) {
+                logger.log(Level.SEVERE, ex.getMessage(), ex);
+            }
         } else {
             logger.log(LoggerLevel.DEBUG, "-evento non cancellato");
             showMessage(null, "Event not cancelled", "");
-            return "";
         }
     }
 
@@ -461,7 +467,8 @@ public class ManageEventBacking implements Serializable {
                                 "partecipi automaticamente ai tuoi eventi", "");
                     }
                 } else {
-                    showMessage("inviteForm:email", "User is already in the list",
+                    showMessage("inviteForm:email",
+                            "User is already in the list",
                             "");
                 }
             } else {
@@ -584,7 +591,7 @@ public class ManageEventBacking implements Serializable {
         eventManager.updateEventLatLng(eventToCreate);
         //setto calendar all'entità corrispondente al calendarName
         setInCalendar(calendarName);
-        
+
         //reset dialogue message
         dialogueMessage = "";
     }
@@ -712,7 +719,7 @@ public class ManageEventBacking implements Serializable {
     private void updateAndShowSaveAndRescheduleDialogue() {
         //informo l'utente con una dialog box
         RequestContext context = RequestContext.getCurrentInstance();
-        
+
         //update pulsanti
         context.update("buttonsForm");
         context.update("buttonsForm:rescheduleButton");
@@ -798,7 +805,7 @@ public class ManageEventBacking implements Serializable {
         }
         return null;
     }
-    
+
     public void removeGuest(UserModel u) {
         guests.remove(u);
     }

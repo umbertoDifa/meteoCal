@@ -297,6 +297,10 @@ public class ViewEventPageBacking implements Serializable {
             partecipate = false;
             answerMessage = "You won't participate";
 
+            //siccome sta annullando la partecipazione gli tolgo l'vento dal calendario
+            calendarManager.removeFromAllCalendars(login.getCurrentUser(),
+                    eventToShow);
+
             if (acceptedInvitations.contains(login.getCurrentUser())) {
                 acceptedInvitations.remove(login.getCurrentUser());
             }
@@ -316,6 +320,9 @@ public class ViewEventPageBacking implements Serializable {
                 publicJoin = false;
                 hasAnswered = false;
                 answerMessage = "You won't participate";
+                //siccome sta annullando la partecipazione gli tolgo l'vento dal calendario
+                calendarManager.removeFromAllCalendars(login.getCurrentUser(),
+                        eventToShow);
 
                 addMessage("You won't join the event");
                 if (publicJoinUsers.contains(login.getCurrentUser())) {
@@ -347,9 +354,9 @@ public class ViewEventPageBacking implements Serializable {
             setUpPublicJoin();
         }
 
-        //se non è il creatore dell evento e o l'evento è pubblico o ha un invito
-        if (!eventMine && (publicAccess || 
-                (getInvitees().contains(login.getCurrentUser())))) {
+        //se non è il creatore dell evento e( o l'evento è pubblico o ha un invito)
+        if (!eventMine && (publicAccess || (getInvitees().contains(
+                login.getCurrentUser())))) {
             //allora può partecipare
             allowedToPartecipate = true;
 
@@ -362,7 +369,6 @@ public class ViewEventPageBacking implements Serializable {
                 InvitationAnswer answer = invitationManager.getInvitationByUserAndEvent(
                         login.getCurrentUser(), eventToShow).getAnswer();
                 if (answer != null) {
-
                     //e il messaggio da visualizzare sul bottone
                     if (answer.equals(InvitationAnswer.YES)) {
                         answerMessage = "You will participate";
@@ -375,7 +381,7 @@ public class ViewEventPageBacking implements Serializable {
                         //salvo che ha risposto
                         hasAnswered = true;
                     } else if (answer.equals(InvitationAnswer.NA)) {
-                        answerMessage = "Answer";
+                        answerMessage = "Answer it";
                         //salvo che non ha risposto
                         hasAnswered = false;
                     }
@@ -398,6 +404,7 @@ public class ViewEventPageBacking implements Serializable {
         }
     }
 
+    //TODO check se esiste in invitation manager e/o sposta
     private List<UserModel> getInvitees() {
         List<UserModel> invitees = new ArrayList<>();
         List<Invitation> list = eventToShow.getInvitations();
@@ -418,7 +425,7 @@ public class ViewEventPageBacking implements Serializable {
     private void setInvitations() {
         if (eventToShow != null) {
             List<Invitation> invitations = eventToShow.getInvitations();
-            if (invitations != null && invitations.size() > 0) {
+            if (invitations != null && !invitations.isEmpty()) {
                 showInvitees = true;
                 for (Invitation invitation : invitations) {
                     switch (invitation.getAnswer()) {
@@ -476,7 +483,8 @@ public class ViewEventPageBacking implements Serializable {
             //messaggio preciso in base a come va a finire il metodo,usare il messaggio (che puo essere di errore)per fare il display sul growl
             showGrowl(GrowlMessage.EVENT_ADDED, "");
         } else if (calendarName == null) {
-             calendarManager.removeFromAllCalendars(login.getCurrentUser(), eventToShow);
+            calendarManager.removeFromAllCalendars(login.getCurrentUser(),
+                    eventToShow);
             addMessage("The event has been removed from your Calendars");
         } else {
             showGrowl(GrowlMessage.EVENT_NOT_ADDED_TO_CALENDAR, calendarName);

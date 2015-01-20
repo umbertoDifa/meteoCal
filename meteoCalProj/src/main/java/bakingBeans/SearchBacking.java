@@ -21,7 +21,7 @@ import model.Event;
 import model.PublicEvent;
 import model.UserModel;
 import utility.LoggerLevel;
-import utility.SearchResult;
+
 
 /**
  *
