@@ -17,11 +17,13 @@
 
         <h:body onload="#{login.updateNotification()}" >
 
-            <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" />
+            <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" />
             <h:outputStylesheet library="css" name="normalization.css"/>
-
+            <h:outputStylesheet library="css" name="metroui.css"/>
+            <h:outputScript library="js" name="sidebar.js" />
             <p:growl severity="info, warn, error, fatal" autoUpdate="true" id="growl" showDetail="true" widgetVar="growl"/>
             <p:messages for="msg" severity="info, warn, error, fatal" showDetail="true"  />
+
 
 
             <p:layout>
@@ -31,18 +33,32 @@
                     <ui:include src="/toolbar.xhtml"/>
 
                 </p:layoutUnit>
+                <!--
+                                <p:layoutUnit class="sidebar" style="background: none !important;" position="west" size="188" >
+                                    <c:if test="">
+                                        <ui:include class="noBackground" src="/landmarks.xhtml"/>
+                                    </c:if>
+                                </p:layoutUnit>-->
 
-                <p:layoutUnit class="sidebar" style="background: none !important;" position="west" size="188" >
-                    <c:if test="#{login.loggedIn}">
-                        <ui:include class="noBackground" src="/landmarks.xhtml"/>
-                    </c:if>
-                </p:layoutUnit>
+                <div id="sidebar">
+                    <p:menu>
+
+                        <p:menuitem value="Calendar" url="/s/calendar.xhtml" icon="ui-icon-calendar" />
+                        <p:menuitem value="Wall" url="/s/wall.xhtml" icon="ui-icon-star" />
+                        <p:menuitem value="Settings" url="/s/settings.xhtml" icon="ui-icon-wrench" />
+                        <p:menuitem value="New Event" url="/s/manageEvent.xhtml" icon="ui-icon-plus" />
+                        <p:menuitem value="Search" url="/s/search.xhtml" icon="ui-icon-search" />
+
+                    </p:menu>
+                </div>
 
                 <p:layoutUnit  position="center" id="centerLayout">
+
                     <ui:insert name="content"/>
+
                 </p:layoutUnit>
 
-                <p:layoutUnit class="sidebar" position="east" size="188"></p:layoutUnit>
+
 
             </p:layout>
 

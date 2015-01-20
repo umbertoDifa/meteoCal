@@ -109,12 +109,12 @@ and open the template in the editor.
                 </p:tabView>
 
 
-                <p:commandButton value="Partecipate" update="@(form)" rendered="#{!viewEvent.publicJoin and !viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.eventMine}" 
+                <p:commandButton value="Partecipate" update="@(form)" rendered="#{!viewEvent.publicJoin and !viewEvent.hasInvitation and !viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.eventMine}" 
                                  action="#{viewEvent.doPartecipate()}"/><br/>
 
-                <p:splitButton id="button1" value="#{viewEvent.answerMessage}" rendered="#{viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.eventMine}">
-                    <p:menuitem value="Participate" update="@(form)" actionListener="#{viewEvent.doPartecipate()}" rendered="#{!viewEvent.publicJoin}" />
-                    <p:menuitem value="Decline" update="@(form)" actionListener="#{viewEvent.doDecline()}" rendered="#{viewEvent.publicJoin}" />
+                <p:splitButton id="button1" value="#{viewEvent.answerMessage}" rendered="#{(viewEvent.hasAnswered or viewEvent.hasInvitation) and viewEvent.publicAccess and !viewEvent.eventMine}">
+                    <p:menuitem value="Participate" update="@(form)" actionListener="#{viewEvent.doPartecipate()}" rendered="#{viewEvent.hasInvitation and !viewEvent.partecipate}" />
+                    <p:menuitem value="Decline" update="@(form)" actionListener="#{viewEvent.doDecline()}" rendered="#{viewEvent.publicJoin or (viewEvent.partecipate and viewEvent.hasInvitation and viewEvent.hasAnswered)}" />
                 </p:splitButton>
 
 
@@ -127,8 +127,10 @@ and open the template in the editor.
 
             <p:button icon="ui-icon-pencil" value="Edit" rendered="#{viewEvent.eventMine and viewEvent.future}" 
                       outcome="/s/manageEvent.xhtml?id=#{viewEvent.eventId}" />
+            
+            <p:commandButton id="delete" value="Delete" rendered="#{viewEvent.eventMine}" action="#{viewEvent.deleteEvent}"/>
 
-            <h:form id="addCalendarForm" rendered="#{!viewEvent.eventMine and ((viewEvent.publicAccess and viewEvent.publicJoin)||( !viewEvent.publicAccess and viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))}">
+            <h:form id="addCalendarForm" rendered="#{!viewEvent.eventMine and ((viewEvent.publicAccess and (viewEvent.publicJoin or (viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))) or ( !viewEvent.publicAccess and viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))}">
 
                 <i class="fa fa-calendar"/> Add into:
                 <h:selectOneMenu value="#{viewEvent.calendarName}" style="width: 180px; text-overflow: ellipsis;"  >

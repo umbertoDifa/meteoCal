@@ -37,7 +37,7 @@ public class ErrorHandler {
         String msg = "An error occurred during the request! ";
         String msgDetail = getMessage();
         if (msgDetail != null) {
-            msg.concat(getMessage());
+            msg = msg.concat(getMessage());
         }
         ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, ""));
 

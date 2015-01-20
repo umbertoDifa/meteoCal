@@ -5,7 +5,9 @@
  */
 package bakingBeans;
 
+import EJB.CalendarManagerImpl;
 import EJB.interfaces.CalendarManager;
+import EJB.interfaces.DeleteManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
 import java.io.IOException;
@@ -13,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -26,7 +29,10 @@ import model.InvitationAnswer;
 import model.PublicEvent;
 import model.UserModel;
 import org.primefaces.context.RequestContext;
+import utility.ControlMessages;
 import utility.GrowlMessage;
+import utility.LoggerLevel;
+import utility.LoggerProducer;
 import utility.TimeTool;
 
 /**
@@ -67,6 +73,9 @@ public class ViewEventPageBacking implements Serializable {
 
     @Inject
     LoginBacking login;
+    
+    @Inject
+    DeleteManager deleteManager;
 
     // if the user has answer to the invitation or does a public join
     private boolean hasAnswered;
@@ -77,6 +86,8 @@ public class ViewEventPageBacking implements Serializable {
 
     @Inject
     private CalendarManager calendarManager;
+    
+    private Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
 
     /**
      * Creates a new instance of viewEventBacking
@@ -475,19 +486,29 @@ public class ViewEventPageBacking implements Serializable {
 
     public void addToCalendar() {
         if (calendarName != null && !"".equals(calendarName)) {
-            // TODO scommentare
-            // calendarManager.removeFromAllCalendar(eventToShow);
+            calendarManager.removeFromAllCalendars(login.getCurrentUser(), eventToShow);
             CalendarModel calendarWhereAdd = calendarManager.findCalendarByName(
                     login.getCurrentUser(), calendarName);
-            calendarManager.addToCalendar(eventToShow, calendarWhereAdd);//TODO questo metodo restituisce un 
-            //messaggio preciso in base a come va a finire il metodo,usare il messaggio (che puo essere di errore)per fare il display sul growl
-            showGrowl(GrowlMessage.EVENT_ADDED, "");
+            ControlMessages msg = calendarManager.addToCalendar(eventToShow, calendarWhereAdd);
+            addMessage(msg.getMessage());
         } else if (calendarName == null) {
             calendarManager.removeFromAllCalendars(login.getCurrentUser(),
                     eventToShow);
             addMessage("The event has been removed from your Calendars");
         } else {
             showGrowl(GrowlMessage.EVENT_NOT_ADDED_TO_CALENDAR, calendarName);
+        }
+    }
+    
+        public String deleteEvent() {
+        if (deleteManager.deleteEvent(eventToShow)) {
+            logger.log(LoggerLevel.DEBUG, "-evento cancellato");
+            addMessage("Event cancelled");
+            return "/s/calendar.xhtml";
+        } else {
+            logger.log(LoggerLevel.DEBUG, "-evento non cancellato");
+            addMessage("Event not cancelled");
+            return "";
         }
     }
 

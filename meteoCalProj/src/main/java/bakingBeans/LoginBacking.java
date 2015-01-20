@@ -62,7 +62,7 @@ public class LoginBacking implements Serializable {
             return "/s/calendar.xhtml?faces-redirect=true";
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error: You are not logged in", userAndMessage.getControlMessage().getMessage()));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", userAndMessage.getControlMessage().getMessage()));
             RequestContext.getCurrentInstance().update("growl");
             return "/";
         }
