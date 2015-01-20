@@ -24,30 +24,29 @@ import utility.LoggerProducer;
 
 @Stateless
 public class LoginManagerImpl implements LoginManager {
-    
+
     @Inject
     SettingManager settingManager;
-    
+
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
-    
+
     private Logger logger = LoggerProducer.debugLogger(LoginManagerImpl.class);
-    
+
     private UserAndMessage userAndMessage;
-    
+
     @PostConstruct
     private void init() {
         userAndMessage = new UserAndMessage();
     }
-    
+
     @Override
     public UserAndMessage findUser(CredentialsBacking credentials) {
-        
+
         List<UserModel> results = database
                 .createQuery(
-                        "select u from UserModel u where u.email=:email and u.password=:password")
-                .setParameter("email", credentials.getEmail())
-                .setParameter("password", credentials.getPassword()).getResultList();
+                        "select u from UserModel u where u.email=:email")
+                .setParameter("email", credentials.getEmail()).getResultList();
 
         //query per cercare un utente preciso
         if (results.isEmpty()) {
@@ -61,19 +60,20 @@ public class LoginManagerImpl implements LoginManager {
                     "There are multiple users corresponding to a single id.Database is corrupted.");
         } else {
             //verifico la password
-            logger.log(LoggerLevel.DEBUG, "utente trovato:"+results.get(0).getEmail());
+            logger.log(LoggerLevel.DEBUG, "utente trovato:"
+                    + results.get(0).getEmail());
             if (results.get(0).getPassword().equals(credentials.getPassword())) {
                 userAndMessage.setUser(results.get(0));
                 database.refresh(results.get(0));
                 userAndMessage.setControlMessage(
-                        ControlMessages.LOGIN_SUCCESSFUL);                
+                        ControlMessages.LOGIN_SUCCESSFUL);
             } else {
                 //se password sbagliata, scrivo l'errore e ritorno null
                 userAndMessage.setUser(null);
                 userAndMessage.setControlMessage(ControlMessages.WRONG_PASSWORD);
             }
         }
-        
+
         return userAndMessage;
     }
 }
