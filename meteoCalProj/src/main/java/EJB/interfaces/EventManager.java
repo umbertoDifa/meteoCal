@@ -35,7 +35,7 @@ public interface EventManager {
 
     public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees);
 
-    public List<UserModel> getInviteesFiltered(Event event, InvitationAnswer answer);
+    
 
     public List<UserModel> getPublicJoin(Event event);
 

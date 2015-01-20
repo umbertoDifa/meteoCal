@@ -438,35 +438,7 @@ public class EventManagerImpl implements EventManager {
         }
 
     }
-
-    /**
-     * Get all the invitees with a particular answer
-     *
-     * @param event event to serch invitees for
-     * @param answer answer of the invitees
-     * @return the invitees who answered like answer
-     */
-    @Override
-    public List<UserModel> getInviteesFiltered(Event event, InvitationAnswer answer) {
-        if (event != null) {
-            event = database.find(Event.class, event.getId());
-            List<Invitation> invitations = event.getInvitations();
-            List<UserModel> users = new ArrayList<>();
-
-            for (Invitation invitation : invitations) {
-                if (invitation.getAnswer().equals(answer)) {
-                    users.add(invitation.getInvitee());
-                }
-            }
-            return users;
-        } else {
-            logger.log(LoggerLevel.DEBUG,
-                    "L'event è null in getInviteesFiltered");
-            return null;
-        }
-
-    }
-
+   
     @Override
     public List<UserModel> getPublicJoin(Event event) {
         try {
