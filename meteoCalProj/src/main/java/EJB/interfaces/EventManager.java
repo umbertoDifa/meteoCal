@@ -33,8 +33,6 @@ public interface EventManager {
 
     public Event findEventbyId(Long id);
 
-    public boolean deleteEvent(Event event);
-
     public boolean updateEvent(Event event, CalendarModel inCalendar, List<UserModel> invitees);
 
     public List<UserModel> getInviteesFiltered(Event event, InvitationAnswer answer);

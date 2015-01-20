@@ -34,26 +34,23 @@ import utility.LoggerLevel;
 public class EventManagerImpl implements EventManager {
 
     @Inject
-    SearchManager searchManager;
+    private CalendarManager calManager;
 
     @Inject
-    CalendarManager calManager;
+    private InvitationManager invitationManager;
 
     @Inject
-    InvitationManager invitationManager;
+    private NotificationManager notificationManager;
 
     @Inject
-    NotificationManager notificationManager;
-
-    @Inject
-    WeatherManager weatherManager;
+    private WeatherManager weatherManager;
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
     @Inject
     @Default
-    Logger logger;
+    private Logger logger;
 
     @Override
     public boolean scheduleNewEvent(Event event, CalendarModel insertInCalendar, List<UserModel> invitees) {
@@ -440,33 +437,6 @@ public class EventManagerImpl implements EventManager {
             return null;
         }
 
-    }
-
-    @Override
-    public boolean deleteEvent(Event event) {
-        //TODO è sbagliata cancella i calendari dell'utente
-        if (event != null) {
-            try {
-                event = database.find(Event.class, event.getId());
-                CalendarModel cal;
-                if (event instanceof PublicEvent) {
-                    PublicEvent publicEvent = (PublicEvent) event;
-                    notificationManager.createNotifications(
-                            publicEvent.getGuests(),
-                            event, NotificationType.EVENT_CANCELLED, true);
-                }
-                notificationManager.createNotifications(event.getInvitee(),
-                        event,
-                        NotificationType.EVENT_CANCELLED, true);
-                database.remove(event);
-                return true;
-            } catch (IllegalArgumentException e) {
-                logger.log(LoggerLevel.DEBUG, "Evento: {0} non trovato",
-                        event.getId());
-                return false;
-            }
-        }
-        return false;
     }
 
     /**

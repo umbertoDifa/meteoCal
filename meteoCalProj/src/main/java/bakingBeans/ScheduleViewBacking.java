@@ -6,6 +6,7 @@
 package bakingBeans;
 
 import EJB.interfaces.CalendarManager;
+import EJB.interfaces.DeleteManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.SearchManager;
 import java.io.IOException;
@@ -54,6 +55,10 @@ public class ScheduleViewBacking implements Serializable {
 
     @Inject
     private SearchManager search;
+    
+    
+    @Inject
+    private DeleteManager deleteManager;
 
     private ScheduleModel eventsToShow;
 
@@ -284,7 +289,7 @@ public class ScheduleViewBacking implements Serializable {
      */
     public void deleteCalendar(String response) {
         DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
-        if (calendarManager.deleteCalendar(calendarShown, option)) {
+        if (deleteManager.deleteCalendar(login.getCurrentUser(),calendarShown, option)) {
             showGrowl(GrowlMessage.CALENDAR_DELETED);
             init();
         } else {

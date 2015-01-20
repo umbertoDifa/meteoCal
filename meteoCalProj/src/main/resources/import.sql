@@ -48,13 +48,13 @@ insert into CALENDAR (TITLE, ISDEFAULT, ISPUBLIC, OWNER_ID)
 
 insert into EVENT (ID, DESCRIPTION, ENDDATETIME, ISOUTDOOR, LOCATION, STARTDATETIME, TITLE, OWNER_ID, TYPE)
 	values
-	(1, "Evento Privato di amdin", '2014-12-22 01:30', 1 , "a casa mia", '2014-12-22 00:30', "Private Event of admin", 7 , "PRIVATE"),
-	(2, "Evento Privato di fra", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Private Event of fra", 6, "PRIVATE"),
+	(1, "Evento Privato di amdin", '2015-01-26 01:30', 1 , "a casa mia", '2014-12-22 00:30', "Private Event of admin", 7 , "PRIVATE"),
+	(2, "Evento Privato di fra", '2015-01-29 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Private Event of fra", 6, "PRIVATE"),
 	(3, "Evento Privato di vale", '2015-01-04 13:00', 1 , "a casa mia", '2015-01-04 12:00', "Private Event of vale", 5, "PRIVATE"),
 	(4, "Evento Privato di umbo", '2015-02-04 15:00', 1 , "a casa mia", '2015-02-02 13:00', "Private Event of umbo", 4, "PRIVATE"),
 	(5, "Evento Privato di c", '2015-01-02 13:00', 1 , "a casa mia", '2015-01-02 12:00', "Private Event of c", 3, "PRIVATE"),
-	(6, "Evento Privato di b", '2015-01-03 11:00', 1 , "a casa mia", '2015-01-03 09:30', "Private Event of b", 2, "PRIVATE"),
-	(7, "Evento Privato di a", '2015-01-04 22:00', 1 , "a casa mia", '2015-01-04 20:00', "Private Event of a", 1, "PRIVATE");
+	(6, "Evento Privato di b", '2015-01-25 11:00', 1 , "a casa mia", '2015-01-22 09:30', "Private Event of b", 2, "PRIVATE"),
+	(7, "Evento Privato di a", '2015-01-26 22:00', 1 , "a casa mia", '2015-01-20 20:00', "Private Event of a", 1, "PRIVATE");
 
 insert into PRIVATE_EVENT (ID)
 values

@@ -13,7 +13,6 @@ import model.Invitation;
 import model.InvitationAnswer;
 import model.UserModel;
 import model.NotificationType;
-import utility.LoggerLevel;
 
 @Stateless
 public class InvitationManagerImpl implements InvitationManager {
@@ -23,9 +22,6 @@ public class InvitationManagerImpl implements InvitationManager {
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
-
-    @Inject
-    private Logger logger;
 
     @Override
     public void createInvitations(List<UserModel> usersToInvite, Event event) {

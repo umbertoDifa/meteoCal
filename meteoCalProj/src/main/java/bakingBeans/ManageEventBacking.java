@@ -2,6 +2,7 @@ package bakingBeans;
 
 import EJB.CalendarManagerImpl;
 import EJB.interfaces.CalendarManager;
+import EJB.interfaces.DeleteManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.SearchManager;
@@ -102,8 +103,8 @@ public class ManageEventBacking implements Serializable {
     private EventManager eventManager;
 
     @Inject
-    private InvitationManager invitationManager;
-
+    private DeleteManager deleteManager;
+    
     @Inject
     private SearchManager searchManager;
 
@@ -434,7 +435,7 @@ public class ManageEventBacking implements Serializable {
     public String deleteEvent() {
         logger.log(LoggerLevel.DEBUG, "-dentro delete, eventToCreate vale:"
                 + eventToCreate);
-        if (eventManager.deleteEvent(eventToCreate)) {
+        if (deleteManager.deleteEvent(eventToCreate)) {
             logger.log(LoggerLevel.DEBUG, "-evento cancellato");
             return "/s/calendar.xhtml";
         } else {
@@ -460,7 +461,7 @@ public class ManageEventBacking implements Serializable {
                                 "partecipi automaticamente ai tuoi eventi", "");
                     }
                 } else {
-                    showMessage("inviteForm:email", "l'utente è già in lista",
+                    showMessage("inviteForm:email", "User is already in the list",
                             "");
                 }
             } else {

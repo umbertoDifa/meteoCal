@@ -141,8 +141,8 @@ public class EventManagerImplTest {
         Event event = null;
         EventManagerImpl instance = new EventManagerImpl();
         boolean expResult = false;
-        boolean result = instance.deleteEvent(event);
-        assertEquals(expResult, result);
+        //boolean result = instance.deleteEvent(event);
+       // assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

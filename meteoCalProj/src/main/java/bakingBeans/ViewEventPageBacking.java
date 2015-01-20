@@ -467,7 +467,7 @@ public class ViewEventPageBacking implements Serializable {
     }
 
     public void addToCalendar() {
-        if (calendarName != null && calendarName != "") {
+        if (calendarName != null && !"".equals(calendarName)) {
             // TODO scommentare
             // calendarManager.removeFromAllCalendar(eventToShow);
             CalendarModel calendarWhereAdd = calendarManager.findCalendarByName(
@@ -476,7 +476,7 @@ public class ViewEventPageBacking implements Serializable {
             //messaggio preciso in base a come va a finire il metodo,usare il messaggio (che puo essere di errore)per fare il display sul growl
             showGrowl(GrowlMessage.EVENT_ADDED, "");
         } else if (calendarName == null) {
-            // calendarManager.removeFromAllCalendar(eventToShow);
+             calendarManager.removeFromAllCalendars(login.getCurrentUser(), eventToShow);
             addMessage("The event has been removed from your Calendars");
         } else {
             showGrowl(GrowlMessage.EVENT_NOT_ADDED_TO_CALENDAR, calendarName);
