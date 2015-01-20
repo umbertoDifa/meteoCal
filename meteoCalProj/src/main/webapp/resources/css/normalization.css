@@ -16,6 +16,18 @@ and open the template in the editor.
     overflow: hidden !important;
 }
 
+#centerLayout {
+    min-height: 500px;
+    min-width: 700px;
+    max-width: 900px;
+    margin: 0 auto !important;
+
+}
+
+.noLinkStyle {
+    text-decoration: none;
+}
+
 .removeUser {
     display: none;
 }
@@ -36,6 +48,7 @@ hr {
 #header{
     position: fixed !important;
     z-index: 1 !important;
+
 }
 
 .ui-messages-error{
@@ -63,4 +76,22 @@ hr {
 
 #header, .sidebar, .noBorder tr td, .noBorder tr {
     border: none !important;
+}
+
+.sidebar, .sidebar > .ui-widget-content {
+    background: none;
+}
+
+.ui-widget-header {
+    border: none;
+}
+
+#hamburger {
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+#sidebar {
+    height: 100vh;
+    width: 160px;
 }

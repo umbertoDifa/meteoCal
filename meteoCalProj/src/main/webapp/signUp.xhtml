@@ -21,7 +21,8 @@ and open the template in the editor.
         <h:outputStylesheet library="css" name="logIn.css"/>
     </h:head>
     <h:body>
-
+        <p:growl severity="info, warn, error, fatal" autoUpdate="true" id="growl" showDetail="true" widgetVar="growl"/>
+        
         <p:outputPanel id="conteiner">
             <h1>MeteoCal</h1>
             <h3>More than just a calendar</h3>
@@ -41,23 +42,24 @@ and open the template in the editor.
                     <p:panelGrid class="noBorder" columns="1" rendered="#{!login.loggedIn}" style="margin:auto"> 
 
                         <br/>
-                        <p:inputText id="email" value="#{user.email}" pt:required="">
-                            <f:passThroughAttribute name="type" value="email" />
+                        <p:inputText id="email" value="#{user.email}" validatorMessage="The email is not valid" requiredMessage="Insert an email address" required="true">
                             <f:passThroughAttribute name="placeholder" value="Email Address"/>
+                            <f:validateRegex  pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
                         </p:inputText>
 
 
-                        <p:inputText id="name" value="#{user.name}" pt:required="" >
+                        <p:inputText id="name" value="#{user.name}" requiredMessage="Please insert your name" required="true" >
                             <f:passThroughAttribute name="placeholder" value="Name"/>
                         </p:inputText>
 
-                        <p:inputText id="surname" value="#{user.surname}" pt:required="">
+                        <p:inputText id="surname" value="#{user.surname}" requiredMessage="Please insert your surname" required="true">
                             <f:passThroughAttribute name="placeholder" value="Surname"/>
                         </p:inputText>
 
 
-                        <p:password id="password" value="#{user.password}" pt:required="" >
+                        <p:password id="password" value="#{user.password}" requiredMessage="Insert a password" required="true" >
                             <f:passThroughAttribute name="placeholder" value="Password"/>
+                            <f:validateLength minimum="3"/>
                         </p:password>
 
 

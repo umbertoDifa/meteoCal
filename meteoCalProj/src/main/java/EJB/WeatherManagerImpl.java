@@ -93,8 +93,8 @@ public class WeatherManagerImpl implements WeatherManager {
         this.event = event;
 
         //valido e aggiorno l'evento
-        if (validate(event)) {
-            Calendar day = event.getStartDateTime();
+        if (validate(this.event)) {
+            Calendar day = this.event.getStartDateTime();
 
             //in base a che giorno è oggi e a quando è schedulato l'evento uso
             //un tipo diverso di previsioni
@@ -447,7 +447,11 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private boolean validate(Event event) {
-        if (event != null && event.hasLocation() && event.isIsOutdoor()) {
+        if(event!= null && event.getId() != null){
+            //se posso aggiorno
+            event = database.find(Event.class, event.getId());
+        }
+        if (event != null && event.hasLocation() && event.isIsOutdoor()) {            
             return true;
         }
         logger.log(LoggerLevel.DEBUG,

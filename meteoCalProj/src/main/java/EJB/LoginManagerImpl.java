@@ -61,7 +61,7 @@ public class LoginManagerImpl implements LoginManager {
         } else {
             //verifico la password
             logger.log(LoggerLevel.DEBUG, "utente trovato:"
-                    + results.get(0).getEmail());
+                    + ((UserModel)results.get(0)).getEmail());
             if (results.get(0).getPassword().equals(credentials.getPassword())) {
                 userAndMessage.setUser(results.get(0));
                 database.refresh(results.get(0));
