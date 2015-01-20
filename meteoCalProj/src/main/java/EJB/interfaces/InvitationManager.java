@@ -35,5 +35,5 @@ public interface InvitationManager {
      * null if not
      */
     public Invitation getInvitationByUserAndEvent(UserModel user, Event event);
-
+public List<UserModel> getInviteesFiltered(Event event, InvitationAnswer answer);
 }

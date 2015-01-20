@@ -147,23 +147,7 @@ public class EventManagerImplTest {
         fail("The test case is a prototype.");
     }
 
-    /**
-     * Test of getInviteesFiltered method, of class EventManagerImpl.
-     */
-    @Test
-    @Ignore
-    public void testGetInviteesFiltered() throws Exception {
-        System.out.println("getInviteesFiltered");
-        Event event = null;
-        InvitationAnswer answer = null;
-        EventManagerImpl instance = new EventManagerImpl();
-        List<UserModel> expResult = null;
-        List<UserModel> result = instance.getInviteesFiltered(event, answer);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
+ 
     /**
      * Test of getPublicJoin method, of class EventManagerImpl.
      */

@@ -2,6 +2,7 @@ package EJB;
 
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.NotificationManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -13,6 +14,7 @@ import model.Invitation;
 import model.InvitationAnswer;
 import model.UserModel;
 import model.NotificationType;
+import utility.LoggerLevel;
 
 @Stateless
 public class InvitationManagerImpl implements InvitationManager {
@@ -22,6 +24,9 @@ public class InvitationManagerImpl implements InvitationManager {
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
+        
+    @Inject
+    private Logger logger;
 
     @Override
     public void createInvitations(List<UserModel> usersToInvite, Event event) {
@@ -90,6 +95,34 @@ public class InvitationManagerImpl implements InvitationManager {
             }
         }
         return null;
+    }
+
+     /**
+     * Get all the invitees with a particular answer
+     *
+     * @param event event to serch invitees for
+     * @param answer answer of the invitees
+     * @return the invitees who answered like answer
+     */
+    @Override
+    public List<UserModel> getInviteesFiltered(Event event, InvitationAnswer answer) {
+        if (event != null) {
+            event = database.find(Event.class, event.getId());
+            List<Invitation> invitations = event.getInvitations();
+            List<UserModel> users = new ArrayList<>();
+
+            for (Invitation invitation : invitations) {
+                if (invitation.getAnswer().equals(answer)) {
+                    users.add(invitation.getInvitee());
+                }
+            }
+            return users;
+        } else {
+            logger.log(LoggerLevel.DEBUG,
+                    "L'event è null in getInviteesFiltered");
+            return null;
+        }
+
     }
 
 }

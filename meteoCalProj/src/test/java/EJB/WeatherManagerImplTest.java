@@ -116,10 +116,10 @@ public class WeatherManagerImplTest {
 
         //quando cerca il tempo vecchio lo trova
         when(forecast.getMain()).thenReturn("Clear");
-
-        //le notifiche vanno mandate a la lista di invitati
-        when(eventManagerMock.getInviteesFiltered(event, InvitationAnswer.YES)).thenReturn(
-                invitee);
+//
+//        //le notifiche vanno mandate a la lista di invitati
+//        when(eventManagerMock.getInviteesFiltered(event, InvitationAnswer.YES)).thenReturn(
+//                invitee);
 
         weatherManager.updateWeather(event);
 

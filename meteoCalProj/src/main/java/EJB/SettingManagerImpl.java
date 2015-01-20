@@ -59,8 +59,9 @@ public class SettingManagerImpl implements SettingManager {
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
-
-    Logger logger = LoggerProducer.debugLogger(SettingManagerImpl.class);
+    
+    @Inject
+    private Logger logger;
 
     /**
      * Constructor for the test
@@ -193,7 +194,7 @@ public class SettingManagerImpl implements SettingManager {
     }
 
     private void addIcalAttendees(CalendarModel calendar, int eventPosition, VEvent event) {
-        List<UserModel> attendees = eventManager.getInviteesFiltered(
+        List<UserModel> attendees = invitationManager.getInviteesFiltered(
                 calendar.getEventsInCalendar().get(eventPosition),
                 InvitationAnswer.YES);
 
