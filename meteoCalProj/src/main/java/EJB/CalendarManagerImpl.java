@@ -287,10 +287,13 @@ public class CalendarManagerImpl implements CalendarManager {
      */
     @Override
     public ControlMessages addToCalendar(Event event, CalendarModel calendar) {
+        //se gli oggetti non sono null e lo user ha i permessi di aggiungere
+        //l'evento al suo calendario
         if (event != null && calendar != null && hasPermissionToAdd(
                 calendar.getOwner(), event)) {
             //recupera gli oggetti dal db
             event = database.find(Event.class, event.getId());
+
             calendar = (CalendarModel) database.createNamedQuery(
                     "findCalbyUserAndTitle").setParameter(
                             "id", calendar.getOwner()).setParameter("title",
@@ -346,7 +349,9 @@ public class CalendarManagerImpl implements CalendarManager {
         if ((event instanceof PrivateEvent) && (event.getOwner().equals(user)
                 || (event.getInvitee().contains(user)))) {
             //e hai messo che parteciperai
-            if (invitationManager.getInvitationByUserAndEvent(user, event) != null && invitationManager.getInvitationByUserAndEvent(user, event).getAnswer() == InvitationAnswer.YES ) {
+            if (invitationManager.getInvitationByUserAndEvent(user, event)
+                    != null && invitationManager.getInvitationByUserAndEvent(
+                            user, event).getAnswer() == InvitationAnswer.YES) {
                 return true;
             }
         } else if (event instanceof PublicEvent) {
@@ -361,6 +366,7 @@ public class CalendarManagerImpl implements CalendarManager {
 
     }
 
+   
     /**
      * Doppione di quella in eventManager per qeustioni di dependency
      *
@@ -384,16 +390,14 @@ public class CalendarManagerImpl implements CalendarManager {
         if (user != null && event != null) {
             user = database.find(UserModel.class, user.getId());
             event = database.find(Event.class, event.getId());
-            //TODO da finire
-            //Calendar calendar = findCalendarbyuserandevent;
 
-//            if (user != null && event != null) {
-//                for (CalendarModel cal : calendar.getOwner().getOwnedCalendars()) {
-//                    cal.getEventsInCalendar().remove(event);
-//                    logger.log(LoggerLevel.DEBUG,
-//                            "Event removed from calendar: " + cal.getTitle());
-//                }
-//            }
+            if (user != null && event != null) {
+                for (CalendarModel cal : user.getOwnedCalendars()) {
+                    if (cal.getEventsInCalendar().remove(event)) {
+                        logger.log(LoggerLevel.DEBUG, "Event removed from calendar: {0}", cal.getTitle());
+                    }
+                }
+            }
         }
     }
 
@@ -461,6 +465,9 @@ public class CalendarManagerImpl implements CalendarManager {
         }
         database.flush();
     }
+    
+    
+    
 
     @Override
     public boolean isDefault(CalendarModel calendar) {
@@ -474,55 +481,7 @@ public class CalendarManagerImpl implements CalendarManager {
         }
     }
 
-    @Override
-    public boolean deleteCalendar(CalendarModel calendar, DeleteCalendarOption opt) {
-        try {
-            if (!isDefault(calendar)) {
-                calendar = (CalendarModel) database.createNamedQuery(
-                        "findCalbyUserAndTitle").setParameter("id",
-                                calendar.getOwner()).setParameter("title",
-                                calendar.getTitle()).getSingleResult();
-                switch (opt) {
-                    case MOVE_EVENTS_AND_DELETE:
-                        CalendarModel defaultCalendar = (CalendarModel) database.createNamedQuery(
-                                "findDefaultCalendar").setParameter("user",
-                                        calendar.getOwner()).getSingleResult();
-                        for (int i = 0; i
-                                < calendar.getEventsInCalendar().size(); i++) {
-                            defaultCalendar.addEventInCalendar(
-                                    calendar.getEventsInCalendar().get(i));
-                        }
-                        calendar.getEventsInCalendar().clear();
-                        break;
-                    case DELETE_CALENDAR_ONLY:
-                        calendar.getEventsInCalendar().clear();
-                        break;
-                    case DELETE_ALL:
-                        Event event;
-                        //per ogni evento
-                        for (int i = 0; i
-                                < calendar.getEventsInCalendar().size(); i++) {
-                            event = calendar.getEventsInCalendar().get(i);
-                            //se l'owner dell'evento è diverso da quello del calendario
-                            if (!Objects.equals(event.getOwner().getId(),
-                                    calendar.getOwner().getId())) {
-                                //rimuovo l'evento dal calendario così quando alla fine faccio la remove
-                                //la cascade non mi rimuove un evento di cui non sono il proprietario
-                                calendar.getEventsInCalendar().remove(event);
-                            }
-                        }
-                }
-
-                database.flush();
-                database.remove(calendar);
-                return true;
-            } else {
-                return false;
-            }
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
+    
 
     @Override
     public boolean makeDefault(CalendarModel calendar) {
@@ -559,14 +518,19 @@ public class CalendarManagerImpl implements CalendarManager {
             return null;
         }
     }
-    
+
     @Override
-    public CalendarModel getCalendarOfEvent (Event event, UserModel user) {
-        user = database.find(UserModel.class, user.getId());
-        database.refresh(user);
-        for (CalendarModel calendar :user.getOwnedCalendars()) {
-            if (calendar.hasEvent(event))
+    public CalendarModel
+            getCalendarOfEvent(Event event, UserModel user) {
+        if (user != null && event != null) {
+            user = database.find(UserModel.class, user.getId());
+            database.refresh(user);
+            for (CalendarModel calendar
+                    : user.getOwnedCalendars()) {
+                if (calendar.hasEvent(event)) {
                     return calendar;
+                }
+            }
         }
         return null;
     }

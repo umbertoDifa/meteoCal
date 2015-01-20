@@ -49,13 +49,19 @@ public interface CalendarManager {
 
     public void toggleCalendarPrivacy(CalendarModel calendar);
 
-    public boolean deleteCalendar(CalendarModel calendar, DeleteCalendarOption opt);
+    public void removeFromAllCalendars(UserModel user, Event event);
 
     public boolean isDefault(CalendarModel calendar);
 
     public boolean makeDefault(CalendarModel calendar);
 
     public CalendarModel getDefaultCalendar(UserModel user);
-    
-    public CalendarModel getCalendarOfEvent (Event event, UserModel user);
+
+    /**
+     *
+     * @param event
+     * @param user
+     * @return a calendar if found, null if not
+     */
+    public CalendarModel getCalendarOfEvent(Event event, UserModel user);
 }
