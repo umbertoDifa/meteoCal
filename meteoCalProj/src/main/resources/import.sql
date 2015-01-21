@@ -30,13 +30,13 @@ insert into USER (ID,EMAIL,NAME,PASSWORD,SURNAME,GENDER)
 
 insert into CALENDAR (TITLE, ISDEFAULT, ISPUBLIC, OWNER_ID) 
     values 
-    ("Deafult", 1, 0, 1),
-    ("Deafult", 1, 0, 2),
-    ("Deafult", 1, 0, 3),
-    ("Deafult", 1, 0, 4),
-    ("Deafult", 1, 0, 5),
-    ("Deafult", 1, 0, 6),
-    ("Deafult", 1, 0, 7),
+    ("Default", 1, 0, 1),
+    ("Default", 1, 0, 2),
+    ("Default", 1, 0, 3),
+    ("Default", 1, 0, 4),
+    ("Default", 1, 0, 5),
+    ("Default", 1, 0, 6),
+    ("Default", 1, 0, 7),
     ("Public_Cal", 0, 1, 1),
     ("Public_Cal", 0, 1, 2),
     ("Public_Cal", 0, 1, 3),
@@ -76,13 +76,13 @@ values
 
 insert into EVENT_IN_CALENDAR (eventsInCalendar_ID, TITLE, OWNER_ID)
 	values
-	(1, "Deafult", 7),
-	(2, "Deafult", 6),
-	(3, "Deafult", 5),
-	(4, "Deafult", 4),
-	(5, "Deafult", 3),
-	(6, "Deafult", 2),
-	(7, "Deafult", 1),
+	(1, "Default", 7),
+	(2, "Default", 6),
+	(3, "Default", 5),
+	(4, "Default", 4),
+	(5, "Default", 3),
+	(6, "Default", 2),
+	(7, "Default", 1),
 	(8, "Public_Cal", 1),
 	(9, "Public_Cal", 2),
 	(10, "Public_Cal", 3),

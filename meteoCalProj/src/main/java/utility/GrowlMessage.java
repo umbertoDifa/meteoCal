@@ -18,7 +18,7 @@ public enum GrowlMessage {
     ERROR_REDIRECT ("Error", "Redirect has failed. An error has occured.", FacesMessage.SEVERITY_ERROR),
     CALENDAR_DELETED ("Calendar Deleted", "Your calendar has been successfully deleted", FacesMessage.SEVERITY_INFO),
     ERROR_DELETE ("Error", "Delete has failed. An error has occured", FacesMessage.SEVERITY_ERROR),
-    DEFAUL_CHANGED ("Defaul Calendar Changed", "The current calendar has been successfully set as Default.", FacesMessage.SEVERITY_INFO),
+    DEFAULT_CHANGED ("Default Calendar Changed", "The current calendar has been successfully set as Default.", FacesMessage.SEVERITY_INFO),
     CALENDAR_SWITCHED_TO_PRIVATE ("Privacy Changed", "Current calendar is now private", FacesMessage.SEVERITY_INFO),
     CALENDAR_SWITCHED_TO_PUBLIC ("Privacy Changed", "Current calendar is now public", FacesMessage.SEVERITY_INFO),
     CALENDAR_CREATED("Calendar has been created", "The new calendar has been created", FacesMessage.SEVERITY_INFO),

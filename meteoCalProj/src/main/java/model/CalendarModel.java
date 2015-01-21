@@ -17,6 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 
 /**
@@ -132,5 +133,11 @@ public class CalendarModel implements Serializable {
     
     public boolean hasEvent (Event event) {
         return this.eventsInCalendar.contains(event);
+    }
+    
+    @PreRemove
+    private void detach(){
+        //detach user
+        this.eventsInCalendar.clear();
     }
 }

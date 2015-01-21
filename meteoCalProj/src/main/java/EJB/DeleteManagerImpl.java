@@ -56,13 +56,13 @@ public class DeleteManagerImpl implements DeleteManager {
                         publicEvent.getGuests(),
                         event, NotificationType.EVENT_CANCELLED, true);
             }
-                //se è pubblico o privato avviso quelli che hanno risposto si 
+            //se è pubblico o privato avviso quelli che hanno risposto si 
             //all'invito
             notificationManager.createNotifications(
                     invitationManager.getInviteesFiltered(event,
                             InvitationAnswer.YES), event,
                     NotificationType.EVENT_CANCELLED, true);
-                                     
+
             //cancello l'evento
             database.remove(event);
 
@@ -73,7 +73,6 @@ public class DeleteManagerImpl implements DeleteManager {
     }
 
     @Override
-    //TODO check
     public boolean deleteCalendar(UserModel user, CalendarModel calendar, DeleteCalendarOption opt) {
         if (hasPermissionToDelete(user, calendar)) {
             try {
@@ -94,12 +93,8 @@ public class DeleteManagerImpl implements DeleteManager {
                                 defaultCalendar.addEventInCalendar(
                                         calendar.getEventsInCalendar().get(i));
                             }
-                            //elimino gli eventi dal calendario che voglio eliminare
-                            calendar.getEventsInCalendar().clear();
                             break;
                         case DELETE_CALENDAR_ONLY:
-                            //elimino gli eventi dal calendario che voglio eliminare
-                            calendar.getEventsInCalendar().clear();
                             break;
                         case DELETE_ALL:
                             //elimo ogni mio evento
@@ -109,13 +104,21 @@ public class DeleteManagerImpl implements DeleteManager {
                                         == calendar.getOwner()) {
                                     this.deleteEvent(
                                             calendar.getEventsInCalendar().get(i));
+                                } else {
+                                    //se non è mio metto la partecipazione a NO
+                                    invitationManager.setAnswer(user,
+                                            calendar.getEventsInCalendar().get(i),
+                                            InvitationAnswer.NO);
                                 }
                             }
-                            //elimino gli eventi dal calenadrio
-                            calendar.getEventsInCalendar().clear();
                     }
 
                     database.flush();
+
+                    //elimino il calendario dall'utente
+                    user = database.find(UserModel.class, user.getId());
+                    user.getOwnedCalendars().remove(calendar);
+
                     database.remove(calendar);
                     return true;
                 } else {

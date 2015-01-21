@@ -350,22 +350,31 @@ public class CalendarManagerImpl implements CalendarManager {
             return true;
         }
         //se l'evento è privato e  hai un invito
-        if ((event instanceof PrivateEvent) && (event.getInvitee().contains(user))) {
-            //e hai messo che parteciperai
-            if (invitationManager.getInvitationByUserAndEvent(user, event)
-                    != null && invitationManager.getInvitationByUserAndEvent(
-                            user, event).getAnswer() == InvitationAnswer.YES) {
-                return true;
-            }
+        //e hai messo che parteciperai
+        if ((event instanceof PrivateEvent)
+                && (event.getInvitee().contains(user)) && hasAnsweredYes(user,
+                        event)) {
+            return true;
+
         } else if (event instanceof PublicEvent) {
-            //se l'evento è pubblico  e hai messo che parteciperai
-            if (getPublicJoin(event).contains(user)) {
+            //se l'evento è pubblico  e hai messo che parteciperai o è pubblico
+            //ma hai un invito a cui hai risposto si
+            if (getPublicJoin(event).contains(user)
+                    || (event.getInvitee().contains(user)
+                    && hasAnsweredYes(user, event))) {
                 return true;
             }
         }
         logger.log(LoggerLevel.DEBUG,
                 "User do not have permission to add event to his calendar");
+
         return false;
+    }
+
+    private boolean hasAnsweredYes(UserModel user, Event event) {
+        return invitationManager.getInvitationByUserAndEvent(user, event)
+                != null && invitationManager.getInvitationByUserAndEvent(
+                        user, event).getAnswer() == InvitationAnswer.YES;
 
     }
 
@@ -388,12 +397,15 @@ public class CalendarManagerImpl implements CalendarManager {
         }
     }
 
-    public void removeFromAllCalendars(UserModel user, Event event) {
+    @Override
+    public
+            void removeFromAllCalendars(UserModel user, Event event) {
         if (user != null && event != null) {
             user = database.find(UserModel.class, user.getId());
             event = database.find(Event.class, event.getId());
 
-            if (user != null && event != null) {
+            if (user != null && event
+                    != null) {
                 for (CalendarModel cal : user.getOwnedCalendars()) {
                     if (cal.getEventsInCalendar().remove(event)) {
                         logger.log(LoggerLevel.DEBUG,
@@ -449,7 +461,8 @@ public class CalendarManagerImpl implements CalendarManager {
         user = database.find(UserModel.class, user.getId());
         database.refresh(user);
         List<String> names = new ArrayList<>();
-        for (CalendarModel cal : this.getCalendars(user)) {
+        for (CalendarModel cal
+                : this.getCalendars(user)) {
             names.add(cal.getTitle());
         }
         return names;

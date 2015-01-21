@@ -405,7 +405,7 @@ public class ScheduleViewBacking implements Serializable {
     public void makeDefault() {
         if (calendarManager.makeDefault(calendarShown)) {
             refreshCalendar();
-            showGrowl(GrowlMessage.DEFAUL_CHANGED);
+            showGrowl(GrowlMessage.DEFAULT_CHANGED);
         } else {
             showGrowl(GrowlMessage.GENERIC_ERROR);
         }
