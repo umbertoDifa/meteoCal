@@ -1,6 +1,7 @@
 package EJB;
 
 import EJB.interfaces.CalendarManager;
+import EJB.interfaces.DeleteManager;
 import EJB.interfaces.EventManager;
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.NotificationManager;
@@ -43,6 +44,9 @@ public class EventManagerImpl implements EventManager {
 
     @Inject
     private WeatherManager weatherManager;
+
+    @Inject
+    DeleteManager deleteManager;
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
@@ -216,10 +220,7 @@ public class EventManagerImpl implements EventManager {
     private boolean updateEventData(Event event) {
         Event oldEvent = database.find(Event.class, event.getId());
         boolean changed = false;
-        //TODO non mando la notifica di evento cambiato
-        //se il cambio non interessa direttamente gli invitati
-        
-        
+
         //aggiorno la descrizione
         if (oldEvent.getDescription() == null ? (event.getDescription()) != null : !oldEvent.getDescription().equals(
                 event.getDescription())) {
@@ -285,7 +286,6 @@ public class EventManagerImpl implements EventManager {
         return changed;
     }
 
-    //TODO check
     @Override
     public boolean changeEventPrivacy(Event event, boolean spreadInvitations) {
         //mi salvo il vecchio id
@@ -293,6 +293,8 @@ public class EventManagerImpl implements EventManager {
 
         //cerco il vecchio evento
         Event oldEvent = database.find(Event.class, oldId);
+        logger.log(LoggerLevel.DEBUG, "Vecchio evento" + oldEvent);
+        logger.log(LoggerLevel.DEBUG, "nuovo evento:" + event);
 
         List<UserModel> oldInvitees = oldEvent.getInvitee();
         List<Invitation> oldInvitations = oldEvent.getInvitations();
@@ -301,18 +303,33 @@ public class EventManagerImpl implements EventManager {
         if (oldEvent instanceof PrivateEvent && event instanceof PublicEvent) {
 
             logger.log(LoggerLevel.DEBUG, "Da private a public");
-            database.remove(oldEvent);//TODO qui le cascade?            
-            database.persist(event);
+//            //rimuovo il vecchio evento
+//            deleteManager.deleteEvent(oldEvent, true);
+//
+//            //persisto il nuovo
+//            database.persist(event);
+//
+//            //a questo punto ho creato un evento con un id nuovo, quindi 
+//            //ripristino il vecchio id
+//            event.setId(oldId);
+//
+//            //risetto anche gli invitati vecchi
+//            event.setInvitations(oldInvitations);
+//
+//            //persisto i cambiamenti
+//            database.flush();
 
-            //a questo punto ho creato un evento con un id nuovo, quindi 
-            //ripristino il vecchio id
-            event.setId(oldId);
-
-            //risetto anche gli invitati vecchi
-            event.setInvitations(oldInvitations);
-
-            //persisto i cambiamenti
-            database.flush();
+            //cancello l'id dai private e lo metto nei public
+//            String deleteQuery = "DELETE FROM PRIVATE_EVENT WHERE id = "
+//                    + oldId + ";";
+//            String insertQuery = "INSERT INTO PUBLIC_EVENT VALUES ("
+//                    + oldId + ");";
+//            String updateQuery = "UPDATE EVENT SET type='PUBLIC' WHERE id = "+oldId+";";
+//            database.createNativeQuery(deleteQuery).executeUpdate();
+//            database.createNativeQuery(insertQuery).;
+            //e cambio il tipo da private a public
+//            database.createNamedQuery("deleteEventByType").setParameter("type",
+//                    PrivateEvent.class).setParameter("id", oldId);
 
             notificationManager.createNotifications(oldInvitees, event,
                     NotificationType.EVENT_CHANGED_TO_PUBLIC, false);
@@ -324,7 +341,9 @@ public class EventManagerImpl implements EventManager {
             logger.log(LoggerLevel.DEBUG, "Da public a private");
             //semplicemente persisto un nuovo evento privato eliminando
             //il pubblico
-            database.remove(oldEvent);//TODO qui le cascade?            
+
+            deleteManager.deleteEvent(event, true);
+
             database.persist(event);
 
             //a questo punto ho creato un evento con un id nuovo, quindi 
@@ -440,7 +459,7 @@ public class EventManagerImpl implements EventManager {
         }
 
     }
-   
+
     @Override
     public List<UserModel> getPublicJoin(Event event) {
         try {

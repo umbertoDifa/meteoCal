@@ -45,8 +45,9 @@ import javax.persistence.Temporal;
     //Da chiamare sempre limitando i risulati ad 1 solo!
     @NamedQuery(name = "isConflicting",
                 query = "SELECT e FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND e.id <> :id AND "
-                + "(e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start)"), //    @NamedQuery(name = "deleteEventFromAllCalendars",
-//                query = "DELETE FROM Event e WHERE e.id=:id AND e IN e.inCalendars")
+                + "(e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start)"), 
+    @NamedQuery(name = "deleteEventByType",
+                query = "DELETE FROM Event e WHERE TYPE(e) = :type AND e.id = :id")
 })
 @NamedQuery(name = "isInAnyCalendar",
             query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE e.id=:event AND e.owner=:user")

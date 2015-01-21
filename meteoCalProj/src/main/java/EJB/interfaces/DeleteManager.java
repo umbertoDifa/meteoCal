@@ -11,7 +11,7 @@ import utility.DeleteCalendarOption;
  */
 public interface DeleteManager {
 
-    public boolean deleteEvent(Event event);
+    public boolean deleteEvent(Event event,boolean silent);
     public boolean deleteCalendar(UserModel user,CalendarModel calendar, DeleteCalendarOption opt);
 
 }

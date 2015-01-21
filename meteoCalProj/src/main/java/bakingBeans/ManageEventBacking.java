@@ -434,7 +434,7 @@ public class ManageEventBacking implements Serializable {
     public void deleteEvent() {
         logger.log(LoggerLevel.DEBUG, "-dentro delete, eventToCreate vale:"
                 + eventToCreate);
-        if (deleteManager.deleteEvent(eventToCreate)) {
+        if (deleteManager.deleteEvent(eventToCreate,false)) {
             logger.log(LoggerLevel.DEBUG, "-evento cancellato");
             //redirect
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();

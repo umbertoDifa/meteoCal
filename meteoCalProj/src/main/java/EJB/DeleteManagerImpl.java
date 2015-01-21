@@ -39,7 +39,7 @@ public class DeleteManagerImpl implements DeleteManager {
     private Logger logger;
 
     @Override
-    public boolean deleteEvent(Event event) {
+    public boolean deleteEvent(Event event, boolean silent) {
 
         if (event != null) {
             logger.log(LoggerLevel.DEBUG, "Event {0} is going to be cancelled.",
@@ -49,19 +49,9 @@ public class DeleteManagerImpl implements DeleteManager {
 
             event = database.find(Event.class, event.getId());
 
-            //se l'evento è pubblico avviso chi ha fatto la public join
-            if (event instanceof PublicEvent) {
-                PublicEvent publicEvent = (PublicEvent) event;
-                notificationManager.createNotifications(
-                        publicEvent.getGuests(),
-                        event, NotificationType.EVENT_CANCELLED, true);
+            if (!silent) {
+                notifyEventDelete(event);
             }
-            //se è pubblico o privato avviso quelli che hanno risposto si 
-            //all'invito
-            notificationManager.createNotifications(
-                    invitationManager.getInviteesFiltered(event,
-                            InvitationAnswer.YES), event,
-                    NotificationType.EVENT_CANCELLED, true);
 
             //cancello l'evento
             database.remove(event);
@@ -70,6 +60,22 @@ public class DeleteManagerImpl implements DeleteManager {
 
         }
         return false;
+    }
+
+    private void notifyEventDelete(Event event) {
+        //se l'evento è pubblico avviso chi ha fatto la public join
+        if (event instanceof PublicEvent) {
+            PublicEvent publicEvent = (PublicEvent) event;
+            notificationManager.createNotifications(
+                    publicEvent.getGuests(),
+                    event, NotificationType.EVENT_CANCELLED, true);
+        }
+        //se è pubblico o privato avviso quelli che hanno risposto si
+        //all'invito
+        notificationManager.createNotifications(
+                invitationManager.getInviteesFiltered(event,
+                        InvitationAnswer.YES), event,
+                NotificationType.EVENT_CANCELLED, true);
     }
 
     @Override
@@ -103,7 +109,7 @@ public class DeleteManagerImpl implements DeleteManager {
                                 if (calendar.getEventsInCalendar().get(i).getOwner()
                                         == calendar.getOwner()) {
                                     this.deleteEvent(
-                                            calendar.getEventsInCalendar().get(i));
+                                            calendar.getEventsInCalendar().get(i),false);
                                 } else {
                                     //se non è mio metto la partecipazione a NO
                                     invitationManager.setAnswer(user,

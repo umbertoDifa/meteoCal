@@ -501,7 +501,7 @@ public class ViewEventPageBacking implements Serializable {
     }
     
         public String deleteEvent() {
-        if (deleteManager.deleteEvent(eventToShow)) {
+        if (deleteManager.deleteEvent(eventToShow,false)) {
             logger.log(LoggerLevel.DEBUG, "-evento cancellato");
             addMessage("Event cancelled");
             return "/s/calendar.xhtml";

@@ -26,7 +26,6 @@ import utility.ControlMessages;
 import utility.LoggerLevel;
 import utility.WeatherMessages;
 import model.WeatherForecast;
-import utility.DeleteCalendarOption;
 
 @Stateless
 public class CalendarManagerImpl implements CalendarManager {
