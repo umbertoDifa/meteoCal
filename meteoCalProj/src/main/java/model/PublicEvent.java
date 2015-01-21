@@ -24,7 +24,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "PUBLIC_EVENT")
 @NamedQuery(name = "findNextPublicEvents",
-            query = "SELECT e FROM PublicEvent e WHERE e.endDateTime>= CURRENT_TIMESTAMP AND e.owner <> :user")
+            query = "SELECT e FROM PublicEvent e WHERE e.endDateTime>= CURRENT_TIMESTAMP ORDER BY e.startDateTime ASC")
 @DiscriminatorValue("PUBLIC")
 public class PublicEvent extends Event {
 

@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 /**
@@ -21,33 +22,38 @@ import javax.persistence.NamedQuery;
  * @author Luckyna
  */
 @Entity
-@IdClass (InvitationId.class)
+@IdClass(InvitationId.class)
+@NamedQueries({
+    @NamedQuery(name = "findInvitedEvents", query = "SELECT i.event FROM Invitation i WHERE i.invitee = :user AND i.event.endDateTime > CURRENT_TIMESTAMP ORDER BY i.event.startDateTime ASC"),
+     @NamedQuery(name = "findAcceptedInvitations", query = "SELECT i.event FROM Invitation i WHERE i.invitee = :user AND i.answer=model.InvitationAnswer.YES AND i.event.endDateTime > CURRENT_TIMESTAMP ORDER BY i.event.startDateTime ASC"),
+    
+    @NamedQuery(name = "findInvitation", query = "SELECT i FROM Invitation i WHERE i.event=:event AND i.invitee=:user")
+})
 
-@NamedQuery (name= "findInvitation", query="SELECT i FROM Invitation i WHERE i.event=:event AND i.invitee=:user")
 public class Invitation implements Serializable {
+
     @Id
     @ManyToOne
     private UserModel invitee;
-    
+
     @Id
-    @ManyToOne (targetEntity = Event.class)
-    @JoinColumn 
+    @ManyToOne(targetEntity = Event.class)
+    @JoinColumn
     private Event event;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('YES', 'NO', 'NA')")
     private InvitationAnswer answer;
-    
+
     /*
      *
      *   CONSTRUCTORS
      */
-
     public Invitation(UserModel invitee, Event event) {
         this.invitee = invitee;
         this.event = event;
         this.answer = InvitationAnswer.NA;
-                
+
     }
 
     public Invitation() {
@@ -81,5 +87,4 @@ public class Invitation implements Serializable {
         this.answer = answer;
     }
 
-    
 }

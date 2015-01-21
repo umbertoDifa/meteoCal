@@ -24,8 +24,8 @@ import javax.persistence.SequenceGenerator;
  * @author Luckyna
  */
 @NamedQueries({
-    @NamedQuery(name = "findInvitationNotifications", query = "SELECT n FROM Notification n WHERE n.recipient=:user AND n.type = model.NotificationType.INVITATION "),
-    @NamedQuery(name = "findEventNotifications", query = "SELECT n FROM Notification n WHERE n.recipient=:user AND n.type != model.NotificationType.INVITATION "),
+    @NamedQuery(name = "findInvitationNotifications", query = "SELECT n FROM Notification n WHERE n.recipient=:user AND n.type = model.NotificationType.INVITATION ORDER BY n.id DESC"),
+    @NamedQuery(name = "findEventNotifications", query = "SELECT n FROM Notification n WHERE n.recipient=:user AND n.type != model.NotificationType.INVITATION ORDER BY n.id DESC "),
     @NamedQuery(name = "countUnreadNotifications", query = "SELECT COUNT(n) FROM Notification n WHERE n.recipient=:user AND n.isRead = false")
 })
 

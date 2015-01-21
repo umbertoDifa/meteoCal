@@ -22,7 +22,6 @@ import javax.persistence.PersistenceException;
 import model.CalendarModel;
 import model.Event;
 import model.Invitation;
-import model.InvitationAnswer;
 import model.NotificationType;
 import model.PublicEvent;
 import model.PrivateEvent;
@@ -410,7 +409,7 @@ public class EventManagerImpl implements EventManager {
     }
 
     private List<Event> ownedEventonWall(UserModel user, int n) {
-        List<Event> r = user.getOwnedEvents();
+        List<Event> r = (List<Event>) database.createNamedQuery("findNextOwnedEvents").setParameter("user", user).getResultList();
         if (n > r.size()) {
             return r;
         } else {
@@ -419,28 +418,25 @@ public class EventManagerImpl implements EventManager {
     }
 
     private List<Event> acceptedEventsOnWall(UserModel user, int n) {
-        List<Event> events = new ArrayList<>();
-        List<Invitation> invitations = user.getInvitations();
-        for (int i = 0; i < n && i < invitations.size(); i++) {
-            if (invitations.get(i).getAnswer().equals(InvitationAnswer.YES)) {
-                events.add(invitations.get(i).getEvent());
-            }
-
+        List<Event> events = database.createNamedQuery("findAcceptedInvitations").setParameter("user", user).getResultList();
+        if (n > events.size()) {
+            return events;
+        } else {
+            return events.subList(0, n);
         }
-        return events;
     }
 
     private List<Event> invitedEventsOnWall(UserModel user, int n) {
-        List<Event> events = new ArrayList<>();
-        List<Invitation> invitations = user.getInvitations();
-        for (int i = 0; i < n && i < invitations.size(); i++) {
-            events.add(invitations.get(i).getEvent());
+        List<Event> events = database.createNamedQuery("findInvitedEvents").setParameter("user", user).getResultList();
+        if (n > events.size()) {
+            return events;
+        } else {
+            return events.subList(0, n);
         }
-        return events;
     }
 
     private List<PublicEvent> joinedEventsOnWall(UserModel user, int n) {
-        List<PublicEvent> r = user.getPublicJoins();
+        List<PublicEvent> r = database.createNamedQuery("findPublicJoins").setParameter("user", user).getResultList();
         if (n > r.size()) {
             return r;
         } else {

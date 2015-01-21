@@ -22,6 +22,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import utility.Gender;
@@ -39,7 +40,9 @@ import utility.Gender;
                 query = "SELECT u FROM UserModel u WHERE u.name LIKE :search OR u.surname LIKE :search OR u.email LIKE :search"),
 
     @NamedQuery(name = "findUserbyEmail",
-                query = "SELECT u FROM UserModel u WHERE u.email=:email")
+                query = "SELECT u FROM UserModel u WHERE u.email=:email"),
+    
+    @NamedQuery ( name = "findPublicJoins", query =  "SELECT e FROM UserModel u INNER JOIN u.publicJoins e WHERE u = :user AND e.endDateTime> CURRENT_TIMESTAMP ORDER BY e.startDateTime")
 
 })
 @Table(name = "USER")
@@ -79,6 +82,7 @@ public class UserModel implements Serializable {
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "owner")
+    @OrderBy (value = "startDateTime ASC")
     private List<Event> ownedEvents;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner",
