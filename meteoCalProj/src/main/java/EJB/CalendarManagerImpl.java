@@ -6,15 +6,12 @@ import EJB.interfaces.WeatherManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import model.CalendarModel;
 import model.Event;
@@ -109,18 +106,19 @@ public class CalendarManagerImpl implements CalendarManager {
     @Override
     public boolean isInConflict(Event event) {
         if (event != null) {
-            try {
-                //ha l'id a null quando faccio il check prima di inserirlo nel db
-                if (event.getId() == null) {
-                    //imposto l'id a -1 perchè sicuramente non esiste un evento con lo stesso
-                    //id
-                    //TODO trovare un modo per fare qusta cosa senza crocifissione
-                    //ma con query
-                    event.setId(Long.parseLong("-1"));
-                }
-                logger.log(LoggerLevel.DEBUG, "id event ora:" + event.getId());
+            Long conflictNumber;
+            logger.log(LoggerLevel.DEBUG, "Checking conflicts for event:  " + event.getTitle() + ", owner: " + event.getOwner().getName() + ", id: " + event.getId());
+            if (event.getId() == null) {
+                conflictNumber = (Long) database.createNamedQuery(
+                        "newEventConflicting").setParameter(
+                                "user", event.getOwner()).setParameter("end",
+                                event.getEndDateTime()).setParameter(
+                                "start", event.getStartDateTime()).getSingleResult();
 
-                Event firstConflict = (Event) database.createNamedQuery(
+                logger.log(LoggerLevel.DEBUG, "Debugging query. Owned events in conflict: "+conflictNumber);
+
+            } else {
+                conflictNumber = (Long) database.createNamedQuery(
                         "isConflicting").setParameter(
                                 "user", event.getOwner()).setParameter("end",
                                 event.getEndDateTime()).setParameter(
@@ -128,41 +126,32 @@ public class CalendarManagerImpl implements CalendarManager {
                                 "id",
                                 event.getId()).getSingleResult();
 
-                //reimposto l'id dell'evento a null se lo era
-                if (event.getId() == -1) {
-                    event.setId(null);
-                }
-
-                logger.log(LoggerLevel.DEBUG, "id event ora: {0}", event.getId());
-
-                //se non alza eccezioni è perchè ha trovato esattamente un conflitto
-                logger.log(LoggerLevel.DEBUG, "Conflict found with event: "
-                        + firstConflict.getTitle() + "id: "
-                        + firstConflict.getId());
-
-                return true;
-            } catch (NoResultException e) {
-                //reimposto l'id dell'evento a null se lo era
-                if (event.getId() == -1) {
-                    event.setId(null);
-                }
-                logger.log(LoggerLevel.DEBUG, "id event ora:" + event.getId());
+//            List<Event> conflicts = (List<Event>) database.createNamedQuery(
+//                    "isConflicting").setParameter(
+//                            "user", event.getOwner()).setParameter("end",
+//                            event.getEndDateTime()).setParameter(
+//                            "start", event.getStartDateTime()).setParameter(
+//                            "id",
+//                            event.getId()).getResultList();
+//
+//            int conflictNumber = conflicts.size();
+            }
+            if (conflictNumber == 0) {
 
                 //se non trova risultati allora non ci sono conflitti
                 logger.log(LoggerLevel.DEBUG, "Conflict NOT found");
                 return false;
-            } catch (NonUniqueResultException e) {
-                //reimposto l'id dell'evento a null se lo era
 
-                if (event.getId() == -1) {
-                    event.setId(null);
-                }
-                logger.log(LoggerLevel.DEBUG, "id event ora:" + event.getId());
+            } else {
 
                 //se trova molti risultati allora ci sono conflitti
                 logger.log(LoggerLevel.DEBUG, "Conflict found");
+//                for (int i = 0; i < conflictNumber; i++) {
+//                    logger.log(LoggerLevel.DEBUG, "Title: " + conflicts.get(i).getTitle() + ", id: " + conflicts.get(i).getId());
+//                }
                 return true;
             }
+
         } else {
             logger.log(Level.SEVERE, "Event is null.");
             return false;
@@ -314,8 +303,8 @@ public class CalendarManagerImpl implements CalendarManager {
                     logger.log(Level.INFO,
                             "Evento {0} aggiunto al calendario {1} di {2}",
                             new Object[]{event.getTitle(),
-                                         calendar.getTitle(),
-                                         calendar.getOwner().getEmail()});
+                                calendar.getTitle(),
+                                calendar.getOwner().getEmail()});
                     logger.log(LoggerLevel.DEBUG,
                             "Events in calendar now: {0}",
                             calendar.getEventsInCalendar());
