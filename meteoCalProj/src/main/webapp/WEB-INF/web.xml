@@ -72,7 +72,7 @@
     
     <context-param>
         <param-name>primefaces.THEME</param-name>
-        <param-value>mytheme</param-value>
+        <param-value>mytheme3</param-value>
     </context-param>
 
 </web-app>
