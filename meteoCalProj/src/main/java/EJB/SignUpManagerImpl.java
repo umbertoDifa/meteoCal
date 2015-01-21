@@ -20,6 +20,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import model.CalendarModel;
 import model.UserModel;
+import utility.LoggerLevel;
+import utility.PasswordTool;
 
 @Stateless
 public class SignUpManagerImpl implements SignUpManager {
@@ -35,40 +37,64 @@ public class SignUpManagerImpl implements SignUpManager {
 
     private CalendarModel defaultCalendar;
 
-    private Pattern pattern;
+    private Pattern userNamePattern;
+    private Pattern passwordPattern;
     private Matcher matcher;
 
     private static final String USERNAME_PATTERN = "^[a-z0-9_-]{3,15}$";
-    
+    private static final String PASSWORD_PATTERN = "^(?=\\S+$).{6,30}$";
+
     @PostConstruct
-    private void init(){
-        pattern = Pattern.compile(USERNAME_PATTERN);
+    private void init() {
+        userNamePattern = Pattern.compile(USERNAME_PATTERN);
+        passwordPattern = Pattern.compile(PASSWORD_PATTERN);
     }
 
     @Override
     public boolean addUser(UserModel newUser) {
 
-        validate(newUser);
+        if (validate(newUser)) {
 
-        //creo un calendario default
-        defaultCalendar = calManager.createDefaultCalendar(newUser);
+            setUpHashedPassword(newUser);
+            //creo un calendario default
+            defaultCalendar = calManager.createDefaultCalendar(newUser);
 
-        try {
-            //cerco di persistere calendario e utente
-            database.persist(defaultCalendar);
-            database.persist(newUser);
-            logger.log(Level.INFO, "User +{0} created", newUser.getName());
-        } catch (EntityExistsException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-            return false;
+            try {
+                //cerco di persistere calendario e utente
+                database.persist(defaultCalendar);
+                database.persist(newUser);
+                logger.log(Level.INFO, "User +{0} created", newUser.getName());
+            } catch (EntityExistsException ex) {
+                logger.log(Level.SEVERE, ex.getMessage(), ex);
+                return false;
+            }
+            return true;
         }
-        return true;
+        logger.log(LoggerLevel.DEBUG, "SOmething do not match patteerns.");
+        return false;
     }
 
+    /**
+     * Check if name and password respect regex
+     *
+     * @param newUser
+     * @return
+     */
     private boolean validate(UserModel newUser) {
-       matcher = pattern.matcher(newUser.getName());
-		  return matcher.matches();
+        boolean u = userNamePattern.matcher(newUser.getName()).matches();
+        boolean p = passwordPattern.matcher(newUser.getPassword()).matches();
+        logger.log(LoggerLevel.DEBUG, "u: " + u + "p: " + p);
+        return u && p;
     }
 
+    private void setUpHashedPassword(UserModel newUser) {
+        try {
+            newUser.setPassword(
+                    PasswordTool.getSaltedHash(newUser.getPassword()));
+        } catch (Exception ex) {
+            logger.log(LoggerLevel.SEVERE,
+                    "Something went wrong hashing the password");
+        }
+    }
 
 }

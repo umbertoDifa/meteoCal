@@ -21,6 +21,7 @@ import wrappingObjects.UserAndMessage;
 import utility.ControlMessages;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
+import utility.PasswordTool;
 
 @Stateless
 public class LoginManagerImpl implements LoginManager {
@@ -61,16 +62,27 @@ public class LoginManagerImpl implements LoginManager {
         } else {
             //verifico la password
             logger.log(LoggerLevel.DEBUG, "utente trovato:"
-                    + ((UserModel)results.get(0)).getEmail());
-            if (results.get(0).getPassword().equals(credentials.getPassword())) {
-                userAndMessage.setUser(results.get(0));
-                database.refresh(results.get(0));
-                userAndMessage.setControlMessage(
-                        ControlMessages.LOGIN_SUCCESSFUL);
-            } else {
-                //se password sbagliata, scrivo l'errore e ritorno null
+                    + ((UserModel) results.get(0)).getEmail());
+            try {
+                if (PasswordTool.check(credentials.getPassword(),
+                        results.get(0).getPassword())) {
+                    logger.log(LoggerLevel.DEBUG, "password ok");
+                    userAndMessage.setUser(results.get(0));
+                    database.refresh(results.get(0));
+                    userAndMessage.setControlMessage(
+                            ControlMessages.LOGIN_SUCCESSFUL);
+                } else {
+                    //se password sbagliata, scrivo l'errore e ritorno null
+                    userAndMessage.setUser(null);
+                    userAndMessage.setControlMessage(
+                            ControlMessages.WRONG_PASSWORD);
+                }
+            } catch (Exception ex) {
                 userAndMessage.setUser(null);
-                userAndMessage.setControlMessage(ControlMessages.WRONG_PASSWORD);
+                userAndMessage.setControlMessage(
+                        ControlMessages.WRONG_PASSWORD);
+                logger.log(LoggerLevel.SEVERE,
+                        "Something whent wrong checking the password.");
             }
         }
 
