@@ -27,7 +27,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
-import javax.persistence.PreRemove;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 
@@ -44,8 +43,12 @@ import javax.persistence.Temporal;
                 query = "SELECT e FROM Event e WHERE e.title=:title"),
     //Da chiamare sempre limitando i risulati ad 1 solo!
     @NamedQuery(name = "isConflicting",
-                query = "SELECT e FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND e.id <> :id AND "
-                + "(e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start)"), 
+                query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND (e.id!= :id) AND ((e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start))"), 
+    
+        @NamedQuery(name = "newEventConflicting",
+              query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user  AND ((e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start))"), 
+    
+    
     @NamedQuery(name = "deleteEventByType",
                 query = "DELETE FROM Event e WHERE TYPE(e) = :type AND e.id = :id")
 })
