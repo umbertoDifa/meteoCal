@@ -38,22 +38,24 @@ import javax.persistence.Temporal;
 @NamedQueries({
     //COME IMPOSTARE IL PARAMETRO: namedQuery.setParameter("search", "%" + value + "%");
     @NamedQuery(name = "findEventbyString",
-                query = "SELECT e FROM Event e WHERE e.title LIKE :search"),
+            query = "SELECT e FROM Event e WHERE e.title LIKE :search"),
     @NamedQuery(name = "findEventbyTitle",
-                query = "SELECT e FROM Event e WHERE e.title=:title"),
+            query = "SELECT e FROM Event e WHERE e.title=:title"),
     //Da chiamare sempre limitando i risulati ad 1 solo!
     @NamedQuery(name = "isConflicting",
-                query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND (e.id!= :id) AND ((e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start))"), 
-    
-        @NamedQuery(name = "newEventConflicting",
-              query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user  AND ((e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start))"), 
-    
-    
+            query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND (e.id!= :id) AND ((e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start))"),
+
+    @NamedQuery(name = "newEventConflicting",
+            query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user  AND ((e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start))"),
+
     @NamedQuery(name = "deleteEventByType",
-                query = "DELETE FROM Event e WHERE TYPE(e) = :type AND e.id = :id")
+            query = "DELETE FROM Event e WHERE TYPE(e) = :type AND e.id = :id"),
+
+    @NamedQuery(name = "isInAnyCalendar",
+            query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE e.id=:event AND e.owner=:user"),
+
+    @NamedQuery(name = "findNextOwnedEvents", query = "SELECT e FROM Event e WHERE e.owner = :user AND e.endDateTime > CURRENT_TIMESTAMP ORDER BY e.startDateTime ASC")
 })
-@NamedQuery(name = "isInAnyCalendar",
-            query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE e.id=:event AND e.owner=:user")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE")
 public abstract class Event implements Serializable {
@@ -61,8 +63,8 @@ public abstract class Event implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @TableGenerator(name = "EVENT_SEQ", table = "SEQUENCE",
-                    pkColumnName = "SEQ_NAME",
-                    valueColumnName = "SEQ_COUNT", pkColumnValue = "EVENT_SEQ")
+            pkColumnName = "SEQ_NAME",
+            valueColumnName = "SEQ_COUNT", pkColumnValue = "EVENT_SEQ")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "EVENT_SEQ")
     private Long id;
 
