@@ -116,3 +116,7 @@ hr {
     padding: 0 !important;
     background: none;
 }
+
+.ui-toolbar {
+    padding: 0;
+}
