@@ -29,6 +29,8 @@
             <groupId>org.primefaces.themes</groupId>
             <artifactId>mytheme</artifactId>
             <version>1.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/mytheme.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

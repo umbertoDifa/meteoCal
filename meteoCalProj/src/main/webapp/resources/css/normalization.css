@@ -48,7 +48,9 @@ hr {
 #header{
     position: fixed !important;
     z-index: 1 !important;
-
+    padding: 0;
+    height: 35px !important;
+    background: none;
 }
 
 .ui-messages-error{
@@ -94,4 +96,10 @@ hr {
 #sidebar {
     height: 100vh;
     width: 160px;
+    top: 29px;
+}
+
+#header .ui-layout-unit, #header .ui-layout-unit-content {
+    padding: 0 !important;
+    background: none;
 }
