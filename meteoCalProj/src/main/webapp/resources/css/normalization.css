@@ -9,7 +9,8 @@ and open the template in the editor.
 */
 
 .ui-widget{
-    font-family:Arial,sans-serif;font-size: 13px !important;
+    font-family:Arial,sans-serif;
+    font-size: 0.92em !important;
 }
 
 #header .ui-layout-unit-content {
@@ -49,9 +50,12 @@ hr {
     position: fixed !important;
     z-index: 1 !important;
     padding: 0;
-    height: 35px !important;
     background: none;
 }
+
+/*#header, #toolbar {
+    height: 53px !important;
+}*/
 
 .ui-messages-error{
     padding: 4px 4px 4px 4px;
@@ -95,9 +99,18 @@ hr {
 
 #sidebar {
     height: 100vh;
-    width: 160px;
-    top: 29px;
+    width: 180px;
+    top: 30px;
+    background: lightgray;
 }
+
+#sidebar .ui-widget-content {
+    background: none;
+}
+
+/*#sidebar, #header {
+    font-size: 1.5em !important;
+}*/
 
 #header .ui-layout-unit, #header .ui-layout-unit-content {
     padding: 0 !important;
