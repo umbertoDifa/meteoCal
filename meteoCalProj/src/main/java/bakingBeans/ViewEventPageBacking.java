@@ -73,7 +73,7 @@ public class ViewEventPageBacking implements Serializable {
 
     @Inject
     LoginBacking login;
-    
+
     @Inject
     DeleteManager deleteManager;
 
@@ -86,7 +86,7 @@ public class ViewEventPageBacking implements Serializable {
 
     @Inject
     private CalendarManager calendarManager;
-    
+
     private Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
 
     /**
@@ -486,10 +486,12 @@ public class ViewEventPageBacking implements Serializable {
 
     public void addToCalendar() {
         if (calendarName != null && !"".equals(calendarName)) {
-            calendarManager.removeFromAllCalendars(login.getCurrentUser(), eventToShow);
+            calendarManager.removeFromAllCalendars(login.getCurrentUser(),
+                    eventToShow);
             CalendarModel calendarWhereAdd = calendarManager.findCalendarByName(
                     login.getCurrentUser(), calendarName);
-            ControlMessages msg = calendarManager.addToCalendar(eventToShow, calendarWhereAdd);
+            ControlMessages msg = calendarManager.addToCalendar(eventToShow,
+                    calendarWhereAdd);
             addMessage(msg.getMessage());
         } else if (calendarName == null) {
             calendarManager.removeFromAllCalendars(login.getCurrentUser(),
@@ -499,16 +501,22 @@ public class ViewEventPageBacking implements Serializable {
             showGrowl(GrowlMessage.EVENT_NOT_ADDED_TO_CALENDAR, calendarName);
         }
     }
-    
-        public String deleteEvent() {
-        if (deleteManager.deleteEvent(eventToShow,false)) {
+
+    public void deleteEvent() {
+        if (deleteManager.deleteEvent(eventToShow, false)) {
             logger.log(LoggerLevel.DEBUG, "-evento cancellato");
             addMessage("Event cancelled");
-            return "/s/calendar.xhtml";
+            
+            ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+            try {
+                context.redirect(context.getRequestContextPath()
+                        + "/s/calendar.xhtml");
+            } catch (IOException ex) {
+                logger.log(LoggerLevel.WARNING, ex.getMessage(), ex);
+            }
         } else {
             logger.log(LoggerLevel.DEBUG, "-evento non cancellato");
-            addMessage("Event not cancelled");
-            return "";
+            addMessage("Event has not been cancelled, try later");            
         }
     }
 
