@@ -128,7 +128,7 @@ and open the template in the editor.
             <p:button icon="ui-icon-pencil" value="Edit" rendered="#{viewEvent.eventMine and viewEvent.future}" 
                       outcome="/s/manageEvent.xhtml?id=#{viewEvent.eventId}" />
             
-            <p:commandButton id="delete" value="Delete" rendered="#{viewEvent.eventMine}" action="#{viewEvent.deleteEvent}"/>
+            <p:commandButton id="delete" value="Delete" rendered="#{viewEvent.eventMine}" oncomplete="PF('deleteDialog').show();" />
 
             <h:form id="addCalendarForm" rendered="#{!viewEvent.eventMine and ((viewEvent.publicAccess and (viewEvent.publicJoin or (viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))) or ( !viewEvent.publicAccess and viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))}">
 
@@ -141,7 +141,11 @@ and open the template in the editor.
                 <p:commandButton id="save" value="Save" action="#{viewEvent.addToCalendar}" update="@form"/>
 
             </h:form>
-
+            
+            <p:dialog closeOnEscape="true" widgetVar="deleteDialog">
+                <h:outputText value="Are you sure you want to delete?" style="white-space: pre-wrap"></h:outputText><br/>
+                <p:commandButton value="Delete" rendered="#{viewEvent.eventMine}" oncomplete="PF('deleteDialog').hide();" action="#{viewEvent.deleteEvent}"/>
+            </p:dialog>
 
 
 

@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    $("#sidebar").css("position", "relative");
     $("#sidebar").css("left", "-300px");
 
     $("#hamburger").click(function () {
@@ -9,4 +8,5 @@ $(document).ready(function () {
             $("#sidebar").animate({"left": "0px"}, "slow");
         }
     });
+    
 });

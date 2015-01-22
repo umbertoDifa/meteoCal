@@ -35,14 +35,8 @@
                     <ui:include src="/toolbar.xhtml"/>
 
                 </p:layoutUnit>
-                <!--
-                                <p:layoutUnit class="sidebar" style="background: none !important;" position="west" size="188" >
-                                    <c:if test="">
-                                        <ui:include class="noBackground" src="/landmarks.xhtml"/>
-                                    </c:if>
-                                </p:layoutUnit>-->
 
-                <div id="sidebar">
+                <p:outputPanel id="sidebar">
                     <p:menu>
 
                         <p:menuitem value="Calendar" url="/s/calendar.xhtml" icon="ui-icon-calendar" />
@@ -52,7 +46,8 @@
                         <p:menuitem value="Search" url="/s/search.xhtml" icon="ui-icon-search" />
 
                     </p:menu>
-                </div>
+                </p:outputPanel>
+                
 
                 <p:layoutUnit  position="center" id="centerLayout">
 
