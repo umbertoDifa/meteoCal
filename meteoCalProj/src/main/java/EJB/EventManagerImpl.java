@@ -403,8 +403,7 @@ public class EventManagerImpl implements EventManager {
     }
 
     private List<PublicEvent> publicEventsOnWall(UserModel user, int n) {
-        return database.createNamedQuery("findNextPublicEvents").setParameter(
-                "user", user).setMaxResults(n).getResultList();
+        return database.createNamedQuery("findNextPublicEvents").setMaxResults(n).getResultList();
 
     }
 
