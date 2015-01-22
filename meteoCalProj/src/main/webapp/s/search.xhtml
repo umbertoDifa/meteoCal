@@ -43,12 +43,12 @@ and open the template in the editor.
                 <input type="radio" value="#{search.searchForUsers}"/><br />
 
             </h:form>
-
-            <p:tabView>
+            <br/>
+            <p:tabView rendered="#{(not empty search.eventResults) or (not empty search.userResults)}">
                 <p:tab title="(#{search.eventResults.size()}) Event">
                     <h:form>
-                        <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="3">
-                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
+                        <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="10">
+                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px" class="prevEvent">
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default.png"/> 
 
@@ -79,7 +79,7 @@ and open the template in the editor.
                 <p:tab title="(#{search.userResults.size()}) User">
                     <h:form>
                         <p:dataScroller value="#{search.userResults}" var="u" chunkSize="10">
-                            <p:fieldset legend="#{u.name}" style="margin-bottom:20px">
+                            <p:fieldset legend="#{u.name}" style="margin-bottom:20px" class="prevEvent">
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default-user-profile.jpg" width="114"/> 
 

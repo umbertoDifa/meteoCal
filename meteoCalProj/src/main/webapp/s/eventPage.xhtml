@@ -142,9 +142,10 @@ and open the template in the editor.
 
             </h:form>
             
-            <p:dialog closeOnEscape="true" widgetVar="deleteDialog">
-                <h:outputText value="Are you sure you want to delete?" style="white-space: pre-wrap"></h:outputText><br/>
+            <p:dialog closeOnEscape="true" widgetVar="deleteDialog" resizable="false">
+                <h:outputText value="Are you sure you want to delete?" style="white-space: pre-wrap"></h:outputText><br/><br/>
                 <p:commandButton value="Delete" rendered="#{viewEvent.eventMine}" oncomplete="PF('deleteDialog').hide();" action="#{viewEvent.deleteEvent}"/>
+                <p:commandButton value="Cancel" type="button" onclick="PF('deleteDialog').hide()" />
             </p:dialog>
 
 

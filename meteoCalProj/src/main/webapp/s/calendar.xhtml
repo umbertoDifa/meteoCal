@@ -23,6 +23,14 @@ and open the template in the editor.
 
         <ui:define name="content">
 
+            <c:if test="#{!scheduleView.readOnly}">
+                <h1>Your Calendars</h1>
+            </c:if>
+            
+            <c:if test="#{scheduleView.readOnly}">
+                <h1><p:outputLabel value="#{scheduleView.calendarShown.owner.name}"/>'s Calendar</h1>
+            </c:if>
+
             <p:toolbar style="margin-bottom: 12px">
 
                 <f:facet name="left">

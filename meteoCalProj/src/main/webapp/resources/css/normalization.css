@@ -186,6 +186,9 @@ hr {
 
 .prevEvent td {
     vertical-align: top;
+    padding-right: 16px;
+    padding-bottom: 3px;
+    padding-top: 7px;
 }
 
 #scheduleForm tr {
