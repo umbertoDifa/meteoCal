@@ -25,8 +25,8 @@ public enum NotificationType {
             + "Have a look to the event page on the following link:\n\n{3}\n\nMeteoCalendar Team"),
 
     SIGN_UP_OK("Successful sign up for MeteoCal!",
-            "Hello {0},\n we inform you that you successful signed up for MeteoCal,"
-            + "log in to get access to the best calendar ever!\n\nMeteoCalendar Team"),
+            "Hello {0},\n we inform you that you successful signed up for MeteoCal, "
+            + "login to get access to the best calendar ever!\n\nMeteoCalendar Team"),
 
     WEATHER_CHANGED("Weather changed for event {0}",
             "Hello {0},\n we inform you that the weather for"
@@ -36,7 +36,7 @@ public enum NotificationType {
             + "the tomorrow event {1} is bad.\n\nLink:{3}\n\nMeteoCalendar Team"),
     BAD_WEATHER_IN_THREE_DAYS("Bad weather forecast for event {0}",
             "Hello {0},\nwe are sorry to inform you that the weather forecast for"
-            + "the event {1} is bad.\n If you want you can reschedule your event.\n\nLink:{3}\n\nMeteoCalendar Team"),
+            + "the event {1} is bad.\n If you want you can reschedule your event. Go to the following link and hit ''Try Reschedule''\n\nLink:{3}\n\nMeteoCalendar Team"),
     EVENT_CHANGED("Event {0} has been modified",
             "Hello {0},\n we inform you that event {1} has been modified\n\nLink:{3}\n\nMeteoCalendar Team"),
     EVENT_CANCELLED("Event {0} has been cancelled",
@@ -91,7 +91,7 @@ public enum NotificationType {
         if (this == NotificationType.BAD_WEATHER_IN_THREE_DAYS) {
             //se la notifica riguarda il brutto tempo in 3 gionri
             //mando il link che propone la reschedule al volo
-            this.link = RESCHEDULE_LINK + id; //TODO aggiungi chiamata a bottone reschedule
+            this.link = RESCHEDULE_LINK + id; 
         } else {
             //altrimenti il link dell'evento
             this.link = EVENT_LINK + id;
