@@ -79,7 +79,7 @@ public class ScheduleViewBacking implements Serializable {
 
     private CalendarModel calendarToCreate;
 
-    private Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
+    private Logger logger = LoggerProducer.debugLogger(ScheduleViewBacking.class);
 
 
     /*
