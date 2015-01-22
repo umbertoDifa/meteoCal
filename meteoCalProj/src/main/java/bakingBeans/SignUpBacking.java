@@ -7,9 +7,12 @@ package bakingBeans;
 
 import EJB.interfaces.SignUpManager;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import model.UserModel;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -33,16 +36,21 @@ public class SignUpBacking {
     public SignUpBacking() {
     }
 
-    public String signUp() {        
+    public String signUp() {
         //creo un user e setto user coi parametri di tempUser
         buildUser();
         if (signUpManager.addUser(user)) {
             return "success";
         }
-        return "";
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                "Error",
+                "You are already registered"));
+        RequestContext.getCurrentInstance().update("growl");
+        return "/";
     }
-    
-    private void buildUser(){
+
+    private void buildUser() {
         user = new UserModel();
         user.setEmail(tempUser.getEmail());
         user.setName(tempUser.getName());

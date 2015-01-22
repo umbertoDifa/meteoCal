@@ -20,13 +20,14 @@ public enum NotificationType {
      * SE AGGIUNGETE ENTITA' A QUESTA CLASSE, DOVETE AGGIUNGERLA ANCHE ALL'ENUM
      * DEL DATABASE CHE TROVATE NELL'ENTITA' NOTIFICATION NEL CAMPO TYPE
      */
-    /**
-     * SE AGGIUNGETE ENTITA' A QUESTA CLASSE, DOVETE AGGIUNGERLA ANCHE ALL'ENUM
-     * DEL DATABASE CHE TROVATE NELL'ENTITA' NOTIFICATION NEL CAMPO TYPE
-     */
     INVITATION("Invitation to event {0}",
             "Hello {0},\nyou''ve received an invitation for event {1} from {2}.\n\n "
             + "Have a look to the event page on the following link:\n\n{3}\n\nMeteoCalendar Team"),
+
+    SIGN_UP_OK("Successful sign up for MeteoCal!",
+            "Hello {0},\n we inform you that you successful signed up for MeteoCal,"
+            + "log in to get access to the best calendar ever!\n\nMeteoCalendar Team"),
+
     WEATHER_CHANGED("Weather changed for event {0}",
             "Hello {0},\n we inform you that the weather for"
             + "the event {1} has changed.\n\n Check it at:\n\nLink:{3}\n\nMeteoCalendar Team"),
@@ -47,12 +48,12 @@ public enum NotificationType {
             "Event {0} has changed privacy from Public to Private",
             "Hello {0},\n we inform you that event {1} has changed its privacy from Public to Private.\n\nMeteoCalendar Team");
 
-    private String subject;
-    private String bodyMessage;
-    private String eventOwner;
-    private String inviteeName;
-    private String eventName;
-    private String link;
+    private String subject = "";
+    private String bodyMessage = "";
+    private String eventOwner = "";
+    private String inviteeName = "";
+    private String eventName = "";
+    private String link = "";
 
     //template
     private final String templateSubject;
@@ -90,7 +91,7 @@ public enum NotificationType {
         if (this == NotificationType.BAD_WEATHER_IN_THREE_DAYS) {
             //se la notifica riguarda il brutto tempo in 3 gionri
             //mando il link che propone la reschedule al volo
-             this.link = RESCHEDULE_LINK + id; //TODO aggiungi chiamata a bootone reschedule
+            this.link = RESCHEDULE_LINK + id; //TODO aggiungi chiamata a bottone reschedule
         } else {
             //altrimenti il link dell'evento
             this.link = EVENT_LINK + id;
