@@ -443,19 +443,7 @@ public class CalendarManagerImpl implements CalendarManager {
         return null;
     }
 
-    @Override
-    public List<String> getCalendarTitles(UserModel user
-    ) {
-        user = database.find(UserModel.class, user.getId());
-        database.refresh(user);
-        List<String> names = new ArrayList<>();
-        for (CalendarModel cal
-                : this.getCalendars(user)) {
-            names.add(cal.getTitle());
-        }
-        return names;
-
-    }
+   
 
     @Override
     public void toggleCalendarPrivacy(CalendarModel calendar) {
