@@ -17,7 +17,7 @@ video {
     width: auto;
     height: auto;
     z-index: -1000;
-    background: url('/meteoCalProj/resources/img/poster.png') no-repeat;
+    background: black;
     background-size: cover;
     transition: 1s opacity;
 }
