@@ -133,7 +133,6 @@ dfn {
  */
 
 h1 {
-  font-size: 2em;
   margin: 0.67em 0;
 }
 
@@ -150,9 +149,6 @@ mark {
  * Address inconsistent and variable font size in all browsers.
  */
 
-small {
-  font-size: 80%;
-}
 
 /**
  * Prevent `sub` and `sup` affecting `line-height` in all browsers.
@@ -160,7 +156,6 @@ small {
 
 sub,
 sup {
-  font-size: 75%;
   line-height: 0;
   position: relative;
   vertical-align: baseline;
@@ -231,7 +226,6 @@ kbd,
 pre,
 samp {
   font-family: monospace, monospace;
-  font-size: 1em;
 }
 
 /* Forms

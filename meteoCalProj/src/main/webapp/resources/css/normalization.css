@@ -8,9 +8,17 @@ and open the template in the editor.
     Author     : Francesco
 */
 
+body {
+    font-size: 100%;
+}
+
+a {
+    text-decoration: none;
+}
+
 .ui-widget{
     font-family:Arial,sans-serif;
-    font-size: 0.92em !important;
+    font-size: 15px;
 }
 
 #header .ui-layout-unit-content {
@@ -18,11 +26,10 @@ and open the template in the editor.
 }
 
 #centerLayout {
-    min-height: 500px;
     min-width: 700px;
     max-width: 900px;
     margin: 0 auto !important;
-
+    height: 100%;
 }
 
 .noLinkStyle {
@@ -42,20 +49,20 @@ hr {
 }
 
 .scheduleConteiner {
-    width: 1000px !important;
-    height: 700px !important;
+    width: 900px !important;
+    height: 900px;
 }
 
 #header{
-    position: fixed !important;
+    /*    position: fixed !important;*/
     z-index: 1 !important;
     padding: 0;
     background: none;
 }
 
-/*#header, #toolbar {
-    height: 53px !important;
-}*/
+#header, #toolbar {
+    height: 45px !important;
+}
 
 .ui-messages-error{
     padding: 4px 4px 4px 4px;
@@ -92,25 +99,56 @@ hr {
     border: none;
 }
 
-#hamburger {
-    padding: 0 10px;
+.linkBalloon, .linkToolbar {
+    padding: 10px;
+    margin: 0px 10px;
     cursor: pointer;
+    color: #1976D2;
+    height: 15px;
+    width: 15px;
+    text-align: center;
+    position: relative;
+}
+
+.textToolbar {
+    margin: 0px 10px;
+}
+
+.linkBalloon a, .linkToolbar a {
+    color: #1976D2;
+    text-decoration:  none;
+}
+
+.linkBalloon:hover, .linkBalloon:hover a {
+    color: #fff;
+    background-color: #1976D2;
+    border: 0px solid #1976D2;
+    border-radius: 50%;
+}
+
+.linkToolbar:hover, .linkToolbar:hover a {
+    color: #fff;
+}
+
+#notifications .badges {
+    position: absolute;
+    left: 23px;
+    top: -10px;
+    font-size: .9em;
 }
 
 #sidebar {
     height: 100vh;
     width: 180px;
-    top: 30px;
     background: lightgray;
+    top: 45px !important;
+    position: fixed;
+    z-index: 2;
 }
 
 #sidebar .ui-widget-content {
     background: none;
 }
-
-/*#sidebar, #header {
-    font-size: 1.5em !important;
-}*/
 
 #header .ui-layout-unit, #header .ui-layout-unit-content {
     padding: 0 !important;
@@ -119,4 +157,72 @@ hr {
 
 .ui-toolbar {
     padding: 0;
+}
+
+#header .ui-toolbar-group-left, #header .ui-toolbar-group-right {
+    line-height: 45px;
+    vertical-align: middle;
+    margin-right: 30px;
+}
+
+.ui-menu {
+    width: 100%;
+    padding: 0;
+}
+
+#sidebar ul li {
+    margin-top: 10px !important;
+    margin-bottom: 5px !important;
+    padding-left: 7px;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight{
+    background: #FFEB3B !important; 
+}
+
+.ui-datepicker.ui-widget-content td a.ui-state-highlight {
+    background: #FFEB3B !important;
+}
+
+.prevEvent td {
+    vertical-align: top;
+}
+
+#scheduleForm tr {
+    vertical-align: top;
+}
+
+.ui-shadow {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.ui-layout-unit-content {
+    height: auto !important;
+}
+
+.ui-fieldset-legend {
+    border: #BBDEFB !important;
+    background: #BBDEFB !important;
+}
+
+.ui-toolbar .ui-button, .ui-toolbar .ui-toolbar-group-right, .ui-toolbar .ui-toolbar-group-left {
+    height: 35px;
+    border: 0px;
+    margin: 0;
+}
+.ui-toolbar .ui-toolbar-group-right {
+    padding: 0;
+}
+.ui-toolbar .ui-selectonemenu-label {
+    padding: 5px;
+    height: 23px;
+    border: 1px;
+    line-height: 23px;
+    vertical-align: middle; 
+}
+
+.ui-toolbar {
+    height:  35px;
 }

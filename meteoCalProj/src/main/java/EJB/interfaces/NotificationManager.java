@@ -25,14 +25,15 @@ public interface NotificationManager {
      * @param event
      * @param type
      * @param sendEmail
-     * 
+     *
      */
     public void createNotifications(List<UserModel> users, Event event, NotificationType type, boolean sendEmail);
-    
-    public int getUnreadNotificationNumber (UserModel user);
-    
-    public List<Notification> getNotificationFiltred (UserModel user, NotificationCategories type);
-    
-    public void markAllAsRead(List<Notification> notifications);
-}
 
+    public int getUnreadNotificationNumber(UserModel user);
+
+    public List<Notification> getNotificationFiltred(UserModel user, NotificationCategories type);
+
+    public void markAllAsRead(List<Notification> notifications);
+
+    public void sendSignUpConfirmation(UserModel user);
+}

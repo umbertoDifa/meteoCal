@@ -23,7 +23,7 @@ and open the template in the editor.
                 <p:tab title="Wall">
                     <h:form>
                         <p:dataScroller value="#{events.wallEvents}" var="ev" chunkSize="3">
-                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
+                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px" class="prevEvent">
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default.png"/> 
 

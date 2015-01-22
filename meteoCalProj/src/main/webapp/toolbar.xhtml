@@ -4,72 +4,53 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <body>
 
         <p:toolbar id="toolbar">
             <f:facet name="left">
-                <i class="fa fa-bars" id="hamburger"></i>
+                <i class="fa fa-bars linkBalloon" id="hamburger"></i>
                 <p:link class="noLinkStyle" value="MeteoCal" outcome="/s/calendar.xhtml" />
             </f:facet>
             <f:facet name="right">
 
                 <h:form id="notifications" rendered="#{login.loggedIn}" >
-                    
-                    <p:outputLabel value="Ciao #{login.currentUser.name}! "/>
 
-                    <p:button icon="ui-icon-mail-closed" value="#{login.notificationNumber}"  outcome="/s/notifications.xhtml" />
+                    <p:outputLabel class="textToolbar" value="Hi #{login.currentUser.name}! "/>
+
+                    <span class="linkBalloon">
+                        <a href="/s/notifications.xhtml">
+                            <i class="fa fa-envelope-o"></i>
+                            <p:outputLabel class="badges" value="#{login.notificationNumber}"/>
+                        </a>
+                    </span>
+
                 </h:form>
 
                 <h:form id="loginForm"> 
-                    <p:focus context="loginForm"/>
-
-                    <!--if the user is not logged show login panel-->
-                    <h:panelGroup  layout="block" rendered="#{!login.loggedIn}"> 
-                        <h:outputLabel for="email">Email:</h:outputLabel> 
-
-                        <p:inputText id="email" value="#{credentials.email}">
-                            <f:passThroughAttribute name="type" value="email"/>
-                        </p:inputText>
-
-                        <h:outputLabel for="password">Password:</h:outputLabel> 
-
-                        <p:password id="password" value="#{credentials.password}" pt:required="" />
-
-                    </h:panelGroup> 
-
-                    <!--if the user is not logged in show button to submit credentials-->
-                    <p:commandButton id="login" 
-
-                                     value="Login" 
-
-                                     icon="ui-icon-key" 
-
-                                     action="#{login.login}" 
-
-                                     rendered="#{!login.loggedIn}"/>
-
                     <!--if the user is not logged in show button to log out-->
-                    <p:commandButton id="logout" 
+                    <span class="linkToolbar">
+                        <c:if test="#{login.loggedIn}">
+                            <i class="fa fa-sign-out"></i>
+                        </c:if>
+                        <p:commandLink id="logout" 
 
-                                     value="Logout" 
+                                       value="Logout" 
 
-                                     icon="ui-icon-extlink" 
+                                       action="#{login.logout}" 
 
-                                     action="#{login.logout}" 
+                                       rendered="#{login.loggedIn}"/>
 
-                                     rendered="#{login.loggedIn}"/>
-
-                    <p:commandButton action="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
-
-                    <p:message for="email" style="color:red" />
-                    <p:message for="password" style="color:red" />
+                        <p:commandLink action="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
+                    </span>
                 </h:form> 
 
 
 
             </f:facet>
         </p:toolbar>
+        <p:sticky target="toolbar" />
     </body>
 </html>

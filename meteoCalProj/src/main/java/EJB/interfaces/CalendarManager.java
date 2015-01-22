@@ -41,8 +41,6 @@ public interface CalendarManager {
 
     public CalendarModel findCalendarByName(UserModel user, String name);
 
-    public List<String> getCalendarTitles(UserModel user);
-
     public boolean isInConflict(Event event);
 
     public int findFreeSlots(Event event);

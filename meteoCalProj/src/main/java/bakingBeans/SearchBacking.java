@@ -7,29 +7,30 @@ package bakingBeans;
 
 import EJB.interfaces.SearchManager;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Named;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import model.CalendarModel;
 import model.Event;
 import model.PublicEvent;
 import model.UserModel;
 import utility.LoggerLevel;
-
+import utility.LoggerProducer;
 
 /**
  *
  * @author Francesco
  */
 @Named(value = "search")
-@RequestScoped
-public class SearchBacking {
+@ViewScoped
+public class SearchBacking implements Serializable {
 
     private String searchKey;
     private List<Event> eventResults = new ArrayList<>();
@@ -40,8 +41,7 @@ public class SearchBacking {
     @Inject
     private SearchManager searchManager;
 
-    @Inject
-    Logger logger;
+    private Logger logger = LoggerProducer.debugLogger(SearchBacking.class);
 
     @Inject
     LoginBacking login;
@@ -79,6 +79,7 @@ public class SearchBacking {
     }
 
     public List<Event> getEventResults() {
+        System.out.println("---list: " + eventResults);
         return eventResults;
     }
 
@@ -135,7 +136,6 @@ public class SearchBacking {
     public void doSearch() {
         users = searchManager.searchUsers(searchKey);
         events = searchManager.searchEvents(searchKey);
-
 
         if (searchForUsers || (!searchForEvents && !searchForUsers)) {
             for (UserModel u : users) {

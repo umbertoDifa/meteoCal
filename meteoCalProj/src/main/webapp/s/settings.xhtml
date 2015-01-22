@@ -62,7 +62,9 @@ and open the template in the editor.
             </h:form>
             <hr/>
             <h2> Export Calendar: </h2>
+            <p:panelGrid columns="2" class="noBorder">
             <h:form id="chooseDownload">
+                <p:panelGrid columns="2" class="noBorder">
                 <p:selectOneMenu value="#{settings.calendarToExport}" >
                     <f:selectItem itemValue="null" itemLabel="nessun calendario"/>
                     <c:forEach items="#{calendar.calendarNames}" var="cal">
@@ -70,6 +72,7 @@ and open the template in the editor.
                     </c:forEach>
                 </p:selectOneMenu>
                 <p:commandButton action="#{settings.exportCalendar()}" value="Select"/>
+                </p:panelGrid>
             </h:form>
 
             <h:form id="downloadForm">
@@ -77,7 +80,7 @@ and open the template in the editor.
                     <p:fileDownload value="#{settings.streamedContent}" />
                 </p:commandButton>
             </h:form>
-
+            </p:panelGrid>
             <hr/>
             
             <h2> Import Calendar: </h2>
@@ -90,6 +93,7 @@ and open the template in the editor.
                 it later or retrieve calendars and events you have created. If you still wish to delete your account,
                 click on "Delete my Account"</p>
             <p:commandButton icon="ui-icon-alert" id="delete" value="Delete my Account" action="#{settings.deleteAccount}"/>
+            <br/>
         </ui:define>
 
         <script type="text/javascript">

@@ -11,6 +11,7 @@ import EJB.interfaces.DeleteManager;
 import EJB.interfaces.SearchManager;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -79,7 +80,7 @@ public class ScheduleViewBacking implements Serializable {
 
     private CalendarModel calendarToCreate;
 
-    private Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
+    private Logger logger = LoggerProducer.debugLogger(ScheduleViewBacking.class);
 
 
     /*
@@ -180,17 +181,33 @@ public class ScheduleViewBacking implements Serializable {
 
             if (calendars != null && !calendars.isEmpty()) {
                 //riempio la tendina
-                calendarNames = calendarManager.getCalendarTitles(user);
+                calendarNames = getCalendarTitles();
+
                 //riempio la lista di eventi visibili nello schedule
-                updateEventsToShow(calendarManager.getDefaultCalendar(user));
+                if (readOnly) {
+                    updateEventsToShow(calendars.get(0));
+                } else {
+                    updateEventsToShow(calendarManager.getDefaultCalendar(user));
+                }
+
                 calendarSelected = calendarManager.getDefaultCalendar(user).getTitle();
                 calendarShown = calendarManager.getDefaultCalendar(user);
             }
             switchLabel();
         }
         //inizializzo etichetta pulsante cambio privacy
-        logger.log(LoggerLevel.DEBUG, "dentro init. user: "+user+" . calendarShown: "+calendarShown+" .");
-        
+        logger.log(LoggerLevel.DEBUG, "dentro init. user: " + user
+                + " . calendarShown: " + calendarShown + " .");
+
+    }
+
+    private List<String> getCalendarTitles() {
+        List<String> names = new ArrayList<>();
+        for (CalendarModel cal : calendars) {
+            names.add(cal.getTitle());
+        }
+        return names;
+
     }
 
     /**
@@ -205,8 +222,12 @@ public class ScheduleViewBacking implements Serializable {
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         try {
             // se l evento è public o sei l owner
-            if ((eventToManage.getData() != null && ((EventDetails) eventToManage.getData()).isPub()) || !readOnly) {
-                context.redirect(context.getRequestContextPath() + "/s/eventPage.xhtml?id=" + ((EventDetails) eventToManage.getData()).getId());
+            if ((eventToManage.getData() != null
+                    && ((EventDetails) eventToManage.getData()).isPub())
+                    || !readOnly) {
+                context.redirect(context.getRequestContextPath()
+                        + "/s/eventPage.xhtml?id="
+                        + ((EventDetails) eventToManage.getData()).getId());
             }
         } catch (IOException ex) {
             showGrowl(GrowlMessage.ERROR_REDIRECT);
@@ -221,9 +242,11 @@ public class ScheduleViewBacking implements Serializable {
     public void onDateSelect(SelectEvent selectEvent) {
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         try {
-            context.redirect(context.getRequestContextPath() + "/s/manageEvent.xhtml");
+            context.redirect(context.getRequestContextPath()
+                    + "/s/manageEvent.xhtml");
         } catch (IOException ex) {
-            Logger.getLogger(ScheduleViewBacking.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ScheduleViewBacking.class.getName()).log(
+                    Level.SEVERE, null, ex);
             System.out.println("Redirect fallita");
         }
     }
@@ -252,16 +275,19 @@ public class ScheduleViewBacking implements Serializable {
         if (id != null) {
             // provo a confrontare l'id con quello dell utente loggato
             try {
-                if (!Objects.equals(Long.valueOf(id).longValue(), login.getCurrentUser().getId())) {
+                if (!Objects.equals(Long.valueOf(id).longValue(),
+                        login.getCurrentUser().getId())) {
                     readOnly = true;
                     user = search.findUserById(Long.valueOf(id).longValue());
                     if (user == null) {
                         showGrowl(GrowlMessage.ERROR_USER);
                         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                         try {
-                            context.redirect(context.getRequestContextPath() + "/error.xhtml?faces-redirect=true");
+                            context.redirect(context.getRequestContextPath()
+                                    + "/error.xhtml?faces-redirect=true");
                         } catch (IOException ex) {
-                            Logger.getLogger(ScheduleViewBacking.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(ScheduleViewBacking.class.getName()).log(
+                                    Level.SEVERE, null, ex);
                             logger.log(LoggerLevel.DEBUG, "redirect fallita");
                         }
                     }
@@ -272,9 +298,11 @@ public class ScheduleViewBacking implements Serializable {
                 showGrowl(GrowlMessage.ERROR_USER);
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                 try {
-                    context.redirect(context.getRequestContextPath() + "/error.xhtml");
+                    context.redirect(context.getRequestContextPath()
+                            + "/error.xhtml");
                 } catch (IOException e) {
-                    Logger.getLogger(ScheduleViewBacking.class.getName()).log(Level.SEVERE, null, e);
+                    Logger.getLogger(ScheduleViewBacking.class.getName()).log(
+                            Level.SEVERE, null, e);
                 }
             }
         } else {
@@ -303,7 +331,8 @@ public class ScheduleViewBacking implements Serializable {
      */
     public void deleteCalendar(String response) {
         DeleteCalendarOption option = DeleteCalendarOption.valueOf(response);
-        if (deleteManager.deleteCalendar(login.getCurrentUser(), calendarShown, option)) {
+        if (deleteManager.deleteCalendar(login.getCurrentUser(), calendarShown,
+                option)) {
             showGrowl(GrowlMessage.CALENDAR_DELETED);
             init();
         } else {
@@ -329,18 +358,26 @@ public class ScheduleViewBacking implements Serializable {
                 // se l'evento è privato e non sei l'owner
                 if (ev instanceof PrivateEvent && readOnly) {
                     // creo una slot senza dettagli
+                    logger.log(LoggerLevel.DEBUG, "Evento privato e readOnly:"
+                            + ev.getTitle());
                     DefaultScheduleEvent e = new DefaultScheduleEvent(
                             "Busy Slot",
                             ev.getStartDateTime().getTime(),
                             ev.getEndDateTime().getTime(),
-                            new EventDetails(ev.getId(), (ev instanceof PublicEvent)));
+                            new EventDetails(ev.getId(),
+                                    (ev instanceof PublicEvent)));
                     eventsToShow.addEvent(e);
                 } else {
+                    logger.log(LoggerLevel.DEBUG,
+                            "Evento pubblico o non readOnly:"
+                            + ev.getTitle());
+
                     DefaultScheduleEvent e = new DefaultScheduleEvent(
                             ev.getTitle(),
                             ev.getStartDateTime().getTime(),
                             ev.getEndDateTime().getTime(),
-                            new EventDetails(ev.getId(), (ev instanceof PublicEvent)));
+                            new EventDetails(ev.getId(),
+                                    (ev instanceof PublicEvent)));
                     e.setDescription(ev.getDescription());
                     eventsToShow.addEvent(e);
                 }
@@ -357,7 +394,8 @@ public class ScheduleViewBacking implements Serializable {
      */
     private void showGrowl(GrowlMessage growl) {
         FacesContext ctx = FacesContext.getCurrentInstance();
-        ctx.addMessage(null, new FacesMessage(growl.getSeverity(), growl.getTitle(), growl.getMessage()));
+        ctx.addMessage(null, new FacesMessage(growl.getSeverity(),
+                growl.getTitle(), growl.getMessage()));
         RequestContext.getCurrentInstance().update("growl");
     }
 
@@ -445,9 +483,11 @@ public class ScheduleViewBacking implements Serializable {
      * newCalendarDialog
      */
     public void addNewCalendar() {
-        System.out.println("dentro addNewCalendar, calendarToCreate: " + calendarToCreate.toString());
+        System.out.println("dentro addNewCalendar, calendarToCreate: "
+                + calendarToCreate.toString());
 
-        if (calendarToCreate.getTitle() != null && !calendarToCreate.getTitle().isEmpty()) {
+        if (calendarToCreate.getTitle() != null
+                && !calendarToCreate.getTitle().isEmpty()) {
             calendarToCreate.setOwner(user);
             if (calendarManager.addCalendarToUser(calendarToCreate)) {
                 showGrowl(GrowlMessage.CALENDAR_CREATED);

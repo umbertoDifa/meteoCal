@@ -9,8 +9,6 @@ and open the template in the editor.
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:pt="http://java.sun.com/jsf/passthrough"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:p="http://primefaces.org/ui">
 
 
@@ -46,10 +44,10 @@ and open the template in the editor.
 
             </h:form>
 
-            <p:tabView rendered="#{(not empty search.eventResults) || (not empty search.userResults)}">
+            <p:tabView>
                 <p:tab title="(#{search.eventResults.size()}) Event">
                     <h:form>
-                        <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="10">
+                        <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="3">
                             <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
                                 <h:panelGrid columns="2">
                                     <p:graphicImage value="/resources/img/default.png"/> 
