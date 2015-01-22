@@ -42,7 +42,7 @@ import utility.Gender;
     @NamedQuery(name = "findUserbyEmail",
                 query = "SELECT u FROM UserModel u WHERE u.email=:email"),
     
-    @NamedQuery ( name = "findPublicJoins", query =  "SELECT e FROM UserModel u INNER JOIN u.publicJoins e WHERE u = :user AND e.endDateTime> CURRENT_TIMESTAMP ORDER BY e.startDateTime")
+    @NamedQuery ( name = "findPublicJoins", query =  "SELECT e FROM UserModel u INNER JOIN u.joinedEvents e WHERE u = :user AND e.endDateTime> CURRENT_TIMESTAMP ORDER BY e.startDateTime")
 
 })
 @Table(name = "USER")
@@ -73,7 +73,7 @@ public class UserModel implements Serializable {
     private Gender gender;
 
     @ManyToMany(mappedBy = "guests", cascade = CascadeType.REMOVE)
-    private List<PublicEvent> publicJoins;
+    private List<PublicEvent> joinedEvents;
 
     @OneToMany(mappedBy = "invitee", cascade = CascadeType.REMOVE)
     private List<Invitation> invitations;
@@ -145,12 +145,12 @@ public class UserModel implements Serializable {
         this.id = id;
     }
 
-    public List<PublicEvent> getPublicJoins() {
-        return publicJoins;
+    public List<PublicEvent> getJoinedEvents() {
+        return joinedEvents;
     }
 
-    public void setPublicJoins(List<PublicEvent> publicJoins) {
-        this.publicJoins = publicJoins;
+    public void setJoinedEvents(List<PublicEvent> joinedEvents) {
+        this.joinedEvents = joinedEvents;
     }
 
     public List<Invitation> getInvitations() {

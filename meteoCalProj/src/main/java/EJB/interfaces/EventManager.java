@@ -8,7 +8,6 @@ package EJB.interfaces;
 import java.util.List;
 import model.CalendarModel;
 import model.Event;
-import model.InvitationAnswer;
 import model.UserModel;
 
 /**
@@ -45,7 +44,7 @@ public interface EventManager {
 
     public boolean isInAnyCalendar(Event event, UserModel user);
 
-    public boolean changeEventPrivacy(Event event, boolean spreadInvitations);
+  //  public boolean changeEventPrivacy(Event event, boolean spreadInvitations);
     
     public void updateEventLatLng(Event event) ;
 
