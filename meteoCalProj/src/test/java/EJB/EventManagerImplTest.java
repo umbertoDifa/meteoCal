@@ -3,7 +3,6 @@ package EJB;
 import java.util.List;
 import model.CalendarModel;
 import model.Event;
-import model.InvitationAnswer;
 import model.PublicEvent;
 import model.UserModel;
 import org.junit.After;
@@ -80,22 +79,22 @@ public class EventManagerImplTest {
         fail("The test case is a prototype.");
     }
 
-    /**
-     * Test of changeEventPrivacy method, of class EventManagerImpl.
-     */
-    @Test
-    @Ignore
-    public void testChangeEventPrivacy() throws Exception {
-        System.out.println("changeEventPrivacy");
-        Event event = null;
-        boolean spreadInvitations = false;
-        EventManagerImpl instance = new EventManagerImpl();
-        boolean expResult = false;
-        boolean result = instance.changeEventPrivacy(event, spreadInvitations);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+//    /**
+//     * Test of changeEventPrivacy method, of class EventManagerImpl.
+//     */
+//    @Test
+//    @Ignore
+//    public void testChangeEventPrivacy() throws Exception {
+//        System.out.println("changeEventPrivacy");
+//        Event event = null;
+//        boolean spreadInvitations = false;
+//        EventManagerImpl instance = new EventManagerImpl();
+//        boolean expResult = false;
+//        boolean result = instance.changeEventPrivacy(event, spreadInvitations);
+//        assertEquals(expResult, result);
+//        // TODO review the generated test code and remove the default call to fail.
+//        fail("The test case is a prototype.");
+//    }
 
     /**
      * Test of eventOnWall method, of class EventManagerImpl.

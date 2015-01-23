@@ -21,10 +21,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import model.CalendarModel;
 import model.Event;
-import model.Invitation;
 import model.NotificationType;
 import model.PublicEvent;
-import model.PrivateEvent;
 import model.UserModel;
 import model.WeatherForecast;
 import utility.LoggerLevel;
@@ -67,7 +65,7 @@ public class EventManagerImpl implements EventManager {
         database.flush();
         logger.log(LoggerLevel.DEBUG, "Attualment lat e long:{0} e {1}",
                 new Object[]{event.getLatitude(),
-                             event.getLongitude()});
+                    event.getLongitude()});
 
         //aggiungo weather
         WeatherForecast forecast = weatherManager.getWeather(event);
@@ -118,7 +116,7 @@ public class EventManagerImpl implements EventManager {
 
                     logger.log(LoggerLevel.DEBUG, "Trovate lat e long: {0} ,{1}",
                             new Object[]{event.getLatitude(),
-                                         event.getLongitude()});
+                                event.getLongitude()});
                 }
             } catch (Exception ex) {
                 logger.log(Level.WARNING, ex.getMessage(), ex);
@@ -195,9 +193,9 @@ public class EventManagerImpl implements EventManager {
             }
 
             //cambio la privacy
-            if (changeEventPrivacy(event, false)) {
-                logger.log(LoggerLevel.DEBUG, "Event privacy CHANGED!");
-            }
+//            if (changeEventPrivacy(event, false)) {
+//                logger.log(LoggerLevel.DEBUG, "Event privacy CHANGED!");
+//            }
 
             //sincronizza il db nel dubbio
             database.flush();
@@ -285,89 +283,79 @@ public class EventManagerImpl implements EventManager {
         return changed;
     }
 
-    @Override
-    public boolean changeEventPrivacy(Event event, boolean spreadInvitations) {
-        //mi salvo il vecchio id
-        Long oldId = event.getId();
-
-        //cerco il vecchio evento
-        Event oldEvent = database.find(Event.class, oldId);
-        logger.log(LoggerLevel.DEBUG, "Vecchio evento" + oldEvent);
-        logger.log(LoggerLevel.DEBUG, "nuovo evento:" + event);
-
-        List<UserModel> oldInvitees = oldEvent.getInvitee();
-        List<Invitation> oldInvitations = oldEvent.getInvitations();
-
-        //se passo da private a public
-        if (oldEvent instanceof PrivateEvent && event instanceof PublicEvent) {
-
-            logger.log(LoggerLevel.DEBUG, "Da private a public");
-//            //rimuovo il vecchio evento
-//            deleteManager.deleteEvent(oldEvent, true);
+//    @Override
+//    public boolean changeEventPrivacy(Event event, boolean spreadInvitations) {
+//        //mi salvo il vecchio id
+//        Long oldId = event.getId();
 //
-//            //persisto il nuovo
-//            database.persist(event);
+//        //cerco il vecchio evento
+//        Event oldEvent = database.find(Event.class, oldId);
+//        logger.log(LoggerLevel.DEBUG, "Vecchio evento" + oldEvent);
+//        logger.log(LoggerLevel.DEBUG, "nuovo evento:" + event);
 //
-//            //a questo punto ho creato un evento con un id nuovo, quindi 
-//            //ripristino il vecchio id
-//            event.setId(oldId);
+//        List<UserModel> oldInvitees = oldEvent.getInvitee();
+//        List<Invitation> oldInvitations = oldEvent.getInvitations();
 //
-//            //risetto anche gli invitati vecchi
-//            event.setInvitations(oldInvitations);
+//        database.detach(oldEvent);
+//        database.detach(event);
+//        database.clear();
+//
+//        //se passo da private a public
+//        if (oldEvent instanceof PrivateEvent && event instanceof PublicEvent) {
+//
+//            logger.log(LoggerLevel.DEBUG, "Change from PRIVATE to PUBLIC event :" + oldId);
+//            int rowCheck1 = (int) database.createNativeQuery("UPDATE EVENT SET TYPE = 'PUBLIC' WHERE ID = ?1;").setParameter(1, oldId).executeUpdate();
+//            int rowCheck2 = (int) database.createNativeQuery("INSERT INTO PUBLIC_EVENT SELECT * FROM PRIVATE_EVENT WHERE ID = ?1;").setParameter(1, oldId).executeUpdate();
+//            int rowCheck3 = (int) database.createNativeQuery("DELETE FROM PRIVATE_EVENT WHERE ID=?1;").setParameter(1, oldId).executeUpdate();
+//
+//            if (rowCheck1 == 0 || rowCheck2 == 0 || rowCheck3 == 0) {
+//                logger.log(LoggerLevel.DEBUG, "------------------------------ No row affected - ERROR IN SQL QUERY ------------------------------------");
+//                return false;
+//            }
+//            
+//            event = database.find(Event.class, oldId);
+//            boolean isRight = false;
+//            if (event instanceof PublicEvent)
+//                isRight = true;
+//            logger.log(LoggerLevel.DEBUG, "New Event Privacy should be PUBLIC and it is : "+isRight);
+//
+//            notificationManager.createNotifications(oldInvitees, event,
+//                    NotificationType.EVENT_CHANGED_TO_PUBLIC, false);
+//            return true;
+//
+//        } else if (oldEvent instanceof PublicEvent
+//                && event instanceof PrivateEvent) {
+//            //se passo da public a private
+//            logger.log(LoggerLevel.DEBUG, "Change from PUBLIC to PRIVATE event :" + oldId);
+//            //semplicemente persisto un nuovo evento privato eliminando
+//            //il pubblico
+//
+//            int rowCheck1 = (int) database.createNativeQuery("UPDATE EVENT SET TYPE = 'PRIVATE' WHERE ID = ?1;").setParameter(1, oldId).executeUpdate();
+//            int rowCheck2 = (int) database.createNativeQuery("INSERT INTO PRIVATE_EVENT SELECT * FROM PUBLIC_EVENT WHERE ID = ?1;").setParameter(1, oldId).executeUpdate();
+//            int rowCheck3 = (int) database.createNativeQuery("DELETE FROM PUBLIC_EVENT WHERE ID=?1;").setParameter(1, oldId).executeUpdate();
+//
+//            if (rowCheck1 == 0 || rowCheck2 == 0 || rowCheck3 == 0) {
+//                logger.log(LoggerLevel.DEBUG, "------------------------------ No row affected - ERROR IN SQL QUERY ------------------------------------");
+//                return false;
+//            }
+//
+////
+//            //se l'utente vuole creare inviti anche per la gente con le public join
+//            if (spreadInvitations) {
+//                List<UserModel> newInvitees = getPublicJoin(oldEvent);
+//                invitationManager.createInvitations(newInvitees, event);
+//            }
 //
 //            //persisto i cambiamenti
 //            database.flush();
-
-            //cancello l'id dai private e lo metto nei public
-//            String deleteQuery = "DELETE FROM PRIVATE_EVENT WHERE id = "
-//                    + oldId + ";";
-//            String insertQuery = "INSERT INTO PUBLIC_EVENT VALUES ("
-//                    + oldId + ");";
-//            String updateQuery = "UPDATE EVENT SET type='PUBLIC' WHERE id = "+oldId+";";
-//            database.createNativeQuery(deleteQuery).executeUpdate();
-//            database.createNativeQuery(insertQuery).;
-            //e cambio il tipo da private a public
-//            database.createNamedQuery("deleteEventByType").setParameter("type",
-//                    PrivateEvent.class).setParameter("id", oldId);
-
-            notificationManager.createNotifications(oldInvitees, event,
-                    NotificationType.EVENT_CHANGED_TO_PUBLIC, false);
-            return true;
-
-        } else if (oldEvent instanceof PublicEvent
-                && event instanceof PrivateEvent) {
-            //se passo da public a private
-            logger.log(LoggerLevel.DEBUG, "Da public a private");
-            //semplicemente persisto un nuovo evento privato eliminando
-            //il pubblico
-
-            deleteManager.deleteEvent(event, true);
-
-            database.persist(event);
-
-            //a questo punto ho creato un evento con un id nuovo, quindi 
-            //ripristino il vecchio id
-            event.setId(oldId);
-
-            // risetto  gli invitati vecchi
-            event.setInvitations(oldInvitations);
-
-            //se l'utente vuole creare inviti anche per la gente con le public join
-            if (spreadInvitations) {
-                List<UserModel> newInvitees = getPublicJoin(oldEvent);
-                invitationManager.createInvitations(newInvitees, event);
-            }
-
-            //persisto i cambiamenti
-            database.flush();
-
-            notificationManager.createNotifications(oldInvitees, event,
-                    NotificationType.EVENT_CHANGED_TO_PRIVATE, false);
-
-            return true;
-        }
-        return false;
-    }
+//
+//            notificationManager.createNotifications(oldInvitees, event,
+//                    NotificationType.EVENT_CHANGED_TO_PRIVATE, false);
+//
+//            return true;
+//        }
+//        return false;
+//    }
 
     @Override
     public List<Event> eventOnWall(utility.EventType type, int n, UserModel owner) {
@@ -447,7 +435,9 @@ public class EventManagerImpl implements EventManager {
     public Event findEventbyId(Long id) {
         Event event = database.find(Event.class, id);
         if (event != null) {
+
             database.refresh(event);
+
             return event;
         } else {
             return null;

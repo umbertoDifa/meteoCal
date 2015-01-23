@@ -634,8 +634,8 @@ public class ManageEventBacking implements Serializable {
             showMessage(login.getCurrentUser().getEmail(), "Event not saved",
                     "The event cannot end before it starts");
         } else {
-            //se inizio evento nel passato
-            if (eventToCreate.getStartDateTime().before(Calendar.getInstance())) {
+            //se evento è passato
+            if (eventToCreate.getEndDateTime().before(Calendar.getInstance())) {
                 //avvisa errore
                 showMessage(login.getCurrentUser().getEmail(),
                         "Event not saved",
