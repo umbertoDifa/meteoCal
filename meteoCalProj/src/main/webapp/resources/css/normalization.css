@@ -13,11 +13,10 @@ body {
 }
 
 a {
-    text-decoration: none;
+    /*    text-decoration: none;*/
 }
 
 .ui-widget{
-    font-family:Arial,sans-serif;
     font-size: 15px;
 }
 
@@ -73,6 +72,16 @@ hr {
     border:none; 
     padding:0!important;
     cursor: pointer;
+    color: #1976D2 !important;
+}
+
+.linkStyle:hover {
+    color: white !important;
+    background: #1976D2;
+}
+
+.linkStyle ui-icon {
+    background-image: none;
 }
 
 .ui-dialog {
@@ -177,11 +186,11 @@ hr {
 }
 
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight{
-    background: #FFEB3B !important; 
+    background: #FFF317 !important; 
 }
 
 .ui-datepicker.ui-widget-content td a.ui-state-highlight {
-    background: #FFEB3B !important;
+    background: #FFF317 !important;
 }
 
 .prevEvent td {
@@ -228,4 +237,22 @@ hr {
 
 .ui-toolbar {
     height:  35px;
+}
+
+.fc-event {
+    cursor: pointer;
+}
+
+.profileImg {
+    border-radius: 50%;
+}
+
+.profile {
+    margin: auto;
+    width: 180px;
+    text-align: center;
+}
+
+h1, h2, h3 {
+    color: #454545;
 }

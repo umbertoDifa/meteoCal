@@ -26,9 +26,12 @@ and open the template in the editor.
             <c:if test="#{!scheduleView.readOnly}">
                 <h1>Your Calendars</h1>
             </c:if>
-            
+
             <c:if test="#{scheduleView.readOnly}">
-                <h1><p:outputLabel value="#{scheduleView.calendarShown.owner.name}"/>'s Calendar</h1>
+                <div class="profile">
+                    <p:graphicImage id="profileImgMain" class="profileImg" value="/resources/img/default-user-profile.jpg" width="100" />
+                    <h1><h:outputText value="#{scheduleView.calendarShown.owner.name} #{scheduleView.calendarShown.owner.surname}"/></h1>
+                </div>
             </c:if>
 
             <p:toolbar style="margin-bottom: 12px">
@@ -46,19 +49,15 @@ and open the template in the editor.
                     </h:panelGrid>
                 </f:facet>
                 <f:facet name="right">
-                    <h:panelGrid columns="2" rendered="#{scheduleView.readOnly}">
-                        <p:graphicImage value="/resources/img/default-user-profile.jpg" width="27" />
-                        <p:outputLabel style="font-size: large;" value="Calendars of #{scheduleView.calendarShown.owner.name} #{scheduleView.calendarShown.owner.surname}"/>
-                    </h:panelGrid>
                     <h:form id="publicSwitchForm" rendered="#{!scheduleView.readOnly}">
                         <h:panelGrid >
-                            <p:commandButton id="publicSwitch" widgetVar="publicSwitch" value="#{scheduleView.labelPrivacy}" actionListener="#{scheduleView.switchPrivacy()}" update="@this"  />
+                            <p:commandButton class="linkStyle" id="publicSwitch" widgetVar="publicSwitch" value="#{scheduleView.labelPrivacy}" actionListener="#{scheduleView.switchPrivacy()}" update="@this"  />
                         </h:panelGrid>
                     </h:form>
 
                     <h:form id="addCalendar" rendered="#{!scheduleView.readOnly}">
                         <h:panelGrid columns="2">
-                            <p:commandButton id="addCalendar" widgetVar="addCalendar" value="addCalendar" onclick="PF('newCalendarDialog').show()" icon="ui-icon-plusthick" />
+                            <p:commandButton class="linkStyle" id="addCalendar" widgetVar="addCalendar" value="addCalendar" onclick="PF('newCalendarDialog').show()" icon="ui-icon-plusthick" />
                         </h:panelGrid>
 
                         <p:dialog closeOnEscape="true" widgetVar="newCalendarDialog" header="Create new calendar"  resizable="false" >
@@ -84,7 +83,7 @@ and open the template in the editor.
 
                     <h:form id="changeDefault" rendered="#{!scheduleView.readOnly}">
                         <h:panelGrid columns="2" >
-                            <p:commandButton widgetVar="changeDefaultButton" value="Make Default" onclick="PF('confirmChangeDef').show()" type="button" icon="ui-icon-heart" disabled="#{scheduleView.calendarShown.isDefault}"/>
+                            <p:commandButton class="linkStyle" widgetVar="changeDefaultButton" value="Make Default" onclick="PF('confirmChangeDef').show()" type="button" icon="ui-icon-heart" disabled="#{scheduleView.calendarShown.isDefault}"/>
                         </h:panelGrid>
 
                         <p:dialog closeOnEscape="true" widgetVar="confirmChangeDef" header="Change Default Calendar"  resizable="false" >
@@ -98,7 +97,7 @@ and open the template in the editor.
 
                     <h:form id="deleteForm" rendered="#{!scheduleView.readOnly}">
                         <h:panelGrid columns="2" >
-                            <p:commandButton value="Delete Calendar" onclick="PF('confirmationDialog').show()" icon="ui-icon-trash" type="button"/>
+                            <p:commandButton class="linkStyle" value="Delete Calendar" onclick="PF('confirmationDialog').show()" icon="ui-icon-trash" type="button"/>
                         </h:panelGrid>
 
                         <p:dialog widgetVar="confirmationDialog" header="Initiating delete process"  resizable="false" >

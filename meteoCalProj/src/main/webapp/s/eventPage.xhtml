@@ -38,7 +38,7 @@ and open the template in the editor.
                         <i class="fa fa-map-marker" /> Location:
                         <h:outputText value="#{viewEvent.eventToShow.location}"/>
                         <i class="fa fa-user"></i> Organized By:
-                        <h:outputText value="#{viewEvent.eventToShow.owner.name} #{viewEvent.eventToShow.owner.surname}"/>
+                        <p:link outcome="/s/calendar.xhtml?id=#{viewEvent.eventToShow.owner.id}" value="#{viewEvent.eventToShow.owner.name} #{viewEvent.eventToShow.owner.surname}"/>
                         <i class="fa fa-globe"></i> Privacy:
                         <h:outputText rendered="#{viewEvent.publicAccess}" value="public"/>
                         <h:outputText rendered="#{!viewEvent.publicAccess}" value="private"/>
@@ -108,7 +108,8 @@ and open the template in the editor.
                     </p:tab>
                 </p:tabView>
 
-
+                <br/>
+                
                 <p:commandButton value="Partecipate" update="@(form)" rendered="#{!viewEvent.publicJoin and !viewEvent.hasInvitation and !viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.eventMine}" 
                                  action="#{viewEvent.doPartecipate()}"/><br/>
 
@@ -124,7 +125,7 @@ and open the template in the editor.
                 </p:splitButton>
 
             </h:form>
-
+            
             <p:button icon="ui-icon-pencil" value="Edit" rendered="#{viewEvent.eventMine and viewEvent.future}" 
                       outcome="/s/manageEvent.xhtml?id=#{viewEvent.eventId}" />
             

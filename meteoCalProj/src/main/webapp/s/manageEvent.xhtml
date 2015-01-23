@@ -161,7 +161,7 @@
                                         </p:outputLabel>
                                         <p:tooltip for="toolTipTrack2" value="Every user can see the event when public!" />
                                     </p:outputPanel>
-                                    <h:selectBooleanCheckbox value="#{eventToManage.publicAccess}"/>
+                                    <h:selectBooleanCheckbox disabled="#{eventToManage.saved}" value="#{eventToManage.publicAccess}"/>
 
                                     <i class="fa fa-map-marker"></i> Location:
 
