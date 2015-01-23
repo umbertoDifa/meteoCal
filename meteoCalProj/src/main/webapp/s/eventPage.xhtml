@@ -27,7 +27,7 @@ and open the template in the editor.
             <h1><h:outputText value="#{viewEvent.eventToShow.title}" /></h1>
 
             <p:panelGrid columns="3" class="noBorder">
-                <p:graphicImage value="/resources/img/default.png"/>
+                <h:panelGroup layout="block" id="imgEvent"><h:outputText value="#{viewEvent.eventToShow.title.charAt(0)}" /></h:panelGroup>
                 <p:panel>
                     <p:panelGrid columns="2" class="noBorder">
 

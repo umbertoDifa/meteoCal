@@ -12,7 +12,12 @@
                 <title><ui:insert name="title" /></title>
             </f:facet>
             <ui:insert name="secondaryHead"/>
-
+            <!-- for FF, Chrome, Opera -->
+            <link rel="icon" href="/meteoCalProj/resources/icons/web.png" type="image/png" />
+            <!-- for IE -->
+            <link rel="icon" href="/meteoCalProj/resources/icons/web.ico" type="image/x-icon" />
+            
+            
         </h:head>
 
         <h:body onload="#{login.updateNotification()}" >

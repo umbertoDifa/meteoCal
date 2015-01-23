@@ -60,7 +60,7 @@ and open the template in the editor.
                             <p:commandButton class="linkStyle" id="addCalendar" widgetVar="addCalendar" value="addCalendar" onclick="PF('newCalendarDialog').show()" icon="ui-icon-plusthick" />
                         </h:panelGrid>
 
-                        <p:dialog closeOnEscape="true" widgetVar="newCalendarDialog" header="Create new calendar"  resizable="false" >
+                        <p:dialog closeOnEscape="true" widgetVar="newCalendarDialog" header="Create new calendar"  resizable="false" draggable="false" >
                             <h:outputText value="Title :" />
                             <p:inputText placeholder="Insert title here" value="#{scheduleView.calendarToCreate.title}" required="true" requiredMessage="An unique title is required"/>
                             <br />
@@ -86,7 +86,7 @@ and open the template in the editor.
                             <p:commandButton class="linkStyle" widgetVar="changeDefaultButton" value="Make Default" onclick="PF('confirmChangeDef').show()" type="button" icon="ui-icon-heart" disabled="#{scheduleView.calendarShown.isDefault}"/>
                         </h:panelGrid>
 
-                        <p:dialog closeOnEscape="true" widgetVar="confirmChangeDef" header="Change Default Calendar"  resizable="false" >
+                        <p:dialog closeOnEscape="true" widgetVar="confirmChangeDef" header="Change Default Calendar"  resizable="false"  draggable="false" >
                             <h:outputText value="Do you really want to set the Current Calendar as Default?"/><br/>
                             <f:facet name="footer">
                                 <p:commandButton value="Yes" icon="ui-icon-check" actionListener="#{scheduleView.makeDefault}" update="@form" oncomplete="PF('confirmChangeDef').hide();" />
@@ -100,7 +100,7 @@ and open the template in the editor.
                             <p:commandButton class="linkStyle" value="Delete Calendar" onclick="PF('confirmationDialog').show()" icon="ui-icon-trash" type="button"/>
                         </h:panelGrid>
 
-                        <p:dialog widgetVar="confirmationDialog" header="Initiating delete process"  resizable="false" >
+                        <p:dialog widgetVar="confirmationDialog" header="Initiating delete process"  resizable="false"  draggable="false"  >
                             <h:outputText value="Are you sure?"/><br/>
                             <f:facet name="footer">
                                 <p:commandButton value="Yes" icon="ui-icon-check" update=":growl" actionListener="#{scheduleView.canDeleteCalendar()}" oncomplete="PF('confirmationDialog').hide()" />
@@ -109,7 +109,7 @@ and open the template in the editor.
                         </p:dialog>
                     </h:form>
 
-                    <p:dialog closeOnEscape="true" header="Delete Options" id="delOpt" widgetVar="delOpt" resizable="false" >
+                    <p:dialog closeOnEscape="true" header="Delete Options" id="delOpt" widgetVar="delOpt" resizable="false"  draggable="false" >
                         <h:outputText value="Do you want to delete, move or detach the events in the calendar?" /><br/>
                         <f:facet name="footer">
                             <h:form>
@@ -140,6 +140,11 @@ and open the template in the editor.
                     </p:schedule>
                 </h:panelGrid>
             </h:form>
+
+            <a href="/meteoCalProj/s/manageEvent.xhtml">
+                <h:panelGroup layout="block" id="newEventButton"><span>+</span></h:panelGroup>
+                <p:tooltip for="newEventButton" value="Add a new Event!" showDelay="250"/>
+            </a>
         </ui:define>
 
     </ui:composition>
