@@ -175,7 +175,7 @@ hr {
 }
 
 .ui-menu {
-    width: 100%;
+    
     /*    padding: 0;*/
 }
 
@@ -254,13 +254,23 @@ h1, h2, h3 {
     color: #454545;
 }
 
-#imgEvent {
+.imgEvent {
     background: #FFF317 !important;
     width: 200px;
     height: 200px;
     text-transform: capitalize;
     text-align: center;
     font-size: 140px;
+    font-weight: 100;
+}
+
+.imgEventPrev {
+    background: #FFF317 !important;
+    width: 120px;
+    height: 120px;
+    text-transform: capitalize;
+    text-align: center;
+    font-size: 80px;
     font-weight: 100;
 }
 

@@ -25,8 +25,9 @@ and open the template in the editor.
                         <p:dataScroller value="#{events.wallEvents}" var="ev" chunkSize="10">
                             <p:fieldset legend="#{ev.title}" style="margin-bottom:20px" class="prevEvent">
                                 <h:panelGrid columns="2">
-                                    <p:graphicImage value="/resources/img/default.png"/> 
-
+                                    <h:panelGroup layout="block" class="imgEventPrev">
+                                        <h:outputText value="#{ev.title.charAt(0)}" />
+                                    </h:panelGroup>
 
                                     <p:outputPanel>
                                         <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
@@ -38,7 +39,7 @@ and open the template in the editor.
                                             <h:outputText value="#{ev.location}"/>
 
                                             <i class="fa fa-user"></i> By:
-                                            <h:outputLabel value="#{ev.owner.name} #{ev.owner.surname}"/>
+                                            <p:link value="#{ev.owner.name} #{ev.owner.surname}" outcome="/s/calendar.xhtml?id=#{ev.owner.id}" />
                                         </h:panelGrid>
 
                                     </p:outputPanel>
@@ -56,7 +57,9 @@ and open the template in the editor.
                         <p:dataScroller value="#{events.ownedEvents}" var="ev" chunkSize="10">
                             <p:fieldset legend="#{ev.title}" style="margin-bottom:20px" class="prevEvent">
                                 <h:panelGrid columns="2">
-                                    <p:graphicImage value="/resources/img/default.png"/> 
+                                    <h:panelGroup layout="block" class="imgEventPrev">
+                                        <h:outputText value="#{ev.title.charAt(0)}" />
+                                    </h:panelGroup> 
 
                                     <p:outputPanel>
                                         <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
@@ -68,7 +71,7 @@ and open the template in the editor.
                                             <h:outputText value="#{ev.location}"/>
 
                                             <i class="fa fa-user"></i> By:
-                                            <h:outputLabel value="#{ev.owner.name} #{ev.owner.surname}"/>
+                                            <p:link value="#{ev.owner.name} #{ev.owner.surname}" outcome="/s/calendar.xhtml?id=#{ev.owner.id}" />
                                         </h:panelGrid>
 
                                     </p:outputPanel>
@@ -86,7 +89,9 @@ and open the template in the editor.
                         <p:dataScroller value="#{events.joinedEvents}" var="ev" chunkSize="10">
                             <p:fieldset legend="#{ev.title}" style="margin-bottom:20px" class="prevEvent">
                                 <h:panelGrid columns="2">
-                                    <p:graphicImage value="/resources/img/default.png"/> 
+                                    <h:panelGroup layout="block" class="imgEventPrev">
+                                        <h:outputText value="#{ev.title.charAt(0)}" />
+                                    </h:panelGroup> 
 
 
                                     <p:outputPanel>
@@ -99,7 +104,7 @@ and open the template in the editor.
                                             <h:outputText value="#{ev.location}"/>
 
                                             <i class="fa fa-user"></i> By:
-                                            <h:outputLabel value="#{ev.owner.name} #{ev.owner.surname}"/>
+                                            <p:link value="#{ev.owner.name} #{ev.owner.surname}" outcome="/s/calendar.xhtml?id=#{ev.owner.id}" />
                                         </h:panelGrid>
 
                                     </p:outputPanel>
@@ -118,8 +123,9 @@ and open the template in the editor.
                         <p:dataScroller value="#{events.invitations}" var="ev" chunkSize="10">
                             <p:fieldset legend="#{ev.title}" style="margin-bottom:20px" class="prevEvent">
                                 <h:panelGrid columns="2">
-                                    <p:graphicImage value="/resources/img/default.png"/> 
-
+                                    <h:panelGroup layout="block" class="imgEventPrev">
+                                        <h:outputText value="#{ev.title.charAt(0)}" />
+                                    </h:panelGroup>
 
                                     <p:outputPanel>
                                         <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
@@ -131,7 +137,7 @@ and open the template in the editor.
                                             <h:outputText value="#{ev.location}"/>
 
                                             <i class="fa fa-user"></i> By:
-                                            <h:outputLabel value="#{ev.owner.name} #{ev.owner.surname}"/>
+                                            <p:link value="#{ev.owner.name} #{ev.owner.surname}" outcome="/s/calendar.xhtml?id=#{ev.owner.id}" />
                                         </h:panelGrid>
 
                                     </p:outputPanel>
