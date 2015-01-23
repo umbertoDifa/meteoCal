@@ -20,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -79,7 +80,8 @@ public abstract class Event implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private java.util.Calendar endDateTime;
-
+    
+    @Lob
     private String description;
 
     private boolean isOutdoor;

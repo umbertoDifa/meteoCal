@@ -17,7 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.TableGenerator;
 
 /**
  *
@@ -30,12 +30,14 @@ import javax.persistence.SequenceGenerator;
 })
 
 @Entity
-@SequenceGenerator(name = "notifSeq", initialValue = 50)
 public class Notification implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notifSeq")
+    @TableGenerator(name = "NOTIF_SEQ", table = "SEQUENCE",
+            pkColumnName = "SEQ_NAME",
+            valueColumnName = "SEQ_COUNT", pkColumnValue = "NOTIF_SEQ")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "NOTIF_SEQ")
     private Long id;
 
     @ManyToOne
