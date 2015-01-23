@@ -12,7 +12,12 @@
                 <title><ui:insert name="title" /></title>
             </f:facet>
             <ui:insert name="secondaryHead"/>
-
+            <!-- for FF, Chrome, Opera -->
+            <link rel="icon" href="/meteoCalProj/resources/icons/web.png" type="image/png" />
+            <!-- for IE -->
+            <link rel="icon" href="/meteoCalProj/resources/icons/web.ico" type="image/x-icon" />
+            
+            
         </h:head>
 
         <h:body onload="#{login.updateNotification()}" >
@@ -20,8 +25,6 @@
             <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" />
             <h:outputStylesheet library="css" name="normalize.css"/>
             <h:outputStylesheet library="css" name="normalization.css"/>
-            
-<!--            <h:outputStylesheet library="css" name="metroui.css"/>-->
             <h:outputScript library="js" name="sidebar.js" />
             <p:growl severity="info, warn, error, fatal" autoUpdate="true" id="growl" showDetail="true" widgetVar="growl"/>
             <p:messages for="msg" severity="info, warn, error, fatal" showDetail="true"  />
@@ -41,9 +44,9 @@
 
                         <p:menuitem value="Calendar" url="/s/calendar.xhtml" icon="ui-icon-calendar" />
                         <p:menuitem value="Wall" url="/s/wall.xhtml" icon="ui-icon-star" />
-                        <p:menuitem value="Settings" url="/s/settings.xhtml" icon="ui-icon-wrench" />
                         <p:menuitem value="New Event" url="/s/manageEvent.xhtml" icon="ui-icon-plus" />
                         <p:menuitem value="Search" url="/s/search.xhtml" icon="ui-icon-search" />
+                        <p:menuitem value="Settings" url="/s/settings.xhtml" icon="ui-icon-gear" />
 
                     </p:menu>
                 </p:outputPanel>

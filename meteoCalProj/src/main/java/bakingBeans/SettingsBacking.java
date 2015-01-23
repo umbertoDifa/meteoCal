@@ -5,7 +5,6 @@
  */
 package bakingBeans;
 
-import EJB.SettingManagerImpl;
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.SettingManager;
 import java.io.File;
@@ -29,7 +28,7 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import utility.GrowlMessage;
+import utility.Gender;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
 import wrappingObjects.Pair;
@@ -56,6 +55,7 @@ public class SettingsBacking implements Serializable {
     private String oldPassword;
     private String newPassword1;
     private String newPassword2;
+    private Gender gender;
 
     private List<String> calendarTitles;
 
@@ -91,6 +91,7 @@ public class SettingsBacking implements Serializable {
         surname = login.getSurname();
         calendars = calendarManager.getCalendars(user);
         calendarTitles = titlesCalendar(calendars);
+        gender = login.getCurrentUser().getGender();
 
     }
 
@@ -186,6 +187,21 @@ public class SettingsBacking implements Serializable {
         this.newPassword2 = newPassword2;
     }
 
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public List<Gender> getGenders() {
+        List<Gender> list = new ArrayList<>();
+        list.add(Gender.F);
+        list.add(Gender.M);
+        return list;
+    }
+
     private List<String> titlesCalendar(List<model.CalendarModel> c) {
         List<String> result = new ArrayList<>();
         if (c != null) {
@@ -202,6 +218,11 @@ public class SettingsBacking implements Serializable {
         if (settingManager.changeCredentials(login.getCurrentUser(), name,
                 surname, email)) {
             showInfoMessage(null, "Credential updated", "");
+//            if (settingManager.setGender(gender)) {
+//                showInfoMessage(null, "Gender has been set", "");
+//            } else {
+//                showWarnMessage(null, "Gender not updated", "");
+//            }
             login.refreshCurrentUser();
         } else {
             showWarnMessage(null, "Credential not updated", "");

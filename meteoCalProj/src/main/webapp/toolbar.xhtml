@@ -21,7 +21,7 @@
                     <p:outputLabel class="textToolbar" value="Hi #{login.currentUser.name}! "/>
 
                     <span class="linkBalloon">
-                        <a href="/s/notifications.xhtml">
+                        <a href="/meteoCalProj/s/notifications.xhtml">
                             <i class="fa fa-envelope-o"></i>
                             <p:outputLabel class="badges" value="#{login.notificationNumber}"/>
                         </a>
@@ -43,6 +43,15 @@
 
                                        rendered="#{login.loggedIn}"/>
 
+                        <c:if test="#{!login.loggedIn}">
+                            <i class="fa fa-sign-out"></i>
+                        </c:if>
+                        <p:link id="login" value="Login" rendered="#{!login.loggedIn}" outcome="/logIn.xhtml"/>
+                    </span>
+                    <span class="linkToolbar" >
+                        <c:if test="#{!login.loggedIn}">
+                            <i class="fa fa-sign-in"></i>
+                        </c:if>
                         <p:commandLink action="/signUp.xhtml" rendered="#{!login.loggedIn}" value="Sign Up"/>
                     </span>
                 </h:form> 

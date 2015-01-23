@@ -43,14 +43,17 @@ and open the template in the editor.
                 <input type="radio" value="#{search.searchForUsers}"/><br />
 
             </h:form>
-
-            <p:tabView>
+            <br/>
+            <p:tabView rendered="#{(not empty search.eventResults) or (not empty search.userResults)}">
                 <p:tab title="(#{search.eventResults.size()}) Event">
                     <h:form>
-                        <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="3">
-                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px">
+                        <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="10">
+                            <p:fieldset legend="#{ev.title}" style="margin-bottom:20px" class="prevEvent">
                                 <h:panelGrid columns="2">
-                                    <p:graphicImage value="/resources/img/default.png"/> 
+
+                                    <h:panelGroup layout="block" class="imgEventPrev">
+                                        <h:outputText value="#{ev.title.charAt(0)}" />
+                                    </h:panelGroup> 
 
                                     <p:outputPanel>
                                         <p:link outcome="/s/eventPage.xhtml?id=#{ev.id}" value="#{ev.title}"/>
@@ -62,7 +65,7 @@ and open the template in the editor.
                                             <h:outputText value="#{ev.location}"/>
 
                                             <i class="fa fa-user"></i> By:
-                                            <h:outputLabel value="#{ev.owner.email}"/>
+                                            <p:link value="#{ev.owner.name} #{ev.owner.surname}" outcome="/s/calendar.xhtml?id=#{ev.owner.id}" />
                                         </h:panelGrid>
 
                                     </p:outputPanel>
@@ -79,9 +82,9 @@ and open the template in the editor.
                 <p:tab title="(#{search.userResults.size()}) User">
                     <h:form>
                         <p:dataScroller value="#{search.userResults}" var="u" chunkSize="10">
-                            <p:fieldset legend="#{u.name}" style="margin-bottom:20px">
+                            <p:fieldset legend="#{u.name}" style="margin-bottom:20px" class="prevEvent">
                                 <h:panelGrid columns="2">
-                                    <p:graphicImage value="/resources/img/default-user-profile.jpg" width="114"/> 
+                                    <p:graphicImage value="/resources/img/default-user-profile.jpg" width="114" style="border-radius: 50%;"/> 
 
 
                                     <p:outputPanel>

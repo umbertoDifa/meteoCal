@@ -503,4 +503,18 @@ public class ScheduleViewBacking implements Serializable {
         calendarToCreate = new CalendarModel();
     }
 
+    public void redirect() {
+        System.out.println("----dentro redirect");
+        
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        try {
+            context.redirect(context.getRequestContextPath()
+                    + "/s/manageEvent.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(ScheduleViewBacking.class.getName()).log(
+                    Level.SEVERE, null, ex);
+            System.out.println("Redirect fallita");
+        }
+    }
+
 }

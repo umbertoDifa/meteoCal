@@ -13,13 +13,12 @@ body {
 }
 
 a {
-    text-decoration: none;
+    /*    text-decoration: none;*/
 }
 
-.ui-widget{
-    font-family:Arial,sans-serif;
+/*.ui-widget{
     font-size: 15px;
-}
+}*/
 
 #header .ui-layout-unit-content {
     overflow: hidden !important;
@@ -63,25 +62,35 @@ hr {
 #header, #toolbar {
     height: 45px !important;
 }
-
+/*
 .ui-messages-error{
     padding: 4px 4px 4px 4px;
-}
+}*/
 
 .linkStyle {
     background:none!important;
     border:none; 
     padding:0!important;
     cursor: pointer;
+    color: #1976D2 !important;
 }
 
+.linkStyle:hover {
+    color: white !important;
+    background: #1976D2;
+}
+
+.linkStyle ui-icon {
+    background-image: none;
+}
+/*
 .ui-dialog {
     white-space: nowrap;        
 }
 
 .ui-dialog-footer, .ui-panelgrid-footer {
     text-align: center !important;
-}
+}*/
 
 .ui-toolbar form {
     display: inline-block;
@@ -94,10 +103,10 @@ hr {
 .sidebar, .sidebar > .ui-widget-content {
     background: none;
 }
-
+/*
 .ui-widget-header {
     border: none;
-}
+}*/
 
 .linkBalloon, .linkToolbar {
     padding: 10px;
@@ -166,8 +175,8 @@ hr {
 }
 
 .ui-menu {
-    width: 100%;
-    padding: 0;
+    
+    /*    padding: 0;*/
 }
 
 #sidebar ul li {
@@ -175,17 +184,20 @@ hr {
     margin-bottom: 5px !important;
     padding-left: 7px;
 }
-
+/*
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight{
-    background: #FFEB3B !important; 
+    background: #FFF317 !important; 
 }
 
 .ui-datepicker.ui-widget-content td a.ui-state-highlight {
-    background: #FFEB3B !important;
-}
+    background: #FFF317 !important;
+}*/
 
 .prevEvent td {
     vertical-align: top;
+    padding-right: 16px;
+    padding-bottom: 3px;
+    padding-top: 7px;
 }
 
 #scheduleForm tr {
@@ -198,9 +210,6 @@ hr {
     box-shadow: none;
 }
 
-.ui-layout-unit-content {
-    height: auto !important;
-}
 
 .ui-fieldset-legend {
     border: #BBDEFB !important;
@@ -225,4 +234,68 @@ hr {
 
 .ui-toolbar {
     height:  35px;
+}
+
+.fc-event {
+    cursor: pointer;
+}
+
+.profileImg {
+    border-radius: 50%;
+}
+
+.profile {
+    margin: auto;
+    width: 180px;
+    text-align: center;
+}
+
+h1, h2, h3 {
+    color: #454545;
+}
+
+.imgEvent {
+    background: #FFF317 !important;
+    width: 200px;
+    height: 200px;
+    text-transform: capitalize;
+    text-align: center;
+    font-size: 140px;
+    font-weight: 100;
+}
+
+.imgEventPrev {
+    background: #FFF317 !important;
+    width: 120px;
+    height: 120px;
+    text-transform: capitalize;
+    text-align: center;
+    font-size: 80px;
+    font-weight: 100;
+}
+
+.ui-dialog {
+    box-shadow: 1px 5px 8px rgba(0,0,0,0.8) !important;
+    moz-box-shadow: 1px 5px 8px rgba(0,0,0,0.8) !important;
+    webkit-box-shadow: 1px 5px 8px rgba(0,0,0,0.8) !important;
+}
+
+#newEventButton {
+    position: fixed;
+    bottom: 45px !important;
+    right: 45px !important;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    color: white !important;
+    font-size: 40px;
+    font-weight: 500;
+    background: yellow;
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    cursor: pointer;    
+    box-shadow: 2px 3px 4px rgba(0,0,0,0.5)  !important;
+    moz-box-shadow: 2px 3px 4px rgba(0,0,0,0.5) !important;
+    webkit-box-shadow: 2px 3px 4px rgba(0,0,0,0.5)  !important;
 }

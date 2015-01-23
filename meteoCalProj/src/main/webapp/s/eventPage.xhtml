@@ -13,7 +13,7 @@ and open the template in the editor.
       xmlns:p="http://primefaces.org/ui">
 
     <ui:composition template="/template.xhtml">
-        
+
 
         <f:metadata>
             <f:viewParam name="id" value="#{viewEvent.eventId}"/>
@@ -27,7 +27,7 @@ and open the template in the editor.
             <h1><h:outputText value="#{viewEvent.eventToShow.title}" /></h1>
 
             <p:panelGrid columns="3" class="noBorder">
-                <p:graphicImage value="/resources/img/default.png"/>
+                <h:panelGroup layout="block" class="imgEvent"><h:outputText value="#{viewEvent.eventToShow.title.charAt(0)}" /></h:panelGroup>
                 <p:panel>
                     <p:panelGrid columns="2" class="noBorder">
 
@@ -38,7 +38,7 @@ and open the template in the editor.
                         <i class="fa fa-map-marker" /> Location:
                         <h:outputText value="#{viewEvent.eventToShow.location}"/>
                         <i class="fa fa-user"></i> Organized By:
-                        <h:outputText value="#{viewEvent.eventToShow.owner.name} #{viewEvent.eventToShow.owner.surname}"/>
+                        <p:link outcome="/s/calendar.xhtml?id=#{viewEvent.eventToShow.owner.id}" value="#{viewEvent.eventToShow.owner.name} #{viewEvent.eventToShow.owner.surname}"/>
                         <i class="fa fa-globe"></i> Privacy:
                         <h:outputText rendered="#{viewEvent.publicAccess}" value="public"/>
                         <h:outputText rendered="#{!viewEvent.publicAccess}" value="private"/>
@@ -108,9 +108,10 @@ and open the template in the editor.
                     </p:tab>
                 </p:tabView>
 
+                <br/>
 
                 <p:commandButton value="Partecipate" update="@(form)" rendered="#{!viewEvent.publicJoin and !viewEvent.hasInvitation and !viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.eventMine}" 
-                                 action="#{viewEvent.doPartecipate()}"/><br/>
+                                 action="#{viewEvent.doPartecipate()}"/>
 
                 <p:splitButton id="button1" value="#{viewEvent.answerMessage}" rendered="#{(viewEvent.hasAnswered or viewEvent.hasInvitation) and viewEvent.publicAccess and !viewEvent.eventMine}">
                     <p:menuitem value="Participate" update="@(form)" actionListener="#{viewEvent.doPartecipate()}" rendered="#{viewEvent.hasInvitation and !viewEvent.partecipate}" />
@@ -123,28 +124,31 @@ and open the template in the editor.
                     <p:menuitem value="Decline" update="@(form)" actionListener="#{viewEvent.doDecline()}" rendered="#{!viewEvent.hasAnswered or viewEvent.partecipate}" />
                 </p:splitButton>
 
+                <p:ajax event="click" update=":addCalendarForm"/>
             </h:form>
-
-            <p:button icon="ui-icon-pencil" value="Edit" rendered="#{viewEvent.eventMine and viewEvent.future}" 
-                      outcome="/s/manageEvent.xhtml?id=#{viewEvent.eventId}" />
-            
-            <p:commandButton id="delete" value="Delete" rendered="#{viewEvent.eventMine}" oncomplete="PF('deleteDialog').show();" />
-
-            <h:form id="addCalendarForm" rendered="#{!viewEvent.eventMine and ((viewEvent.publicAccess and (viewEvent.publicJoin or (viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))) or ( !viewEvent.publicAccess and viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))}">
-
+            <br/>
+            <h:form id="addCalendarForm" style="display: inline-block">
+                <p:outputPanel  rendered="#{!viewEvent.eventMine and ((viewEvent.publicAccess and (viewEvent.publicJoin or (viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))) or ( !viewEvent.publicAccess and viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))}">
                 <i class="fa fa-calendar"/> Add into:
                 <h:selectOneMenu value="#{viewEvent.calendarName}" style="width: 180px; text-overflow: ellipsis;"  >
                     <f:selectItems value="#{calendar.calendarNames}"/>
                     <f:selectItem value="#{null}" itemLabel="Nessun Calendario" />
                 </h:selectOneMenu>
 
-                <p:commandButton id="save" value="Save" action="#{viewEvent.addToCalendar}" update="@form"/>
+                <p:commandButton widgetVar="addCalButton" id="save" value="Save" action="#{viewEvent.addToCalendar}" update="@form"/>
+                </p:outputPanel>
+            </h:form> 
 
-            </h:form>
-            
-            <p:dialog closeOnEscape="true" widgetVar="deleteDialog">
-                <h:outputText value="Are you sure you want to delete?" style="white-space: pre-wrap"></h:outputText><br/>
+            <p:button icon="ui-icon-pencil" value="Edit" rendered="#{viewEvent.eventMine and viewEvent.future}" 
+                      outcome="/s/manageEvent.xhtml?id=#{viewEvent.eventId}" />
+
+            <p:commandButton id="delete" value="Delete" rendered="#{viewEvent.eventMine}" oncomplete="PF('deleteDialog').show();" />
+
+
+            <p:dialog closeOnEscape="true" widgetVar="deleteDialog" resizable="false" draggable="false">
+                <h:outputText value="Are you sure you want to delete?" style="white-space: pre-wrap"></h:outputText><br/><br/>
                 <p:commandButton value="Delete" rendered="#{viewEvent.eventMine}" oncomplete="PF('deleteDialog').hide();" action="#{viewEvent.deleteEvent}"/>
+                <p:commandButton value="Cancel" type="button" onclick="PF('deleteDialog').hide()" />
             </p:dialog>
 
 

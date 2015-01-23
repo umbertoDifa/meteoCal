@@ -131,7 +131,7 @@
                                     <i class="fa fa-calendar"/> Add into:
                                     <h:selectOneMenu value="#{eventToManage.calendarName}" style="width: 180px; text-overflow: ellipsis;"  >
                                         <f:selectItems value="#{calendar.calendarNames}"/>
-                                        <f:selectItem value="#{null}" itemLabel="Nessun Calendario" />
+                                        <f:selectItem value="#{null}" itemLabel="No Calendar" />
                                     </h:selectOneMenu>
 
                                     <i class="fa fa-calendar-o"></i> Starting date:
@@ -161,7 +161,7 @@
                                         </p:outputLabel>
                                         <p:tooltip for="toolTipTrack2" value="Every user can see the event when public!" />
                                     </p:outputPanel>
-                                    <h:selectBooleanCheckbox value="#{eventToManage.publicAccess}"/>
+                                    <h:selectBooleanCheckbox disabled="#{eventToManage.saved}" value="#{eventToManage.publicAccess}"/>
 
                                     <i class="fa fa-map-marker"></i> Location:
 
@@ -265,7 +265,7 @@
             </div>
 
 
-            <p:dialog closeOnEscape="true" header="Reschedule suggested" id="conflictDialog" widgetVar="conflictDialog" minHeight="40" resizable="false">
+            <p:dialog closeOnEscape="true" header="Reschedule suggested" id="conflictDialog" widgetVar="conflictDialog" minHeight="40" resizable="false" draggable="false">
                 <h:outputText id="dialogMessage" value="#{eventToManage.dialogueMessage}" style="white-space: pre-wrap"></h:outputText><br/>
                 <f:facet name="footer">
                     <h:form id="buttonsForm">

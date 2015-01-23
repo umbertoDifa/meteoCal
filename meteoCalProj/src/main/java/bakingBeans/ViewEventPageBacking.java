@@ -308,7 +308,7 @@ public class ViewEventPageBacking implements Serializable {
             partecipate = false;
             answerMessage = "You won't participate";
 
-            //siccome sta annullando la partecipazione gli tolgo l'vento dal calendario
+            //siccome sta annullando la partecipazione gli tolgo l'evento dal calendario
             calendarManager.removeFromAllCalendars(login.getCurrentUser(),
                     eventToShow);
 

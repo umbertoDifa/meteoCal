@@ -20,7 +20,7 @@ and open the template in the editor.
             <h1>Notifications</h1>
             
             <p:tabView>
-                <p:tab title="Invitations">
+                <p:tab title="(#{notification.invitations.size()}) Invitations">
                     <h:form>
                         <p:dataScroller value="#{notification.invitations}" var="in" chunkSize="10">
                             <p:fieldset legend="#{in.title}" style="margin-bottom:20px" >
@@ -45,7 +45,7 @@ and open the template in the editor.
                         </p:dataScroller>
                     </h:form>
                 </p:tab>
-                <p:tab title="Events Changes">
+                <p:tab title="(#{notification.eventChanges.size()}) Events Changes">
                     <h:form>
                         <p:dataScroller value="#{notification.eventChanges}" var="en" chunkSize="10">
                             <p:fieldset legend="#{en.title}" style="margin-bottom:20px">
