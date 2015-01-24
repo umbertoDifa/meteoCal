@@ -430,7 +430,7 @@ public class ViewEventPageBacking implements Serializable {
 
     public boolean isFuture() {
         Calendar today = Calendar.getInstance();
-        return TimeTool.isBefore(today, eventToShow.getEndDateTime());
+        return today.before(eventToShow.getEndDateTime());
     }
 
     //TODO da spostare

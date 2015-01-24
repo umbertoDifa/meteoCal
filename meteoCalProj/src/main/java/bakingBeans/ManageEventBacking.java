@@ -701,7 +701,7 @@ public class ManageEventBacking implements Serializable {
             //se non trovo un giorno avviso
             saveButton = "Save Anyway";
             showRescheduleButton = false;
-            if (eventToCreate.isIsOutdoor()) {
+            if (eventToCreate.isIsOutdoor() && eventToCreate.hasLocation()) {
                 dialogueMessage += "\nIt wasn't possible to find a free sunny day for a reschedule.";
             } else {
                 dialogueMessage += "\nIt wasn't possible to find a free "
