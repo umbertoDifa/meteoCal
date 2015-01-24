@@ -262,12 +262,16 @@ h1, h2, h3 {
 
 .imgEventPrev {
     background: #FFF317 !important;
-    width: 120px;
-    height: 120px;
+    width: 110px;
+    height: 110px;
     text-transform: capitalize;
     text-align: center;
     font-size: 80px;
     font-weight: 100;
+}
+
+.tableAlign td{
+    vertical-align: top !important;
 }
 
 .ui-dialog {

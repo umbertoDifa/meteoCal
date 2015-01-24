@@ -115,7 +115,9 @@
         <ui:define name="content">
             <h1>            
                 <h:outputLabel rendered="#{!eventToManage.saved}" value="Create a new event"/>
-                <h:outputLabel rendered="#{eventToManage.saved}" value="Update event #{eventToManage.title}"/>
+                <p:outputPanel style="width: 900px; text-overflow: clip; overflow: hidden;">
+                    <h:outputLabel rendered="#{eventToManage.saved}" value="Update event #{eventToManage.title}"/>
+                </p:outputPanel>
             </h1>
             <div class="ui-grid ui-grid-responsive">
                 <div class="ui-grid-row">
@@ -195,7 +197,7 @@
                                 <br/>
 
                                 <i class="fa fa-quote-left"/><h:outputLabel value=" Description:" /><br />
-                                <p:inputTextarea value="#{eventToManage.description}" style="width: 100%;" autoResize="true" /><br />
+                                <p:inputTextarea value="#{eventToManage.description}" style="width: 100%;" autoResize="true"  /><br />
 
                                 <br/>
 

@@ -23,10 +23,11 @@ and open the template in the editor.
         <ui:define name="title">event</ui:define>
 
         <ui:define name="content">
+            <p:outputPanel style="width: 900px; text-overflow: clip; overflow: hidden;">
+                <h1><h:outputText value="#{viewEvent.eventToShow.title}" /></h1>
+            </p:outputPanel>
 
-            <h1><h:outputText value="#{viewEvent.eventToShow.title}" /></h1>
-
-            <p:panelGrid columns="3" class="noBorder">
+            <p:panelGrid columns="3" class="noBorder tableAlign">
                 <h:panelGroup layout="block" class="imgEvent"><h:outputText value="#{viewEvent.eventToShow.title.charAt(0)}" /></h:panelGroup>
                 <p:panel>
                     <p:panelGrid columns="2" class="noBorder">
@@ -76,9 +77,9 @@ and open the template in the editor.
 
                 </p:fieldset>
             </p:panelGrid>
-            <p:outputPanel rendered="#{not empty viewEvent.eventToShow.description}">
+            <p:outputPanel rendered="#{not empty viewEvent.eventToShow.description}" >
                 <i class="fa fa-quote-left"/><h:outputLabel value=" Description:" /><br />
-                <p:panel>
+                <p:panel style="overflow: auto;">
                     <h:outputText value="#{viewEvent.eventToShow.description}"/>
                 </p:panel>
             </p:outputPanel>
