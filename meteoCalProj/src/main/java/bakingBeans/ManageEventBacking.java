@@ -116,11 +116,12 @@ public class ManageEventBacking implements Serializable {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
         Calendar cal = Calendar.getInstance();
+        
         startDate = dateFormat.format(cal.getTime());
         endDate = dateFormat.format(cal.getTime());
         startTime = timeFormat.format(cal.getTime());
         endTime = timeFormat.format(cal.getTime());
-
+        
     }
 
     /*
@@ -810,10 +811,4 @@ public class ManageEventBacking implements Serializable {
         guests.remove(u);
     }
     
-    public boolean saveEventWithoutCheck() {
-        createOrLoadInstance();
-        setUpInstance();
-        save();
-        return true;
-    }
 }

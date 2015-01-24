@@ -12,14 +12,6 @@ body {
     font-size: 100%;
 }
 
-a {
-    /*    text-decoration: none;*/
-}
-
-/*.ui-widget{
-    font-size: 15px;
-}*/
-
 #header .ui-layout-unit-content {
     overflow: hidden !important;
 }
@@ -62,10 +54,6 @@ hr {
 #header, #toolbar {
     height: 45px !important;
 }
-/*
-.ui-messages-error{
-    padding: 4px 4px 4px 4px;
-}*/
 
 .linkStyle, .linkStyle2 {
     background:none!important;
@@ -171,7 +159,7 @@ hr {
 }
 
 .ui-menu {
-    
+
     /*    padding: 0;*/
 }
 
@@ -180,14 +168,6 @@ hr {
     margin-bottom: 5px !important;
     padding-left: 7px;
 }
-/*
-.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight{
-    background: #FFF317 !important; 
-}
-
-.ui-datepicker.ui-widget-content td a.ui-state-highlight {
-    background: #FFF317 !important;
-}*/
 
 .prevEvent td {
     vertical-align: top;
@@ -210,6 +190,10 @@ hr {
 .ui-fieldset-legend {
     border: #BBDEFB !important;
     background: #BBDEFB !important;
+    max-width: 400px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
 }
 
 .ui-toolbar .ui-button, .ui-toolbar .ui-toolbar-group-right, .ui-toolbar .ui-toolbar-group-left {
@@ -303,3 +287,4 @@ h1, h2, h3 {
 .ui-tooltip {
     background: #BBDEFB;
 }
+

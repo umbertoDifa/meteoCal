@@ -269,18 +269,23 @@ public class ScheduleViewBacking implements Serializable {
      * @param selectEvent
      */
     public void onDateSelect(SelectEvent selectEvent) {
-//        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-//        try {
-//            context.redirect(context.getRequestContextPath()
-//                    + "/s/manageEvent.xhtml");
-//        } catch (IOException ex) {
-//            Logger.getLogger(ScheduleViewBacking.class.getName()).log(
-//                    Level.SEVERE, null, ex);
-//            System.out.println("Redirect fallita");
-//        }
-
-        eventToManage = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
+        if (Calendar.getInstance().getTime().after((Date)selectEvent.getObject())) {
+            
+            showGrowl(GrowlMessage.ERROR_CREATE_PAST_EVET);
+            
+        } else {
+            ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+            try {
+                context.redirect(context.getRequestContextPath()
+                        + "/s/manageEvent.xhtml");
+            } catch (IOException ex) {
+                Logger.getLogger(ScheduleViewBacking.class.getName()).log(
+                        Level.SEVERE, null, ex);
+            }
+        }
     }
+
+    
 
     /**
      * quando il calendario cambia faccio il refresh degli eventi da
@@ -548,18 +553,4 @@ public class ScheduleViewBacking implements Serializable {
         }
     }
 
-    public void saveEvent() {
-        // se oggi è dopo la fine dell evento
-        if (Calendar.getInstance().getTime().after(eventToManage.getEndDate())) {
-            showGrowl(GrowlMessage.ERROR_CREATE_PAST_EVET);
-        } else {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            manageEventBacking.setTitle(titleEventToManage);
-            manageEventBacking.setCalendarName(calendarSelected);
-            manageEventBacking.setStartDate(dateFormat.format(eventToManage.getStartDate()));
-            manageEventBacking.setEndDate(dateFormat.format(eventToManage.getEndDate()));
-            manageEventBacking.setPublicAccess(privacyEventToManage);
-            manageEventBacking.saveEventWithoutCheck();
-        }
-    }
 }

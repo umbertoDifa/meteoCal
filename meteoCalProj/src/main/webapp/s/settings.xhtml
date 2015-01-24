@@ -29,7 +29,7 @@ and open the template in the editor.
 
                 <h:inputText id="name" value="#{settings.name}" pt:required="" /> , 
                 <h:inputText id="surname" value="#{settings.surname}" pt:required=""/>
-                
+
                 <br/><br/>
 
                 <h:outputLabel for="email">Email: </h:outputLabel> 
@@ -39,7 +39,7 @@ and open the template in the editor.
                 </h:inputText>
 
                 <br/><br/>
-                
+
                 Gender:
                 <h:selectOneMenu value="#{settings.gender}" >
                     <f:selectItems value="#{settings.genders}" />
@@ -101,7 +101,23 @@ and open the template in the editor.
             <p>Please be aware that once the account has been deleted, it will not be possible to reactivate
                 it later or retrieve calendars and events you have created. If you still wish to delete your account,
                 click on "Delete my Account"</p>
-            <p:commandButton icon="ui-icon-alert" id="delete" value="Delete my Account" action="#{settings.deleteAccount}"/>
+            <h:form>
+                <p:commandButton icon="ui-icon-alert" widgetVar="deleteButton" 
+                                 
+                                 id="deleteButton" value="Delete my Account" 
+                                                                  
+                                 onclick="PF('confirmDeleteAccount').show()" 
+                                 
+                                 type="button" />
+                
+                <p:dialog closeOnEscape="true" widgetVar="confirmDeleteAccount" header="Delete Account" resizable="false"  draggable="false" >
+                    <h:outputText value="Do you really want to delete your account?"/><br/>
+                    <f:facet name="footer">
+                        <p:commandButton value="Yes" icon="ui-icon-check" actionListener="#{settings.deleteAccount()}" />
+                        <p:commandButton type="button" value="No" icon="ui-icon-close" onclick="PF('confirmDeleteAccount').hide()"/>
+                    </f:facet>
+                </p:dialog> 
+            </h:form>
             <br/>
         </ui:define>
 

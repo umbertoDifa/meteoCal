@@ -135,42 +135,20 @@ and open the template in the editor.
                     <p:schedule id="schedule" value="#{scheduleView.eventsToShow}" widgetVar="schedule" draggable="false" resizable="false" timeZone="GMT+2">
 
                         <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" />
-                        <p:ajax event="dateSelect" listener="#{scheduleView.onDateSelect}" disabled="#{scheduleView.readOnly}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
-                        
-                        
+                        <p:ajax event="dateSelect" listener="#{scheduleView.onDateSelect}" disabled="#{scheduleView.readOnly}" />
+
+
                     </p:schedule>
-                    <p:dialog rendered="#{!scheduleView.readOnly}" widgetVar="eventDialog" header="Event Details" resizable="false" draggable="false" closeOnEscape="true">
-                        <h:panelGrid id="eventDetails" columns="2">
-                            <h:outputLabel for="title" value="Title:" />
-                            <p:inputText id="title" value="#{scheduleView.titleEventToManage}" required="true" />
-
-                            <h:outputLabel for="from" value="From:" />
-                            <p:inputMask id="from" value="#{scheduleView.eventToManage.startDate}" mask="99/99/9999">
-                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+2"/>
-                            </p:inputMask>
-
-                            <h:outputLabel for="to" value="To:" />
-                            <p:inputMask id="to" value="#{scheduleView.eventToManage.endDate}" mask="99/99/9999">
-                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+2"/>
-                            </p:inputMask>
-
-                            <h:outputLabel for="privacy" value="Public:" />
-                            <p:selectBooleanCheckbox id="privacy" value="#{scheduleView.privacyEventToManage}" />
-                        </h:panelGrid>
-                        <f:facet name="footer">
-                            <p:commandButton type="reset" value="Reset" />
-                            <p:commandButton id="addButton" value="Save" actionListener="#{scheduleView.saveEvent}" oncomplete="PF('schedule').update();PF('eventDialog').hide();" />
-                        </f:facet>
-
-                    </p:dialog>
 
                 </h:panelGrid>
             </h:form>
 
-            <a href="/meteoCalProj/s/manageEvent.xhtml">
-                <h:panelGroup layout="block" id="newEventButton"><span>+</span></h:panelGroup>
-                <p:tooltip for="newEventButton" value="Add a new Event!" showDelay="250"/>
-            </a>
+            <p:outputPanel rendered="#{!scheduleView.readOnly}">
+                <a href="/meteoCalProj/s/manageEvent.xhtml">
+                    <h:panelGroup layout="block" id="newEventButton"><span>+</span></h:panelGroup>
+                    <p:tooltip for="newEventButton" value="Add a new Event!" showDelay="250" />
+                </a>
+            </p:outputPanel>
         </ui:define>
 
     </ui:composition>

@@ -39,6 +39,7 @@ and open the template in the editor.
 
                                 </h:panelGrid>
                             </p:fieldset>
+                            <hr/>
                             <f:facet name="loader">
                                 <p:commandButton type="button" value="More"/>
                             </f:facet>
@@ -48,7 +49,7 @@ and open the template in the editor.
                 <p:tab title="(#{notification.eventChanges.size()}) Events Changes">
                     <h:form>
                         <p:dataScroller value="#{notification.eventChanges}" var="en" chunkSize="10">
-                            <p:fieldset legend="#{en.title}" style="margin-bottom:20px">
+                            <p:fieldset legend="#{en.title}" style="margin-bottom: 20px; ">
                                 <h:panelGrid columns="2" >
                                     
 
@@ -64,6 +65,7 @@ and open the template in the editor.
 
                                 </h:panelGrid>
                             </p:fieldset>
+                            <hr/>
                             <f:facet name="loader">
                                 <p:commandButton type="button" value="More"/>
                             </f:facet>
