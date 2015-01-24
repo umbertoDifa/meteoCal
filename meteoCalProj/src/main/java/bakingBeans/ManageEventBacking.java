@@ -770,9 +770,9 @@ public class ManageEventBacking implements Serializable {
 
     private void setRescheduleVars(int offset) {
         //creo le possibili date di reschedule
-        rescheduleDayStart = eventToCreate.getStartDateTime();
+        rescheduleDayStart = (Calendar) eventToCreate.getStartDateTime().clone();
         rescheduleDayStart.add(Calendar.DATE, offset);
-        rescheduleDayEnd = eventToCreate.getEndDateTime();
+        rescheduleDayEnd = (Calendar) eventToCreate.getEndDateTime().clone();
         rescheduleDayEnd.add(Calendar.DATE, offset);
 
         dialogueMessage += "\nWe found an available slot.\nDo you want to reschedule the event from the:\n"
