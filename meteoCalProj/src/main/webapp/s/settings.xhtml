@@ -38,13 +38,6 @@ and open the template in the editor.
                     <f:passThroughAttribute name="type" value="email" />
                 </h:inputText>
 
-                <br/><br/>
-
-                Gender:
-                <h:selectOneMenu value="#{settings.gender}" >
-                    <f:selectItems value="#{settings.genders}" />
-                    <f:selectItem value="#{null}" itemLabel="Unspecified" />
-                </h:selectOneMenu>                
 
                 <br/><br />
                 <p:commandButton id="save" value="Save" actionListener="#{settings.saveCredentials}" update="@(form)"/>
