@@ -260,7 +260,7 @@ public class ViewEventPageBacking implements Serializable {
             }
         }
         calendarName = searchCalendarByEvent();
-        logger.log(LoggerLevel.DEBUG, "lat lon:"+eventToShow.getLatitude()+eventToShow.getLongitude());
+//        logger.log(LoggerLevel.DEBUG, "lat lon:"+eventToShow.getLatitude()+eventToShow.getLongitude());
     }
 
     public void doPartecipate() {

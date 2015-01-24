@@ -297,6 +297,7 @@ public class ScheduleViewBacking implements Serializable {
             if (cal.getTitle().equals(calendarSelected)) {
                 updateEventsToShow(cal);
                 calendarShown = cal;
+                switchLabel();
             }
         }
 

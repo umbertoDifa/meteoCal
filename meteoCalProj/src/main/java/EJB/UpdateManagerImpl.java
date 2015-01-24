@@ -79,7 +79,7 @@ public class UpdateManagerImpl {
 
     //every six hours events are checked to see if there is any that needs
     //an updater to be created
-    @Schedule(hour = "*/6", minute = "*", second = "*", persistent = false) 
+    @Schedule(hour = "*", minute = "*/1", second = "*", persistent = false) 
     private void refreshEventToUpdate() {
         //while there is any element in the queue
         while (!eventsToCreateUpdater.isEmpty()) {
@@ -103,7 +103,7 @@ public class UpdateManagerImpl {
             logger.log(LoggerLevel.DEBUG, "Created updater for event {0}",
                     event.getTitle());
             ScheduledFuture<?> res = updater.runTillPast(executor, PERIOD,
-                    TimeUnit.HOURS);
+                    TimeUnit.SECONDS);
             return res;
             //periodicamente ogni 12 ore                
             //il giorno prima notificando se è brutto(inlcuso nella notifica ogni 12 ore)

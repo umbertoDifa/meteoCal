@@ -58,7 +58,7 @@ and open the template in the editor.
                                             
                                             <h:outputText value="#{en.title}" />
                                             <br />
-                                            <h:link value="Go to the event" outcome="/s/eventPage.xhtml?id=#{en.message}" />
+                                            <h:link value="Go to the event" outcome="/s/eventPage.xhtml?id=#{en.relatedEvent.id}" />
                                             
                                         </h:panelGrid>
                                     </p:outputPanel>

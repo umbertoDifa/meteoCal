@@ -116,12 +116,12 @@ public class ManageEventBacking implements Serializable {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
         Calendar cal = Calendar.getInstance();
-        
+
         startDate = dateFormat.format(cal.getTime());
         endDate = dateFormat.format(cal.getTime());
         startTime = timeFormat.format(cal.getTime());
         endTime = timeFormat.format(cal.getTime());
-        
+
     }
 
     /*
@@ -435,7 +435,7 @@ public class ManageEventBacking implements Serializable {
     public void deleteEvent() {
         logger.log(LoggerLevel.DEBUG, "-dentro delete, eventToCreate vale:"
                 + eventToCreate);
-        if (deleteManager.deleteEvent(eventToCreate,false)) {
+        if (deleteManager.deleteEvent(eventToCreate, false)) {
             logger.log(LoggerLevel.DEBUG, "-evento cancellato");
             //redirect
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
@@ -516,17 +516,29 @@ public class ManageEventBacking implements Serializable {
                     "-dentro createOrL, dentro isSaved, idEvent vale:" + id);
             if (id != null) {
                 Event eventFound = eventManager.findEventbyId(Long.parseLong(id));
-                if (((eventFound instanceof PublicEvent) && (publicAccess))
-                        || ((eventFound instanceof PrivateEvent)
-                        && (!publicAccess))) {
-                    eventToCreate = eventFound;
-                } else {
-                    if (publicAccess) {
-                        eventToCreate = new PublicEvent();
+                if (eventFound != null) {
+                    if (((eventFound instanceof PublicEvent) && (publicAccess))
+                            || ((eventFound instanceof PrivateEvent)
+                            && (!publicAccess))) {
+                        eventToCreate = eventFound;
                     } else {
-                        eventToCreate = new PrivateEvent();
+                        if (publicAccess) {
+                            eventToCreate = new PublicEvent();
+                        } else {
+                            eventToCreate = new PrivateEvent();
+                        }
+                        eventToCreate.setId(eventFound.getId());
                     }
-                    eventToCreate.setId(eventFound.getId());
+                } else {
+                    //redirect
+                    ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+                    try {
+                        context.redirect(context.getRequestContextPath()
+                                + "/error.xhtml"
+                                + "&&faces-redirect=true");
+                    } catch (IOException ex) {
+                        logger.log(Level.SEVERE, ex.getMessage(), ex);
+                    }
                 }
             } else {
                 logger.log(LoggerLevel.DEBUG, "idEvent è null");
@@ -550,51 +562,59 @@ public class ManageEventBacking implements Serializable {
      * imposta tutti i parametri di eventToCreate con i campi del form impostati
      * dall'utente
      */
-    private void setUpInstance() {
+    private boolean setUpInstance() {
         //creo un Calendar per l'inizio
         startDateTime = Calendar.getInstance();
         String[] startDateToken = startDate.split("-");
         String[] startTimeToken = startTime.split(":");
-        //lo setto all'anno, al mese (contato da zero), giorno e ora, min e secondi
-        startDateTime.set(Integer.parseInt(startDateToken[0]),
-                Integer.parseInt(startDateToken[1]) - 1,
-                Integer.parseInt(startDateToken[2]),
-                Integer.parseInt(startTimeToken[0]),
-                Integer.parseInt(startTimeToken[1]), 0);
 
-        //creo un Calendar per la fine
-        endDateTime = Calendar.getInstance();
-        String[] endDateToken = endDate.split("-");
-        String[] endTimeToken = endTime.split(":");
-        //lo setto all'anno, al mese (contato da zero), giorno e ora, min e secondi
-        endDateTime.set(Integer.parseInt(endDateToken[0]),
-                Integer.parseInt(endDateToken[1]) - 1,
-                Integer.parseInt(endDateToken[2]),
-                Integer.parseInt(endTimeToken[0]),
-                Integer.parseInt(endTimeToken[1]), 0);
+        try {
+            //lo setto all'anno, al mese (contato da zero), giorno e ora, min e secondi
+            startDateTime.set(Integer.parseInt(startDateToken[0]),
+                    Integer.parseInt(startDateToken[1]) - 1,
+                    Integer.parseInt(startDateToken[2]),
+                    Integer.parseInt(startTimeToken[0]),
+                    Integer.parseInt(startTimeToken[1]), 0);
 
-        //riempio un entità di Event con i vari attributi
-        eventToCreate.setDescription(description);
-        eventToCreate.setTitle(title);
+            //creo un Calendar per la fine
+            endDateTime = Calendar.getInstance();
+            String[] endDateToken = endDate.split("-");
+            String[] endTimeToken = endTime.split(":");
+            //lo setto all'anno, al mese (contato da zero), giorno e ora, min e secondi
+            endDateTime.set(Integer.parseInt(endDateToken[0]),
+                    Integer.parseInt(endDateToken[1]) - 1,
+                    Integer.parseInt(endDateToken[2]),
+                    Integer.parseInt(endTimeToken[0]),
+                    Integer.parseInt(endTimeToken[1]), 0);
 
-        if (place != null) {
-            logger.log(LoggerLevel.DEBUG, "place non è null!!");
-            location = place.toString();
+            //riempio un entità di Event con i vari attributi
+            eventToCreate.setDescription(description);
+            eventToCreate.setTitle(title);
+
+            if (place != null) {
+                logger.log(LoggerLevel.DEBUG, "place non è null!!");
+                location = place.toString();
+            }
+
+            logger.log(LoggerLevel.DEBUG, "Complete location is: " + location);
+            eventToCreate.setLocation(location);
+            eventToCreate.setHasLocation(hasLocation);
+            eventToCreate.setIsOutdoor(outdoor);
+            eventToCreate.setStartDateTime(startDateTime);
+            eventToCreate.setEndDateTime(endDateTime);
+            eventToCreate.setOwner(login.getCurrentUser());
+            eventManager.updateEventLatLng(eventToCreate);
+            //setto calendar all'entità corrispondente al calendarName
+            setInCalendar(calendarName);
+
+            //reset dialogue message
+            dialogueMessage = "";
+            return true;
+        } catch (NumberFormatException e) {
+            dialogueMessage = "";
+            showMessage(null, "Date and time cannot be empty", "Specify a starting, ending date and time");
+            return false;
         }
-
-        logger.log(LoggerLevel.DEBUG, "Complete location is: " + location);
-        eventToCreate.setLocation(location);
-        eventToCreate.setHasLocation(hasLocation);
-        eventToCreate.setIsOutdoor(outdoor);
-        eventToCreate.setStartDateTime(startDateTime);
-        eventToCreate.setEndDateTime(endDateTime);
-        eventToCreate.setOwner(login.getCurrentUser());
-        eventManager.updateEventLatLng(eventToCreate);
-        //setto calendar all'entità corrispondente al calendarName
-        setInCalendar(calendarName);
-
-        //reset dialogue message
-        dialogueMessage = "";
     }
 
     /**
@@ -658,12 +678,13 @@ public class ManageEventBacking implements Serializable {
     public void suggestReschedule() {
         logger.log(LoggerLevel.DEBUG, "dentro forceReschedule");
         createOrLoadInstance();
-        setUpInstance();
-        if (validateEventConstraint()) {
-            searchForReschedule();
-            updateAndShowSaveAndRescheduleDialogue();
+        if (setUpInstance()) {
+            if (validateEventConstraint()) {
+                searchForReschedule();
+                updateAndShowSaveAndRescheduleDialogue();
 
-        }// end if
+            }// end if
+        }
         //non faccio nulla perchè l'utente ha sbagliato ad inserire dei dati
     }
 
@@ -691,33 +712,36 @@ public class ManageEventBacking implements Serializable {
     public void checkEvent() {
         logger.log(LoggerLevel.DEBUG, "dentro checkEvent");
         createOrLoadInstance();
-        setUpInstance();
         RequestContext context = RequestContext.getCurrentInstance();
 
-        if (validateEventConstraint()) {
-            //controllo se ci osno porblemi i,e, conflitti o tempo malo
-            List<ControlMessages> outcome = calendarManager.checkData(
-                    eventToCreate);
+        if (setUpInstance()) {
 
-            //se tutto ok 
-            if (outcome.contains(ControlMessages.NO_PROBLEM)) {
-                //salvo l'evento/update
-                save();
-                context.execute("PF('loadingImage').hide();");
-                
-            } else {
-                //Listo gli errori
-                dialogueMessage = "";
-                for (ControlMessages mex : outcome) {
-                    dialogueMessage += mex.getMessage() + "\n";
+            if (validateEventConstraint()) {
+                //controllo se ci osno porblemi i,e, conflitti o tempo malo
+                List<ControlMessages> outcome = calendarManager.checkData(
+                        eventToCreate);
+
+                //se tutto ok 
+                if (outcome.contains(ControlMessages.NO_PROBLEM)) {
+                    //salvo l'evento/update
+                    save();
+                    context.execute("PF('loadingImage').hide();");
+
+                } else {
+                    //Listo gli errori
+                    dialogueMessage = "";
+                    for (ControlMessages mex : outcome) {
+                        dialogueMessage += mex.getMessage() + "\n";
+                    }
+
+                    searchForReschedule();
+                    updateAndShowSaveAndRescheduleDialogue();
+
                 }
-
-                searchForReschedule();
-                updateAndShowSaveAndRescheduleDialogue();
-
-            }
-        }//end if
+            }//end if
+        }
         //se ci sono problemi non ti faccio comparire la dialog per salvare
+        context.execute("PF('loadingImage').hide();");
     }
 
     private void updateAndShowSaveAndRescheduleDialogue() {
@@ -734,7 +758,7 @@ public class ManageEventBacking implements Serializable {
 
         //nascondo loading
         context.execute("PF('loadingImage').hide();");
-        
+
         //esegui dialog
         context.execute("PF('conflictDialog').show();");
     }
@@ -816,5 +840,5 @@ public class ManageEventBacking implements Serializable {
     public void removeGuest(UserModel u) {
         guests.remove(u);
     }
-    
+
 }

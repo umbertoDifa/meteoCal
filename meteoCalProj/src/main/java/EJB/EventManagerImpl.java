@@ -21,6 +21,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import model.CalendarModel;
 import model.Event;
+import model.InvitationAnswer;
 import model.NotificationType;
 import model.PublicEvent;
 import model.UserModel;
@@ -171,7 +172,7 @@ public class EventManagerImpl implements EventManager {
                     event.toString());
 
             //salvo i vecchi invitati
-            List<UserModel> oldInvitees = vecchioEvento.getInvitee();
+            List<UserModel> oldInvitees = invitationManager.getInviteesFiltered(vecchioEvento, InvitationAnswer.YES);
             logger.log(LoggerLevel.DEBUG, "I vecchi invitati sono:\n{0}",
                     oldInvitees);
 
@@ -196,7 +197,6 @@ public class EventManagerImpl implements EventManager {
 //            if (changeEventPrivacy(event, false)) {
 //                logger.log(LoggerLevel.DEBUG, "Event privacy CHANGED!");
 //            }
-
             //sincronizza il db nel dubbio
             database.flush();
             return true;
@@ -223,6 +223,7 @@ public class EventManagerImpl implements EventManager {
                 event.getDescription())) {
             oldEvent.setDescription(event.getDescription());
             changed = true;
+            logger.log(LoggerLevel.DEBUG, "trovata modifica descrizione!");
         }
         //aggiorno inizio evento
         if (oldEvent.getStartDateTime() != event.getStartDateTime()) {
@@ -230,12 +231,13 @@ public class EventManagerImpl implements EventManager {
 
             //aggiorno il tempo al nuovo giorno
             weatherManager.updateWeather(oldEvent);
-
+            logger.log(LoggerLevel.DEBUG, "trovata modifica inizio evento!");
             changed = true;
         }
         //aggiorno fine evento
         if (oldEvent.getEndDateTime() != event.getEndDateTime()) {
             oldEvent.setEndDateTime(event.getEndDateTime());
+            logger.log(LoggerLevel.DEBUG, "trovata modifica fine evento!");
             changed = true;
         }
         //aggiorno location
@@ -262,6 +264,7 @@ public class EventManagerImpl implements EventManager {
         if (oldEvent.getTitle() == null ? (event.getTitle()) != null : !oldEvent.getTitle().equals(
                 event.getTitle())) {
             oldEvent.setTitle(event.getTitle());
+            logger.log(LoggerLevel.DEBUG, "trovata modifica titolo!");
             changed = true;
         }
         //aggiorno outdoor
@@ -271,6 +274,7 @@ public class EventManagerImpl implements EventManager {
             if (event.isIsOutdoor()) {
                 weatherManager.updateWeather(oldEvent);
             }
+            logger.log(LoggerLevel.DEBUG, "trovata modifica outdoor!");
             changed = true;
         }
 
@@ -356,7 +360,6 @@ public class EventManagerImpl implements EventManager {
 //        }
 //        return false;
 //    }
-
     @Override
     public List<Event> eventOnWall(utility.EventType type, int n, UserModel owner) {
         owner = database.find(UserModel.class, owner.getId());

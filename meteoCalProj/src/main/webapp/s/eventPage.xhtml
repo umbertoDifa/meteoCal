@@ -82,7 +82,7 @@ and open the template in the editor.
             </p:panelGrid>
             
             <p:gmap rendered="#{viewEvent.eventToShow.hasLocation}"  center="#{viewEvent.eventToShow.latitude}, #{viewEvent.eventToShow.longitude}" zoom="15" type="hybrid" style="height:150px" />
-            
+            <br/>
             <p:outputPanel rendered="#{not empty viewEvent.eventToShow.description}" >
                 <i class="fa fa-quote-left"/><h:outputLabel value=" Description:" /><br />
                 <p:panel style="overflow: auto;">
@@ -124,7 +124,7 @@ and open the template in the editor.
 
                 <p:splitButton id="button1" value="#{viewEvent.answerMessage}" rendered="#{(viewEvent.hasAnswered or viewEvent.hasInvitation) and viewEvent.publicAccess and !viewEvent.eventMine}">
                     <p:menuitem value="Participate" update="@(form)" actionListener="#{viewEvent.doPartecipate()}" rendered="#{viewEvent.hasInvitation and !viewEvent.partecipate}" />
-                    <p:menuitem value="Decline" update="@(form)" actionListener="#{viewEvent.doDecline()}" rendered="#{viewEvent.publicJoin or (viewEvent.partecipate and viewEvent.hasInvitation and viewEvent.hasAnswered)}" />
+                    <p:menuitem value="Decline" update="@(form)" actionListener="#{viewEvent.doDecline()}" rendered="#{viewEvent.publicJoin or (viewEvent.partecipate and viewEvent.hasInvitation and viewEvent.hasAnswered) or (viewEvent.hasInvitation and !viewEvent.hasAnswered)}" />
                 </p:splitButton>
 
 
