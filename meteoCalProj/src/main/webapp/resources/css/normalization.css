@@ -27,7 +27,7 @@ a {
 #centerLayout {
     min-width: 700px;
     max-width: 900px;
-    margin: 0 auto !important;
+    margin: 0 auto 50px auto !important;
     height: 100%;
 }
 
@@ -67,30 +67,26 @@ hr {
     padding: 4px 4px 4px 4px;
 }*/
 
-.linkStyle {
+.linkStyle, .linkStyle2 {
     background:none!important;
     border:none; 
     padding:0!important;
     cursor: pointer;
     color: #1976D2 !important;
+    border: 0;
 }
 
 .linkStyle:hover {
     color: white !important;
-    background: #1976D2;
 }
 
 .linkStyle ui-icon {
     background-image: none;
 }
-/*
-.ui-dialog {
-    white-space: nowrap;        
-}
 
-.ui-dialog-footer, .ui-panelgrid-footer {
-    text-align: center !important;
-}*/
+.linkStyle2:hover {
+    color: #1976D2 !important;
+}
 
 .ui-toolbar form {
     display: inline-block;
@@ -298,4 +294,8 @@ h1, h2, h3 {
     box-shadow: 2px 3px 4px rgba(0,0,0,0.5)  !important;
     moz-box-shadow: 2px 3px 4px rgba(0,0,0,0.5) !important;
     webkit-box-shadow: 2px 3px 4px rgba(0,0,0,0.5)  !important;
+}
+
+.ui-tooltip {
+    background: #BBDEFB;
 }

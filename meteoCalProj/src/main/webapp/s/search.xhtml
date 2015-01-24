@@ -29,7 +29,7 @@ and open the template in the editor.
 
             <h:form>
 
-                <h:inputText id="searchKey" value="#{search.searchKey}" required="true" validatorMessage="insert minimum 2 character" >
+                <h:inputText id="searchKey" value="#{search.searchKey}" validatorMessage="insert minimum 2 character" >
                     <f:validateLength minimum="2" />
                 </h:inputText>
 
@@ -44,6 +44,7 @@ and open the template in the editor.
 
             </h:form>
             <br/>
+            <h:outputText value="There are no results for your search" rendered="#{ (not empty search.searchKey )and ( empty search.eventResults) or ( empty search.userResults)}" />
             <p:tabView rendered="#{(not empty search.eventResults) or (not empty search.userResults)}">
                 <p:tab title="(#{search.eventResults.size()}) Event">
                     <h:form>
@@ -72,7 +73,7 @@ and open the template in the editor.
 
                                 </h:panelGrid>
                             </p:fieldset>
-
+                            <hr/>
                             <f:facet name="loader">
                                 <p:commandButton type="button" value="More"/>
                             </f:facet>
@@ -100,6 +101,7 @@ and open the template in the editor.
 
                                 </h:panelGrid>
                             </p:fieldset>
+                            <hr/>
                             <f:facet name="loader">
                                 <p:commandButton type="button" value="More"/>
                             </f:facet>

@@ -51,7 +51,7 @@ and open the template in the editor.
                 <f:facet name="right">
                     <h:form id="publicSwitchForm" rendered="#{!scheduleView.readOnly}">
                         <h:panelGrid >
-                            <p:commandButton class="linkStyle" id="publicSwitch" widgetVar="publicSwitch" value="#{scheduleView.labelPrivacy}" actionListener="#{scheduleView.switchPrivacy()}" update="@this"  />
+                            <p:commandButton class="linkStyle" id="publicSwitch" icon="ui-icon-refresh" widgetVar="publicSwitch" value="#{scheduleView.labelPrivacy}" actionListener="#{scheduleView.switchPrivacy()}" update="@this"  />
                         </h:panelGrid>
                     </h:form>
 

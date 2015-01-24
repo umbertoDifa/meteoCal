@@ -129,10 +129,10 @@
                                     <h:inputText pt:placeholder="Title" value="#{eventToManage.title}" style="width: 176px; text-overflow: ellipsis;"/>
 
                                     <i class="fa fa-calendar"/> Add into:
-                                    <h:selectOneMenu value="#{eventToManage.calendarName}" style="width: 180px; text-overflow: ellipsis;"  >
+                                    <p:selectOneMenu value="#{eventToManage.calendarName}" style="width: 180px; text-overflow: ellipsis;"  >
                                         <f:selectItems value="#{calendar.calendarNames}"/>
                                         <f:selectItem value="#{null}" itemLabel="No Calendar" />
-                                    </h:selectOneMenu>
+                                    </p:selectOneMenu>
 
                                     <i class="fa fa-calendar-o"></i> Starting date:
                                     <h:inputText id="startingDate" value="#{eventToManage.startDate}">
@@ -161,8 +161,10 @@
                                         </p:outputLabel>
                                         <p:tooltip for="toolTipTrack2" value="Every user can see the event when public!" />
                                     </p:outputPanel>
-                                    <h:selectBooleanCheckbox disabled="#{eventToManage.saved}" value="#{eventToManage.publicAccess}"/>
-
+                                    <p:outputPanel>
+                                        <h:selectBooleanCheckbox id="privacyCheckbox" disabled="#{eventToManage.saved}" value="#{eventToManage.publicAccess}"/>
+                                        <p:tooltip for="privacyCheckbox" value="Once created the privacy can't be changed" />
+                                    </p:outputPanel>
                                     <i class="fa fa-map-marker"></i> Location:
 
                                     <p:outputPanel >
@@ -193,7 +195,7 @@
                                 <br/>
 
                                 <i class="fa fa-quote-left"/><h:outputLabel value=" Description:" /><br />
-                                <h:inputTextarea value="#{eventToManage.description}" style="resize: none; width: 100%;" /><br />
+                                <p:inputTextarea value="#{eventToManage.description}" style="width: 100%;" autoResize="true" /><br />
 
                                 <br/>
 
@@ -201,7 +203,7 @@
                                 <p:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/calendar.xhtml"/> 
                                 <p:commandButton id="delete" value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.deleteEvent}"/>
                                 <p:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.id}"/>
-                                
+
                                 <p:commandButton value="Try Reschedule" actionListener="#{eventToManage.suggestReschedule()}" rendered="#{eventToManage.saved}"/>
                             </h:form>
                         </p:panel>
@@ -216,21 +218,21 @@
                             <h:form id="inviteForm">
                                 <p:fieldset legend="Pending guests" rendered="#{not empty eventToManage.guests}" >
                                     <c:forEach items="#{eventToManage.guests}" var="g" >
-                                        <p:commandButton icon="ui-icon-closethick" id="toolTipTrack3" class="linkStyle" value="#{g.email}" actionListener="#{eventToManage.removeGuest(g)}" update="@form" />
+                                        <p:commandButton icon="ui-icon-closethick" id="toolTipTrack3" class="linkStyle2" value="#{g.email}" actionListener="#{eventToManage.removeGuest(g)}" update="@form" />
                                         <br/>
                                     </c:forEach>
                                 </p:fieldset><br/>
 
                                 <h:outputLabel value="Invite: "/>
-                                <h:inputText id="email" value="#{eventToManage.newGuestEmail}" required="true" validatorMessage="insert minimum 2 character" requiredMessage="Insert a search key">
+                                <p:inputText id="email" value="#{eventToManage.newGuestEmail}" required="true" validatorMessage="insert minimum 2 character" requiredMessage="Insert a search key">
                                     <f:validateLength minimum="2" />
-                                </h:inputText>
+                                </p:inputText>
                                 <p:commandButton value="Search" update="@form" actionListener="#{eventToManage.showResultUsers}" /><br/><br/>
 
                                 <p:panel rendered="#{eventToManage.displayResultUsers}" >
                                     <h:outputText value="Results:  (click to invite!)" /><br/><br/>
                                     <c:forEach items="#{eventToManage.resultUsers}" var="u">
-                                        <p:commandButton class="linkStyle" update="@form" value="#{u.email}" actionListener="#{eventToManage.invite(u.email)}" /><br/>
+                                        <p:commandButton class="linkStyle2" update="@form" value="#{u.email}" actionListener="#{eventToManage.invite(u.email)}" /><br/>
                                     </c:forEach>
 
                                 </p:panel><br/>

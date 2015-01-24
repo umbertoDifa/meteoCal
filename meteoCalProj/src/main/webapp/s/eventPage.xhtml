@@ -128,14 +128,17 @@ and open the template in the editor.
             </h:form>
             <br/>
             <h:form id="addCalendarForm" style="display: inline-block">
-                <p:outputPanel  rendered="#{!viewEvent.eventMine and ((viewEvent.publicAccess and (viewEvent.publicJoin or (viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))) or ( !viewEvent.publicAccess and viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))}">
-                <i class="fa fa-calendar"/> Add into:
-                <h:selectOneMenu value="#{viewEvent.calendarName}" style="width: 180px; text-overflow: ellipsis;"  >
-                    <f:selectItems value="#{calendar.calendarNames}"/>
-                    <f:selectItem value="#{null}" itemLabel="Nessun Calendario" />
-                </h:selectOneMenu>
 
-                <p:commandButton widgetVar="addCalButton" id="save" value="Save" action="#{viewEvent.addToCalendar}" update="@form"/>
+                <p:outputPanel  rendered="#{!viewEvent.eventMine and ((viewEvent.publicAccess and (viewEvent.publicJoin or (viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))) or ( !viewEvent.publicAccess and viewEvent.partecipate and viewEvent.hasAnswered and viewEvent.hasInvitation))}">
+                    <h:panelGrid columns="3" >
+                        <i class="fa fa-calendar"/> Add into: 
+                        <p:selectOneMenu value="#{viewEvent.calendarName}" style="width: 180px; text-overflow: ellipsis;"  >
+                            <f:selectItems value="#{calendar.calendarNames}"/>
+                            <f:selectItem value="#{null}" itemLabel="No Calendar" />
+                        </p:selectOneMenu>
+
+                        <p:commandButton widgetVar="addCalButton" id="save" value="Save" action="#{viewEvent.addToCalendar}" update="@form"/>
+                    </h:panelGrid>
                 </p:outputPanel>
             </h:form> 
 
