@@ -34,7 +34,7 @@ public class SearchManagerImpl implements SearchManager {
         return user;
     }
 
-    //TODO non è mai usata
+    
     @Override
     public List<UserModel> searchUserForInvitation(String stringToSearch, Event event) {
         List<UserModel> users = searchUsers(stringToSearch);

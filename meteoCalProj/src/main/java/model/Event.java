@@ -42,6 +42,7 @@ import javax.persistence.Temporal;
             query = "SELECT e FROM Event e WHERE e.title LIKE :search"),
     @NamedQuery(name = "findEventbyTitle",
             query = "SELECT e FROM Event e WHERE e.title=:title"),
+    @NamedQuery(name = "findAllEventsWithLocation",query = "SELECT e FROM Event e WHERE e.hasLocation = 1"),
     //Da chiamare sempre limitando i risulati ad 1 solo!
     @NamedQuery(name = "isConflicting",
             query = "SELECT COUNT(e) FROM Event e INNER JOIN e.inCalendars c WHERE c.owner=:user AND (e.id!= :id) AND ((e.startDateTime >= :start AND e.startDateTime < :end) OR (e.startDateTime < :start AND e.endDateTime > :start))"),

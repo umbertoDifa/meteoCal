@@ -129,7 +129,6 @@ public class WeatherManagerImpl implements WeatherManager {
 
         //se chiede il forecast di un giorno passato per ora il risultato 
         //è unpredictable
-        //TODO vedi se riesci a fare qualcosa con la history
         //se per un giorno passato allora unpredictable
         if (TimeTool.isBefore(dayToCheck, today)) {
             return ForecastType.UNPREDICTABLE;
@@ -273,8 +272,6 @@ public class WeatherManagerImpl implements WeatherManager {
         }
     }
 
-    //TODO questo controlla il get(0) cioè le previsioni per mezzanotte, sarebbe
-    //opportuno ricevere le previsioni più vicine all'ora dell'eventos
     private boolean infoIsAvailable5Days(Calendar day) {
         try {
             position = this.findDayPositionInForecastList(forecastFiveDays, day);

@@ -204,8 +204,6 @@ public class CalendarManagerImpl implements CalendarManager {
                 return i;
             }
         }
-
-        //TODO modificare questo orrore
         return -1;
     }
 

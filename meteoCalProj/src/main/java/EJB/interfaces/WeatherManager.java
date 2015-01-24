@@ -19,9 +19,6 @@ public interface WeatherManager {
      * @return Ritorna un oggetto che contiene la previsione, può essere vuoto
      */
     public WeatherForecast getWeather(Event event);
-    //TODO sarebbe corretto salvare le previsioni del tempo nel database
-    //e aggiornarle ogni tanto senza caricarle in real time ogni volta che un user apre
-    //un evento
 
     public void updateWeather(Event event);
 }

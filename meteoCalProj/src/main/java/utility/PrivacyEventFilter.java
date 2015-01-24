@@ -72,7 +72,7 @@ public class PrivacyEventFilter implements Filter {
                     } catch (NumberFormatException ex) {
                         ((HttpServletResponse) response).sendError(
                                 HttpServletResponse.SC_BAD_REQUEST,
-                                "The event doesn't exist.");
+                                "The event does not exist.");
                         error = true;
                     }
                 } else {

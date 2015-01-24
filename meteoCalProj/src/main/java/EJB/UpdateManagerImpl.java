@@ -1,11 +1,9 @@
 package EJB;
 
 import EJB.interfaces.WeatherManager;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,12 +16,11 @@ import javax.annotation.Resource;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ejb.Timer;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import model.Event;
-import model.PrivateEvent;
 import utility.EntityManagerHelper;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
@@ -35,8 +32,11 @@ public class UpdateManagerImpl {
     @Inject
     WeatherManager weatherManager;
 
-    @Resource//TODO check if needed
+    @Resource
     TimerService timerService;
+
+    @PersistenceContext(unitName = "meteoCalDB")
+    private EntityManager database;
 
     private Logger logger = LoggerProducer.debugLogger(UpdateManagerImpl.class);
 
@@ -48,23 +48,21 @@ public class UpdateManagerImpl {
     @PostConstruct
     private void init() {
         eventsToCreateUpdater = new LinkedList<>();
-        //per cancellare timer rimasti attivi nelle prove
-//        for (Object obj : timerService.getTimers()) {
-//            Timer t = (Timer) obj;
-//            logger.log(LoggerLevel.DEBUG, "Timer cancellato: " + t.toString());
-//            t.cancel();
-//        }
+
+        //aggiungo tutti gli eventi nel db a quelli la cui location va refreshata
+        List<Event> eventsInDB = database.createNamedQuery(
+                "findAllEventsWithLocation").getResultList();
+
+        for (Event e : eventsInDB) {
+            eventsToCreateUpdater.add(e);
+        }
+        logger.log(LoggerLevel.DEBUG,
+                "Weather updater started and events loaded");
+
     }
 
     private final static int PERIOD = 12;
 
-    //TODO
-    //all'avvio bisognerebbe prendere tutti gli eventi nel db
-    //e metterli in lista perchè gli venga attacato un updater
-    //ammenocchè il timer non sia persistent=true
-    /**
-     * Constructor for container
-     */
     public UpdateManagerImpl() {
 
     }
@@ -81,7 +79,7 @@ public class UpdateManagerImpl {
 
     //every six hours events are checked to see if there is any that needs
     //an updater to be created
-    @Schedule(hour = "*/6", minute = "*", second = "*", persistent = false) //TODO fixme sia l'ora che il persistent da discutere
+    @Schedule(hour = "*/6", minute = "*", second = "*", persistent = false) 
     private void refreshEventToUpdate() {
         //while there is any element in the queue
         while (!eventsToCreateUpdater.isEmpty()) {
@@ -105,7 +103,7 @@ public class UpdateManagerImpl {
             logger.log(LoggerLevel.DEBUG, "Created updater for event {0}",
                     event.getTitle());
             ScheduledFuture<?> res = updater.runTillPast(executor, PERIOD,
-                    TimeUnit.HOURS);//TODO fixme
+                    TimeUnit.HOURS);
             return res;
             //periodicamente ogni 12 ore                
             //il giorno prima notificando se è brutto(inlcuso nella notifica ogni 12 ore)
@@ -130,21 +128,31 @@ public class UpdateManagerImpl {
         public void run() {
             this.event = database.find(Event.class, event.getId());
 
-            //refresho l'evento nel caso la data di fine sia cambiata
-            database.refresh(event);
+            //se trovo l'evento
+            if (this.event != null) {
+                //refresho l'evento nel caso la data di fine sia cambiata
+                database.refresh(event);
 
-            //se oggi è prima della fine dell'evento
-            if (Calendar.getInstance().before(event.getEndDateTime())) {
-                //lo aggiorno
-                logger.log(LoggerLevel.DEBUG,
-                        "Update weather fired for event {0}",
-                        event.getTitle());
-                weatherManager.updateWeather(event);
-            } else {
-                //l'evento è passato elimino il thread di update
-                logger.log(LoggerLevel.DEBUG, "Updater terminated for event{0}",
-                        event.getTitle());
-                self.cancel(true);
+                //se oggi è prima della fine dell'evento
+                if (Calendar.getInstance().before(event.getEndDateTime())) {
+                    //lo aggiorno
+                    logger.log(LoggerLevel.DEBUG,
+                            "Update weather fired for event {0}",
+                            event.getTitle());
+                    weatherManager.updateWeather(event);
+                } else {
+                    //l'evento è passato elimino il thread di update
+                    logger.log(LoggerLevel.DEBUG,
+                            "Updater terminated for event{0}",
+                            event.getTitle());
+                    self.cancel(true);
+                }
+            }else{
+                //l'evento è eliminato elimino il thread di update
+                    logger.log(LoggerLevel.DEBUG,
+                            "Updater terminated for event{0}",
+                            event.getTitle());
+                    self.cancel(true);
             }
 
         }

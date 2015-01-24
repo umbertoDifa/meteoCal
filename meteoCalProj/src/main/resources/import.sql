@@ -79,7 +79,7 @@ insert into INVITATION (INVITEE_ID, EVENT_ID, ANSWER)
 insert into NOTIFICATION (ID, TITLE, MESSAGE, `TYPE`, ISREAD, RECIPIENT_ID, RELATEDEVENT_ID)
     values 
     (1, "Invitation for Birthday Party!", "You have received an invitation for event Birthday Party! from angelo.francesco.mobile@gmail.com. Check it out!", "INVITATION", 0, 2,2),
-    (2, "Invitation for Birthday Party!", "You have received an invitation for event Birthday Party! from angelo.francesco.mobile@gmail.com. Check it out!", "INVITATION", 0, 2,3);
+    (2, "Invitation for Birthday Party!", "You have received an invitation for event Birthday Party! from angelo.francesco.mobile@gmail.com. Check it out!", "INVITATION", 0, 3,2);
 
 
 UPDATE SEQUENCE
