@@ -42,6 +42,7 @@ import org.primefaces.model.UploadedFile;
 
 import utility.LoggerLevel;
 import utility.LoggerProducer;
+import utility.PasswordTool;
 import utility.TimeTool;
 import wrappingObjects.Pair;
 
@@ -59,7 +60,7 @@ public class SettingManagerImpl implements SettingManager {
 
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
-    
+
     @Inject
     private Logger logger;
 
@@ -503,20 +504,24 @@ public class SettingManagerImpl implements SettingManager {
 
     }
 
-   
-
     @Override
     public boolean changePassword(UserModel user, String oldPassword, String newPassword) {
         if (user != null && !oldPassword.isEmpty() && !newPassword.isEmpty()) {
             user = database.find(UserModel.class, user.getId());
             if (user != null) {
-                if (user.getPassword().equals(oldPassword)) {
-                    user.setPassword(newPassword);
-                    database.flush();
-                    return true;
-                } else {
+                try {
+                    if (PasswordTool.check(oldPassword, user.getPassword())) {
+                        user.setPassword(PasswordTool.getSaltedHash(newPassword));
+                        database.flush();
+                        return true;
+                    } else {
+                        logger.log(LoggerLevel.WARNING,
+                                "La vecchia password è sbagliata");
+                        return false;
+                    }
+                } catch (Exception ex) {
                     logger.log(LoggerLevel.WARNING,
-                            "La vecchia password è sbagliata");
+                            "Errore nel check/salting della password");
                     return false;
                 }
             } else {
