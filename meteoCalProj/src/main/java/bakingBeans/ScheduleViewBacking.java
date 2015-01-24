@@ -53,9 +53,6 @@ public class ScheduleViewBacking implements Serializable {
     private CalendarManager calendarManager;
 
     @Inject
-    private ManageEventBacking manageEventBacking;
-
-    @Inject
     private SearchManager search;
 
     @Inject
@@ -86,6 +83,7 @@ public class ScheduleViewBacking implements Serializable {
     private CalendarModel calendarToCreate;
 
     private Logger logger = LoggerProducer.debugLogger(ScheduleViewBacking.class);
+    private boolean publicCalendarEmpty;
 
 
     /*
@@ -141,6 +139,14 @@ public class ScheduleViewBacking implements Serializable {
         this.id = id;
     }
 
+    public boolean isPublicCalendarEmpty() {
+        return publicCalendarEmpty;
+    }
+
+    public void setPublicCalendarEmpty(boolean publicCalendarEmpty) {
+        this.publicCalendarEmpty = publicCalendarEmpty;
+    }
+
     public boolean isReadOnly() {
         return readOnly;
     }
@@ -177,6 +183,14 @@ public class ScheduleViewBacking implements Serializable {
         this.privacyEventToManage = privacyEventToManage;
     }
 
+    public UserModel getUser() {
+        return user;
+    }
+
+    public void setUser(UserModel user) {
+        this.user = user;
+    }
+
     /*
      *
      * METHODS
@@ -201,28 +215,37 @@ public class ScheduleViewBacking implements Serializable {
 
             // tolgo i calendari privati se visitatore
             if (readOnly) {
-                for (int i = 0; i < calendars.size(); i++) {
-                    if (!calendars.get(i).isIsPublic()) {
-                        calendars.remove(i);
+                List<CalendarModel> publicCalendars = new ArrayList<>();
+                for (CalendarModel calendar : calendars) {
+                    if (calendar.isIsPublic()) {
+                        publicCalendars.add(calendar);
                     }
                 }
+                calendars = publicCalendars;
             }
 
             if (calendars != null && !calendars.isEmpty()) {
+                publicCalendarEmpty = false;
+
                 //riempio la tendina
                 calendarNames = getCalendarTitles();
 
                 //riempio la lista di eventi visibili nello schedule
                 if (readOnly) {
                     updateEventsToShow(calendars.get(0));
+                    calendarSelected = calendars.get(0).getTitle();
+                    calendarShown = calendars.get(0);
                 } else {
                     updateEventsToShow(calendarManager.getDefaultCalendar(user));
+                    calendarSelected = calendarManager.getDefaultCalendar(user).getTitle();
+                    calendarShown = calendarManager.getDefaultCalendar(user);
                 }
+                switchLabel();
 
-                calendarSelected = calendarManager.getDefaultCalendar(user).getTitle();
-                calendarShown = calendarManager.getDefaultCalendar(user);
+            } else {
+                publicCalendarEmpty = true;
             }
-            switchLabel();
+
         }
         //inizializzo etichetta pulsante cambio privacy
         logger.log(LoggerLevel.DEBUG, "dentro init. user: " + user
@@ -269,10 +292,10 @@ public class ScheduleViewBacking implements Serializable {
      * @param selectEvent
      */
     public void onDateSelect(SelectEvent selectEvent) {
-        if (Calendar.getInstance().getTime().after((Date)selectEvent.getObject())) {
-            
+        if (Calendar.getInstance().getTime().after((Date) selectEvent.getObject())) {
+
             showGrowl(GrowlMessage.ERROR_CREATE_PAST_EVET);
-            
+
         } else {
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
             try {
@@ -285,8 +308,6 @@ public class ScheduleViewBacking implements Serializable {
         }
     }
 
-    
-
     /**
      * quando il calendario cambia faccio il refresh degli eventi da
      * visualizzare
@@ -296,7 +317,7 @@ public class ScheduleViewBacking implements Serializable {
         for (CalendarModel cal : calendars) {
             if (cal.getTitle().equals(calendarSelected)) {
                 updateEventsToShow(cal);
-                calendarShown = cal;
+                calendarShown = calendarManager.getCalendarUpdated(cal);
                 switchLabel();
             }
         }
@@ -445,7 +466,7 @@ public class ScheduleViewBacking implements Serializable {
         updateEventsToShow(calendarShown);
     }
 
-    private class EventDetails {
+    private class EventDetails implements Serializable {
 
         private Long id;
         private boolean pub;
@@ -491,10 +512,10 @@ public class ScheduleViewBacking implements Serializable {
      * cambia privacy al calendario visualizzato correntemente
      */
     public void switchPrivacy() {
-        System.out.println("Privacy: " + calendarShown.isIsPublic());
+        logger.log(LoggerLevel.DEBUG, "Privacy: " + calendarShown.isIsPublic());
         calendarManager.toggleCalendarPrivacy(calendarShown);
         calendarShown = calendarManager.getCalendarUpdated(calendarShown);
-        System.out.println("Privacy: " + calendarShown.isIsPublic());
+        logger.log(LoggerLevel.DEBUG, "Privacy: " + calendarShown.isIsPublic());
         switchLabel();
 
         if (calendarShown.isIsPublic()) {

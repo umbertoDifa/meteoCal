@@ -26,7 +26,9 @@ import model.NotificationType;
 import model.PublicEvent;
 import model.UserModel;
 import model.WeatherForecast;
+import utility.ControlMessages;
 import utility.LoggerLevel;
+import utility.TimeTool;
 
 @Stateless
 public class EventManagerImpl implements EventManager {
@@ -95,14 +97,14 @@ public class EventManagerImpl implements EventManager {
         return true;
     }
 
-    //NB non usare il database in questo metodo perchè l'event potrebbe non essere nel db
+    //NB non usare il database in questo metodo perchÃ¨ l'event potrebbe non essere nel db
     @Override
     public void updateEventLatLng(Event event) {
         GeoApiContext context = new GeoApiContext().setApiKey(
                 "AIzaSyCAlR8JiKO0QPZ_tm51cJITop7aGTDcnlo");
         GeocodingResult[] results;
 
-        //se l'utente ha inserito un indirizzo e l'indirizzo è capito da google 
+        //se l'utente ha inserito un indirizzo e l'indirizzo Ã¨ capito da google 
         if (event.hasLocation() && event.getLocation() != null) {
             try {
                 //cerco di trovare le coordinate corrispondenti
@@ -188,7 +190,9 @@ public class EventManagerImpl implements EventManager {
 
             //aggiungo l'evento al (nuovo) calendario se necessario
             if (inCalendar != null) {
-                calManager.addToCalendar(vecchioEvento, inCalendar);
+                if (calManager.addToCalendar(vecchioEvento, inCalendar) != ControlMessages.EVENT_ADDED) {
+                    return false;
+                }
                 logger.log(LoggerLevel.DEBUG, "evento aggiunto al celendario{0}",
                         inCalendar);
             }
@@ -217,74 +221,77 @@ public class EventManagerImpl implements EventManager {
     private boolean updateEventData(Event event) {
         Event oldEvent = database.find(Event.class, event.getId());
         boolean changed = false;
+        if (oldEvent != null) {
+            //aggiorno la descrizione
+            if (oldEvent.getDescription() == null ? (event.getDescription()) != null : !oldEvent.getDescription().equals(
+                    event.getDescription())) {
+                oldEvent.setDescription(event.getDescription());
+                changed = true;
+                logger.log(LoggerLevel.DEBUG, "trovata modifica descrizione!");
+            }
+            //aggiorno inizio evento
+            if (!TimeTool.dateToTextDay(oldEvent.getStartDateTime().getTime(), "yyyy-MM-dd hh:mm").equals(TimeTool.dateToTextDay(event.getStartDateTime().getTime(), "yyyy-MM-dd hh:mm"))) {
+                oldEvent.setStartDateTime(event.getStartDateTime());
 
-        //aggiorno la descrizione
-        if (oldEvent.getDescription() == null ? (event.getDescription()) != null : !oldEvent.getDescription().equals(
-                event.getDescription())) {
-            oldEvent.setDescription(event.getDescription());
-            changed = true;
-            logger.log(LoggerLevel.DEBUG, "trovata modifica descrizione!");
-        }
-        //aggiorno inizio evento
-        if (oldEvent.getStartDateTime() != event.getStartDateTime()) {
-            oldEvent.setStartDateTime(event.getStartDateTime());
-
-            //aggiorno il tempo al nuovo giorno
-            weatherManager.updateWeather(oldEvent);
-            logger.log(LoggerLevel.DEBUG, "trovata modifica inizio evento!");
-            changed = true;
-        }
-        //aggiorno fine evento
-        if (oldEvent.getEndDateTime() != event.getEndDateTime()) {
-            oldEvent.setEndDateTime(event.getEndDateTime());
-            logger.log(LoggerLevel.DEBUG, "trovata modifica fine evento!");
-            changed = true;
-        }
-        //aggiorno location
-        if (oldEvent.getLocation() == null ? (event.getLocation()) != null : !oldEvent.getLocation().equals(
-                event.getLocation())) {
-
-            if (!event.getLocation().isEmpty()) {
-                logger.log(LoggerLevel.DEBUG, "trovata modifica location!");
-                logger.log(LoggerLevel.DEBUG, "vecchia location: "
-                        + oldEvent.getLocation() + " nuova: "
-                        + event.getLocation());
-                logger.log(LoggerLevel.DEBUG, "vecchia has location: "
-                        + oldEvent.hasLocation() + "nuova: "
-                        + event.hasLocation());
-                oldEvent.setLocation(event.getLocation());
-                oldEvent.setHasLocation(event.hasLocation());
-                this.updateEventLatLng(oldEvent);
+                //aggiorno il tempo al nuovo giorno
                 weatherManager.updateWeather(oldEvent);
-
+                logger.log(LoggerLevel.DEBUG, "trovata modifica inizio evento!");
                 changed = true;
             }
-        }
-        //aggiorno titolo
-        if (oldEvent.getTitle() == null ? (event.getTitle()) != null : !oldEvent.getTitle().equals(
-                event.getTitle())) {
-            oldEvent.setTitle(event.getTitle());
-            logger.log(LoggerLevel.DEBUG, "trovata modifica titolo!");
-            changed = true;
-        }
-        //aggiorno outdoor
-        if (oldEvent.isIsOutdoor() != event.isIsOutdoor()) {
-            oldEvent.setIsOutdoor(event.isIsOutdoor());
-            //se ora è diventato outdoor
-            if (event.isIsOutdoor()) {
-                weatherManager.updateWeather(oldEvent);
+            //aggiorno fine evento
+            if (!TimeTool.dateToTextDay(oldEvent.getEndDateTime().getTime(), "yyyy-MM-dd hh:mm").equals(TimeTool.dateToTextDay(event.getEndDateTime().getTime(), "yyyy-MM-dd hh:mm"))) {
+                oldEvent.setEndDateTime(event.getEndDateTime());
+                logger.log(LoggerLevel.DEBUG, "trovata modifica fine evento!");
+                changed = true;
             }
-            logger.log(LoggerLevel.DEBUG, "trovata modifica outdoor!");
-            changed = true;
+            //aggiorno location
+            if (oldEvent.getLocation() == null ? (event.getLocation()) != null : !oldEvent.getLocation().equals(
+                    event.getLocation())) {
+
+                if (!event.getLocation().isEmpty()) {
+                    logger.log(LoggerLevel.DEBUG, "trovata modifica location!");
+                    logger.log(LoggerLevel.DEBUG, "vecchia location: "
+                            + oldEvent.getLocation() + " nuova: "
+                            + event.getLocation());
+                    logger.log(LoggerLevel.DEBUG, "vecchia has location: "
+                            + oldEvent.hasLocation() + "nuova: "
+                            + event.hasLocation());
+                    oldEvent.setLocation(event.getLocation());
+                    oldEvent.setHasLocation(event.hasLocation());
+                    this.updateEventLatLng(oldEvent);
+                    weatherManager.updateWeather(oldEvent);
+
+                    changed = true;
+                }
+            }
+            //aggiorno titolo
+            if (oldEvent.getTitle() == null ? (event.getTitle()) != null : !oldEvent.getTitle().equals(
+                    event.getTitle())) {
+                oldEvent.setTitle(event.getTitle());
+                logger.log(LoggerLevel.DEBUG, "trovata modifica titolo!");
+                changed = true;
+            }
+            //aggiorno outdoor
+            if (oldEvent.isIsOutdoor() != event.isIsOutdoor()) {
+                oldEvent.setIsOutdoor(event.isIsOutdoor());
+                //se ora Ã¨ diventato outdoor
+                if (event.isIsOutdoor()) {
+                    weatherManager.updateWeather(oldEvent);
+                }
+                logger.log(LoggerLevel.DEBUG, "trovata modifica outdoor!");
+                changed = true;
+            }
+
+            //sincronizzo ogni eventuale cambiamento col db
+            database.flush();
+
+            logger.log(LoggerLevel.DEBUG,
+                    "Event Data updated with modification: {0}", changed);
+
+            return changed;
+        } else {
+            return false;
         }
-
-        //sincronizzo ogni eventuale cambiamento col db
-        database.flush();
-
-        logger.log(LoggerLevel.DEBUG,
-                "Event Data updated with modification: {0}", changed);
-
-        return changed;
     }
 
 //    @Override
@@ -499,7 +506,7 @@ public class EventManagerImpl implements EventManager {
     ) {
         Long i = (Long) database.createNamedQuery("isInAnyCalendar").setParameter(
                 "event", event.getId()).setParameter("user", user).getSingleResult();
-        logger.log(LoggerLevel.DEBUG, "Evento già in " + i + " calendari!");
+        logger.log(LoggerLevel.DEBUG, "Evento giÃ  in " + i + " calendari!");
         return i != 0;
     }
 

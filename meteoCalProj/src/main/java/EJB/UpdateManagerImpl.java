@@ -25,8 +25,8 @@ import utility.EntityManagerHelper;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
 
-@Singleton
-@Startup
+//@Singleton
+//@Startup
 public class UpdateManagerImpl {
 
     @Inject

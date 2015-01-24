@@ -27,16 +27,25 @@ and open the template in the editor.
 
                 <h:outputLabel>Name, Surname: </h:outputLabel> 
 
-                <h:inputText id="name" value="#{settings.name}" pt:required="" /> , 
-                <h:inputText id="surname" value="#{settings.surname}" pt:required=""/>
+                <p:inputText id="name" value="#{settings.name}" validatorMessage="The name must be only characters and numbers between 3 and 15 characters" requiredMessage="Please insert your name" required="true" >
+                    <f:passThroughAttribute name="placeholder" value="Name"/>
+                    <f:validateLength minimum="3"/>
+                    <f:validateLength maximum="15"/>
+                    <f:validateRegex  pattern="[a-zA-Z0-9]*" />
+                </p:inputText>
+
+                <p:inputText id="surname" value="#{settings.surname}" requiredMessage="Please insert your surname" required="true">
+                    <f:passThroughAttribute name="placeholder" value="Surname"/>
+                </p:inputText>
 
                 <br/><br/>
 
                 <h:outputLabel for="email">Email: </h:outputLabel> 
 
-                <h:inputText id="email" value="#{settings.email}" pt:required="">
-                    <f:passThroughAttribute name="type" value="email" />
-                </h:inputText>
+                <p:inputText id="email" value="#{settings.email}" validatorMessage="The email is not valid respect: something@something.something" requiredMessage="Insert an email address" required="true">
+                    <f:passThroughAttribute name="placeholder" value="Email Address"/>
+                    <f:validateRegex  pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                </p:inputText>
 
 
                 <br/><br />
@@ -49,13 +58,30 @@ and open the template in the editor.
                 <h2> Change Password: </h2>
                 <h:panelGrid columns="2">
                     <h:outputLabel>Old Password:</h:outputLabel> 
-                    <h:inputSecret id="oldPassword" value="#{settings.oldPassword}" required="true" requiredMessage="insert the old password"/>
+                    <p:password id="oldPassword" value="#{settings.oldPassword}" validatorMessage="The password must be only characters and numbers between 6 and 20 characters" requiredMessage="Insert a password" required="true" >
+                        <f:passThroughAttribute name="placeholder" value="Password"/>
+                        <f:validateLength minimum="6"/>
+                        <f:validateLength maximum="20"/>
+                        <f:validateRegex  pattern="[a-zA-Z0-9]*" />
+                    </p:password>
+
 
                     <h:outputLabel>New Password:</h:outputLabel> 
-                    <h:inputSecret id="newPassword1" value="#{settings.newPassword1}" required="true" requiredMessage="insert the new password"/>
+                    <p:password id="newPassword1" value="#{settings.newPassword1}" validatorMessage="The password must be only characters and numbers between 6 and 20 characters" requiredMessage="Insert a password" required="true" >
+                        <f:passThroughAttribute name="placeholder" value="Password"/>
+                        <f:validateLength minimum="6"/>
+                        <f:validateLength maximum="20"/>
+                        <f:validateRegex  pattern="[a-zA-Z0-9]*" />
+                    </p:password>
+
 
                     <h:outputLabel>Repeat Password:</h:outputLabel> 
-                    <h:inputSecret id="newPassword2" value="#{settings.newPassword2}" required="true" requiredMessage="repeat the new password" />
+                    <p:password id="newPassword2" value="#{settings.newPassword2}" validatorMessage="The password must be only characters and numbers between 6 and 20 characters" requiredMessage="Insert a password" required="true" >
+                        <f:passThroughAttribute name="placeholder" value="Password"/>
+                        <f:validateLength minimum="6"/>
+                        <f:validateLength maximum="20"/>
+                        <f:validateRegex  pattern="[a-zA-Z0-9]*" />
+                    </p:password>
                 </h:panelGrid>
                 <br/>
                 <p:commandButton id="save" value="Save" actionListener="#{settings.savePassword}"/>
@@ -96,13 +122,13 @@ and open the template in the editor.
                 click on "Delete my Account"</p>
             <h:form>
                 <p:commandButton icon="ui-icon-alert" widgetVar="deleteButton" 
-                                 
+
                                  id="deleteButton" value="Delete my Account" 
-                                                                  
+
                                  onclick="PF('confirmDeleteAccount').show()" 
-                                 
+
                                  type="button" />
-                
+
                 <p:dialog closeOnEscape="true" widgetVar="confirmDeleteAccount" header="Delete Account" resizable="false"  draggable="false" >
                     <h:outputText value="Do you really want to delete your account?"/><br/>
                     <f:facet name="footer">

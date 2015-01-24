@@ -507,7 +507,7 @@ public class SettingManagerImpl implements SettingManager {
 
     @Override
     public boolean changePassword(UserModel user, String oldPassword, String newPassword) {
-        if (user != null) {
+        if (user != null && !oldPassword.isEmpty() && !newPassword.isEmpty()) {
             user = database.find(UserModel.class, user.getId());
             if (user != null) {
                 if (user.getPassword().equals(oldPassword)) {
