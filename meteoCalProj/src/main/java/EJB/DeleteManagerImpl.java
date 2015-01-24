@@ -4,6 +4,7 @@ import EJB.interfaces.CalendarManager;
 import EJB.interfaces.DeleteManager;
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.NotificationManager;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
@@ -12,7 +13,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import model.CalendarModel;
 import model.Event;
+import model.Invitation;
 import model.InvitationAnswer;
+import model.Notification;
 import model.NotificationType;
 import model.PublicEvent;
 import model.UserModel;
@@ -80,9 +83,16 @@ public class DeleteManagerImpl implements DeleteManager {
 
     @Override
     public boolean deleteCalendar(UserModel user, CalendarModel calendar, DeleteCalendarOption opt) {
+        return this.deleteCalendar(user, calendar, opt, false);
+    }
+
+    private boolean deleteCalendar(UserModel user, CalendarModel calendar, DeleteCalendarOption opt, boolean deleteAlsoDefault) {
+        logger.log(LoggerLevel.DEBUG, "Calendar {0} is going to be cancelled.",
+                calendar.getTitle());
+
         if (hasPermissionToDelete(user, calendar)) {
             try {
-                if (!calendarManager.isDefault(calendar)) {
+                if (!calendarManager.isDefault(calendar) || deleteAlsoDefault) {
                     calendar = (CalendarModel) database.createNamedQuery(
                             "findCalbyUserAndTitle").setParameter("id",
                                     calendar.getOwner()).setParameter("title",
@@ -109,7 +119,8 @@ public class DeleteManagerImpl implements DeleteManager {
                                 if (calendar.getEventsInCalendar().get(i).getOwner()
                                         == calendar.getOwner()) {
                                     this.deleteEvent(
-                                            calendar.getEventsInCalendar().get(i),false);
+                                            calendar.getEventsInCalendar().get(i),
+                                            false);
                                 } else {
                                     //se non è mio metto la partecipazione a NO
                                     invitationManager.setAnswer(user,
@@ -128,13 +139,18 @@ public class DeleteManagerImpl implements DeleteManager {
                     database.remove(calendar);
                     return true;
                 } else {
+                    logger.log(LoggerLevel.DEBUG,
+                            "Calendar cannot be cancelled because it's default");
                     return false;
                 }
             } catch (IllegalArgumentException e) {
                 return false;
             }
+        } else {
+            logger.log(LoggerLevel.DEBUG,
+                    "Calendar cannot be cancelled because user hasnot permission");
+            return false;
         }
-        return false;
     }
 
     /**
@@ -159,6 +175,70 @@ public class DeleteManagerImpl implements DeleteManager {
             return false;
         }
 
+    }
+
+    @Override
+    public boolean deleteAccount(UserModel userToDelete) {
+        if (userToDelete != null) {
+            userToDelete = database.find(UserModel.class, userToDelete.getId());
+            if (userToDelete != null) {
+                //per ogni calendario dell'utente cancello il calendario
+                //con la modalità elimina evento
+                while (!userToDelete.getOwnedCalendars().isEmpty()) {
+                    logger.log(LoggerLevel.DEBUG,
+                            "canecllo calendario ---------size is:"
+                            + userToDelete.getOwnedCalendars().size());
+
+                    this.deleteCalendar(userToDelete,
+                            userToDelete.getOwnedCalendars().get(0),
+                            DeleteCalendarOption.DELETE_ALL, true);
+                    logger.log(LoggerLevel.DEBUG,
+                            "canecllo calendario FINE--------- i"
+                            + "size is: "
+                            + userToDelete.getOwnedCalendars().size());
+
+                }
+
+                database.flush();
+
+                //controllo se ci sono altri eventi di quell'utente in nessun calendario
+                //e cancello anche quelli
+                for (int i = 0; i < userToDelete.getOwnedEvents().size();
+                        i++) {
+                    this.deleteEvent(userToDelete.getOwnedEvents().get(i),
+                            false);
+                }
+                database.flush();
+
+                //rimuovo tutte le notifiche dell'utente
+                for (Notification n : userToDelete.getNotifications()) {
+                    database.remove(n);
+                }
+                database.flush();
+
+                //rimuovo tutti gli inviti dell'utente
+                for (Invitation i : userToDelete.getInvitations()) {
+                    database.remove(i);
+                }
+                database.flush();
+
+                //rimuovo l'utente
+                logger.log(LoggerLevel.DEBUG,
+                        "User {0} is going to be cancelled, id is{1}",
+                        new Object[]{userToDelete.getEmail(),
+                                     userToDelete.getId()});
+
+                database.remove(userToDelete);
+                return true;
+            } else {
+                logger.log(LoggerLevel.WARNING,
+                        "L'utente da cancellare non esiste nel db");
+                return false;
+            }
+        } else {
+            logger.log(LoggerLevel.WARNING, "L'utente da cancellare è null");
+            return false;
+        }
     }
 
 }

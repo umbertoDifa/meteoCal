@@ -503,23 +503,7 @@ public class SettingManagerImpl implements SettingManager {
 
     }
 
-    @Override
-    public boolean deleteAccount(UserModel userToDelete) {
-        if (userToDelete != null) {
-            userToDelete = database.find(UserModel.class, userToDelete.getId());
-            if (userToDelete != null) {
-                database.remove(userToDelete); //TODO come siamo messi a cascade?
-                return true;
-            } else {
-                logger.log(LoggerLevel.WARNING,
-                        "L'utente da cancellare non esiste nel db");
-                return false;
-            }
-        } else {
-            logger.log(LoggerLevel.WARNING, "L'utente da cancellare è null");
-            return false;
-        }
-    }
+   
 
     @Override
     public boolean changePassword(UserModel user, String oldPassword, String newPassword) {

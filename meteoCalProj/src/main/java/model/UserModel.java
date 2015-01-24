@@ -23,6 +23,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import utility.Gender;
@@ -41,8 +42,8 @@ import utility.Gender;
 
     @NamedQuery(name = "findUserbyEmail",
                 query = "SELECT u FROM UserModel u WHERE u.email=:email"),
-    
-    @NamedQuery ( name = "findPublicJoins", query =  "SELECT e FROM UserModel u INNER JOIN u.joinedEvents e WHERE u = :user AND e.endDateTime> CURRENT_TIMESTAMP ORDER BY e.startDateTime")
+    @NamedQuery(name = "findPublicJoins",
+                query = "SELECT e FROM UserModel u INNER JOIN u.joinedEvents e WHERE u = :user AND e.endDateTime> CURRENT_TIMESTAMP ORDER BY e.startDateTime")
 
 })
 @Table(name = "USER")
@@ -72,21 +73,20 @@ public class UserModel implements Serializable {
     @Column(columnDefinition = "ENUM('M','F')")
     private Gender gender;
 
-    @ManyToMany(mappedBy = "guests", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "guests")
     private List<PublicEvent> joinedEvents;
 
-    @OneToMany(mappedBy = "invitee", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "invitee")
     private List<Invitation> invitations;
 
-    @OneToMany(mappedBy = "recipient", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "recipient")
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "owner")
-    @OrderBy (value = "startDateTime ASC")
+    @OrderBy(value = "startDateTime ASC")
     private List<Event> ownedEvents;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner",
-               cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
     private List<CalendarModel> ownedCalendars;
 
     /*
@@ -118,7 +118,6 @@ public class UserModel implements Serializable {
     public String getPassword() {
         return password;
     }
-
 
     public Gender getGender() {
         return gender;
@@ -185,7 +184,6 @@ public class UserModel implements Serializable {
         this.password = password;
     }
 
-
     public void setGender(Gender gender) {
         this.gender = gender;
     }
@@ -213,6 +211,15 @@ public class UserModel implements Serializable {
         UserModel other = (UserModel) object;
         return !((this.id == null && other.id != null) || (this.id != null
                 && !this.id.equals(other.id)));
+    }
+
+    @PreRemove
+    private void detachRelations() {
+        //stacco gli elmenti che non voglio cancellare in cascade
+        System.out.println("++++++++++dentro pre remove user+++++++++++++");       
+        this.joinedEvents.clear();
+        System.out.println("++++++++++FIne pre remove user+++++++++++++");
+
     }
 
 }

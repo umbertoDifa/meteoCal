@@ -6,6 +6,7 @@
 package bakingBeans;
 
 import EJB.interfaces.CalendarManager;
+import EJB.interfaces.DeleteManager;
 import EJB.interfaces.SettingManager;
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,7 +67,7 @@ public class SettingsBacking implements Serializable {
     private SettingManager settingManager;
 
     @Inject
-    private CredentialsBacking credentials;
+    private DeleteManager deleteManager;
 
     private LoginBacking login;
 
@@ -245,7 +246,7 @@ public class SettingsBacking implements Serializable {
 
     public void deleteAccount() {
 
-        if (settingManager.deleteAccount(login.getCurrentUser())) {
+        if (deleteManager.deleteAccount(login.getCurrentUser())) {
             login.forceLogout();
         } else {
             showWarnMessage(null, "Error", "Impossible to delete account");

@@ -9,6 +9,7 @@ import java.util.Calendar;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.NamedQuery;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 
 /**
@@ -33,7 +34,12 @@ public class PrivateEvent extends Event{
     public PrivateEvent() {
     }
     
-    
+    @PreRemove
+    private void detachRelations() {
+        //stacco gli elmenti che non voglio cancellare in cascade
+        System.out.println("++++++++++dentro detach Private Event+++++++++++++");
+        super.detachNotifications();
+    }
 }
 
 
