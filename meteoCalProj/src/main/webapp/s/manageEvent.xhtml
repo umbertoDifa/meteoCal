@@ -201,12 +201,16 @@
 
                                 <br/>
 
-                                <p:commandButton id="save" value="Save" action="#{eventToManage.checkEvent()}"/>
+                                <p:commandButton id="save" value="Save" action="#{eventToManage.checkEvent()}" onclick="PF('loadingImage').show()"/>
                                 <p:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/calendar.xhtml"/> 
                                 <p:commandButton id="delete" value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.deleteEvent}"/>
                                 <p:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.id}"/>
 
                                 <p:commandButton value="Try Reschedule" actionListener="#{eventToManage.suggestReschedule()}" rendered="#{eventToManage.saved}"/>
+                                
+                                <p:dialog closeOnEscape="false" draggable="false" resizable="false" minimizable="false" closable="false" widgetVar="loadingImage">
+                                    <p:graphicImage value="/resources/img/loader.gif"/>
+                                </p:dialog>
                             </h:form>
                         </p:panel>
                     </div>

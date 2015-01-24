@@ -692,6 +692,7 @@ public class ManageEventBacking implements Serializable {
         logger.log(LoggerLevel.DEBUG, "dentro checkEvent");
         createOrLoadInstance();
         setUpInstance();
+        RequestContext context = RequestContext.getCurrentInstance();
 
         if (validateEventConstraint()) {
             //controllo se ci osno porblemi i,e, conflitti o tempo malo
@@ -702,6 +703,8 @@ public class ManageEventBacking implements Serializable {
             if (outcome.contains(ControlMessages.NO_PROBLEM)) {
                 //salvo l'evento/update
                 save();
+                context.execute("PF('loadingImage').hide();");
+                
             } else {
                 //Listo gli errori
                 dialogueMessage = "";
@@ -729,6 +732,9 @@ public class ManageEventBacking implements Serializable {
         //update messaggio
         context.update("dialogMessage");
 
+        //nascondo loading
+        context.execute("PF('loadingImage').hide();");
+        
         //esegui dialog
         context.execute("PF('conflictDialog').show();");
     }
