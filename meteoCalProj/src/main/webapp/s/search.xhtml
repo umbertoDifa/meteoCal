@@ -29,9 +29,9 @@ and open the template in the editor.
 
             <h:form>
 
-                <h:inputText id="searchKey" value="#{search.searchKey}" validatorMessage="insert minimum 2 character" >
+                <p:inputText id="searchKey" value="#{search.searchKey}" validatorMessage="insert minimum 2 character" >
                     <f:validateLength minimum="2" />
-                </h:inputText>
+                </p:inputText>
 
                 <p:commandButton value="Search" ajax="false" action="#{search.redirect}" /><br/>
 

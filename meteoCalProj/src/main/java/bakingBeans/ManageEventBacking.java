@@ -809,4 +809,11 @@ public class ManageEventBacking implements Serializable {
     public void removeGuest(UserModel u) {
         guests.remove(u);
     }
+    
+    public boolean saveEventWithoutCheck() {
+        createOrLoadInstance();
+        setUpInstance();
+        save();
+        return true;
+    }
 }

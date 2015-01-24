@@ -5,13 +5,16 @@
  */
 package bakingBeans;
 
-import EJB.CalendarManagerImpl;
 import EJB.interfaces.CalendarManager;
 import EJB.interfaces.DeleteManager;
 import EJB.interfaces.SearchManager;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -61,6 +64,8 @@ public class ScheduleViewBacking implements Serializable {
     private ScheduleModel eventsToShow;
 
     private ScheduleEvent eventToManage = new DefaultScheduleEvent();
+    private String titleEventToManage;
+    private boolean privacyEventToManage;
 
     private List<CalendarModel> calendars;
 
@@ -146,6 +151,30 @@ public class ScheduleViewBacking implements Serializable {
 
     public String getLabelPrivacy() {
         return labelPrivacy;
+    }
+
+    public ScheduleEvent getEventToManage() {
+        return eventToManage;
+    }
+
+    public void setEventToManage(ScheduleEvent eventToManage) {
+        this.eventToManage = eventToManage;
+    }
+
+    public String getTitleEventToManage() {
+        return titleEventToManage;
+    }
+
+    public void setTitleEventToManage(String titleEventToManage) {
+        this.titleEventToManage = titleEventToManage;
+    }
+
+    public boolean isPrivacyEventToManage() {
+        return privacyEventToManage;
+    }
+
+    public void setPrivacyEventToManage(boolean privacyEventToManage) {
+        this.privacyEventToManage = privacyEventToManage;
     }
 
     /*
@@ -240,15 +269,17 @@ public class ScheduleViewBacking implements Serializable {
      * @param selectEvent
      */
     public void onDateSelect(SelectEvent selectEvent) {
-        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-        try {
-            context.redirect(context.getRequestContextPath()
-                    + "/s/manageEvent.xhtml");
-        } catch (IOException ex) {
-            Logger.getLogger(ScheduleViewBacking.class.getName()).log(
-                    Level.SEVERE, null, ex);
-            System.out.println("Redirect fallita");
-        }
+//        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+//        try {
+//            context.redirect(context.getRequestContextPath()
+//                    + "/s/manageEvent.xhtml");
+//        } catch (IOException ex) {
+//            Logger.getLogger(ScheduleViewBacking.class.getName()).log(
+//                    Level.SEVERE, null, ex);
+//            System.out.println("Redirect fallita");
+//        }
+
+        eventToManage = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
     }
 
     /**
@@ -505,7 +536,7 @@ public class ScheduleViewBacking implements Serializable {
 
     public void redirect() {
         System.out.println("----dentro redirect");
-        
+
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         try {
             context.redirect(context.getRequestContextPath()
@@ -517,4 +548,18 @@ public class ScheduleViewBacking implements Serializable {
         }
     }
 
+    public void saveEvent() {
+        // se oggi è dopo la fine dell evento
+        if (Calendar.getInstance().getTime().after(eventToManage.getEndDate())) {
+            showGrowl(GrowlMessage.ERROR_CREATE_PAST_EVET);
+        } else {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            manageEventBacking.setTitle(titleEventToManage);
+            manageEventBacking.setCalendarName(calendarSelected);
+            manageEventBacking.setStartDate(dateFormat.format(eventToManage.getStartDate()));
+            manageEventBacking.setEndDate(dateFormat.format(eventToManage.getEndDate()));
+            manageEventBacking.setPublicAccess(privacyEventToManage);
+            manageEventBacking.saveEventWithoutCheck();
+        }
+    }
 }
