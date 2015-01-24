@@ -44,7 +44,7 @@ and open the template in the editor.
 
             </h:form>
             <br/>
-            <h:outputText value="There are no results for your search" rendered="#{ (not empty search.searchKey )and ( empty search.eventResults) or ( empty search.userResults)}" />
+            <h:outputText value="There are no results for your search" rendered="#{ (not empty search.searchKey ) and ( empty search.eventResults) and ( empty search.userResults)}" />
             <p:tabView rendered="#{(not empty search.eventResults) or (not empty search.userResults)}">
                 <p:tab title="(#{search.eventResults.size()}) Event">
                     <h:form>
