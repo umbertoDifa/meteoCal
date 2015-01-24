@@ -144,6 +144,10 @@ public abstract class Event implements Serializable {
     public boolean hasLocation() {
         return hasLocation;
     }
+    
+    public boolean getHasLocation() {
+        return hasLocation;
+    }
 
     public void setHasLocation(boolean hasLocation) {
         this.hasLocation = hasLocation;

@@ -17,9 +17,7 @@ and open the template in the editor.
 
         <ui:define name="content">
             <h1>Error <h:outputLabel value="#{errorHandler.code}"/></h1>
-            <p:messages showDetail="true" autoUpdate="true" closable="false" showSummary="true">
-                <p:effect type="pulsate" event="load" delay="500" />
-            </p:messages>
+            <p:messages showDetail="true" autoUpdate="true" closable="false" showSummary="true"/>
         </ui:define>
     </ui:composition>
 </html>

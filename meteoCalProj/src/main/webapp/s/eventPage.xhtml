@@ -13,6 +13,9 @@ and open the template in the editor.
       xmlns:p="http://primefaces.org/ui">
 
     <ui:composition template="/template.xhtml">
+        <ui:define name="secondaryHead">
+            <script src="http://maps.google.com/maps/api/js?sensor=true|false" type="text/javascript"></script>    
+        </ui:define>
 
 
         <f:metadata>
@@ -77,6 +80,9 @@ and open the template in the editor.
 
                 </p:fieldset>
             </p:panelGrid>
+            
+            <p:gmap rendered="#{viewEvent.eventToShow.hasLocation}"  center="#{viewEvent.eventToShow.latitude}, #{viewEvent.eventToShow.longitude}" zoom="15" type="hybrid" style="height:150px" />
+            
             <p:outputPanel rendered="#{not empty viewEvent.eventToShow.description}" >
                 <i class="fa fa-quote-left"/><h:outputLabel value=" Description:" /><br />
                 <p:panel style="overflow: auto;">
@@ -86,29 +92,31 @@ and open the template in the editor.
             <br />
 
             <h:form id="formPartecipate">
-                <p:tabView rendered="#{viewEvent.showInvitees}">
-                    <p:tab title="(#{viewEvent.acceptedInvitations.size()}) Partecipants">
-                        <c:forEach items="#{viewEvent.acceptedInvitations}" var="yesUser">
-                            <p:link href="/s/calendar.xhtml?id=#{yesUser.id}" value="#{yesUser.name} #{yesUser.surname}"/><br/>
-                        </c:forEach>
-                    </p:tab>
-                    <p:tab title="(#{viewEvent.declinedInvitations.size()}) Declined">
-                        <c:forEach items="#{viewEvent.declinedInvitations}" var="noUser">
-                            <p:link href="/s/calendar.xhtml?id=#{noUser.id}" value="#{noUser.name} #{noUser.surname}"/><br/>
-                        </c:forEach>
-                    </p:tab>
-                    <p:tab title="(#{viewEvent.noAnswerInvitations.size()}) No Asnwer">
-                        <c:forEach items="#{viewEvent.noAnswerInvitations}" var="bhoUser">
-                            <p:link href="/s/calendar.xhtml?id=#{bhoUser.id}" value="#{bhoUser.name} #{bhoUser.surname}"/><br/>
-                        </c:forEach>
-                    </p:tab>
-                    <p:tab title="(#{viewEvent.publicJoinUsers.size()}) Public Join" rendered="#{viewEvent.publicAccess}">
-                        <c:forEach items="#{viewEvent.publicJoinUsers}" var="publicUser">
-                            <p:link href="/s/calendar.xhtml?id=#{publicUser.id}" value="#{publicUser.name} #{publicUser.surname}"/><br/>
-                        </c:forEach>
-                    </p:tab>
-                </p:tabView>
-
+                
+                    <p:tabView rendered="#{viewEvent.showInvitees}">
+                        <p:tab title="(#{viewEvent.acceptedInvitations.size()}) Partecipants">
+                            <c:forEach items="#{viewEvent.acceptedInvitations}" var="yesUser">
+                                <p:link href="/s/calendar.xhtml?id=#{yesUser.id}" value="#{yesUser.name} #{yesUser.surname}"/><br/>
+                            </c:forEach>
+                        </p:tab>
+                        <p:tab title="(#{viewEvent.declinedInvitations.size()}) Declined">
+                            <c:forEach items="#{viewEvent.declinedInvitations}" var="noUser">
+                                <p:link href="/s/calendar.xhtml?id=#{noUser.id}" value="#{noUser.name} #{noUser.surname}"/><br/>
+                            </c:forEach>
+                        </p:tab>
+                        <p:tab title="(#{viewEvent.noAnswerInvitations.size()}) No Asnwer">
+                            <c:forEach items="#{viewEvent.noAnswerInvitations}" var="bhoUser">
+                                <p:link href="/s/calendar.xhtml?id=#{bhoUser.id}" value="#{bhoUser.name} #{bhoUser.surname}"/><br/>
+                            </c:forEach>
+                        </p:tab>
+                        <p:tab title="(#{viewEvent.publicJoinUsers.size()}) Public Join" rendered="#{viewEvent.publicAccess}">
+                            <c:forEach items="#{viewEvent.publicJoinUsers}" var="publicUser">
+                                <p:link href="/s/calendar.xhtml?id=#{publicUser.id}" value="#{publicUser.name} #{publicUser.surname}"/><br/>
+                            </c:forEach>
+                        </p:tab>
+                    </p:tabView>
+                    
+                
                 <br/>
 
                 <p:commandButton value="Partecipate" update="@(form)" rendered="#{!viewEvent.publicJoin and !viewEvent.hasInvitation and !viewEvent.hasAnswered and viewEvent.publicAccess and !viewEvent.eventMine}" 
@@ -154,8 +162,6 @@ and open the template in the editor.
                 <p:commandButton value="Delete" rendered="#{viewEvent.eventMine}" oncomplete="PF('deleteDialog').hide();" action="#{viewEvent.deleteEvent}"/>
                 <p:commandButton value="Cancel" type="button" onclick="PF('deleteDialog').hide()" />
             </p:dialog>
-
-
 
         </ui:define>
 
