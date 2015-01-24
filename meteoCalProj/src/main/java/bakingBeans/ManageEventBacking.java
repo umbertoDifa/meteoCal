@@ -775,13 +775,13 @@ public class ManageEventBacking implements Serializable {
         rescheduleDayEnd = eventToCreate.getEndDateTime();
         rescheduleDayEnd.add(Calendar.DATE, offset);
 
-        dialogueMessage += "\nDo you want to reschedule the event from the:\n"
+        dialogueMessage += "\nWe found an available slot.\nDo you want to reschedule the event from the:\n"
+                + TimeTool.dateToTextDay(
+                        eventToCreate.getStartDateTime().getTime(),
+                        "dd-MM-YYYY\n") + "to the:\n"
                 + TimeTool.dateToTextDay(
                         rescheduleDayStart.getTime(),
-                        "dd-MM-YYYY hh:mm\n") + "to the:\n"
-                + TimeTool.dateToTextDay(
-                        rescheduleDayEnd.getTime(),
-                        "dd-MM-YYYY hh:mm\n");
+                        "dd-MM-YYYY\n");
         rescheduleButton = "Accept reschedule";
         saveButton = "Ignore and Save";
         showRescheduleButton = true;
