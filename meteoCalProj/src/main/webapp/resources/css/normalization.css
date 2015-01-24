@@ -274,7 +274,7 @@ h1, h2, h3 {
     color: white !important;
     font-size: 40px;
     font-weight: 500;
-    background: yellow;
+    background: #F50057;
     border-radius: 50%;
     border: 0;
     padding: 0;
@@ -288,3 +288,13 @@ h1, h2, h3 {
     background: #BBDEFB;
 }
 
+.ui-state-highlight,.ui-widget-content .ui-state-highlight,.ui-widget-header .ui-state-highlight
+{
+    background: #F50057;
+}
+
+.ui-datepicker.ui-widget-content td a.ui-state-highlight
+{
+    background: #F50057;
+
+}
