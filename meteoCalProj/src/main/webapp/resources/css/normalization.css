@@ -259,6 +259,10 @@ h1, h2, h3 {
     white-space: nowrap;
 }
 
+.tableAlign td:nth-child(even) {
+  white-space: normal;
+}
+
 #weatherBox {
     padding: 0;
 }

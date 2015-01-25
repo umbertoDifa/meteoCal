@@ -361,6 +361,9 @@ public class ManageEventBacking implements Serializable {
                 publicAccess = eventToCreate instanceof PublicEvent;
                 outdoor = eventToCreate.isIsOutdoor();
                 setInvitations();
+                if(publicAccess){
+                    setPublicJoins();
+                }
                 //inizializzare calendarName
                 calendarName = searchCalendarByEvent();
 
@@ -368,7 +371,7 @@ public class ManageEventBacking implements Serializable {
                 hasLocation = eventToCreate.hasLocation();
 
             } else {
-                showMessage(null, "Nessun evento trovato", "");
+                showMessage(null, "No user found", "");
             }
         }
     }
@@ -465,7 +468,7 @@ public class ManageEventBacking implements Serializable {
                         guests.add(userToInvite);
                     } else {
                         showMessage("inviteForm:email",
-                                "partecipi automaticamente ai tuoi eventi", "");
+                                "You participate already to your events", "");
                     }
                 } else {
                     showMessage("inviteForm:email",
@@ -473,12 +476,12 @@ public class ManageEventBacking implements Serializable {
                             "");
                 }
             } else {
-                showMessage("inviteForm:email", "Nessun utente trovato", "");
+                showMessage("inviteForm:email", "No user found", "");
             }
             displayResultUsers = false;
         } else {
             logger.log(LoggerLevel.DEBUG, "--emailToInvite è null");
-            showMessage("inviteForm:email", "Specificare un utente", "");
+            showMessage("inviteForm:email", "Specify an user", "");
         }
     }
 
@@ -499,7 +502,7 @@ public class ManageEventBacking implements Serializable {
         if (resultUsers != null && resultUsers.size() > 0) {
             displayResultUsers = true;
         } else {
-            showMessage("inviteForm:email", "Nessun utente trovato", "");
+            showMessage("inviteForm:email", "No user found", "");
         }
     }
 
@@ -542,7 +545,7 @@ public class ManageEventBacking implements Serializable {
                 }
             } else {
                 logger.log(LoggerLevel.DEBUG, "idEvent è null");
-                showMessage(null, "Nessun evento trovato", "");
+                showMessage(null, "No user found", "");
             }
         } else {
             logger.log(LoggerLevel.DEBUG,
@@ -633,10 +636,10 @@ public class ManageEventBacking implements Serializable {
                     guests)) {
                 setSaved(true);
                 id = eventToCreate.getId().toString();
-                showMessage(null, "L'evento è stato salvato", "");
+                showMessage(null, "The event has been saved", "");
             } else {
                 showMessage(null,
-                        "Evento non salvato", "Errore durante il salvataggio");
+                        "Event not saved", "Error during the saving");
             }
         }
 
@@ -676,6 +679,8 @@ public class ManageEventBacking implements Serializable {
     }
 
     public void suggestReschedule() {
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.execute("PF('loadingImage').show();");
         logger.log(LoggerLevel.DEBUG, "dentro forceReschedule");
         createOrLoadInstance();
         if (setUpInstance()) {
@@ -685,7 +690,7 @@ public class ManageEventBacking implements Serializable {
 
             }// end if
         }
-        RequestContext context = RequestContext.getCurrentInstance();
+        
         if (context != null) {
             context.execute("PF('loadingImage').hide()");
         }
@@ -720,10 +725,12 @@ public class ManageEventBacking implements Serializable {
      * altrimenti chiede se rischedulare suggerendo un giorno
      */
     public void checkEvent() {
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.execute("PF('loadingImage').show();");
+
         logger.log(LoggerLevel.DEBUG, "dentro checkEvent");
         createOrLoadInstance();
-        RequestContext context = RequestContext.getCurrentInstance();
-
+        
         if (setUpInstance()) {
 
             if (validateEventConstraint()) {
@@ -848,6 +855,10 @@ public class ManageEventBacking implements Serializable {
 
     public void removeGuest(UserModel u) {
         guests.remove(u);
+    }
+
+    private void setPublicJoins() {
+        publicJoinUsers = ((PublicEvent)eventToCreate).getGuests();
     }
 
 }

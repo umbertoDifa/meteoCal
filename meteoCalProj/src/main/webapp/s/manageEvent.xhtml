@@ -128,7 +128,7 @@
                                 <p:panelGrid class="noBorder" columns="2">
 
                                     <i class="fa fa-tag"/> Title:
-                                    <h:inputText pt:placeholder="Title" value="#{eventToManage.title}" style="width: 176px; text-overflow: ellipsis;"/>
+                                    <h:inputText pt:placeholder="Title" value="#{eventToManage.title}" style="width: 176px; text-overflow: ellipsis;" required="true" requiredMessage="Insert a title"/>
 
                                     <i class="fa fa-calendar"/> Add into:
                                     <p:selectOneMenu value="#{eventToManage.calendarName}" style="width: 180px; text-overflow: ellipsis;"  >
@@ -201,12 +201,12 @@
 
                                 <br/>
 
-                                <p:commandButton id="save" value="Save" action="#{eventToManage.checkEvent()}" onclick="PF('loadingImage').show()"/>
+                                <p:commandButton id="save" value="Save" action="#{eventToManage.checkEvent()}" />
                                 <p:button value="Cancel" rendered="#{!eventToManage.saved}" outcome="/s/calendar.xhtml"/> 
                                 <p:commandButton id="delete" value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.deleteEvent}"/>
                                 <p:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.id}"/>
 
-                                <p:commandButton value="Try Reschedule" actionListener="#{eventToManage.suggestReschedule()}" rendered="#{eventToManage.saved}" onclick="PF('loadingImage').show()"/>
+                                <p:commandButton value="Try Reschedule" actionListener="#{eventToManage.suggestReschedule()}" rendered="#{eventToManage.saved}" />
                                 
                                 <p:dialog closeOnEscape="false" draggable="false" resizable="false" minimizable="false" closable="false" widgetVar="loadingImage">
                                     <p:graphicImage value="/resources/img/loader.gif"/>
@@ -244,7 +244,7 @@
                                 </p:panel><br/>
                             </h:form>
 
-                            <p:tabView>
+                            <p:tabView scrollable="true">
                                 <p:tab title="(#{eventToManage.acceptedInvitations.size()}) Partecipants">
                                     <c:forEach items="#{eventToManage.acceptedInvitations}" var="yesUser">
                                         <p:link href="/s/calendar.xhtml?id=#{yesUser.id}" value="#{yesUser.name} #{yesUser.surname}"/><br/>

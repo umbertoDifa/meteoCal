@@ -50,8 +50,7 @@ and open the template in the editor.
 
                         <p:inputText id="name" value="#{user.name}" validatorMessage="The name must be only characters and numbers between 3 and 15 characters" requiredMessage="Please insert your name" required="true" >
                             <f:passThroughAttribute name="placeholder" value="Name"/>
-                            <f:validateLength minimum="3"/>
-                            <f:validateLength maximum="15"/>
+                            <f:validateLength minimum="3" maximum="15"/>
                             <f:validateRegex  pattern="[a-zA-Z0-9]*" />
                         </p:inputText>
 
@@ -62,8 +61,7 @@ and open the template in the editor.
 
                         <p:password id="password" value="#{user.password}" validatorMessage="The password must be only characters and numbers between 6 and 20 characters" requiredMessage="Insert a password" required="true" >
                             <f:passThroughAttribute name="placeholder" value="Password"/>
-                            <f:validateLength minimum="6"/>
-                            <f:validateLength maximum="20"/>
+                            <f:validateLength minimum="6" maximum="20"/>
                             <f:validateRegex  pattern="[a-zA-Z0-9]*" />
                         </p:password>
 
