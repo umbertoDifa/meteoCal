@@ -136,7 +136,7 @@ public class SearchBacking implements Serializable {
         
 
             for (Event ev : events) {
-                if ((ev instanceof PublicEvent) || (ev.getInvitee().contains(login.getCurrentUser()))) {
+                if ((ev instanceof PublicEvent) || (ev.getInvitee().contains(login.getCurrentUser()) || ev.getOwner().equals(login.getCurrentUser()))) {
                     eventResults.add(ev);
                 }
             
