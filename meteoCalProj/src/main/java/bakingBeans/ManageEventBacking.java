@@ -639,7 +639,7 @@ public class ManageEventBacking implements Serializable {
                 showMessage(null, "The event has been saved", "");
             } else {
                 showMessage(null,
-                        "Event not saved", "Error during the saving");
+                        "Event not saved", "Error during saving");
             }
         }
 

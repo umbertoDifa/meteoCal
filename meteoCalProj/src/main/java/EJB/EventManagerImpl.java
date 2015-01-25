@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
@@ -55,8 +56,13 @@ public class EventManagerImpl implements EventManager {
 
     @Override
     public boolean scheduleNewEvent(Event event, CalendarModel insertInCalendar, List<UserModel> invitees) {
-        //salvo evento nel db        
-        database.persist(event);
+        //salvo evento nel db  
+        try {
+            database.persist(event);
+        } catch (EntityExistsException ex) {
+            logger.log(LoggerLevel.SEVERE, "Conflitto persistene evento!");
+            return false;
+        }
 
         //aggiungo coordinate all'evento
         updateEventLatLng(event);
@@ -368,40 +374,40 @@ public class EventManagerImpl implements EventManager {
     @Override
     public List<Event> eventOnWall(utility.EventType type, UserModel owner) {
         if (owner != null) {
-        owner = database.find(UserModel.class, owner.getId());
-        List<Event> events = new ArrayList<Event>();
-        database.refresh(owner);
-        switch (type) {
-            case INVITED: {
+            owner = database.find(UserModel.class, owner.getId());
+            List<Event> events = new ArrayList<Event>();
+            database.refresh(owner);
+            switch (type) {
+                case INVITED: {
 
-                events = database.createNamedQuery("findInvitedEvents").setParameter("user", owner).getResultList();;
-                break;
+                    events = database.createNamedQuery("findInvitedEvents").setParameter("user", owner).getResultList();;
+                    break;
+
+                }
+                case PARTECIPATING: {
+                    events = database.createNamedQuery("findAcceptedInvitations").setParameter("user", owner).getResultList();
+                    break;
+                }
+
+                case JOINED: {
+                    events = database.createNamedQuery("findPublicJoins").setParameter("user", owner).getResultList();
+                    break;
+
+                }
+
+                case OWNED: {
+                    events = database.createNamedQuery("findNextOwnedEvents").setParameter("user", owner).getResultList();
+                    break;
+                }
+
+                case PUBLIC: {
+                    events = database.createNamedQuery("findNextPublicEvents").getResultList();
+                    break;
+
+                }
 
             }
-            case PARTECIPATING: {
-                events = database.createNamedQuery("findAcceptedInvitations").setParameter("user", owner).getResultList();
-                break;
-            }
-
-            case JOINED: {
-                events = database.createNamedQuery("findPublicJoins").setParameter("user", owner).getResultList();
-                break;
-
-            }
-
-            case OWNED: {
-                events = database.createNamedQuery("findNextOwnedEvents").setParameter("user", owner).getResultList();
-                break;
-            }
-
-            case PUBLIC: {
-                events = database.createNamedQuery("findNextPublicEvents").getResultList();
-                break;
-
-            }
-    
-        }
-        return events;
+            return events;
         }
         return null;
     }
