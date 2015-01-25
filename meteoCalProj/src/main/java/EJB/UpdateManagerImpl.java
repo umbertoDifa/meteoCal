@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -23,8 +25,8 @@ import utility.EntityManagerHelper;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
 
-//@Singleton
-//@Startup
+@Singleton
+@Startup
 public class UpdateManagerImpl {
 
     @Inject
