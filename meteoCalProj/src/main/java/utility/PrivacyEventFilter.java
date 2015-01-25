@@ -34,7 +34,6 @@ public class PrivacyEventFilter implements Filter {
 
     @Override
     public void destroy() {
-        // TODO Auto-generated method stub
     }
 
     @Override
@@ -76,8 +75,10 @@ public class PrivacyEventFilter implements Filter {
                         error = true;
                     }
                 } else {
-                    System.out.println("-Filtro privacy: eventId null");
-                    //TODO
+                    ((HttpServletResponse) response).sendError(
+                            HttpServletResponse.SC_BAD_REQUEST,
+                            "The event does not exist.");
+                    error = true;
                 }
             }
         }

@@ -16,6 +16,7 @@ import model.Invitation;
 import model.InvitationAnswer;
 import model.Notification;
 import model.NotificationType;
+import model.PrivateEvent;
 import model.PublicEvent;
 import model.UserModel;
 import utility.DeleteCalendarOption;
@@ -37,7 +38,6 @@ public class DeleteManagerImpl implements DeleteManager {
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
-    
     private static final Logger logger = LoggerProducer.debugLogger(DeleteManagerImpl.class);
 
     @Override
@@ -122,9 +122,14 @@ public class DeleteManagerImpl implements DeleteManager {
                                             false);
                                 } else {
                                     //se non è mio metto la partecipazione a NO
-                                    invitationManager.setAnswer(user,
-                                            calendar.getEventsInCalendar().get(i),
-                                            InvitationAnswer.NO);
+                                    if (calendar.getEventsInCalendar().get(i) instanceof PrivateEvent) {
+                                        invitationManager.setAnswer(user,
+                                                calendar.getEventsInCalendar().get(i),
+                                                InvitationAnswer.NO);
+                                    } else {
+                                        //se è pubblico tolgo la public join
+                                        ((PublicEvent) calendar.getEventsInCalendar().get(i)).getGuests().remove(user);
+                                    }
                                 }
                             }
                     }
@@ -225,7 +230,7 @@ public class DeleteManagerImpl implements DeleteManager {
                 logger.log(LoggerLevel.DEBUG,
                         "User {0} is going to be cancelled, id is{1}",
                         new Object[]{userToDelete.getEmail(),
-                                     userToDelete.getId()});
+                            userToDelete.getId()});
 
                 database.remove(userToDelete);
                 return true;

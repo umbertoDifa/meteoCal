@@ -541,8 +541,7 @@ public class ScheduleViewBacking implements Serializable {
      * newCalendarDialog
      */
     public void addNewCalendar() {
-        System.out.println("dentro addNewCalendar, calendarToCreate: "
-                + calendarToCreate.toString());
+     
 
         if (calendarToCreate.getTitle() != null
                 && !calendarToCreate.getTitle().isEmpty()) {
@@ -562,7 +561,6 @@ public class ScheduleViewBacking implements Serializable {
     }
 
     public void redirect() {
-        System.out.println("----dentro redirect");
 
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         try {
@@ -571,7 +569,6 @@ public class ScheduleViewBacking implements Serializable {
         } catch (IOException ex) {
             Logger.getLogger(ScheduleViewBacking.class.getName()).log(
                     Level.SEVERE, null, ex);
-            System.out.println("Redirect fallita");
         }
     }
 

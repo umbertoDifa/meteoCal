@@ -264,6 +264,7 @@ public class ViewEventPageBacking implements Serializable {
     }
 
     public void doPartecipate() {
+        logger.log(LoggerLevel.DEBUG,"do participate");
         if (hasInvitation) {
             invitationManager.setAnswer(login.getCurrentUser(), eventToShow,
                     InvitationAnswer.YES);
@@ -286,6 +287,8 @@ public class ViewEventPageBacking implements Serializable {
 
         } else {
             if (publicAccess) {
+                        logger.log(LoggerLevel.DEBUG,"public access");
+
                 eventManager.addPublicJoin(eventToShow, login.getCurrentUser());
                 publicJoin = true;
                 hasAnswered = true;
@@ -416,7 +419,6 @@ public class ViewEventPageBacking implements Serializable {
         }
     }
 
-    //TODO check se esiste in invitation manager e/o sposta
     private List<UserModel> getInvitees() {
         List<UserModel> invitees = new ArrayList<>();
         List<Invitation> list = eventToShow.getInvitations();
@@ -433,7 +435,6 @@ public class ViewEventPageBacking implements Serializable {
         return today.before(eventToShow.getEndDateTime());
     }
 
-    //TODO da spostare
     private void setInvitations() {
         if (eventToShow != null) {
             List<Invitation> invitations = eventToShow.getInvitations();

@@ -103,7 +103,7 @@ public class UpdateManagerImpl {
             logger.log(LoggerLevel.DEBUG, "Created updater for event {0}",
                     event.getTitle());
             ScheduledFuture<?> res = updater.runTillPast(executor, PERIOD,
-                    TimeUnit.SECONDS);
+                    TimeUnit.HOURS);
             return res;
             //periodicamente ogni 12 ore                
             //il giorno prima notificando se è brutto(inlcuso nella notifica ogni 12 ore)

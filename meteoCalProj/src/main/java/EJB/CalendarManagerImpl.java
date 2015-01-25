@@ -12,6 +12,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import model.CalendarModel;
 import model.Event;
@@ -28,7 +30,6 @@ import utility.LoggerProducer;
 @Stateless
 public class CalendarManagerImpl implements CalendarManager {
 
-    
     private static final Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
 
     @Inject
@@ -116,7 +117,7 @@ public class CalendarManagerImpl implements CalendarManager {
                                 event.getEndDateTime()).setParameter(
                                 "start", event.getStartDateTime()).getSingleResult();
 
-                logger.log(LoggerLevel.DEBUG, "Debugging query. Owned events in conflict: "+conflictNumber);
+                logger.log(LoggerLevel.DEBUG, "Debugging query. Owned events in conflict: " + conflictNumber);
 
             } else {
                 conflictNumber = (Long) database.createNamedQuery(
@@ -249,15 +250,25 @@ public class CalendarManagerImpl implements CalendarManager {
     @Override
     public boolean addCalendarToUser(CalendarModel calendar) {
         try {
-            boolean makeDefault = calendar.isIsDefault();
-            calendar.setIsDefault(false);
-            database.persist(calendar);
-            logger.log(Level.INFO, "{0} created for user {1}", new Object[]{
-                calendar.getTitle(), calendar.getOwner().getEmail()});
-            if (makeDefault) {
-                makeDefault(calendar);
+            UserModel user = database.find(UserModel.class, calendar.getOwner().getId());
+            if (user != null && !calendar.getTitle().isEmpty()) {
+                for (CalendarModel cal : user.getOwnedCalendars()) {
+                    if (cal.getTitle().equals(calendar.getTitle())) {
+                        return false;
+                    }
+                }
+                boolean makeDefault = calendar.isIsDefault();
+                calendar.setIsDefault(false);
+                database.persist(calendar);
+                logger.log(Level.INFO, "{0} created for user {1}", new Object[]{
+                    calendar.getTitle(), calendar.getOwner().getEmail()});
+                if (makeDefault) {
+                    makeDefault(calendar);
+                }
+                return true;
+            } else {
+                return false;
             }
-            return true;
         } catch (EntityExistsException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
             return false;
@@ -441,8 +452,6 @@ public class CalendarManagerImpl implements CalendarManager {
         }
         return null;
     }
-
-   
 
     @Override
     public void toggleCalendarPrivacy(CalendarModel calendar) {

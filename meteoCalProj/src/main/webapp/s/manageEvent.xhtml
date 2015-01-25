@@ -206,7 +206,7 @@
                                 <p:commandButton id="delete" value="Delete" rendered="#{eventToManage.saved}" action="#{eventToManage.deleteEvent}"/>
                                 <p:button value="Show Event" rendered="#{eventToManage.saved}" outcome="/s/eventPage.xhtml?id=#{eventToManage.id}"/>
 
-                                <p:commandButton value="Try Reschedule" actionListener="#{eventToManage.suggestReschedule()}" rendered="#{eventToManage.saved}"/>
+                                <p:commandButton value="Try Reschedule" actionListener="#{eventToManage.suggestReschedule()}" rendered="#{eventToManage.saved}" onclick="PF('loadingImage').show()"/>
                                 
                                 <p:dialog closeOnEscape="false" draggable="false" resizable="false" minimizable="false" closable="false" widgetVar="loadingImage">
                                     <p:graphicImage value="/resources/img/loader.gif"/>
@@ -260,7 +260,7 @@
                                         <p:link href="/s/calendar.xhtml?id=#{bhoUser.id}" value="#{bhoUser.name} #{bhoUser.surname}"/><br/>
                                     </c:forEach>
                                 </p:tab>
-                                <p:tab title="(#{eventToManage.publicJoinUsers.size()}) Public Join" rendered="#{viewEvent.publicAccess}">
+                                <p:tab title="(#{eventToManage.publicJoinUsers.size()}) Public Join" rendered="#{eventToManage.publicAccess}">
                                     <c:forEach items="#{eventToManage.publicJoinUsers}" var="publicUser">
                                         <p:link href="/s/calendar.xhtml?id=#{publicUser.id}" value="#{publicUser.name} #{publicUser.surname}"/><br/>
                                     </c:forEach>

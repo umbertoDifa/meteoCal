@@ -216,9 +216,7 @@ public class UserModel implements Serializable {
     @PreRemove
     private void detachRelations() {
         //stacco gli elmenti che non voglio cancellare in cascade
-        System.out.println("++++++++++dentro pre remove user+++++++++++++");       
         this.joinedEvents.clear();
-        System.out.println("++++++++++FIne pre remove user+++++++++++++");
 
     }
 

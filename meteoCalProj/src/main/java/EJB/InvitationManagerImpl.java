@@ -14,6 +14,7 @@ import model.Invitation;
 import model.InvitationAnswer;
 import model.UserModel;
 import model.NotificationType;
+import model.PublicEvent;
 import utility.LoggerLevel;
 import utility.LoggerProducer;
 
@@ -41,18 +42,45 @@ public class InvitationManagerImpl implements InvitationManager {
     }
 
     private boolean createInvitation(UserModel user, Event event) {
-        //verifico se esiste già un invito per quell'utente a quell'evento 
-        //lo cerco nello user (più lento probabilmente) perchè non è detto che quell'evento sia già stato persistito!
-        user = database.find(UserModel.class, user.getId());
-        event = database.find(Event.class, event.getId());
-        for (Invitation invitation : user.getInvitations()) {
-            if (invitation.getEvent().equals(event)) {
-                return false;
+        //verifico se esiste giÃ  un invito per quell'utente a quell'evento 
+        //lo cerco nello user (piÃ¹ lento probabilmente) perchÃ¨ non Ã¨ detto che quell'evento sia giÃ  stato persistito!
+        logger.log(LoggerLevel.DEBUG, "dentro create invitation");
+
+        if (user != null && event != null) {
+            user = database.find(UserModel.class, user.getId());
+            event = database.find(Event.class, event.getId());
+            for (Invitation invitation : user.getInvitations()) {
+                if (invitation.getEvent().equals(event)) {
+                    return false;
+                }
             }
+            logger.log(LoggerLevel.DEBUG, "dopo check inviti");
+
+            // se l'evento Ã¨ pubblico controllo se l'utente ha fatto public join
+            if (event instanceof PublicEvent) {
+                if (((PublicEvent) event).getGuests().contains(user)) {
+                    // elimino public join, setto risp all invito a yes
+                    ((PublicEvent) event).getGuests().remove(user);
+                    logger.log(LoggerLevel.DEBUG, "Public join rimossa");
+
+                    Invitation invitation = new Invitation(user, event);
+                    invitation.setAnswer(InvitationAnswer.YES);
+                    database.persist(invitation);                                        
+                    logger.log(LoggerLevel.DEBUG, "Cambiata public join in answer yes");
+
+                    return true;
+                }
+            }
+            logger.log(LoggerLevel.DEBUG, "prima di creare invitation");
+
+            Invitation invitation = new Invitation(user, event);
+
+            database.persist(invitation);
+
+            return true;
+        } else {
+            return false;
         }
-        Invitation invitation = new Invitation(user, event);
-        database.persist(invitation);
-        return true;
     }
 
     @Override
@@ -79,11 +107,13 @@ public class InvitationManagerImpl implements InvitationManager {
     }
 
     @Override
-    public Invitation getInvitationByUserAndEvent(UserModel user, Event event) {
+    public Invitation
+            getInvitationByUserAndEvent(UserModel user, Event event) {
         if (user != null && event != null) {
             user = database.find(UserModel.class, user.getId());
             event = database.find(Event.class, event.getId());
-            if (user != null && event != null) {
+            if (user != null && event
+                    != null) {
                 List<Invitation> list = event.getInvitations();
                 if (list != null && !list.isEmpty()) {
                     for (Invitation i : list) {
@@ -119,7 +149,7 @@ public class InvitationManagerImpl implements InvitationManager {
             return users;
         } else {
             logger.log(LoggerLevel.DEBUG,
-                    "L'event è null in getInviteesFiltered");
+                    "L'event Ã¨ null in getInviteesFiltered");
             return null;
         }
 

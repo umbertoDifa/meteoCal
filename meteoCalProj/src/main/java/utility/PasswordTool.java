@@ -22,7 +22,6 @@ public class PasswordTool {
     public static String getSaltedHash(String password) throws Exception {
         byte[] salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLen);
         // store the salt with the password
-        System.out.println("nell GETSALTEDHASH");
         return Base64.encodeBase64String(salt) + "$" + hash(password, salt);
     }
 
@@ -43,7 +42,6 @@ public class PasswordTool {
     private static String hash(String password, byte[] salt) throws Exception {
         if (password == null || password.length() == 0)
             throw new IllegalArgumentException("Empty passwords are not supported.");
-        System.out.println("nell HASH");
         SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         SecretKey key = f.generateSecret(new PBEKeySpec(
             password.toCharArray(), salt, iterations, desiredKeyLen)

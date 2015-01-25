@@ -95,9 +95,7 @@ public class CalendarBacking implements Serializable {
             for (model.CalendarModel b : c) {
                 result.add(b.getTitle());
             }
-        } else {
-            System.out.println("Lista calendari null");
-        }
+        } 
         return result;
     }
 

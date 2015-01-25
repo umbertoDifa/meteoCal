@@ -51,17 +51,10 @@ public class NotificationBacking implements Serializable{
         invitations = notificationManager.getNotificationFiltred(login.getCurrentUser(), NotificationCategories.INVITATIONS);
         eventChanges = notificationManager.getNotificationFiltred(login.getCurrentUser(), NotificationCategories.EVENTS_CHANGES);
         
-        for (Notification in: invitations) {
-        System.out.println(in.getType().getSubject());
-         System.out.println(in.getType().getBodyMessage());
-        }
     }
 
     @PreDestroy
-    public void markNotificationAsRead() {
-        
-        System.out.println("NOTIFICATION BEAN STA PER MORIRE");
-        
+    public void markNotificationAsRead() {                
         notificationManager.markAllAsRead(invitations);
         notificationManager.markAllAsRead(eventChanges);
     }

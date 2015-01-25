@@ -32,11 +32,11 @@ public enum NotificationType {
             "Hello {0},\n we inform you that the weather for"
             + "the event {1} has changed.\n\n Check it at:\n\nLink:{3}\n\nMeteoCalendar Team"),
     BAD_WEATHER_TOMORROW("Bad weather forecast for tomorrow event {0}",
-            "Hello {0},\nwe are sorry to inform you that the weather forecast for"
+            "Hello {0},\nwe are sorry to inform you that the weather forecast for "
             + "the tomorrow event {1} is bad.\n\nLink:{3}\n\nMeteoCalendar Team"),
     BAD_WEATHER_IN_THREE_DAYS("Bad weather forecast for event {0}",
             "Hello {0},\nwe are sorry to inform you that the weather forecast for"
-            + "the event {1} is bad.\n If you want you can reschedule your event. Go to the following link and hit ''Try Reschedule''\n\nLink:{3}\n\nMeteoCalendar Team"),
+            + "the event {1},scheduled in 3 days, is bad.\n If you want you can reschedule your event. Go to the following link and hit ''Try Reschedule''\n\nLink:{3}\n\nMeteoCalendar Team"),
     EVENT_CHANGED("Event {0} has been modified",
             "Hello {0},\n we inform you that event {1} has been modified\n\nLink:{3}\n\nMeteoCalendar Team"),
     EVENT_CANCELLED("Event {0} has been cancelled",

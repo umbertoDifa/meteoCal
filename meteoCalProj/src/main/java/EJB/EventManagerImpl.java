@@ -229,7 +229,7 @@ public class EventManagerImpl implements EventManager {
                 logger.log(LoggerLevel.DEBUG, "trovata modifica descrizione!");
             }
             //aggiorno inizio evento
-            if (!TimeTool.dateToTextDay(oldEvent.getStartDateTime().getTime(), "yyyy-MM-dd hh:mm").equals(TimeTool.dateToTextDay(event.getStartDateTime().getTime(), "yyyy-MM-dd hh:mm"))) {
+            if (!TimeTool.dateToTextDay(oldEvent.getStartDateTime().getTime(), "yyyy-MM-dd HH:mm").equals(TimeTool.dateToTextDay(event.getStartDateTime().getTime(), "yyyy-MM-dd HH:mm"))) {
                 oldEvent.setStartDateTime(event.getStartDateTime());
 
                 //aggiorno il tempo al nuovo giorno
@@ -238,7 +238,7 @@ public class EventManagerImpl implements EventManager {
                 changed = true;
             }
             //aggiorno fine evento
-            if (!TimeTool.dateToTextDay(oldEvent.getEndDateTime().getTime(), "yyyy-MM-dd hh:mm").equals(TimeTool.dateToTextDay(event.getEndDateTime().getTime(), "yyyy-MM-dd hh:mm"))) {
+            if (!TimeTool.dateToTextDay(oldEvent.getEndDateTime().getTime(), "yyyy-MM-dd HH:mm").equals(TimeTool.dateToTextDay(event.getEndDateTime().getTime(), "yyyy-MM-dd HH:mm"))) {
                 oldEvent.setEndDateTime(event.getEndDateTime());
                 logger.log(LoggerLevel.DEBUG, "trovata modifica fine evento!");
                 changed = true;

@@ -37,7 +37,6 @@ public class PrivateEvent extends Event{
     @PreRemove
     private void detachRelations() {
         //stacco gli elmenti che non voglio cancellare in cascade
-        System.out.println("++++++++++dentro detach Private Event+++++++++++++");
         super.detachNotifications();
     }
 }

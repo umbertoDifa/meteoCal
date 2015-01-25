@@ -79,7 +79,6 @@ public class SearchBacking implements Serializable {
     }
 
     public List<Event> getEventResults() {
-        System.out.println("---list: " + eventResults);
         return eventResults;
     }
 

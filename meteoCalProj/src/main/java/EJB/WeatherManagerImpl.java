@@ -17,7 +17,9 @@ import javax.persistence.PersistenceContext;
 import model.Event;
 import model.Invitation;
 import model.InvitationAnswer;
+import model.Notification;
 import model.NotificationType;
+import model.PublicEvent;
 import model.UserModel;
 import model.WeatherForecast;
 import org.json.JSONException;
@@ -41,14 +43,14 @@ public class WeatherManagerImpl implements WeatherManager {
     //creo oggetto openWeatherMap per fare le richieste con la mia API key
     private OpenWeatherMap openWeatherMap;
 
-    //creo l'oggetto daily forecast che si occuperà di ottenere le previsioni giornaliere
+    //creo l'oggetto daily forecast che si occuperÃ  di ottenere le previsioni giornaliere
     //per un max di 16 giorni 
     private DailyForecastData dailyForecast;
 
     //position of the wanted day in the list of forecast
     private int position;
 
-    //creo l'oggetto che si occuperà di ottere le previsioni per i prox 5 giorni ogni 3 ore
+    //creo l'oggetto che si occuperÃ  di ottere le previsioni per i prox 5 giorni ogni 3 ore
     private ForecastWeatherData forecastFiveDays;
 
     //oggetto per le previsioni per il giorno stesso
@@ -69,7 +71,7 @@ public class WeatherManagerImpl implements WeatherManager {
     @Inject
     private NotificationManager notificationManager;
 
-    private Logger logger = LoggerProducer.debugLogger(WeatherManagerImpl.class);
+    private static final Logger logger = LoggerProducer.debugLogger(WeatherManagerImpl.class);
 
     /**
      * Constructor
@@ -96,7 +98,7 @@ public class WeatherManagerImpl implements WeatherManager {
         if (validate(this.event)) {
             Calendar day = this.event.getStartDateTime();
 
-            //in base a che giorno è oggi e a quando è schedulato l'evento uso
+            //in base a che giorno Ã¨ oggi e a quando Ã¨ schedulato l'evento uso
             //un tipo diverso di previsioni
             this.forecastType = inferForecastType(day);
             logger.log(LoggerLevel.DEBUG, "Forecast infered: {0}", forecastType);
@@ -128,7 +130,7 @@ public class WeatherManagerImpl implements WeatherManager {
         in16Days.add(Calendar.DATE, 16);
 
         //se chiede il forecast di un giorno passato per ora il risultato 
-        //è unpredictable
+        //Ã¨ unpredictable
         //se per un giorno passato allora unpredictable
         if (TimeTool.isBefore(dayToCheck, today)) {
             return ForecastType.UNPREDICTABLE;
@@ -218,7 +220,7 @@ public class WeatherManagerImpl implements WeatherManager {
                 return infoIsAvailable16Days(day);
             default:
                 throw new UnsupportedOperationException(
-                        "Non è possibile controllare le info");
+                        "Non Ã¨ possibile controllare le info");
         }
 
     }
@@ -392,7 +394,7 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private int findDayPositionInForecastList(ForecastWeatherData forecast,
-                                              Calendar day) throws ForecastDayNotFoundException {
+            Calendar day) throws ForecastDayNotFoundException {
         logger.log(LoggerLevel.DEBUG, "Trying to find the forecast position...");
 
         //create an aproximation of the date compatible with the openweather format
@@ -408,7 +410,8 @@ public class WeatherManagerImpl implements WeatherManager {
                         && forecast.getForecast_List().get(i).hasDateTimeText()
                         && forecast.getForecast_List().get(i).getDateTimeText().
                         contains(TimeTool.dateToTextDay(temp.getTime(),
-                                        "yyyy-MM-dd hh:mm:ss"))) {
+                                        "yyyy-MM-dd HH:mm:ss"))) {
+                   
                     return i;
                 }
             }
@@ -418,7 +421,7 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private int findDayPositionInForecastList(DailyForecastData dailyForecast,
-                                              Calendar day) throws ForecastDayNotFoundException {
+            Calendar day) throws ForecastDayNotFoundException {
         logger.log(LoggerLevel.DEBUG, "Trying to find the forecast position...");
 
         if (dailyForecast.hasForecast_List()) {
@@ -444,17 +447,17 @@ public class WeatherManagerImpl implements WeatherManager {
     }
 
     private boolean validate(Event event) {
-        if(event!= null && event.getId() != null){
+        if (event != null && event.getId() != null) {
             //se posso aggiorno
             event = database.find(Event.class, event.getId());
         }
-        if (event != null && event.hasLocation() && event.isIsOutdoor()) {            
+        if (event != null && event.hasLocation() && event.isIsOutdoor()) {
             return true;
         }
         logger.log(LoggerLevel.DEBUG,
                 "l''event \u00e8 null, o non ha location o \u00e8 indoor -> non scarico weather:\nhaslocation= {0}\nisOutodoor: {1}",
                 new Object[]{event.hasLocation(),
-                             event.isIsOutdoor()});
+                    event.isIsOutdoor()});
         return false;
     }
 
@@ -470,8 +473,7 @@ public class WeatherManagerImpl implements WeatherManager {
 
         //se non esisteva una previsione
         if (event.getWeather() == null || event.getWeather().getMain() == null) {
-            event.setWeather(newForecast);
-            //se è la prima volta
+            //se Ã¨ la prima volta
             //aggiungo weather
             database.persist(newForecast);
             event = database.find(Event.class, event.getId());
@@ -493,9 +495,10 @@ public class WeatherManagerImpl implements WeatherManager {
                 database.flush();
                 logger.log(LoggerLevel.DEBUG, "appena flushato il nuovo tempo");
 
-                //controllo se sono tre giorni prima ed è previsto badWeather
-                //nel caso avviso l'owner che può richedulare
-                if (isBadWeatherNDaysBefore(event, newForecast, 3)) {
+                //controllo se sono tre giorni prima ed Ã¨ previsto badWeather
+                //nel caso avviso l'owner che puÃ² richedulare
+                if (isBadWeatherNDaysBefore(event, newForecast, 3)
+                        && !alreadyNotified(event, event.getOwner(), NotificationType.BAD_WEATHER_IN_THREE_DAYS)) {
                     logger.log(LoggerLevel.DEBUG,
                             "Bad weather in three days detected");
 
@@ -508,25 +511,44 @@ public class WeatherManagerImpl implements WeatherManager {
                             NotificationType.BAD_WEATHER_IN_THREE_DAYS, true);
                 }
 
-                //controllo se domani è il giorno dell'evento outdoor
-                //perchè in quel caso se è brutto tempo li informo
+                //controllo se domani Ã¨ il giorno dell'evento outdoor
+                //perchÃ¨ in quel caso se Ã¨ brutto tempo li informo
                 if (isBadWeatherNDaysBefore(event, newForecast, 1)) {
                     logger.log(LoggerLevel.DEBUG,
                             "Bad weather tomorrow detected");
-
+                    //prendo tutti i partecipanti che hanno detto si
                     List<UserModel> participants = this.getInviteesFiltered(
                             event, InvitationAnswer.YES);
-
-                    notificationManager.createNotifications(participants, event,
+                    if (event instanceof PublicEvent) {
+                        participants.addAll(((PublicEvent) event).getGuests());
+                    }
+                    List<UserModel> participantsToNotify = new ArrayList<>();
+                    //per ognuno di loro
+                    for (UserModel user : participants) {
+                        //se non l'ho giÃ  notificato
+                        if (!alreadyNotified(event, user, NotificationType.BAD_WEATHER_TOMORROW)) {
+                            //lo aggiungo ai partecipanti da notificare
+                            participantsToNotify.add(user);
+                        }
+                    }
+                    //creo le notifiche solo per quelli che non ho giÃ  avvisato
+                    notificationManager.createNotifications(participantsToNotify, event,
                             NotificationType.BAD_WEATHER_TOMORROW, true);
 
-                } else if (weatherChanged) {
+                }
+                if (weatherChanged) {
                     //comuque se il tempo cambia li informo
                     logger.log(LoggerLevel.DEBUG,
                             "Weather changed detected");
 
                     List<UserModel> participants = this.getInviteesFiltered(
                             event, InvitationAnswer.YES);
+                    if (!participants.contains(event.getOwner())) {
+                        participants.add(event.getOwner());
+                    }
+                    if (event instanceof PublicEvent) {
+                        participants.addAll(((PublicEvent) event).getGuests());
+                    }
 
                     notificationManager.createNotifications(participants, event,
                             NotificationType.WEATHER_CHANGED, true);
@@ -558,7 +580,7 @@ public class WeatherManagerImpl implements WeatherManager {
             return users;
         } else {
             logger.log(LoggerLevel.DEBUG,
-                    "L'event è null in getInviteesFiltered");
+                    "L'event Ã¨ null in getInviteesFiltered");
 
             return null;
         }
@@ -570,5 +592,28 @@ public class WeatherManagerImpl implements WeatherManager {
 
         return TimeTool.isNDayBefore(daysBefore, today, event.getStartDateTime())
                 && forecast.getMessage() == WeatherMessages.BAD_WEATHER;
+    }
+
+    private boolean alreadyNotified(Event event, UserModel user, NotificationType notificationType) {
+        if (event != null && event.getId() != null && user != null) {
+            event = database.find(Event.class, event.getId());
+            if (event != null) {
+                for (Notification noti : event.getNotifications()) {
+                    if (noti != null && noti.getRelatedEvent() != null && noti.getRelatedEvent() == event
+                            && noti.getRecipient() == user && noti.getType() == notificationType) {
+                        return true;
+                    }
+                }
+                //se non ho trovato che ti ho giÃ  mandato quella notifica
+                return false;
+            } else {
+                return true;
+            }
+
+        } else {
+            //se i campi passati non sono giusti ti 
+            //dico che mi hai gia notificato
+            return true;
+        }
     }
 }

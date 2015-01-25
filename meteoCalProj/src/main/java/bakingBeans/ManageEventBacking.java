@@ -685,6 +685,11 @@ public class ManageEventBacking implements Serializable {
 
             }// end if
         }
+        RequestContext context = RequestContext.getCurrentInstance();
+        if (context != null) {
+            context.execute("PF('loadingImage').hide()");
+        }
+
         //non faccio nulla perchè l'utente ha sbagliato ad inserire dei dati
     }
 
@@ -830,7 +835,6 @@ public class ManageEventBacking implements Serializable {
         }
     }
 
-    //TODO spostare
     private String searchCalendarByEvent() {
         List<CalendarModel> list = calendarManager.getCalendars(
                 login.getCurrentUser());

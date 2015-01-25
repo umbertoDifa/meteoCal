@@ -136,7 +136,6 @@ public class LoginBacking implements Serializable {
     }
 
     public void updateNotification() {
-        System.out.println("---- DENTRO UPDATE NOTIFICATION ----");
         notificationNumber = notificationManager.getUnreadNotificationNumber(currentUser);
     }
 

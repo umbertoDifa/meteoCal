@@ -31,7 +31,6 @@ public class LoginFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        System.out.println("-dentro login filter");
         if (login != null && login.isLoggedIn()) {
             chain.doFilter(request, response);
         } else {
