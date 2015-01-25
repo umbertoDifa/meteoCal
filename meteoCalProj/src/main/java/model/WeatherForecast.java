@@ -56,6 +56,7 @@ public class WeatherForecast implements Serializable {
      * 
      */
     public WeatherForecast() {
+        this.icon = "defaultIcon";
     }
 
     public WeatherForecast(WeatherMessages message, float temp, float maxTemp, float minTemp, float pressure, float humidity, int weatherId, String main, String description, String icon, Event event) {

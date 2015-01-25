@@ -55,7 +55,7 @@ and open the template in the editor.
                     <h:outputText value="The event is outdoor" rendered="#{viewEvent.eventToShow.isOutdoor}"/><br/>
                     <h:outputText value="The event is indoor" rendered="#{!viewEvent.eventToShow.isOutdoor}"/><br/>
                 </p:panel>
-                <p:fieldset  rendered="#{viewEvent.eventToShow.isOutdoor and viewEvent.eventToShow.hasLocation()}">
+                <p:fieldset id="weatherBox" rendered="#{viewEvent.eventToShow.isOutdoor and viewEvent.eventToShow.hasLocation()}">
                     <p:panelGrid columns="2">
                         <p:graphicImage value="/resources/icons/#{viewEvent.eventToShow.weather.icon}.png" /><h3>Weather</h3>
                     </p:panelGrid>

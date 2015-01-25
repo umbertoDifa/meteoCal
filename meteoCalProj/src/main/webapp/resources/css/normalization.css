@@ -256,6 +256,19 @@ h1, h2, h3 {
 
 .tableAlign td{
     vertical-align: top !important;
+    white-space: nowrap;
+}
+
+#weatherBox {
+    padding: 0;
+}
+
+#weatherBox td {
+    white-space: normal;
+}
+
+.tableAlign td .ui-panel, .tableAlign td .ui-panel .ui-panel-content {
+    padding: 0;
 }
 
 .ui-dialog {
