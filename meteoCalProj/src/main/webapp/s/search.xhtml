@@ -36,17 +36,18 @@ and open the template in the editor.
                 <p:commandButton value="Search" ajax="false" action="#{search.redirect}" /><br/>
 
 
-                <h:outputLabel>users:</h:outputLabel> 
-                <input type="radio" value="#{search.searchForEvents}"/>
+                <h:outputLabel>users:</h:outputLabel> &nbsp;
+                <p:selectBooleanCheckbox value="#{search.searchForEvents}" /> &nbsp;
 
-                <h:outputLabel>events:</h:outputLabel> 
-                <input type="radio" value="#{search.searchForUsers}"/><br />
+                <h:outputLabel>events:</h:outputLabel> &nbsp; 
+                <p:selectBooleanCheckbox value="#{search.searchForUsers}" /> 
+ 
 
             </h:form>
             <br/>
             <h:outputText value="There are no results for your search" rendered="#{ (not empty search.searchKey ) and ( empty search.eventResults) and ( empty search.userResults)}" />
             <p:tabView rendered="#{(not empty search.eventResults) or (not empty search.userResults)}">
-                <p:tab title="(#{search.eventResults.size()}) Event">
+                <p:tab title="(#{search.eventResults.size()}) Event" rendered="#{search.searchForEvents}" >
                     <h:form>
                         <p:dataScroller value="#{search.eventResults}" var="ev" chunkSize="10">
                             <p:fieldset legend="#{ev.title}" style="margin-bottom:20px" class="prevEvent">
@@ -80,7 +81,7 @@ and open the template in the editor.
                         </p:dataScroller>
                     </h:form>
                 </p:tab>
-                <p:tab title="(#{search.userResults.size()}) User">
+                <p:tab title="(#{search.userResults.size()}) User" rendered="#{search.searchForUsers}">
                     <h:form>
                         <p:dataScroller value="#{search.userResults}" var="u" chunkSize="10">
                             <p:fieldset legend="#{u.name}" style="margin-bottom:20px" class="prevEvent">
@@ -109,6 +110,9 @@ and open the template in the editor.
                     </h:form>
                 </p:tab>
             </p:tabView>
+            
+            
+            
 
         </ui:define>
     </ui:composition>

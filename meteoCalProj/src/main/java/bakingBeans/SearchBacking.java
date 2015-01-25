@@ -142,7 +142,7 @@ public class SearchBacking implements Serializable {
                 boolean add = false;
                 List<CalendarModel> list = u.getOwnedCalendars();
                 for (CalendarModel c : list) {
-                    if (c.isIsPublic()) {
+                    if (c.isIsPublic() || c.getOwner().equals(login.getCurrentUser())) {
                         add = true;
                     }
                 }
