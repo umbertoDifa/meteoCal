@@ -65,7 +65,7 @@ public enum NotificationType {
     private Object[] subjParams;
     private Object[] bodyParams;
 
-    private Logger logger = LoggerProducer.debugLogger(NotificationType.class);
+    private final Logger logger = LoggerProducer.debugLogger(NotificationType.class);
 
     private NotificationType(String subject, String body) {
         this.templateSubject = subject;

@@ -107,7 +107,7 @@ public class ManageEventBacking implements Serializable {
     @Inject
     private SearchManager searchManager;
 
-    private Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
+    private static final Logger logger = LoggerProducer.debugLogger(ManageEventBacking.class);
 
     private UserModel newGuest;
 

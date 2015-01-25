@@ -28,6 +28,7 @@ import model.UserModel;
 import model.WeatherForecast;
 import utility.ControlMessages;
 import utility.LoggerLevel;
+import utility.LoggerProducer;
 import utility.TimeTool;
 
 @Stateless
@@ -51,9 +52,7 @@ public class EventManagerImpl implements EventManager {
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
-    @Inject
-    @Default
-    private Logger logger;
+    private static final Logger logger = LoggerProducer.debugLogger(EventManagerImpl.class);
 
     @Override
     public boolean scheduleNewEvent(Event event, CalendarModel insertInCalendar, List<UserModel> invitees) {

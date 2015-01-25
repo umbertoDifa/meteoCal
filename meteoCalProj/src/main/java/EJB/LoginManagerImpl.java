@@ -32,7 +32,7 @@ public class LoginManagerImpl implements LoginManager {
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
-    private Logger logger = LoggerProducer.debugLogger(LoginManagerImpl.class);
+    private static final Logger logger = LoggerProducer.debugLogger(LoginManagerImpl.class);
 
     private UserAndMessage userAndMessage;
 

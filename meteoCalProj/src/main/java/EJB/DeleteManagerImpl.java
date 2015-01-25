@@ -4,7 +4,6 @@ import EJB.interfaces.CalendarManager;
 import EJB.interfaces.DeleteManager;
 import EJB.interfaces.InvitationManager;
 import EJB.interfaces.NotificationManager;
-import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
@@ -21,6 +20,7 @@ import model.PublicEvent;
 import model.UserModel;
 import utility.DeleteCalendarOption;
 import utility.LoggerLevel;
+import utility.LoggerProducer;
 
 @Stateless
 public class DeleteManagerImpl implements DeleteManager {
@@ -37,9 +37,8 @@ public class DeleteManagerImpl implements DeleteManager {
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
-    @Inject
-    @Default
-    private Logger logger;
+    
+    private static final Logger logger = LoggerProducer.debugLogger(DeleteManagerImpl.class);
 
     @Override
     public boolean deleteEvent(Event event, boolean silent) {

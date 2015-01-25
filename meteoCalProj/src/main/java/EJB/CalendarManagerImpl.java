@@ -23,12 +23,13 @@ import utility.ControlMessages;
 import utility.LoggerLevel;
 import utility.WeatherMessages;
 import model.WeatherForecast;
+import utility.LoggerProducer;
 
 @Stateless
 public class CalendarManagerImpl implements CalendarManager {
 
-    @Inject
-    private Logger logger;
+    
+    private static final Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
 
     @Inject
     private WeatherManager weatherManager;

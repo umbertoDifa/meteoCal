@@ -14,7 +14,7 @@ public class EmailSender {
     private static String userName = "meteoCalendar.notification";  // GMail user name (just the part before "@gmail.com")
     private static String password = "fravaleumbo"; // GMail password
     private static final String RECIPIENT_DEFAULT = "umberto.difabrizio@gmail.com";
-    private static Logger logger = LoggerProducer.debugLogger(EmailSender.class);
+    private static final Logger logger = LoggerProducer.debugLogger(EmailSender.class);
 
     public static void sendEmail(String recipient, String subject, String body) {
         String from = userName;

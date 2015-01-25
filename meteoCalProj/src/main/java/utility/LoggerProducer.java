@@ -1,5 +1,6 @@
 package utility;
 
+import java.io.Serializable;
 import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Default;
@@ -11,7 +12,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
  * @author umboDifa
  */
 @Dependent
-public class LoggerProducer {
+public class LoggerProducer{
     
     //NB. per spegnere il debug cambiare tutti i DEBUG in INFO
     @Produces

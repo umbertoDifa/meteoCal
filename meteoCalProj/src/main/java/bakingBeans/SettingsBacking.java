@@ -71,7 +71,7 @@ public class SettingsBacking implements Serializable {
 
     private LoginBacking login;
 
-    private Logger logger = LoggerProducer.debugLogger(SettingsBacking.class);
+    private static final Logger logger = LoggerProducer.debugLogger(SettingsBacking.class);
 
     /**
      * Creates a new instance of SettingsBacking

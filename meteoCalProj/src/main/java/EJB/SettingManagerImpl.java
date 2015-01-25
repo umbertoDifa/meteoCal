@@ -61,8 +61,7 @@ public class SettingManagerImpl implements SettingManager {
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
-    @Inject
-    private Logger logger;
+    private static final Logger logger = LoggerProducer.debugLogger(SettingManagerImpl.class);
 
     /**
      * Constructor for the test

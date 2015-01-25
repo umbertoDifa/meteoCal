@@ -24,6 +24,7 @@ import javax.persistence.PersistenceContext;
 import model.CalendarModel;
 import model.UserModel;
 import utility.LoggerLevel;
+import utility.LoggerProducer;
 import utility.PasswordTool;
 
 @Stateless
@@ -32,8 +33,7 @@ public class SignUpManagerImpl implements SignUpManager {
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
-    @Inject @Default
-    private Logger logger;
+    private static final Logger logger = LoggerProducer.debugLogger(SignUpManagerImpl.class);
 
     @Inject
     private CalendarManager calManager;

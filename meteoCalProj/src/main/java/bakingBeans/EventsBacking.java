@@ -31,8 +31,6 @@ public class EventsBacking implements Serializable {
     List<Event> wallEvents;
     List<Event> invitations;
 
-    private int numClickMoreOwned;
-
     final LoginBacking login;
 
     /**

@@ -7,6 +7,7 @@ package utility;
 import EJB.interfaces.EventManager;
 import bakingBeans.LoginBacking;
 import java.io.IOException;
+import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import javax.servlet.Filter;

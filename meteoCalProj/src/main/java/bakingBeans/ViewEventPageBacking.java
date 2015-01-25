@@ -87,7 +87,7 @@ public class ViewEventPageBacking implements Serializable {
     @Inject
     private CalendarManager calendarManager;
 
-    private Logger logger = LoggerProducer.debugLogger(CalendarManagerImpl.class);
+    private static final Logger logger = LoggerProducer.debugLogger(ViewEventPageBacking.class);
 
     /**
      * Creates a new instance of viewEventBacking

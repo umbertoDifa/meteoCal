@@ -18,7 +18,7 @@ import utility.NotificationCategories;
 @Stateless
 public class NotificationManagerImpl implements NotificationManager {
 
-    Logger logger = LoggerProducer.debugLogger(NotificationManagerImpl.class);
+    private static final Logger logger = LoggerProducer.debugLogger(NotificationManagerImpl.class);
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
@@ -26,7 +26,7 @@ public class NotificationManagerImpl implements NotificationManager {
     public void createNotifications(List<UserModel> users, Event event, NotificationType type, boolean sendEmail) {
         logger.log(LoggerLevel.DEBUG, "Setting up the notification...");
 
-        if (users != null && !users.isEmpty()) {
+        if (users != null && !users.isEmpty() && event != null) {
             type.setEventName(event.getTitle()).setEventOwner(
                     event.getOwner().getEmail()).setLink(event.getId());
 

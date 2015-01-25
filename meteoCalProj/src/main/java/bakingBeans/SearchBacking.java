@@ -41,7 +41,7 @@ public class SearchBacking implements Serializable {
     @Inject
     private SearchManager searchManager;
 
-    private Logger logger = LoggerProducer.debugLogger(SearchBacking.class);
+    private static final Logger logger = LoggerProducer.debugLogger(SearchBacking.class);
 
     @Inject
     LoginBacking login;

@@ -38,7 +38,7 @@ public class UpdateManagerImpl {
     @PersistenceContext(unitName = "meteoCalDB")
     private EntityManager database;
 
-    private Logger logger = LoggerProducer.debugLogger(UpdateManagerImpl.class);
+    private static final Logger logger = LoggerProducer.debugLogger(UpdateManagerImpl.class);
 
     private ScheduledExecutorService executor = Executors.newScheduledThreadPool(
             5);
