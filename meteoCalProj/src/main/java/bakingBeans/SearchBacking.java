@@ -35,8 +35,7 @@ public class SearchBacking implements Serializable {
     private String searchKey;
     private List<Event> eventResults = new ArrayList<>();
     private List<UserModel> userResults = new ArrayList<>();
-    private boolean searchForUsers;
-    private boolean searchForEvents;
+
 
     @Inject
     private SearchManager searchManager;
@@ -62,21 +61,6 @@ public class SearchBacking implements Serializable {
         this.searchKey = searchKey;
     }
 
-    public boolean isSearchForUsers() {
-        return searchForUsers;
-    }
-
-    public void setSearchForUsers(boolean searchForUsers) {
-        this.searchForUsers = searchForUsers;
-    }
-
-    public boolean isSearchForEvents() {
-        return searchForEvents;
-    }
-
-    public void setSearchForEvents(boolean searchForEvents) {
-        this.searchForEvents = searchForEvents;
-    }
 
     public List<Event> getEventResults() {
         return eventResults;
@@ -136,7 +120,6 @@ public class SearchBacking implements Serializable {
         users = searchManager.searchUsers(searchKey);
         events = searchManager.searchEvents(searchKey);
 
-        if (searchForUsers || (!searchForEvents && !searchForUsers)) {
             for (UserModel u : users) {
                 boolean add = false;
                 List<CalendarModel> list = u.getOwnedCalendars();
@@ -149,14 +132,13 @@ public class SearchBacking implements Serializable {
                     userResults.add(u);
                 }
             }
-        }
+        
 
-        if (searchForEvents || (!searchForEvents && !searchForUsers)) {
             for (Event ev : events) {
-                if ((ev instanceof PublicEvent) || (ev.getInvitee().contains(login.getCurrentUser()))) {
+                if ((ev instanceof PublicEvent) || (ev.getInvitee().contains(login.getCurrentUser()) || ev.getOwner().equals(login.getCurrentUser()))) {
                     eventResults.add(ev);
                 }
-            }
+            
         }
 
         logger.log(LoggerLevel.DEBUG, "{0} eventi trovati sono :{1}", new Object[]{eventResults.size(), eventResults});
