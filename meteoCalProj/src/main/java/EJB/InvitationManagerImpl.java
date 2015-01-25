@@ -95,7 +95,7 @@ public class InvitationManagerImpl implements InvitationManager {
                                 "user",
                                 invitation.getInvitee()).getSingleResult();
                 invitation.setAnswer(answer);
-                database.persist(invitation);
+                database.flush();
                 return true;
             } catch (IllegalArgumentException e) {
                 return false;
@@ -149,7 +149,7 @@ public class InvitationManagerImpl implements InvitationManager {
             return users;
         } else {
             logger.log(LoggerLevel.DEBUG,
-                    "L'event Ã¨ null in getInviteesFiltered");
+                    "L'event è null in getInviteesFiltered");
             return null;
         }
 

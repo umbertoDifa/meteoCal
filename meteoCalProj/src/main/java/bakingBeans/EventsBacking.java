@@ -89,9 +89,9 @@ public class EventsBacking implements Serializable {
     @PostConstruct
     public void init() {
         //riempio le tab
-        ownedEvents = eventManager.eventOnWall(EventType.OWNED, 80, login.getCurrentUser());
-        joinedEvents = eventManager.eventOnWall(EventType.JOINED, 80, login.getCurrentUser());
-        invitations = eventManager.eventOnWall(EventType.INVITED, 80, login.getCurrentUser());
-        wallEvents = eventManager.eventOnWall(EventType.PUBLIC, 80, login.getCurrentUser());
+        ownedEvents = eventManager.eventOnWall(EventType.OWNED, login.getCurrentUser());
+        joinedEvents = eventManager.eventOnWall(EventType.JOINED, login.getCurrentUser());
+        invitations = eventManager.eventOnWall(EventType.INVITED, login.getCurrentUser());
+        wallEvents = eventManager.eventOnWall(EventType.PUBLIC, login.getCurrentUser());
     }
 }

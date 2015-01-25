@@ -28,7 +28,7 @@ public interface EventManager {
      */
     public boolean scheduleNewEvent(Event event, model.CalendarModel insertInCalendar, List<UserModel> invitees);
 
-    public List<Event> eventOnWall(utility.EventType type, int n, UserModel owner);
+    public List<Event> eventOnWall(utility.EventType type, UserModel owner);
 
     public Event findEventbyId(Long id);
 

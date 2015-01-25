@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -367,77 +366,44 @@ public class EventManagerImpl implements EventManager {
 //        return false;
 //    }
     @Override
-    public List<Event> eventOnWall(utility.EventType type, int n, UserModel owner) {
+    public List<Event> eventOnWall(utility.EventType type, UserModel owner) {
+        if (owner != null) {
         owner = database.find(UserModel.class, owner.getId());
+        List<Event> events = new ArrayList<Event>();
         database.refresh(owner);
         switch (type) {
             case INVITED: {
-                return invitedEventsOnWall(owner, n);
+
+                events = database.createNamedQuery("findInvitedEvents").setParameter("user", owner).getResultList();;
+                break;
+
             }
             case PARTECIPATING: {
-                return acceptedEventsOnWall(owner, n);
+                events = database.createNamedQuery("findAcceptedInvitations").setParameter("user", owner).getResultList();
+                break;
             }
 
             case JOINED: {
-                List<Event> joinedEvents = new ArrayList<>();
-                joinedEvents.addAll(joinedEventsOnWall(owner, n));
-                return joinedEvents;
+                events = database.createNamedQuery("findPublicJoins").setParameter("user", owner).getResultList();
+                break;
 
             }
 
             case OWNED: {
-                return ownedEventonWall(owner, n);
+                events = database.createNamedQuery("findNextOwnedEvents").setParameter("user", owner).getResultList();
+                break;
             }
 
             case PUBLIC: {
-                List<Event> publicEvents = new ArrayList<>();
-                publicEvents.addAll(publicEventsOnWall(owner, n));
-                return publicEvents;
-            }
+                events = database.createNamedQuery("findNextPublicEvents").getResultList();
+                break;
 
+            }
+    
+        }
+        return events;
         }
         return null;
-    }
-
-    private List<PublicEvent> publicEventsOnWall(UserModel user, int n) {
-        return database.createNamedQuery("findNextPublicEvents").setMaxResults(n).getResultList();
-
-    }
-
-    private List<Event> ownedEventonWall(UserModel user, int n) {
-        List<Event> r = (List<Event>) database.createNamedQuery("findNextOwnedEvents").setParameter("user", user).getResultList();
-        if (n > r.size()) {
-            return r;
-        } else {
-            return r.subList(0, n);
-        }
-    }
-
-    private List<Event> acceptedEventsOnWall(UserModel user, int n) {
-        List<Event> events = database.createNamedQuery("findAcceptedInvitations").setParameter("user", user).getResultList();
-        if (n > events.size()) {
-            return events;
-        } else {
-            return events.subList(0, n);
-        }
-    }
-
-    private List<Event> invitedEventsOnWall(UserModel user, int n) {
-        List<Event> events = database.createNamedQuery("findInvitedEvents").setParameter("user", user).getResultList();
-        if (n > events.size()) {
-            return events;
-        } else {
-            return events.subList(0, n);
-        }
-    }
-
-    private List<PublicEvent> joinedEventsOnWall(UserModel user, int n) {
-        List<PublicEvent> r = database.createNamedQuery("findPublicJoins").setParameter("user", user).getResultList();
-        if (n > r.size()) {
-            return r;
-        } else {
-            return r.subList(0, n);
-        }
     }
 
     @Override
