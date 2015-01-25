@@ -44,9 +44,30 @@ insert into EVENT (ID, TITLE,STARTDATETIME, ENDDATETIME, ISOUTDOOR, LOCATION, LA
 	(4, "Conference",'2015-01-02 12:00', '2015-01-02 13:00', 0 , "office",  0.0, 0.0, 0, "Conference with Managers", 1, "PRIVATE"),
 	(5, "Conference Call", '2015-01-25 09:30', '2015-01-25 11:00', 0 , " ", 0.0, 0.0, 0, "Conference call with customers", 2, "PRIVATE"),
 	(6, "Deadline Project ",'2015-01-25 23:59', '2015-01-26 00:00', 0 , " ", 0.0, 0.0, 0,  " Upload project and documentation", 3, "PRIVATE"),
-        (7, "Bon Jovi Concert",'2015-02-23 17:30', '2015-02-23 23:30', 1 , "Milano,Italia,Lombardia",45.4654219, 9.1859243, 1, "SETLIST: That is What the Water Made Me" , 2 ,"PUBLIC"),
-        (8, "Pillow fight", '2015-02-02 13:00', '2015-02-02 16:00',  1 , "Milano,Italia,Lombardia",45.4654219, 9.1859243, 1, "Dear Dudes and Dudettes, you are all welcome to actively participate in this international event. check out the FB event to confirm your participation! Pillow Fight Milano in Pajama! All over the world, groups like us organize free, fun, all ages, non-commercial public events. At 3pm there will be Pillow Fights in many major cities of the world. Check out the main website below and scroll to your town to see if there is one there.  Here the International link.. take a look on the Milano page: http://www.pillowfightday.com/ ", 1,  "PUBLIC"),
-        (9, " FUORISALONE 2015 & SALONE DEL MOBILE " , '2015-04-14 09:00', '2015-04-19 23:59', 0 , "Milano,Italia,Lombardia",45.4654219, 9.1859243, 1, "Fuorisalone or design week today is the most important event in the world related to the topic of design, the term is used to define the set of events and exhibitions that animate the entire city of Milan in the period of April in correspondence of the Salone del Mobile that takes place in exhibition center in Rho", 3,  "PUBLIC"); 
+        (7, "Bon Jovi Concert",'2015-02-23 17:30', '2015-02-23 23:30', 1 , "Milano,Italia,Lombardia",45.4654219, 9.1859243, 1, 'SETLIST: 
+
+That is What the Water Made Me
+You Give Love a Bad Name
+Raise Your Hands 
+Runaway 
+Lost Highway 
+Born to Be My Baby 
+It''s My Life 
+Because We Can 
+We Weren''t Born to Follow 
+Someday I''ll Be Saturday Night 
+Love''s the Only Rule 
+Wanted Dead or Alive 
+Have a Nice Day 
+Livin'' on a Prayer 
+Never Say Goodbye 
+Always ', 2 ,"PUBLIC"),
+        (8, "Pillow fight", '2015-02-02 13:00', '2015-02-02 16:00',  1 , "Milano,Italia,Lombardia",45.4654219, 9.1859243, 1, "Dear Dudes and Dudettes, 
+you are all welcome to actively participate in this international event. check out the FB event to confirm your participation! 
+Pillow Fight Milano in Pajama! All over the world, groups like us organize free, fun, all ages, non-commercial public events. 
+At 3pm there will be Pillow Fights in many major cities of the world. Check out the main website below and scroll to your town to see if there is one there.  
+Here the International link.. take a look on the Milano page: http://www.pillowfightday.com/ ", 1,  "PUBLIC"),
+        (9, "FUORISALONE 2015 & SALONE DEL MOBILE " , '2015-04-14 09:00', '2015-04-19 23:59', 0 , "Milano,Italia,Lombardia",45.4654219, 9.1859243, 1, "Fuorisalone or design week today is the most important event in the world related to the topic of design, the term is used to define the set of events and exhibitions that animate the entire city of Milan in the period of April in correspondence of the Salone del Mobile that takes place in exhibition center in Rho", 3,  "PUBLIC"); 
      
 
 insert into PRIVATE_EVENT (ID)
