@@ -1,6 +1,8 @@
 ##MeteoCal
 A weather based online calendar to help people scheduling their personal events avoiding bad weather conditions in case of outdoor activities.
 
+DEMO at: https://www.youtube.com/watch?v=n3_qTCG0SD4
+
 #Features
 * Remind appointments and give a clear global vision about personal schedules
 * Prevent outdoor event to be spoiled by adverse weather conditions
